@@ -1,0 +1,203 @@
+---
+title: "Roles & Permissions (RBAC)"
+description: "Role-Based Access Control system for managing user access"
+module: "auth"
+feature: "rbac"
+order: 9
+---
+
+# Roles & Permissions (RBAC)
+
+EduShade uses a **Role-Based Access Control (RBAC)** system to manage what each user can see and do on the platform. This system provides fine-grained control over user access through roles and permissions.
+
+## Core Concepts
+
+### Permissions
+
+A **permission** is a single, specific action a user can perform. Permissions are organized into **groups**.
+
+Examples:
+- `user.create` — Can create new users
+- `user.delete` — Can delete users
+- `rbac.view` — Can view roles and permissions
+- `analytics.export` — Can export analytics data
+
+### Roles
+
+A **role** is a named collection of permissions. Instead of assigning individual permissions to each user, you assign roles.
+
+Examples:
+- **Admin** role includes: `user.create`, `user.update`, `user.delete`, `rbac.view`, etc.
+- **Instructor** role includes: course management permissions
+- **Learner** role includes: basic learning permissions
+
+### Direct Permissions
+
+In addition to role-based permissions, individual permissions can be assigned **directly to a user**, bypassing roles. This is useful for granting specific access without creating a new role.
+
+## Permission Groups
+
+Permissions are organized into the following groups:
+
+| Group | Permissions | Description |
+|-------|-------------|-------------|
+| **User** | view, list, create, update, delete, export, profile, sessions, stats | User management operations |
+| **RBAC** | view, create, update, delete | Role and permission management |
+| **Role** | view, list, create, update, delete, assign, remove | Role-specific operations |
+| **Permission** | list, assign, remove | Permission assignment operations |
+| **Tenant** | view, list, create, update, delete, manage | Tenant/organization management |
+| **Organization** | view, update, manage | Organization settings |
+| **Invitation** | view, create, update, delete, accept | User invitation management |
+| **Settings** | view, update, write | Platform settings |
+| **File** | view, list, create, upload, update, download, delete, manage | File/media management |
+| **Notification** | send, view, manage | Notification management |
+| **Analytics** | view, export, manage | Analytics and reporting |
+| **Admin** | users, roles, permissions, audit, settings | Administrative catch-all |
+| **Audit** | view, manage | Audit log access |
+| **Moderation** | view, take_action, appeals | Content moderation |
+
+## Built-in Roles
+
+EduShade comes with pre-configured roles:
+
+### Super Admin
+- **All permissions** — Complete system access
+- Intended for platform owners and top-level administrators
+- Can manage all aspects of the platform
+
+### Admin
+- **Most administrative permissions** — System administration
+- Cannot modify super admin accounts
+- Can manage users, roles, settings
+
+### User Manager
+- **User and role management** — Focus on people operations
+- Can create, edit, and delete users
+- Can assign and manage roles
+
+### Developer
+- **Tenant and platform management** — Technical operations
+- Can manage platform-specific resources and settings
+
+### Moderator
+- **Content moderation** — Community management
+- Can view and moderate content
+- Can handle appeals and take moderation actions
+
+### Auditor
+- **View-only analytics** — Reporting and compliance
+- Can view system resources and analytics
+- Can export reports
+- Cannot modify any data
+
+## Managing Roles (Admin)
+
+### Creating a New Role
+
+1. Go to **Admin → Roles & Permissions**
+2. Click **Create Role**
+3. Enter a **role name**
+4. Select the **permissions** to include
+5. Click **Save**
+
+### Editing a Role
+
+1. Go to **Admin → Roles & Permissions**
+2. Click on the role to edit
+3. Modify the name or toggle permissions on/off
+4. Click **Save**
+5. Changes take effect immediately for all users with this role
+
+### Cloning a Role
+
+Need a role similar to an existing one?
+
+1. Go to **Admin → Roles & Permissions**
+2. Find the role to clone
+3. Click **Clone**
+4. A new role is created with the same permissions
+5. Edit the cloned role to customize
+
+### Deleting a Role
+
+1. Find the role in the roles list
+2. Click **Delete**
+3. Confirm the action
+4. The role is soft-deleted
+5. Users who had this role lose its permissions
+
+## Assigning Roles to Users
+
+### From User Management
+
+1. Go to **Admin → User Management**
+2. Open a user's profile
+3. Edit the user
+4. In the **Roles** section, select roles to assign
+5. Click **Save**
+
+### From RBAC Management
+
+1. Go to **Admin → Roles & Permissions**
+2. Select a role
+3. Assign the role to specific users
+
+## Assigning Direct Permissions
+
+To give a user a specific permission without assigning a full role:
+
+1. Go to **Admin → User Management**
+2. Open a user's profile
+3. In the **Permissions** section, check individual permissions
+4. Click **Save**
+
+## How Permissions Are Checked
+
+When a user tries to access a feature:
+
+1. The system collects all permissions from the user's **assigned roles**
+2. It adds any **directly assigned permissions**
+3. It checks if the required permission is in this combined set
+4. Access is **granted** if the permission exists, **denied** otherwise
+
+### Permission Caching
+
+- Permissions are cached for performance
+- When a role or permission assignment changes, a **cache invalidation event** is published
+- All affected users' permission caches are refreshed
+
+### Frontend Route Protection
+
+The frontend also enforces permissions:
+
+- Admin sidebar menu items are filtered based on user permissions
+- Route-level permission checks prevent unauthorized page access
+- If a user navigates to a restricted page, they are redirected
+
+## Filtering Roles
+
+When viewing roles, you can filter by:
+
+| Filter | Description |
+|--------|-------------|
+| **Search** | Search by role name |
+| **Guard** | Filter by guard type (e.g., "web") |
+| **Status** | Filter by active/inactive |
+| **Permissions** | Find roles that include specific permissions |
+
+## RBAC Events
+
+When roles or permissions change, events are published for:
+
+- **Cache invalidation** — Ensures users immediately see updated permissions
+- **Audit logging** — Tracks who changed what and when
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| User can't access a page | Check that the user has the required permission via their role or direct assignment |
+| Permission change not taking effect | Permissions are cached. The user may need to refresh or re-login |
+| Can't create/edit roles | You need the `rbac.create` or `rbac.update` permission |
+| Role deletion didn't remove access | Ensure the user doesn't have the same permissions via another role or direct assignment |
+| Admin sidebar shows limited items | The sidebar is filtered by permissions — assign the appropriate role |

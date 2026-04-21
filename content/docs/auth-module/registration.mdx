@@ -1,0 +1,107 @@
+---
+title: "User Registration"
+description: "How to create a new account on the EduShade platform"
+module: "auth"
+feature: "registration"
+order: 1
+---
+
+# User Registration
+
+Registration is the first step to using the EduShade platform. Users can create accounts using their email address, phone number, or through social login providers.
+
+## Registration Methods
+
+### 1. Email Registration
+
+The most common registration method. Users provide:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| **Name** | Yes | Your full display name |
+| **Email** | Yes | A valid email address (must be unique per tenant) |
+| **Password** | Yes | Must meet the platform's password policy |
+
+**Steps:**
+1. Navigate to the **Register** page (`/auth/register`)
+2. Enter your full name
+3. Enter your email address
+4. Create a password that meets the password requirements (shown in real-time)
+5. Click **Register**
+6. You will be redirected to the **Email Verification** page to verify your email
+
+### 2. Phone Registration
+
+Users can also register using their phone number:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| **Name** | Yes | Your full display name |
+| **Phone** | Yes | A valid phone number (must be unique per tenant) |
+| **Password** | Yes | Must meet the platform's password policy |
+
+**Steps:**
+1. Navigate to the **Register** page
+2. Toggle to **Phone** mode (click the phone icon)
+3. Enter your full name
+4. Enter your phone number
+5. Create a password
+6. Click **Register**
+7. You will be redirected to the **Phone Verification** page to verify your phone
+
+### 3. Social Login Registration
+
+You can register instantly using a social account. See [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login) for details.
+
+Supported providers:
+- Google
+- Facebook
+- Apple
+
+When registering via social login, your name and email are automatically populated from your social account.
+
+## Password Requirements
+
+The platform enforces configurable password policies. During registration, you'll see a **Password Requirements Panel** showing:
+
+- **Minimum length** — Typically 8 characters (configurable per tenant)
+- **Complexity rules** (if enabled):
+  - At least one uppercase letter (A-Z)
+  - At least one lowercase letter (a-z)
+  - At least one number (0-9)
+  - At least one special character (!@#$%^&*)
+
+The panel updates in real-time as you type, showing green checkmarks for met requirements.
+
+## What Happens After Registration
+
+1. **Account is created** with status `pending_verification`
+2. **Default role**: Every new user is created as a **Learner** (`is_learner = true`)
+3. **Verification required**: Depending on the registration method:
+   - Email registration → Email verification OTP is sent
+   - Phone registration → SMS OTP is sent
+4. **Redirect**: You are automatically redirected to the appropriate verification page
+5. Once verified, your account status changes to `active`
+
+## Reactivating a Deleted Account
+
+If you previously deleted your account and try to register with the same email/phone:
+
+- The system checks the **tenant's data retention policy**
+- If your data is still within the retention period, you may be able to **reactivate** your previous account
+- A verification code is sent to your original email/phone to confirm identity
+- If beyond the retention period, a new account is created
+
+## Rate Limiting
+
+To prevent abuse, registration is rate-limited to **5 requests per 5 minutes** per IP address. If you exceed this limit, you'll need to wait before trying again.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Email already exists" | An account with this email already exists. Try [logging in](/docs/knowledgebase/auth-module/login) or [resetting your password](/docs/knowledgebase/auth-module/password-management) |
+| "Phone already exists" | An account with this phone already exists |
+| Password doesn't meet requirements | Check the password requirements panel and ensure all criteria are met |
+| Rate limit exceeded | Wait 5 minutes and try again |
+| Registration form not loading | Check your internet connection and refresh the page |

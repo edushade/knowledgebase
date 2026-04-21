@@ -1,0 +1,133 @@
+---
+title: "User Analytics"
+description: "User growth statistics, registration trends, and quick overview dashboards"
+module: "auth"
+feature: "user-analytics"
+order: 15
+---
+
+# User Analytics
+
+EduShade provides user analytics and statistics to help administrators understand user growth, activity patterns, and platform health.
+
+## Accessing Analytics
+
+- Navigate to **Admin → User Management** (requires `user.view` permission)
+- Analytics are available through dedicated stats endpoints and dashboard widgets
+
+## Quick Statistics
+
+The quick stats panel provides at-a-glance metrics:
+
+### Overview Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **Total Users** | Total number of registered users (excluding deleted) |
+| **Active Users** | Users with `active` status |
+| **Inactive Users** | Users with `inactive` status |
+| **Suspended Users** | Users with `suspended` status |
+| **Pending Verification** | Users awaiting email/phone verification |
+
+### By User Type
+
+| Metric | Description |
+|--------|-------------|
+| **Total Admins** | Users with `is_admin = true` |
+| **Total Instructors** | Users with `is_instructor = true` |
+| **Total Learners** | Users with `is_learner = true` |
+
+### Recent Activity
+
+| Metric | Description |
+|--------|-------------|
+| **Registrations Today** | New users registered today |
+| **Registrations This Week** | New users registered this week |
+| **Registrations This Month** | New users registered this month |
+| **Last 7 Days** | Total registrations in the past 7 days |
+
+## User Growth Analytics
+
+Track how your user base is growing over time.
+
+### Growth Trends
+
+Available granularity levels:
+
+| Granularity | Data Points | Description |
+|-------------|-------------|-------------|
+| **Daily** | Day-by-day | New registrations and active users per day |
+| **Weekly** | Week-by-week | Weekly user growth totals |
+| **Monthly** | Month-by-month | Monthly user growth totals |
+
+### Growth Data Includes
+
+- **New registrations** per time period
+- **Active user count** per time period
+- **Trend direction** (increasing, decreasing, stable)
+- Data for building **dashboard charts** and **reports**
+
+## Analytics Overview
+
+The analytics overview provides period-over-period comparisons:
+
+| Period | Current | Previous | Comparison |
+|--------|---------|----------|------------|
+| **Today** | Registrations today | Yesterday | Up/Down |
+| **This Week** | This week's registrations | Last week | Up/Down |
+| **This Month** | This month's registrations | Last month | Up/Down |
+
+This helps administrators quickly see whether user growth is accelerating or slowing.
+
+## Materialized View for Performance
+
+For quick dashboard loading, user statistics are computed via a **materialized view** (`mv_user_quick_stats`):
+
+| Metric | Description |
+|--------|-------------|
+| Total Learners | All-time learner count |
+| Current Month Learners | Learners registered this month |
+| Previous Month Learners | Learners registered last month |
+| Total Instructors | All-time instructor count |
+| Current Month Instructors | Instructors registered this month |
+| Previous Month Instructors | Instructors registered last month |
+
+This view is indexed per tenant for fast lookups.
+
+## User Filtering for Analytics
+
+Combine the user list filters with analytics to answer questions like:
+
+- "How many learners registered from Bangladesh this month?"
+- "How many users have enrolled in Course X?"
+- "How many users have completed quizzes?"
+- "What's the breakdown of users by country?"
+
+### Available Analytics Filters
+
+| Filter | Description |
+|--------|-------------|
+| **Status** | Filter by account status |
+| **User Type** | Filter by admin/instructor/learner |
+| **Date Range** | Registration date or last login date |
+| **Country** | Geographic distribution |
+| **Timezone** | Time zone distribution |
+| **Cross-Service** | Has enrollment, certificate, quiz attempts |
+
+## Export Analytics Data
+
+Export user data for external analysis:
+
+1. Apply desired filters
+2. Click **Export** (requires `user.export` permission)
+3. Download CSV with all user fields
+4. Import into spreadsheet or BI tool for further analysis
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Stats not loading | Ensure you have `user.view` or `user.stats` permission |
+| Numbers seem off | Stats may use cached materialized views. Refresh may be needed |
+| Growth chart empty | Ensure the selected time range has data |
+| Export failing | Check `user.export` permission and try with fewer filters |

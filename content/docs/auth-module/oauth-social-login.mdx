@@ -1,0 +1,100 @@
+---
+title: "OAuth & Social Login"
+description: "Sign in or register using Google, Facebook, GitHub, or Apple"
+module: "auth"
+feature: "oauth"
+order: 3
+---
+
+# OAuth & Social Login
+
+EduShade allows users to sign in or register using their existing social media accounts. This eliminates the need to remember another password and speeds up the onboarding process.
+
+## Supported Providers
+
+| Provider | Scopes Requested | Data Retrieved |
+|----------|-----------------|----------------|
+| **Google** | openid, email, profile | Name, Email, Profile Picture, Locale |
+| **Facebook** | email, public_profile | Name, Email, Profile Picture |
+| **GitHub** | user:email | Username, Email, Name, Avatar |
+| **Apple** | — | Name, Email |
+
+## How Social Login Works
+
+### Step-by-Step Flow
+
+1. **Click the provider button** — On the login or register page, click the Google, Facebook, or Apple button
+2. **Redirect to provider** — You are redirected to the provider's authorization page
+3. **Authorize access** — Grant EduShade permission to access your basic profile info
+4. **Redirected back** — The provider redirects you back to EduShade with an authorization code
+5. **Account resolution** — The system:
+   - Checks if an account with your provider ID already exists → **Log in**
+   - If not, checks if an account with your email exists → **Link provider and log in**
+   - If neither, creates a new account → **Register and log in**
+6. **Session created** — You receive access and refresh tokens, and are redirected to your dashboard
+
+### What Gets Auto-Populated
+
+When you register via social login, the following fields are automatically filled:
+
+- **Name** — From your social profile
+- **Email** — From your social profile (auto-verified if the provider confirms it)
+- **Avatar** — Your profile picture URL
+- **Provider ID** — Stored for future logins (e.g., `google_id`, `facebook_id`)
+
+## Security
+
+### State Parameter Protection
+
+The OAuth flow uses a **secure state parameter** to prevent CSRF and replay attacks:
+
+- The state contains an encrypted payload with: Tenant ID, Provider, Token, Expiry
+- On callback, the state is validated for:
+  - Correct tenant (prevents cross-tenant attacks)
+  - Valid token (prevents tampering)
+  - Not expired (prevents replay attacks)
+
+### Email Auto-Verification
+
+If the social provider confirms that the user's email is verified (e.g., Google), EduShade automatically marks the email as verified. This means you skip the email verification step.
+
+## Linking Social Accounts
+
+You can link multiple social accounts to your existing EduShade account.
+
+### How to Link
+
+1. Log in to your EduShade account
+2. Go to **Account Settings**
+3. Find the **Connected Accounts** or **Social Login** section
+4. Click **Connect** next to the provider you want to link
+5. Authorize the provider
+6. Your social account is now linked
+
+### How to Unlink
+
+1. Go to **Account Settings**
+2. Find the **Connected Accounts** section
+3. Click **Disconnect** next to the provider you want to unlink
+4. The provider is removed from your account
+
+**Note:** You must have at least one login method available (password or another social account) before unlinking a provider.
+
+## Admin-Initiated Linking
+
+Administrators can link or unlink social accounts on behalf of users:
+
+1. Go to **Admin → User Management**
+2. Open the user's profile
+3. Use the **Link OAuth** or **Unlink OAuth** action
+4. Select the provider and provide the necessary details
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Authorization failed" | The provider denied access. Try again and ensure you click "Allow" |
+| "Invalid state" | The OAuth session expired. Start the login process again |
+| "Email already registered" | An account with this email exists but isn't linked. Log in with your password first, then link the social account |
+| Provider button not showing | The provider may not be configured for your tenant. Contact your administrator |
+| Profile picture not updating | Social profile pictures are fetched at registration time. Update your avatar manually in account settings |

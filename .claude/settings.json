@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm uninstall *)",
+      "Bash(curl -s -o /tmp/home.html -w \"HOME: HTTP %{http_code}\\\\n\" http://localhost:3002/)",
+      "Bash(curl -s -o /tmp/docs.html -w \"DOCS-root: HTTP %{http_code}\\\\n\" http://localhost:3002/docs/knowledgebase)",
+      "Bash(curl -s -o /tmp/docs_auth.html -w \"DOCS-auth: HTTP %{http_code}\\\\n\" http://localhost:3002/docs/knowledgebase/auth-module)",
+      "Bash(curl -s -o /tmp/docs_reg.html -w \"DOCS-reg: HTTP %{http_code}\\\\n\" http://localhost:3002/docs/knowledgebase/auth-module/registration)",
+      "Bash(curl -s -o /tmp/docs_ad.html -w \"DOCS-acct-del: HTTP %{http_code}\\\\n\" http://localhost:3002/docs/knowledgebase/auth-module/account-deletion)",
+      "Bash(curl -s http://localhost:3002/)",
+      "WebFetch(domain:fumadocs.dev)",
+      "WebFetch(domain:www.fumadocs.dev)",
+      "Bash(curl -s http://localhost:3002/ -o /dev/null)",
+      "Bash(curl -s http://localhost:3002/docs/knowledgebase/auth-module -o /dev/null)",
+      "Bash(curl -s -o /dev/null -w \"icon.png: %{http_code}\\\\n\" http://localhost:3002/icon.png)",
+      "Bash(curl -s -o /dev/null -w \"/logos/logo-light.svg: %{http_code}\\\\n\" http://localhost:3002/logos/logo-light.svg)",
+      "Bash(curl -s -o /dev/null -w \"/logos/logo-dark.svg: %{http_code}\\\\n\" http://localhost:3002/logos/logo-dark.svg)",
+      "Bash(curl -s 'http://localhost:3002/_next/static/chunks/%5Broot-of-the-server%5D__06.-pfn._.css' -o /tmp/styles3.css)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:3002/__TRACKED_VAR__)",
+      "Bash(curl -s -o /tmp/home5.html -w \"HOME %{http_code}\\\\n\" http://localhost:3002/)",
+      "Bash(curl -s -o /tmp/docs5.html -w \"DOCS %{http_code}\\\\n\" http://localhost:3002/docs/knowledgebase/auth-module)",
+      "Bash(curl -s http://localhost:3002/docs/knowledgebase -o /dev/null)",
+      "Bash(curl -s http://localhost:3002/docs/knowledgebase/auth-module echo \"=== logo ===\")",
+      "Bash(curl -s 'http://localhost:3002/_next/static/chunks/%5Broot-of-the-server%5D__06.-pfn._.css')",
+      "Bash(curl -s -o /dev/null -w \"HOME %{http_code}\\\\n\" http://localhost:3002/)",
+      "Bash(curl -s -o /dev/null -w \"DOCS %{http_code}\\\\n\" http://localhost:3002/docs/knowledgebase)",
+      "Bash(file app/icon.png app/apple-icon.png public/logos/*.png)",
+      "Bash(node -e \"const p=require\\('./node_modules/lucide-react/package.json'\\); console.log\\('lucide-react', p.version\\); const f=require\\('./node_modules/fumadocs-core/package.json'\\); console.log\\('fumadocs-core', f.version\\);\")",
+      "Bash(ps -p 674858 674859 -o pid,command)",
+      "Bash(ps -p 674858,674859 -o pid,command)",
+      "Bash(git check-ignore *)"
+    ]
+  }
+}

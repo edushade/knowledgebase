@@ -1,0 +1,125 @@
+---
+title: "User Impersonation"
+description: "Admin feature to log in as another user for support and debugging"
+module: "auth"
+feature: "impersonation"
+order: 11
+---
+
+# User Impersonation
+
+User impersonation allows administrators to temporarily log in as another user. This is essential for support, debugging, and understanding user-specific issues without asking users to share their credentials.
+
+## What is Impersonation?
+
+Impersonation lets an admin "become" another user, seeing exactly what they see and having the same permissions they have. The admin's original session is preserved so they can return to their own account at any time.
+
+## Who Can Impersonate?
+
+- Users with the `admin.users` permission
+- Users with the **admin** role OR the `is_admin` flag set to `true`
+- Instructors with appropriate permissions
+
+**Restrictions:**
+- You **cannot impersonate yourself**
+- You can only impersonate users in your **same tenant**
+- All impersonation actions are **audited**
+
+## How to Start Impersonation
+
+### From User Management
+
+1. Go to **Admin → User Management**
+2. Find the user you want to impersonate
+3. Click the **Impersonate** button on their profile or in the user table
+4. Confirm the action
+5. You are now logged in as that user
+
+### What Happens Behind the Scenes
+
+1. Your **original admin tokens** (access + refresh) and **user data** are saved in browser storage
+2. A new **impersonation token** is generated for the target user
+3. The JWT contains a special `ImpersonatedBy` field with your admin user ID
+4. You receive the target user's tokens and are redirected to their dashboard
+5. An **audit event** is logged: `impersonation_started`
+
+## While Impersonating
+
+When you are impersonating a user:
+
+- You see the platform exactly as that user sees it
+- You have the **same permissions** as the impersonated user
+- The impersonated user's roles and permissions apply
+- You are redirected to the appropriate dashboard (learner or admin)
+- An **impersonation indicator** may be shown in the UI
+
+### What You Can Do
+
+- View the user's courses, enrollments, and progress
+- Check their dashboard and settings
+- Diagnose permission issues
+- Verify what content they can access
+
+### What to Be Careful About
+
+- Actions taken while impersonating are **performed as the user**
+- Changes to the user's profile or data will persist
+- Enrollment actions, purchases, or submissions will be attributed to the user
+
+## How to Stop Impersonation
+
+1. Click the **Stop Impersonation** or **Return to Admin** option
+2. Your original admin tokens are restored from browser storage
+3. A new session is created for your admin account
+4. You are redirected back to the admin dashboard
+5. An **audit event** is logged: `impersonation_stopped`
+
+### What Happens Behind the Scenes
+
+1. The system checks that your current token has the `ImpersonatedBy` field set
+2. Your original admin token and user data are retrieved from browser storage
+3. New tokens are generated for your admin account
+4. Impersonation storage keys are cleared
+5. You are redirected to the page you were on before impersonating (or the admin dashboard)
+
+## Browser Storage During Impersonation
+
+The following keys are used to preserve the admin's session:
+
+| Key | Purpose |
+|-----|---------|
+| `es_impersonation_token` | The impersonated user's token |
+| `es_original_admin_token` | The admin's original access token |
+| `es_original_admin_refresh_token` | The admin's original refresh token |
+| `es_original_admin_user_data` | The admin's user profile data |
+| `es_impersonation_start_page` | The page to return to after stopping |
+| `es_restored_admin_user_data` | Admin data restored after stopping |
+
+## Audit Trail
+
+Every impersonation action is logged for security and compliance:
+
+| Event | Data Logged |
+|-------|-------------|
+| **Impersonation Started** | Admin ID, Target User ID, Timestamp, IP, User Agent |
+| **Impersonation Stopped** | Admin ID, Target User ID, Timestamp, IP, User Agent |
+
+These audit logs can be viewed by administrators with `audit.view` permission.
+
+## Security Considerations
+
+- Impersonation tokens include the admin's ID in the `ImpersonatedBy` JWT claim
+- This allows backend services to distinguish impersonated requests from regular ones
+- All actions during impersonation can be traced back to the admin who initiated it
+- The original admin session is preserved locally, not on the server
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "You don't have permission to impersonate" | You need admin role or `admin.users` permission |
+| "Cannot impersonate yourself" | Self-impersonation is not allowed |
+| "User not found" | The target user may have been deleted or is in a different tenant |
+| Can't stop impersonation | Clear browser storage keys manually and log in again |
+| Lost admin session after impersonation | Log in again with your admin credentials |
+| Actions during impersonation attributed to wrong user | Actions are always performed as the impersonated user — this is expected |

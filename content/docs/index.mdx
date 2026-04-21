@@ -1,0 +1,37 @@
+---
+title: "EduShade Knowledge Base"
+description: "Technical documentation and product guides for every module of the EduShade platform."
+---
+
+Welcome to the **EduShade Knowledge Base** — the single source of truth for engineers, product managers, support staff, and power users building on the platform.
+
+## Modules
+
+<Cards>
+  <Card
+    title="Auth Module"
+    description="Identity, access control, and user lifecycle — registration, login, verification, RBAC, sessions, admin tooling."
+    href="/docs/knowledgebase/auth-module"
+  />
+</Cards>
+
+## How to read these docs
+
+- Use the **sidebar** on the left to browse by module.
+- Use the **search bar** (`⌘K` / `Ctrl+K`) at the top to jump to any page.
+- Use the **table of contents** on the right of every page to skim long sections.
+- Deep links stay stable — feel free to share specific page URLs with teammates.
+
+## Where to start
+
+| You are… | Start here |
+|----------|------------|
+| A new engineer onboarding | [Auth module overview](/docs/knowledgebase/auth-module) |
+| Integrating sign-in flows | [Login](/docs/knowledgebase/auth-module/login) · [OAuth](/docs/knowledgebase/auth-module/oauth-social-login) |
+| Setting up RBAC | [Roles & Permissions](/docs/knowledgebase/auth-module/roles-and-permissions) |
+| An admin doing user ops | [User Management](/docs/knowledgebase/auth-module/user-management) · [User Impersonation](/docs/knowledgebase/auth-module/user-impersonation) |
+| Investigating a security concern | [Security Features](/docs/knowledgebase/auth-module/security-features) |
+
+## Contributing
+
+All pages here are authored as MDX under [`content/docs/`](https://github.com/). Add a new `.mdx` file to a module folder and it will appear in the sidebar on the next reload. Use `meta.json` in a folder to control ordering and titles.

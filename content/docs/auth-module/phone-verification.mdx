@@ -1,0 +1,79 @@
+---
+title: "Phone Verification"
+description: "How to verify your phone number on the EduShade platform"
+module: "auth"
+feature: "phone-verification"
+order: 5
+---
+
+# Phone Verification
+
+If you registered with a phone number, you need to verify it before accessing the platform. Phone verification uses SMS-based OTP (One-Time Password).
+
+## Verification Flow
+
+**Steps:**
+1. After registration (or when prompted), you are redirected to the **Verify Phone** page (`/auth/verify-phone`)
+2. A **6-digit OTP** is sent to your registered phone number via SMS
+3. Enter the 6-digit code in the OTP input field
+4. The form **auto-submits** when all 6 digits are entered
+5. On success, your phone is marked as verified
+
+## OTP Details
+
+| Property | Value |
+|----------|-------|
+| **Format** | 6-digit numeric code |
+| **Expiry** | 10 minutes |
+| **Maximum attempts** | 3 per OTP |
+| **Delivery** | SMS |
+| **Auto-submit** | Yes — submits automatically when 6 digits are entered |
+
+## Resending OTP
+
+If you didn't receive the SMS or the code expired:
+
+1. Click **Resend OTP** on the verification page
+2. A new OTP is generated and sent via SMS
+3. The previous OTP is invalidated
+4. There is a **60-second cooldown** between resend requests
+
+**Rate Limit:** You can resend phone verification up to **3 times per 5 minutes**.
+
+## Phone Number Input
+
+If you are not authenticated (e.g., navigated directly to the verification page):
+- You will see a **phone number input field**
+- Enter your phone number to receive the OTP
+- This is useful if you were logged out after registration
+
+If you are authenticated:
+- Your registered phone number is displayed
+- OTP is automatically sent to that number
+
+## Verification for Phone Changes
+
+When you change your phone number (from Account Settings):
+
+1. A verification OTP is sent to the **new phone number**
+2. Enter the OTP to confirm the change
+3. Only after verification does the phone number update
+4. Your previous phone number becomes unlinked
+
+## What Happens After Verification
+
+1. Your `phone_verified` flag is set to `true`
+2. Your account status updates to `active` (if all other requirements are met)
+3. You are redirected to:
+   - **Profile Completion** page (if required fields are missing)
+   - **Dashboard** (if your profile is complete)
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| SMS not received | Ensure your phone number is correct and has SMS capability. Wait 60 seconds and click "Resend" |
+| OTP expired | Click "Resend OTP" to get a new code |
+| "Maximum attempts exceeded" | Click "Resend OTP" for a new code |
+| Wrong phone number | Log out and register with the correct phone number |
+| Auto-submit not working | Ensure you entered all 6 digits. Try clicking the verify button manually |

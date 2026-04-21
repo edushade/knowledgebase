@@ -1,0 +1,125 @@
+---
+title: "Session Management"
+description: "View and manage your active login sessions and devices"
+module: "auth"
+feature: "session-management"
+order: 8
+---
+
+# Session Management
+
+EduShade tracks every active login session with detailed device and location information. You can view, monitor, and terminate sessions from your account settings.
+
+## What is a Session?
+
+A session is created every time you log in from a device or browser. Each session tracks:
+
+### Device Information
+
+| Field | Example |
+|-------|---------|
+| **Device Type** | Desktop, Mobile, Tablet |
+| **Operating System** | Windows 11, macOS, iOS 17, Android 14 |
+| **OS Version** | 14.2.1 |
+| **Browser** | Chrome 120, Safari 17, Firefox 121 |
+| **Browser Version** | 120.0.6099.130 |
+| **Brand** | Apple, Samsung, Dell |
+| **Model** | iPhone 15 Pro, Galaxy S24 |
+| **Architecture** | x86_64, ARM64 |
+
+### Location Information (via IP Geolocation)
+
+| Field | Example |
+|-------|---------|
+| **IP Address** | 203.0.113.42 |
+| **Continent** | Asia |
+| **Country** | Bangladesh |
+| **City** | Dhaka |
+| **Region** | Dhaka Division |
+| **Timezone** | Asia/Dhaka |
+| **ISP** | Example Broadband |
+| **ASN** | 12345 |
+| **Coordinates** | Latitude, Longitude |
+
+## Viewing Active Sessions
+
+### For Users (Self-Service)
+
+1. Go to **Account Settings → Devices** (or `/dashboard/profile/settings/devices`)
+2. View a list of all your active sessions
+3. The **current session** is highlighted/labeled so you can identify it
+
+Each session card shows:
+- Device type icon (desktop/mobile/tablet)
+- Browser and OS
+- Location (city, country)
+- Login time
+- Last activity
+
+### For Admins (User Management)
+
+1. Go to **Admin → User Management**
+2. Open a user's profile
+3. Navigate to the **Sessions** tab
+4. View all active sessions for that user
+
+## Terminating Sessions
+
+### Terminate a Specific Session
+
+1. Find the session you want to terminate
+2. Click the **Terminate** or **Revoke** button
+3. Confirm the action
+4. The session is immediately invalidated
+5. The user on that device/browser will be logged out on their next request
+
+### Terminate All Other Sessions
+
+1. On the sessions page, click **Terminate All Other Sessions**
+2. Confirm the action
+3. All sessions **except your current one** are invalidated
+4. Useful if you suspect unauthorized access
+
+### Admin Session Termination
+
+Admins can terminate sessions for any user:
+
+1. Go to **Admin → User Management → [User] → Sessions**
+2. Terminate individual sessions or all sessions
+3. Requires `user.update` permission
+
+## Session Expiry
+
+Sessions have a configurable expiration time:
+
+- **Access Token**: Short-lived (configured per deployment)
+- **Refresh Token**: Long-lived, stored in the session record
+- When the refresh token expires, the session becomes inactive
+- Expired sessions are automatically marked as inactive
+
+## Logout
+
+Logging out invalidates your current session:
+
+1. Click **Logout** from the user menu
+2. Your current session's refresh token is invalidated
+3. Access and refresh tokens are cleared from your browser
+4. You are redirected to the login page
+
+## Security Best Practices
+
+- **Regularly review** your active sessions to spot unfamiliar devices or locations
+- **Terminate unknown sessions** immediately if you see a device or location you don't recognize
+- **Terminate all sessions** after changing your password
+- **Log out** when using shared or public computers
+- Enable **email verification** to prevent unauthorized account access
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| See an unfamiliar session | Terminate it immediately and change your password |
+| Can't terminate a session | Ensure you have the correct permissions. Try refreshing the page |
+| Session shows wrong location | IP geolocation can be approximate, especially with VPNs or mobile networks |
+| Logged out unexpectedly | Your session may have expired or been terminated by an admin |
+| Sessions page is empty | You may only have one session (your current one) |

@@ -1,0 +1,45 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/* Brand palette — primary = EduShade blue #0066FF */
+@theme {
+  --color-brand-50: #e6f0ff;
+  --color-brand-100: #cce1ff;
+  --color-brand-200: #99c2ff;
+  --color-brand-300: #66a3ff;
+  --color-brand-400: #3385ff;
+  --color-brand-500: #0066ff;
+  --color-brand-600: #0052cc;
+  --color-brand-700: #003d99;
+  --color-brand-800: #002966;
+  --color-brand-900: #001433;
+}
+
+/* Light theme — map fumadocs primary to brand blue */
+:root {
+  --color-fd-primary: #0066ff;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-ring: #0066ff;
+}
+
+/* Dark theme — softer blue on dark surfaces */
+.dark {
+  --color-fd-primary: #4d94ff;
+  --color-fd-primary-foreground: #001433;
+  --color-fd-ring: #4d94ff;
+}
+
+/* Extend the sidebar surface to the viewport's left edge on wide screens */
+#nd-docs-layout {
+  background: linear-gradient(
+    to right,
+    var(--color-fd-muted) 0,
+    var(--color-fd-muted) calc(
+      50% - var(--fd-layout-width, 97rem) / 2 + var(--fd-sidebar-width)
+    ),
+    transparent calc(
+      50% - var(--fd-layout-width, 97rem) / 2 + var(--fd-sidebar-width)
+    )
+  );
+}

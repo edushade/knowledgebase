@@ -1,0 +1,147 @@
+---
+title: "Login"
+description: "How to sign in to the EduShade platform"
+module: "auth"
+feature: "login"
+order: 2
+---
+
+# Login
+
+EduShade supports multiple login methods to give users flexibility in how they access the platform.
+
+## Login Methods
+
+### 1. Email/Username + Password Login
+
+The standard login method using your credentials.
+
+**Steps:**
+1. Navigate to the **Login** page (`/auth/login`)
+2. Enter your **email address** or **username**
+3. Enter your **password**
+4. Click **Login**
+5. On success, you are redirected to your dashboard
+
+### 2. Phone + OTP Login
+
+A passwordless login method using your phone number and a one-time password.
+
+**Steps:**
+1. Navigate to the **Login** page
+2. Click the **phone icon** to switch to phone login mode
+3. Enter your **phone number**
+4. Click **Send OTP** — a 6-digit code is sent via SMS
+5. Enter the **OTP** received on your phone
+6. Click **Verify** to log in
+
+**OTP Details:**
+- The OTP is a 6-digit numeric code
+- It expires after **10 minutes**
+- You have a maximum of **3 attempts** to enter the correct OTP
+- After a failed OTP, you can request a new one (with a **60-second cooldown**)
+
+### 3. Social Login
+
+Log in instantly using your social accounts. See [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login).
+
+## After Successful Login
+
+When you log in successfully, the system:
+
+1. **Creates a new session** — Tracks your device, browser, OS, and location
+2. **Issues tokens**:
+   - **Access Token** (JWT) — Short-lived token for API requests
+   - **Refresh Token** — Long-lived token for refreshing expired access tokens
+3. **Records login details** — Your last login time and IP address are updated
+4. **Redirects you** based on your user type:
+
+| User Type | Redirect To |
+|-----------|-------------|
+| Admin | `/admin/dashboard` |
+| Instructor | `/admin/dashboard` |
+| Learner | `/dashboard` |
+
+## Verification Requirements
+
+After login, the system checks if additional verification steps are needed:
+
+| Check | Action |
+|-------|--------|
+| Email not verified | Redirect to `/auth/verify-email` |
+| Phone not verified | Redirect to `/auth/verify-phone` |
+| Profile incomplete | Redirect to `/auth/complete-profile` |
+
+You must complete these steps before accessing the main platform.
+
+## Account Status Checks
+
+Login is only allowed for accounts with certain statuses:
+
+| Status | Can Login? | Message |
+|--------|-----------|---------|
+| `active` | Yes | — |
+| `pending_verification` | Yes | Redirected to verification |
+| `inactive` | No | "Your account has been deactivated" |
+| `suspended` | No | "Your account has been suspended" |
+| `deleted` | No | "Account not found" |
+
+## Check Account Status
+
+Before logging in, you can check your account status using the **Status** endpoint:
+
+- Visit `/auth/status` with your email or phone
+- Returns: Whether the account exists, its status, verification state, and whether a password is set
+
+This is useful for determining the right login flow (password vs OTP vs social).
+
+## Token Management
+
+### Access Token
+- Stored in `localStorage` under `es_auth_access_token`
+- Contains: UserID, TenantID, Email, Username, Roles, Permissions
+- Short-lived (configured per deployment)
+
+### Refresh Token
+- Stored in `localStorage` under `es_auth_refresh_token`
+- Used to get a new access token when the current one expires
+- Each refresh token is tied to a specific session
+
+### Automatic Token Refresh
+- When an API request returns **401 Unauthorized**, the frontend automatically:
+  1. Calls the refresh endpoint with the refresh token
+  2. Receives a new access token
+  3. Retries the original request
+- If the refresh token is also expired, the user is logged out
+
+## Security Features During Login
+
+### Brute Force Protection
+
+The system protects against brute force attacks at two levels:
+
+**IP-Based Protection:**
+- Tracks failed login attempts per IP address
+- After **20 failed attempts** within **10 minutes**, the IP is blocked for **30 minutes**
+
+**Account-Based Protection:**
+- Tracks failed login attempts per user account
+- After **5 failed attempts**, the account is temporarily locked
+- Lock duration increases exponentially with each subsequent failure
+- Lock starts at **15 minutes** and increases with each failure
+
+### Rate Limiting
+
+Login requests are rate-limited to **10 requests per minute** per IP address.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Invalid credentials" | Double-check your email/username and password |
+| "Account locked" | Too many failed attempts. Wait for the lock to expire |
+| "Account suspended" | Contact your administrator |
+| "Account not found" | No account exists with this email/phone. [Register](/docs/knowledgebase/auth-module/registration) instead |
+| OTP not received | Check your phone number, wait 60 seconds, then click "Resend OTP" |
+| "Too many requests" | Rate limit hit. Wait 1 minute and try again |
+| Stuck on loading | Clear browser cache, check internet connection |

@@ -1,0 +1,23 @@
+{
+  "title": "Auth Module",
+  "icon": "Shield",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "registration",
+    "login",
+    "oauth-social-login",
+    "email-verification",
+    "phone-verification",
+    "password-management",
+    "account-management",
+    "session-management",
+    "roles-and-permissions",
+    "user-management",
+    "user-impersonation",
+    "security-features",
+    "profile-completion",
+    "account-deletion",
+    "user-analytics"
+  ]
+}

@@ -1,0 +1,91 @@
+---
+title: "Email Verification"
+description: "How to verify your email address on the EduShade platform"
+module: "auth"
+feature: "email-verification"
+order: 4
+---
+
+# Email Verification
+
+After registering with an email address, you must verify your email to activate your account and access the platform.
+
+## Why Email Verification is Required
+
+- Confirms that you own the email address you registered with
+- Prevents fraudulent account creation
+- Enables the platform to send you important notifications (enrollment confirmations, password resets, etc.)
+- Required before you can access courses, enroll in programs, or use any platform features
+
+## Verification Methods
+
+### Method 1: OTP Verification (Primary)
+
+This is the default verification method.
+
+**Steps:**
+1. After registration, you are automatically redirected to the **Verify Email** page (`/auth/verify-email`)
+2. A **6-digit OTP** is sent to your registered email address
+3. Check your email inbox (and spam/junk folder)
+4. Enter the 6-digit OTP in the verification form
+5. Click **Verify**
+6. On success, your email is marked as verified and you are redirected to the dashboard
+
+### Method 2: Verification Link
+
+Some verification emails include a clickable link:
+
+1. Open the verification email
+2. Click the **Verify Email** button/link
+3. The link opens the platform and automatically verifies your email
+4. You are redirected to the dashboard
+
+## OTP Details
+
+| Property | Value |
+|----------|-------|
+| **Format** | 6-digit numeric code |
+| **Expiry** | 10 minutes |
+| **Maximum attempts** | 3 per OTP |
+| **Delivery** | Email |
+
+## Resending Verification
+
+If you didn't receive the OTP or it expired:
+
+1. On the verification page, click **Resend Verification**
+2. A new OTP is generated and sent to your email
+3. The previous OTP is invalidated
+4. There is a **60-second cooldown** between resend requests
+
+**Rate Limit:** You can resend verification emails up to **3 times per 5 minutes**.
+
+## What Happens After Verification
+
+1. Your `email_verified` flag is set to `true`
+2. Your account status changes from `pending_verification` to `active` (if all other requirements are met)
+3. You are redirected to:
+   - **Profile Completion** page (if required fields are missing)
+   - **Dashboard** (if your profile is complete)
+
+## Verification for Email Changes
+
+When you change your email address (from Account Settings):
+
+1. A verification OTP is sent to the **new email address**
+2. You must enter the OTP to confirm the change
+3. Only after verification does the email address update
+4. Your previous email becomes unlinked
+
+See [Account Management](/docs/knowledgebase/auth-module/account-management) for more details.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| OTP email not received | Check spam/junk folder. Wait 60 seconds and click "Resend" |
+| OTP expired | Click "Resend Verification" to get a new code |
+| "Maximum attempts exceeded" | You entered the wrong code too many times. Click "Resend" for a new OTP |
+| "Already verified" | Your email is already verified. Try [logging in](/docs/knowledgebase/auth-module/login) |
+| Wrong email shown | If you registered with the wrong email, log out and register again |
+| Verification link not working | The link may have expired. Go to the verification page and request a new OTP |
