@@ -18,6 +18,7 @@
     "security-features",
     "profile-completion",
     "account-deletion",
-    "user-analytics"
+    "user-analytics",
+    "auth-page-customization"
   ]
 }

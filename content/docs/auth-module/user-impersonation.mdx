@@ -1,6 +1,6 @@
 ---
 title: "User Impersonation"
-description: "Admin feature to log in as another user for support and debugging"
+description: "Admin feature to log in as another user for support and debugging — supports two modes: read-only Impersonation and full-access Masquerade"
 module: "auth"
 feature: "impersonation"
 order: 11
@@ -8,118 +8,122 @@ order: 11
 
 # User Impersonation
 
-User impersonation allows administrators to temporarily log in as another user. This is essential for support, debugging, and understanding user-specific issues without asking users to share their credentials.
+User impersonation lets administrators temporarily act as another user — essential for support, debugging, and reproducing user-specific issues without ever asking for credentials.
 
-## What is Impersonation?
+EduShade ships **two distinct modes**:
 
-Impersonation lets an admin "become" another user, seeing exactly what they see and having the same permissions they have. The admin's original session is preserved so they can return to their own account at any time.
+| Mode | What the admin can do | Token `view_mode` |
+|------|----------------------|-------------------|
+| **Impersonation** (read-only) | View the user's dashboard, courses, settings, etc. **Write actions are blocked** — POST/PUT/DELETE attempts return an error. | `impersonation` |
+| **Masquerade** (full access) | Act as the user end-to-end: enroll, submit, change settings, post content. Every action is attributed to the user. | `masquerade` |
+
+Choose **Impersonation** for safe diagnostic work, and **Masquerade** only when you need to perform an action *as* the user (e.g. completing a stuck workflow on their behalf).
 
 ## Who Can Impersonate?
 
-- Users with the `admin.users` permission
-- Users with the **admin** role OR the `is_admin` flag set to `true`
-- Instructors with appropriate permissions
+- Users with the `admin.users` permission, **or**
+- Users with the `is_admin` flag set to `true`
 
 **Restrictions:**
-- You **cannot impersonate yourself**
-- You can only impersonate users in your **same tenant**
-- All impersonation actions are **audited**
+- You **cannot impersonate yourself**.
+- You can only impersonate users in your **same tenant**.
+- Both modes are **audited** — every start/stop is published as an audit event.
 
 ## How to Start Impersonation
 
-### From User Management
-
-1. Go to **Admin → User Management**
-2. Find the user you want to impersonate
-3. Click the **Impersonate** button on their profile or in the user table
-4. Confirm the action
-5. You are now logged in as that user
+1. Go to **Admin → Users → [select user] → Impersonation tab** (`/admin/users/{userID}/edit/impersonation`)
+2. You will see two buttons:
+   - **Start Impersonation** — read-only mode
+   - **Start Masquerade** — full-access mode
+3. Click the mode you need. Confirm the action.
+4. You are redirected to the target user's dashboard.
 
 ### What Happens Behind the Scenes
 
-1. Your **original admin tokens** (access + refresh) and **user data** are saved in browser storage
-2. A new **impersonation token** is generated for the target user
-3. The JWT contains a special `ImpersonatedBy` field with your admin user ID
-4. You receive the target user's tokens and are redirected to their dashboard
-5. An **audit event** is logged: `impersonation_started`
+1. Frontend calls `POST /v1/auth/impersonate/{user_id}` with `{ "view_mode": "impersonation" | "masquerade" }`.
+2. Backend issues a new access token for the target user. The JWT contains an extra **`impersonated_by`** claim with the admin's user ID.
+3. Frontend snapshots your **original admin token, refresh token, and user data** to `localStorage` so they can be restored later.
+4. The view mode is stored in `localStorage` under `es_impersonation_view_mode`.
+5. An audit event `impersonation_started` is published with: admin ID, target user ID, view_mode, IP, user agent.
 
 ## While Impersonating
 
-When you are impersonating a user:
-
-- You see the platform exactly as that user sees it
-- You have the **same permissions** as the impersonated user
-- The impersonated user's roles and permissions apply
-- You are redirected to the appropriate dashboard (learner or admin)
-- An **impersonation indicator** may be shown in the UI
-
-### What You Can Do
-
-- View the user's courses, enrollments, and progress
-- Check their dashboard and settings
-- Diagnose permission issues
-- Verify what content they can access
+- An **`ImpersonationBanner`** is shown at the top of every page so you cannot forget you are impersonating.
+- The banner shows: target user name, view mode, and a **Stop** button.
+- **In Impersonation mode (read-only):** write operations are rejected by the backend; the UI may still render forms but submissions will fail.
+- **In Masquerade mode:** the target user's roles, permissions, and identity apply to every request. Any data you create or modify is attributed to them.
 
 ### What to Be Careful About
 
-- Actions taken while impersonating are **performed as the user**
-- Changes to the user's profile or data will persist
-- Enrollment actions, purchases, or submissions will be attributed to the user
+- In **Masquerade**, profile changes, enrollments, purchases, and submissions are all stored against the user — there is no automatic rollback.
+- Avoid Masquerade unless you specifically need to *write* on the user's behalf.
+- For pure investigation, always prefer Impersonation.
 
 ## How to Stop Impersonation
 
-1. Click the **Stop Impersonation** or **Return to Admin** option
-2. Your original admin tokens are restored from browser storage
-3. A new session is created for your admin account
-4. You are redirected back to the admin dashboard
-5. An **audit event** is logged: `impersonation_stopped`
-
-### What Happens Behind the Scenes
-
-1. The system checks that your current token has the `ImpersonatedBy` field set
-2. Your original admin token and user data are retrieved from browser storage
-3. New tokens are generated for your admin account
-4. Impersonation storage keys are cleared
-5. You are redirected to the page you were on before impersonating (or the admin dashboard)
+1. Click **Stop** in the impersonation banner (or the **Return to Admin** option in the user menu).
+2. Frontend calls `POST /v1/auth/impersonate/stop`.
+3. Your original admin token, refresh token, and user data are restored from `localStorage`.
+4. Impersonation `localStorage` keys are cleared.
+5. You are redirected to the page you started from (or the admin dashboard).
+6. An audit event `impersonation_stopped` is published.
 
 ## Browser Storage During Impersonation
 
-The following keys are used to preserve the admin's session:
+The frontend uses the following `localStorage` keys to preserve admin state and track the impersonated session. (Source of truth: `src/lib/auth/impersonation/session.ts`.)
 
 | Key | Purpose |
 |-----|---------|
-| `es_impersonation_token` | The impersonated user's token |
-| `es_original_admin_token` | The admin's original access token |
+| `es_impersonation_active` | Boolean flag — `"true"` while an impersonation session is active |
+| `es_impersonation_view_mode` | Current mode — `"impersonation"` or `"masquerade"` |
+| `es_original_admin_token` | The admin's original access token (restored on stop) |
 | `es_original_admin_refresh_token` | The admin's original refresh token |
-| `es_original_admin_user_data` | The admin's user profile data |
-| `es_impersonation_start_page` | The page to return to after stopping |
-| `es_restored_admin_user_data` | Admin data restored after stopping |
+| `es_original_admin_user_data` | The admin's user profile snapshot |
+| `es_impersonated_user_id` | The target user's ID (decoded from the impersonation JWT) |
+| `es_impersonated_by` | Admin user ID (mirror of the JWT `impersonated_by` claim) |
+| `es_impersonated_user_data` | Snapshot of the target user's profile |
+| `es_impersonation_start_page` | URL to return to after stopping |
+| `es_restored_admin_user_data` | Admin profile data restored after stopping (transient) |
+
+> The active access/refresh tokens during impersonation continue to live under the regular `es_auth_access_token` / `es_auth_refresh_token` keys — that's how the rest of the app sees the impersonated session as the "current" session.
 
 ## Audit Trail
 
-Every impersonation action is logged for security and compliance:
+Every impersonation transition is logged for security and compliance:
 
 | Event | Data Logged |
 |-------|-------------|
-| **Impersonation Started** | Admin ID, Target User ID, Timestamp, IP, User Agent |
-| **Impersonation Stopped** | Admin ID, Target User ID, Timestamp, IP, User Agent |
+| `impersonation_started` | Admin ID, Target User ID, **view_mode**, Timestamp, IP, User Agent |
+| `impersonation_stopped` | Admin ID, Target User ID, **view_mode**, Timestamp, IP, User Agent |
 
-These audit logs can be viewed by administrators with `audit.view` permission.
+These are published to the platform's pub/sub event stream and can be viewed by administrators with `audit.view` permission.
+
+## JWT Claim: `impersonated_by`
+
+While impersonating (either mode), the JWT issued to the admin contains:
+
+- `user_id` → the **target user's** ID (so the rest of the system treats requests as the user)
+- `impersonated_by` → the **admin's** user ID
+- `view_mode` → `"impersonation"` or `"masquerade"`
+
+Backend services use the `impersonated_by` claim to:
+- Allow read-only operations in Impersonation mode and reject writes
+- Tag downstream audit/activity events so any side-effects are traceable to the originating admin
 
 ## Security Considerations
 
-- Impersonation tokens include the admin's ID in the `ImpersonatedBy` JWT claim
-- This allows backend services to distinguish impersonated requests from regular ones
-- All actions during impersonation can be traced back to the admin who initiated it
-- The original admin session is preserved locally, not on the server
+- The original admin session is preserved **only in browser storage** (not on the server). If `localStorage` is cleared mid-session, the admin must log back in manually.
+- An impersonation token is just a regular access token with extra claims — same expiry, same revocation rules. Logging out the impersonated session also ends the impersonation.
+- Always prefer **Impersonation** (read-only) for diagnostic work to avoid accidental writes on the user's behalf.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| "You don't have permission to impersonate" | You need admin role or `admin.users` permission |
+| "You don't have permission to impersonate" | You need the `admin.users` permission or the `is_admin` flag |
 | "Cannot impersonate yourself" | Self-impersonation is not allowed |
-| "User not found" | The target user may have been deleted or is in a different tenant |
-| Can't stop impersonation | Clear browser storage keys manually and log in again |
-| Lost admin session after impersonation | Log in again with your admin credentials |
-| Actions during impersonation attributed to wrong user | Actions are always performed as the impersonated user — this is expected |
+| "User not found" | The target user may be soft-deleted, suspended, or in a different tenant |
+| Write actions fail unexpectedly | You are in **Impersonation** (read-only) mode — restart in **Masquerade** mode if writes are required |
+| Can't stop impersonation | Clear all `es_impersonation_*` and `es_original_admin_*` keys from `localStorage` and log in again |
+| Lost admin session after impersonation | Browser storage was cleared. Log back in with your admin credentials |
+| Actions attributed to the wrong user | In Masquerade, actions are *always* attributed to the impersonated user — this is by design |

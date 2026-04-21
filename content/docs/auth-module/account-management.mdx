@@ -128,16 +128,30 @@ View your account activity history.
    - Password changes
    - Email/phone changes
    - Profile updates
-   - Session activity
+   - Session activity (logins from new devices, terminations)
+   - OAuth links/unlinks
+   - Impersonation events targeting your account
+
+These entries are sourced from the **activity event stream** — every meaningful auth action publishes an event (`user.registered`, `password_changed`, `email_changed`, `oauth_login`, `impersonation_started`, etc.) which the activity service stores and surfaces here. See [Security Features](/docs/knowledgebase/auth-module/security-features) for the full event taxonomy.
+
+## Username
+
+Users can have a **username** in addition to (or instead of) email/phone for login.
+
+- Optional, but unique per tenant when set
+- Validation rules: minimum 3 characters; lowercase letters, digits, and `.`, `-`, `_` only
+- Usernames are typically set by an administrator from `/admin/users/{userID}/edit/edit-user` — there is no self-service username change in the standard account settings UI
+- Once set, a username can be used in place of an email address on the login page
 
 ## Unique ID
 
-Each user may have a unique identifier assigned by the system or an administrator:
+Each user may also have a separate **unique identifier** (different from username) assigned by the system or an administrator:
 
 - Format varies per tenant (e.g., `USR_2026_001`)
 - Used for external identification without exposing internal UUIDs
+- Auto-generated for most users via the `UniqueIDGenerator` service
 - Can be viewed in your profile
-- Only administrators can modify unique IDs
+- Only administrators can modify unique IDs (`PUT /v1/users/{user_id}/unique-id`)
 
 ## Troubleshooting
 

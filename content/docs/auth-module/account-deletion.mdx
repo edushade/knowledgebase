@@ -52,21 +52,31 @@ If the retention period has expired, you must create a new account.
 
 ## Admin-Initiated Deletion
 
-### Single User Deletion
+Admins have **two ways** to remove a user:
 
-1. Go to **Admin → User Management**
+### A. Hard-soft-delete via the Delete endpoint
+
+1. Go to **Admin → Users**
 2. Find the user to delete
 3. Click **Delete** (requires `user.delete` permission)
 4. Confirm the action
-5. The user is soft-deleted and their sessions are terminated
+5. The user is soft-deleted (`deleted_at` set, `status = "deleted"`) and all sessions are terminated
+
+API: `DELETE /v1/users/{user_id}`.
+
+### B. Status change to `deleted`
+
+Admins can also flip a user's status to `deleted` via the standard edit endpoint (`PUT /v1/users/{user_id}` with `status: "deleted"`). This produces the same observable outcome: the user can no longer log in. Use the dedicated Delete action when you also want to terminate sessions immediately.
 
 ### Bulk User Deletion
 
-1. Go to **Admin → User Management**
-2. Apply filters to select the target users
+1. Go to **Admin → Users**
+2. Apply filters or select multiple users
 3. Click **Bulk Delete** (requires `user.delete` permission)
 4. Confirm the action
 5. All matching users are soft-deleted
+
+API: `DELETE /v1/users/bulk/delete`.
 
 ## Effects of Account Deletion
 
@@ -81,23 +91,25 @@ If the retention period has expired, you must create a new account.
 | **Roles/Permissions** | Associations removed |
 | **Database Records** | Retained with `deleted_at` timestamp |
 
-## Soft Delete vs Hard Delete
+## Soft Delete (the default — and currently the only mode)
 
-### Soft Delete (Default)
+EduShade only performs **soft deletes** in the standard delete flows:
 
 - Sets `deleted_at` timestamp on the user record
+- Sets the user's `status` to `deleted`
 - Data remains in the database
-- Unique constraints use conditional indexes (`WHERE deleted_at IS NULL`)
-- Allows future reactivation
+- Unique constraints use conditional indexes (`WHERE deleted_at IS NULL`), so the email/phone/username can be reused after the retention period
+- Allows future reactivation within the retention window
 - Supports data retention compliance
 
-### Hard Delete (Compliance)
+### Hard Delete (Out-of-Band)
 
-- For GDPR or similar compliance requirements
-- Permanently removes user data from the database
-- Irreversible — no reactivation possible
-- Typically done after the retention period expires
-- May require admin action
+There is **no hard-delete API endpoint** today. Permanent erasure (e.g. for GDPR right-to-be-forgotten requests) is handled out-of-band by:
+
+- A scheduled retention job that purges records past the tenant's retention period, **or**
+- A direct database operation performed by a platform engineer
+
+If you need a record permanently removed before the retention window elapses, raise a request with your platform team.
 
 ## Troubleshooting
 

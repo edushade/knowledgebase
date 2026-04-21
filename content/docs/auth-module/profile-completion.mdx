@@ -20,6 +20,17 @@ Profile completion is triggered when:
 
 You will be automatically redirected to the **Complete Profile** page (`/auth/complete-profile`) if profile completion is required.
 
+### How the trigger works
+
+Completion state is computed on the **backend**:
+
+- The auth-service's user service computes a profile-completeness score against the tenant's required-fields configuration.
+- Every authenticated request to `GET /v1/auth/account` returns a `profileCompletionRequired` boolean.
+- The frontend's `AuthProvider` reads this flag and the `AuthMiddleware` redirects to `/auth/complete-profile` whenever it is `true`.
+- Completeness is **also exposed as a user-list filter** (`profile_complete=true|false`) so admins can find users who haven't finished onboarding.
+
+This means the rule is enforced server-side — clearing your local state or skipping the frontend won't bypass it.
+
 ## How it Works
 
 ### Multi-Step Wizard

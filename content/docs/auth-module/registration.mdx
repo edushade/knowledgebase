@@ -53,12 +53,18 @@ Users can also register using their phone number:
 
 You can register instantly using a social account. See [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login) for details.
 
-Supported providers:
-- Google
-- Facebook
-- Apple
+**Providers visible on the register page today:** Google and Facebook. Apple and GitHub are supported by the backend but their UI buttons are not currently rendered (Apple is commented out; no GitHub button exists yet) — see the OAuth doc for the full matrix.
 
-When registering via social login, your name and email are automatically populated from your social account.
+When registering via social login, your name, email, and avatar are automatically populated from your social profile, and the email may be auto-verified if the provider confirms it.
+
+### What the Registration Form Actually Collects
+
+The register form (`/auth/register`) only asks for **name**, **email or phone**, and **password** — nothing more. Optional profile fields (date of birth, gender, address, designation, expertise, bio, social links, etc.) are collected later via:
+
+- The [Profile Completion](/docs/knowledgebase/auth-module/profile-completion) wizard, when required by the tenant, or
+- [Account Management](/docs/knowledgebase/auth-module/account-management) at any time after sign-up.
+
+The backend `RegisterRequest` DTO does accept additional fields, but they are not exposed by the standard register UI today.
 
 ## Password Requirements
 

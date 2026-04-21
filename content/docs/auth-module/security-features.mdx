@@ -1,6 +1,6 @@
 ---
 title: "Security Features"
-description: "Brute force protection, rate limiting, account lockout, and security headers"
+description: "Brute force protection, rate limiting, account lockout, JWT, headers, audit publishing, and tenant isolation"
 module: "auth"
 feature: "security"
 order: 12
@@ -14,187 +14,209 @@ EduShade implements multiple layers of security to protect user accounts and pre
 
 ### IP-Based Protection
 
-The system tracks failed login attempts per IP address to detect and block brute force attacks.
+Defined in `auth-service/middlewares/brute_force.go`, backed by Redis (with an in-memory fallback if Redis is unavailable).
 
 | Parameter | Value |
 |-----------|-------|
 | **Threshold** | 20 failed attempts |
-| **Time Window** | 10 minutes |
-| **Block Duration** | 30 minutes |
-| **Storage** | Redis (with in-memory fallback) |
+| **Time window** | 10 minutes |
+| **Block duration** | 30 minutes |
 
 **How it works:**
-1. Every failed login attempt from an IP is recorded
-2. When an IP accumulates 20 failures within 10 minutes, it is **blocked**
-3. All login requests from that IP are rejected for 30 minutes
-4. After the block expires, the counter resets
+1. Every failed login from an IP is recorded against that IP (across all accounts targeted from that IP).
+2. When the IP accumulates 20 failures within 10 minutes, it is **blocked**.
+3. All login requests from that IP are rejected for 30 minutes.
+4. After the block expires, the counter resets.
 
 ### Account-Based Lockout
 
-In addition to IP blocking, individual accounts have lockout protection.
+Defined in `auth-service/services/auth_service.go::lockoutDuration`. Each user account tracks `failed_login_attempts` and a `locked_until` timestamp.
 
-| Parameter | Value |
-|-----------|-------|
-| **Threshold** | 5 failed attempts |
-| **Initial Lock** | 15 minutes |
-| **Escalation** | Exponential backoff |
+| Failed attempts on this account | Lock duration |
+|--------------------------------|---------------|
+| 5+ | **1 minute** |
+| 10+ | **5 minutes** |
+| 15+ | **30 minutes** |
+| 20+ | **2 hours** |
 
-**How it works:**
-1. Each user account tracks `failed_login_attempts`
-2. After 5 failures, the account's `locked_until` timestamp is set
-3. Further login attempts are rejected until the lock expires
-4. Each subsequent failure **increases the lock duration** exponentially
-5. A successful login resets the failure counter
+A successful login resets `failed_login_attempts` to 0.
 
 ### What Users See
 
-- **Before lockout**: Normal login with error messages
+- **Before lockout**: normal login error messages
 - **During IP block**: "Too many failed attempts. Please try again later."
 - **During account lock**: "Your account has been temporarily locked. Try again in X minutes."
 
 ## Rate Limiting
 
-Every public endpoint has rate limits to prevent abuse. Limits are tracked per IP address using Redis.
+Every public endpoint has rate limits, tracked per IP via Redis.
 
 | Endpoint | Limit |
 |----------|-------|
-| **Login** | 10 requests / minute |
-| **Register** | 5 requests / 5 minutes |
-| **Forgot Password** | 3 requests / 5 minutes |
-| **Reset Password** | 5 requests / 5 minutes |
-| **Verify Email** | 10 requests / minute |
-| **Verify Phone** | 10 requests / minute |
-| **Resend Email Verification** | 3 requests / 5 minutes |
-| **Resend Phone Verification** | 3 requests / 5 minutes |
-| **Send OTP** | 3 requests / 5 minutes |
-| **Verify OTP** | 10 requests / minute |
-| **Refresh Token** | 30 requests / minute |
+| **Login** | 10 / minute |
+| **Register** | 5 / 5 minutes |
+| **Forgot Password** | 3 / 5 minutes |
+| **Reset Password** | 5 / 5 minutes |
+| **Verify Email** | 10 / minute |
+| **Verify Phone** | 10 / minute |
+| **Resend Email Verification** | 3 / 5 minutes |
+| **Resend Phone Verification** | 3 / 5 minutes |
+| **Send OTP** | 3 / 5 minutes |
+| **Verify OTP** | 10 / minute |
+| **Refresh Token** | 30 / minute |
 
-When a rate limit is exceeded, the API returns a **429 Too Many Requests** response.
+When a rate limit is exceeded the API returns **429 Too Many Requests**.
 
 ## JWT Security
 
 ### Token Structure
 
-Access tokens are JWTs with the following properties:
-
 | Property | Value |
 |----------|-------|
 | **Algorithm** | HS256 (HMAC-SHA256) |
 | **Secret** | Server-side configured, never exposed |
-| **Issuer** | Platform identifier |
+| **Issuer** | `edushade-auth` (default) |
+| **Audience** | `edushade-users` (default) |
+| **Default access token lifetime** | 24 hours |
+| **Default refresh token lifetime** | 7 days (168 h) |
 
 ### Token Claims
 
-Each JWT contains:
+Each access token contains:
 
 | Claim | Description |
 |-------|-------------|
-| `user_id` | The authenticated user's ID |
-| `tenant_id` | The user's tenant (for multi-tenancy) |
-| `email` | User's email address |
-| `username` | User's username |
-| `phone` | User's phone number |
-| `roles` | Array of assigned role names |
+| `user_id` | Authenticated user's ID |
+| `tenant_id` | User's tenant (multi-tenancy) |
+| `email` | User's email |
+| `username` | User's username (if set) |
+| `phone` | User's phone (if set) |
+| `roles` | Array of role names |
 | `permissions` | Array of permission names |
-| `impersonated_by` | Admin user ID (only during impersonation) |
-| `exp` | Expiration timestamp |
-| `iat` | Issued at timestamp |
-| `nbf` | Not before timestamp |
-| `jti` | JWT ID (unique token identifier) |
+| `impersonated_by` | Admin's user ID — present **only during impersonation/masquerade** |
+| `view_mode` | `"impersonation"` (read-only) or `"masquerade"` (full access) — present only during impersonation |
+| `exp`, `iat`, `nbf` | Standard timing claims |
+| `jti` | Unique JWT identifier (used for revocation) |
+
+> See [User Impersonation](/docs/knowledgebase/auth-module/user-impersonation) for how `impersonated_by` and `view_mode` are used.
 
 ### Token Revocation
 
-- Each session tracks the access token's **JTI** (JWT ID)
-- When a session is terminated, the JTI is invalidated
-- Refresh tokens are stored in the database and can be revoked
-- Logging out invalidates the session's refresh token
+- Each session row stores the access token's **JTI** so it can be invalidated on logout.
+- Refresh tokens are stored in the `user_sessions` table and are revoked when:
+  - The user explicitly logs out
+  - An admin terminates the session
+  - The refresh token expires
+- A revoked refresh token cannot be used to obtain a new access token.
+
+## Audit & Activity Event Publishing
+
+The auth-service emits two separate streams of events. Downstream services (notifications, audit, analytics) consume them independently.
+
+### Notification Events (pub/sub `EventType`)
+
+Published via the notification event bus — consumed by the notification service for emails, push, in-app messages, etc.
+
+| `EventType` | Triggered by |
+|-------------|--------------|
+| `user.registered` | Successful registration |
+| `user.email_verified` | Email verification completed |
+| `user.phone_verified` | Phone verification completed |
+| `user.login_new_device` | Login from a new OS/Browser combination |
+| `user.password_changed` | Self-service password change |
+| `user.password_reset_requested` | Forgot-password flow initiated |
+| `user.otp_verification` | OTP issued for verification |
+
+### Activity Events (`Action` field → activity logs)
+
+Written to the activity log table and surfaced to admins via **Audit Logs** (requires `audit.view`) and to users via **Account Settings → Activity Logs**.
+
+| `Action` | Triggered by |
+|----------|--------------|
+| `register`, `login`, `logout` | Basic auth lifecycle |
+| `forgot_password`, `password_reset`, `password_changed` | Password flows |
+| `email_changed`, `phone_changed`, `account_updated`, `account_deleted` | Self-service account changes |
+| `email_verified`, `phone_verified` | Verification completions |
+| `oauth_login`, `oauth_linked`, `oauth_unlinked` | OAuth sign-in and connection changes |
+| `impersonation_started`, `impersonation_stopped` | Impersonation transitions (include `view_mode`) |
+| `created`, `updated`, `deleted`, `bulk_deleted` | Admin user management |
+| `role_assigned`, `role_removed`, `permission_added`, `permission_removed` | RBAC assignment changes |
+
+Every entry carries the actor (user or admin), tenant ID, target ID, IP, user agent, and timestamp.
 
 ## Security Headers
 
-The API server sets security headers on all responses:
+The API server sets security headers on responses:
 
 | Header | Value | Purpose |
 |--------|-------|---------|
-| `X-Frame-Options` | DENY/SAMEORIGIN | Prevents clickjacking |
-| `Content-Security-Policy` | Configured per deployment | Controls resource loading |
-| `X-Content-Type-Options` | nosniff | Prevents MIME-type sniffing |
-| `X-XSS-Protection` | 1; mode=block | XSS filter |
-| `Strict-Transport-Security` | max-age=... | Forces HTTPS |
+| `X-Frame-Options` | `DENY` / `SAMEORIGIN` | Prevent clickjacking |
+| `Content-Security-Policy` | Configured per deployment | Control resource loading |
+| `X-Content-Type-Options` | `nosniff` | Prevent MIME sniffing |
+| `X-XSS-Protection` | `1; mode=block` | Browser XSS filter |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | Force HTTPS |
 
-## CORS (Cross-Origin Resource Sharing)
+## CORS
 
-- CORS is configured per deployment
-- Only allowed origins can make API requests
-- Prevents unauthorized cross-origin requests
+- CORS is configured per deployment.
+- Only allow-listed origins can make API requests.
 
 ## Request ID Tracking
 
-- Every API request is assigned a unique **Request ID**
-- Used for logging and debugging
-- Correlates frontend requests with backend processing
-- Included in error responses for support reference
+Every API request is assigned a unique **Request ID** (via the OTEL middleware). The ID is logged on the backend and included in error responses for support reference, allowing frontend errors to be correlated with backend traces.
 
 ## Multi-Tenant Isolation
 
 Security is enforced at the tenant level:
 
-- Every database query is scoped to the current tenant's `tenant_id`
-- Users cannot access data from other tenants
-- Roles and permissions are tenant-specific
-- Sessions are isolated per tenant
-- OAuth state validation includes tenant verification
+- Every database query is scoped to the current tenant's `tenant_id`.
+- Unique constraints are tenant-scoped (e.g. the `email` index includes `tenant_id`).
+- Roles, permissions, sessions, and OAuth state are all tenant-isolated.
+- OAuth state validation includes a tenant check to prevent cross-tenant attacks.
 
 ## Password Security
 
-- Passwords are hashed using **bcrypt** before storage
-- Raw passwords are never stored or logged
-- Password complexity rules are enforced at registration and change
-- Password reset tokens are time-limited (1 hour)
-- OTP codes expire after 10 minutes with a maximum of 3 attempts
+- Passwords are hashed with **bcrypt** before storage. Raw passwords are never logged.
+- Password complexity rules are enforced at registration and change time.
+- Password reset tokens are time-limited (**1 hour**).
+- OTP codes expire after **10 minutes** with a **maximum of 3 attempts** per OTP.
+- Tenant-configurable password policy (see [Password Management](/docs/knowledgebase/auth-module/password-management)).
 
 ## Soft Deletes & Data Retention
 
-- All entities (users, roles, sessions) support **soft delete**
-- Deleted records are not removed from the database — they are flagged with a `deleted_at` timestamp
-- Unique indexes exclude soft-deleted records (conditional indexes)
-- **Data retention policies** are configurable per tenant
-- Supports GDPR compliance requirements for data deletion
+- Users, roles, and sessions support **soft delete** (a `deleted_at` timestamp).
+- Unique indexes on email, phone, and username are conditional (`WHERE deleted_at IS NULL`), so a deleted user's email can be reused later.
+- **Data retention policies** are configurable per tenant — supports GDPR-style requirements.
 
 ## OAuth State Security
 
-OAuth login flows use secure state parameters:
+OAuth flows use an encrypted `state` parameter:
 
-- State is an encrypted payload (not plain text)
-- Contains: Tenant ID, Provider, Cryptographic Token, Expiry
-- Validated on callback for tampering and replay attacks
-- Expired states are rejected
-- Prevents cross-tenant OAuth attacks
+- Encodes tenant ID, provider, a cryptographic token, and an expiry.
+- Validated on callback for tampering, replay, and cross-tenant attacks.
 
-## Verification Token Security
+## Verification Token & OTP Security
 
-- Email verification tokens are unique, random strings
-- OTPs are 6-digit random codes
-- Both have configurable expiry (default: 10 minutes for OTP, 1 hour for tokens)
-- Maximum attempt limits prevent brute-forcing OTPs
-- Failed attempts are recorded and tracked
+- Email verification can use either an **OTP** or a base64-encoded token in the verification link (which auto-fills the OTP form).
+- OTPs are 6-digit random codes.
+- Email and phone verification OTP expiry: **10 minutes**. Password reset token expiry: **1 hour**.
+- Maximum 3 attempts per OTP record; failed attempts increment a counter and lock the OTP.
 
 ## Best Practices for Users
 
-1. **Use a strong password** that meets the platform's requirements
-2. **Verify your email** to secure your account
-3. **Review active sessions** regularly in Account Settings
-4. **Terminate unknown sessions** immediately
-5. **Don't share your credentials** — admins can use impersonation for support
-6. **Use social login** for added convenience without password management
-7. **Log out** on shared devices
+1. Use a strong password that meets the platform's policy.
+2. Verify your email and phone to secure your account.
+3. Review your active sessions regularly in Account Settings → Devices.
+4. Terminate any unfamiliar sessions immediately.
+5. Don't share your credentials — admins can use **Impersonation** for support.
+6. Log out on shared or public devices.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Account locked | Wait for the lock duration to expire, or contact an admin |
+| Account locked | Wait for the lock duration (1 / 5 / 30 min / 2 hr ladder) or contact an admin |
 | IP blocked | Wait 30 minutes for the block to expire |
 | Rate limit exceeded | Wait for the specified duration and try again |
-| "Invalid token" errors | Your session may have expired. Try logging in again |
+| "Invalid token" errors | Your session may have expired — log in again |
 | Suspicious sessions | Terminate all sessions and change your password |

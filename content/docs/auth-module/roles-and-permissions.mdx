@@ -1,6 +1,6 @@
 ---
 title: "Roles & Permissions (RBAC)"
-description: "Role-Based Access Control system for managing user access"
+description: "Role-Based Access Control system for managing user access — roles, permissions, direct assignments, and how checks happen"
 module: "auth"
 feature: "rbac"
 order: 9
@@ -8,196 +8,174 @@ order: 9
 
 # Roles & Permissions (RBAC)
 
-EduShade uses a **Role-Based Access Control (RBAC)** system to manage what each user can see and do on the platform. This system provides fine-grained control over user access through roles and permissions.
+EduShade uses **Role-Based Access Control (RBAC)** to determine what each user can see and do. Permissions are the atoms; roles are bundles of permissions; and a user can hold any number of roles plus individually-granted "direct" permissions.
 
 ## Core Concepts
 
 ### Permissions
 
-A **permission** is a single, specific action a user can perform. Permissions are organized into **groups**.
+A **permission** is a single, specific action a user can perform. Permissions are organized into **groups** (e.g. `user`, `rbac`).
 
 Examples:
-- `user.create` — Can create new users
-- `user.delete` — Can delete users
-- `rbac.view` — Can view roles and permissions
-- `analytics.export` — Can export analytics data
+- `user.create` — Create new users
+- `user.delete` — Delete users
+- `rbac.view` — View roles and permissions
+- `analytics.export` — Export analytics data
 
 ### Roles
 
-A **role** is a named collection of permissions. Instead of assigning individual permissions to each user, you assign roles.
-
-Examples:
-- **Admin** role includes: `user.create`, `user.update`, `user.delete`, `rbac.view`, etc.
-- **Instructor** role includes: course management permissions
-- **Learner** role includes: basic learning permissions
+A **role** is a named collection of permissions. Instead of assigning individual permissions to each user, you bundle them into roles and assign roles.
 
 ### Direct Permissions
 
-In addition to role-based permissions, individual permissions can be assigned **directly to a user**, bypassing roles. This is useful for granting specific access without creating a new role.
+Permissions can also be assigned **directly to a user**, bypassing roles. Useful for granting one-off access without creating a new role.
+
+> Effective permissions for a user = (permissions from all assigned roles) ∪ (direct permissions).
 
 ## Permission Groups
 
-Permissions are organized into the following groups:
+Permission seed data lives in `auth-service/data/permissions.json` and is loaded into the `permissions` table. The seed defines permissions across many groups — these are the **platform-wide** permission groups, not all of which are owned by the auth module:
 
-| Group | Permissions | Description |
-|-------|-------------|-------------|
-| **User** | view, list, create, update, delete, export, profile, sessions, stats | User management operations |
-| **RBAC** | view, create, update, delete | Role and permission management |
-| **Role** | view, list, create, update, delete, assign, remove | Role-specific operations |
-| **Permission** | list, assign, remove | Permission assignment operations |
-| **Tenant** | view, list, create, update, delete, manage | Tenant/organization management |
-| **Organization** | view, update, manage | Organization settings |
-| **Invitation** | view, create, update, delete, accept | User invitation management |
-| **Settings** | view, update, write | Platform settings |
-| **File** | view, list, create, upload, update, download, delete, manage | File/media management |
-| **Notification** | send, view, manage | Notification management |
-| **Analytics** | view, export, manage | Analytics and reporting |
-| **Admin** | users, roles, permissions, audit, settings | Administrative catch-all |
-| **Audit** | view, manage | Audit log access |
-| **Moderation** | view, take_action, appeals | Content moderation |
+| Group | Owned by | Notes |
+|-------|----------|-------|
+| `user` | Auth | view, list, create, update, delete, export |
+| `rbac` | Auth | view, create, update, delete |
+| `admin` | Auth | catch-all admin permissions, e.g. `admin.users` (required for impersonation) |
+| `tenant` / `organization` / `invitation` / `settings` | Tenant / platform | Cross-cut across services |
+| `file` | File manager | Upload/download/manage files |
+| `notification` | Notification service | Send and manage notifications |
+| `analytics` | Analytics | View and export reports |
+| `audit` | Audit service | View audit logs |
+| `course` / `enrollment` / `certificate` / `quiz` / etc. | Learning, Quiz, etc. | Defined here so RBAC checks for them are uniform across services |
+
+Use the API `GET /v1/rbac/permissions/groups` to enumerate the groups present in your deployment, and `GET /v1/rbac/permissions/groups/{group}` to list permissions within a group.
 
 ## Built-in Roles
 
-EduShade comes with pre-configured roles:
+> **Note:** EduShade does **not** seed any roles by default. The `roles` table is empty after a fresh install — administrators must create roles before they can be assigned. There are no out-of-the-box "Super Admin" / "Admin" / "Moderator" roles unless you create them yourself or run a custom seeder.
 
-### Super Admin
-- **All permissions** — Complete system access
-- Intended for platform owners and top-level administrators
-- Can manage all aspects of the platform
+A common starter setup teams create manually:
 
-### Admin
-- **Most administrative permissions** — System administration
-- Cannot modify super admin accounts
-- Can manage users, roles, settings
+| Role | Typical permissions |
+|------|---------------------|
+| **Super Admin** | All permissions (effectively bypasses checks via the `super_admin` role-name shortcut, see below) |
+| **Admin** | `user.*`, `rbac.*`, `admin.users`, `audit.view`, `analytics.view` |
+| **Instructor** | Course/lesson management permissions |
+| **Learner** | Basic learning permissions (this is also implied by the `is_learner` user flag) |
 
-### User Manager
-- **User and role management** — Focus on people operations
-- Can create, edit, and delete users
-- Can assign and manage roles
+### `super_admin` shortcut
 
-### Developer
-- **Tenant and platform management** — Technical operations
-- Can manage platform-specific resources and settings
+The frontend route guard treats any user holding a role named **`super_admin`** as having all permissions — this is a convenience escape hatch and is enforced in `src/lib/auth/middlewares/route-permissions.ts`. If you want a "god mode" role, name it `super_admin` exactly.
 
-### Moderator
-- **Content moderation** — Community management
-- Can view and moderate content
-- Can handle appeals and take moderation actions
+## User Type Flags vs Roles
 
-### Auditor
-- **View-only analytics** — Reporting and compliance
-- Can view system resources and analytics
-- Can export reports
-- Cannot modify any data
+EduShade has three boolean flags on every user — independent of RBAC roles:
+
+| Flag | Purpose |
+|------|---------|
+| `is_admin` | Grants access to admin-area routes; required for impersonation alongside `admin.users` |
+| `is_instructor` | Marks the user as a course author |
+| `is_learner` | Marks the user as a learner (default: `true` for new registrations) |
+
+A single user can hold any combination of these flags **and** any number of roles. Flags gate which dashboards (`/admin` vs `/dashboard`) are accessible; roles + permissions determine fine-grained capabilities within those dashboards.
 
 ## Managing Roles (Admin)
 
 ### Creating a New Role
 
-1. Go to **Admin → Roles & Permissions**
+1. Go to **Admin → Users → Roles** (`/admin/users/roles`)
 2. Click **Create Role**
-3. Enter a **role name**
+3. Enter a **role name** (and `guard`, default `web`)
 4. Select the **permissions** to include
 5. Click **Save**
 
+API: `POST /v1/rbac/roles` (requires `rbac.create`).
+
 ### Editing a Role
 
-1. Go to **Admin → Roles & Permissions**
-2. Click on the role to edit
-3. Modify the name or toggle permissions on/off
-4. Click **Save**
-5. Changes take effect immediately for all users with this role
+1. From the roles list, click a role to open `/admin/users/roles/{roleID}/edit`
+2. Modify the name, status, or toggle permissions on/off
+3. Click **Save** — changes take effect immediately for all users with this role (after the cache invalidation event propagates)
+
+API: `PUT /v1/rbac/roles/{roleID}` (requires `rbac.update`).
 
 ### Cloning a Role
 
 Need a role similar to an existing one?
 
-1. Go to **Admin → Roles & Permissions**
-2. Find the role to clone
-3. Click **Clone**
-4. A new role is created with the same permissions
-5. Edit the cloned role to customize
+1. Find the role in the roles list and click **Clone**
+2. A new role is created with the same set of permissions
+3. Edit the cloned role to customize its name and permissions
+
+API: `POST /v1/rbac/roles/{roleID}/clone` (requires `rbac.create`).
 
 ### Deleting a Role
 
-1. Find the role in the roles list
-2. Click **Delete**
-3. Confirm the action
-4. The role is soft-deleted
-5. Users who had this role lose its permissions
+1. Click **Delete** on the role
+2. Confirm the action — the role is **soft-deleted** (`deleted_at` set)
+3. Users who held this role lose its permissions on their next permission-cache refresh
 
-## Assigning Roles to Users
+API: `DELETE /v1/rbac/roles/{roleID}` (requires `rbac.delete`).
 
-### From User Management
+## Assigning Roles & Permissions
 
-1. Go to **Admin → User Management**
-2. Open a user's profile
-3. Edit the user
-4. In the **Roles** section, select roles to assign
-5. Click **Save**
+### Assign a Role to a User
+- API: `POST /v1/rbac/users/{userID}/roles/{roleID}` (requires `rbac.update`)
+- UI: edit the user, pick roles in the **Roles** section.
 
-### From RBAC Management
+### Remove a Role from a User
+- API: `DELETE /v1/rbac/users/{userID}/roles/{roleID}` (requires `rbac.update`)
 
-1. Go to **Admin → Roles & Permissions**
-2. Select a role
-3. Assign the role to specific users
+### Assign a Direct Permission to a User
+- API: `POST /v1/rbac/users/{userID}/permissions/{permissionID}` (requires `rbac.update`)
 
-## Assigning Direct Permissions
-
-To give a user a specific permission without assigning a full role:
-
-1. Go to **Admin → User Management**
-2. Open a user's profile
-3. In the **Permissions** section, check individual permissions
-4. Click **Save**
+### Remove a Direct Permission from a User
+- API: `DELETE /v1/rbac/users/{userID}/permissions/{permissionID}` (requires `rbac.update`)
 
 ## How Permissions Are Checked
 
-When a user tries to access a feature:
+Backend (per-route):
 
-1. The system collects all permissions from the user's **assigned roles**
-2. It adds any **directly assigned permissions**
-3. It checks if the required permission is in this combined set
-4. Access is **granted** if the permission exists, **denied** otherwise
+1. The `Can("permission.name", permissionProvider)` middleware runs on protected routes.
+2. The provider collects the user's effective permissions — direct + role-derived — from a cache.
+3. Access is granted if the requested permission is in the set, otherwise the request is rejected with `403`.
+
+Frontend:
+
+- `usePermissions()` hook (`src/lib/auth/use-permissions.ts`) exposes `hasPermission(name)` and `hasRole(name)` for inline checks.
+- Sidebar items, action buttons, and route guards use these to hide UI a user cannot use.
+- Route-level guards live in `src/lib/auth/middlewares/route-permissions.ts` (`canAccessRoute`, `hasAnyPermission`, `hasAllPermissions`, `isSuperAdmin`).
 
 ### Permission Caching
 
-- Permissions are cached for performance
-- When a role or permission assignment changes, a **cache invalidation event** is published
-- All affected users' permission caches are refreshed
-
-### Frontend Route Protection
-
-The frontend also enforces permissions:
-
-- Admin sidebar menu items are filtered based on user permissions
-- Route-level permission checks prevent unauthorized page access
-- If a user navigates to a restricted page, they are redirected
+- The backend uses `rbac.NewCachedDBPermissionProvider` to cache permissions in memory.
+- When a role or permission assignment changes, an **RBAC event** is published to the platform's pub/sub layer (`RBACEventPublisher`) so other instances refresh their caches.
+- Users may need a fresh access token (re-login or refresh) to see permission changes reflected in their JWT `permissions` claim.
 
 ## Filtering Roles
 
-When viewing roles, you can filter by:
+When viewing the roles list, you can filter by:
 
 | Filter | Description |
 |--------|-------------|
 | **Search** | Search by role name |
-| **Guard** | Filter by guard type (e.g., "web") |
-| **Status** | Filter by active/inactive |
-| **Permissions** | Find roles that include specific permissions |
+| **Guard** | Filter by guard type (default: `web`) |
+| **Status** | Active / inactive |
 
 ## RBAC Events
 
 When roles or permissions change, events are published for:
 
-- **Cache invalidation** — Ensures users immediately see updated permissions
-- **Audit logging** — Tracks who changed what and when
+- **Cache invalidation** — keeps multi-instance deployments in sync
+- **Audit logging** — tracks who changed what and when (visible to users with `audit.view`)
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| User can't access a page | Check that the user has the required permission via their role or direct assignment |
-| Permission change not taking effect | Permissions are cached. The user may need to refresh or re-login |
-| Can't create/edit roles | You need the `rbac.create` or `rbac.update` permission |
-| Role deletion didn't remove access | Ensure the user doesn't have the same permissions via another role or direct assignment |
-| Admin sidebar shows limited items | The sidebar is filtered by permissions — assign the appropriate role |
+| User can't access a page | Confirm they have the required permission via a role or a direct assignment |
+| Permission change not taking effect | Permissions are cached. The user may need to refresh their token (re-login) |
+| Can't create or edit roles | You need `rbac.create` / `rbac.update` |
+| Role deletion didn't remove access | Check the user doesn't have the same permissions via another role or as a direct assignment |
+| Admin sidebar shows limited items | The sidebar is filtered by permissions — the user needs the matching role/permissions for items to appear |
+| No roles exist after install | This is expected — roles are not seeded by default. Create the roles your team needs |

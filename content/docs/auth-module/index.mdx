@@ -15,7 +15,7 @@ The **Authentication Module** is the core identity and access management system 
 |---------|-------------|
 | [Registration](/docs/knowledgebase/auth-module/registration) | Create new accounts via email, phone, or social login |
 | [Login](/docs/knowledgebase/auth-module/login) | Sign in with email/username + password or phone OTP |
-| [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login) | Sign in with Google, Facebook, GitHub, or Apple |
+| [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login) | Sign in with Google or Facebook (Apple/GitHub supported by the backend but not yet enabled in the UI) |
 | [Email Verification](/docs/knowledgebase/auth-module/email-verification) | Verify your email address via OTP or link |
 | [Phone Verification](/docs/knowledgebase/auth-module/phone-verification) | Verify your phone number via SMS OTP |
 | [Password Management](/docs/knowledgebase/auth-module/password-management) | Forgot password, reset password, change password |
@@ -23,11 +23,12 @@ The **Authentication Module** is the core identity and access management system 
 | [Session Management](/docs/knowledgebase/auth-module/session-management) | View active sessions, manage devices, terminate sessions |
 | [Roles & Permissions (RBAC)](/docs/knowledgebase/auth-module/roles-and-permissions) | Role-based access control with granular permissions |
 | [User Management (Admin)](/docs/knowledgebase/auth-module/user-management) | Admin tools for creating, editing, and managing users |
-| [User Impersonation](/docs/knowledgebase/auth-module/user-impersonation) | Admin ability to log in as another user for support |
+| [User Impersonation](/docs/knowledgebase/auth-module/user-impersonation) | Admin can act as another user — two modes: **Impersonation** (read-only) and **Masquerade** (full access) |
 | [Security Features](/docs/knowledgebase/auth-module/security-features) | Brute force protection, rate limiting, account lockout |
 | [Profile Completion](/docs/knowledgebase/auth-module/profile-completion) | Required profile fields and completion workflow |
 | [Account Deletion](/docs/knowledgebase/auth-module/account-deletion) | Self-service and admin account deletion |
 | [User Analytics](/docs/knowledgebase/auth-module/user-analytics) | User growth stats, registration trends, quick overview |
+| [Auth Page Customization](/docs/knowledgebase/auth-module/auth-page-customization) | Tenant-controlled image shown on the login/register/verify pages |
 
 ## Architecture Overview
 
@@ -49,6 +50,8 @@ EduShade supports three user types, and a single user can hold multiple types si
 | **Learner** | `is_learner` | `true` | Students who enroll in courses and learning paths |
 | **Instructor** | `is_instructor` | `false` | Teachers who create and manage course content |
 | **Admin** | `is_admin` | `false` | Platform administrators with management access |
+
+> User type flags are **independent of RBAC roles**. Flags determine *which area* of the platform a user can enter (`/dashboard` vs `/admin`). [Roles & Permissions](/docs/knowledgebase/auth-module/roles-and-permissions) determine *what they can do* once inside.
 
 ### User Statuses
 

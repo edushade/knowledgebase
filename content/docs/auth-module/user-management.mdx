@@ -1,6 +1,6 @@
 ---
 title: "User Management (Admin)"
-description: "Admin tools for creating, managing, and monitoring users"
+description: "Admin tools for creating, filtering, editing, deleting, exporting, and inspecting users — including direct credential edits and cross-service filters"
 module: "auth"
 feature: "user-management"
 order: 10
@@ -8,223 +8,246 @@ order: 10
 
 # User Management (Admin)
 
-The User Management section is an admin-only area where administrators can create, view, edit, and manage all platform users.
+The User Management area is an admin-only surface where administrators create, filter, edit, monitor, and (soft-)delete platform users.
 
 ## Accessing User Management
 
-1. Log in as an **Admin** or **Instructor** with user management permissions
-2. Navigate to **Admin → User Management**
-3. Required permission: `user.list` or `user.view`
+1. Sign in as an **Admin** or **Instructor** with user management permissions.
+2. Navigate to **Admin → Users** (`/admin/users`).
+3. Required permission: `user.list` to view, `user.view` to open profiles.
+
+There are also dedicated sub-lists:
+
+| Page | Path |
+|------|------|
+| All users | `/admin/users` |
+| Learners | `/admin/users/learners` |
+| Admins | `/admin/users/admins` |
+| Instructors | `/admin/users/instructors` |
+| Roles & Permissions | `/admin/users/roles` |
 
 ## User List
 
-The user list provides a comprehensive, filterable table of all platform users.
+A comprehensive, filterable, paginated table of all platform users (`GET /v1/users`).
 
 ### Available Columns
 
-- Name and Avatar
-- Email
-- Phone
-- Username
-- Status (active, inactive, suspended, etc.)
-- User type (Admin, Instructor, Learner)
+- Name and avatar
+- Email, phone, username, unique ID
+- Status (`active`, `inactive`, `suspended`, `pending_verification`, `deleted`)
+- User type flags (`is_admin`, `is_instructor`, `is_learner`)
 - Roles
-- Registration date
-- Last login date
+- Registration date, last login
 
 ### Filtering Users
 
-You can filter users using multiple criteria simultaneously:
+The user list backs onto a rich `UserFilters` DTO (see `auth-service/dto/user.go`). Filters can be combined freely.
 
-| Filter | Options |
-|--------|---------|
-| **Status** | Active, Inactive, Suspended, Pending Verification, Deleted |
-| **User Type** | Admin, Instructor, Learner |
-| **Search** | By name, email, phone, or username (fuzzy matching) |
-| **Date Range** | Filter by registration date or last login date |
-| **Roles** | Filter by assigned roles |
-| **Country** | Filter by user's country |
-| **Timezone** | Filter by user's timezone |
+**Identity & status:**
+
+| Filter | Description |
+|--------|-------------|
+| **Search** | Fuzzy match across name, email, phone, username, unique ID |
+| **Status / Statuses** | One or many of: `active`, `inactive`, `suspended`, `pending_verification`, `deleted` |
+| **User type** | Admin, Instructor, Learner (`is_admin`, `is_instructor`, `is_learner`) |
+| **Verification** | `email_verified`, `phone_verified` |
+| **Auth method** | `email`, `phone`, `oauth` |
+| **OAuth** | `has_oauth`, `oauth_provider` (google / facebook / github / apple) |
+| **Has password set** | `has_password` |
+| **Roles** | Filter by assigned role(s) |
+
+**Profile & demographics:**
+
+| Filter | Description |
+|--------|-------------|
+| **Profile complete** | `profile_complete=true/false` (uses backend completeness scoring) |
+| **Has avatar / bio / location** | Boolean filters |
+| **Country / city / state / continent / timezone / locale** | Geographic filters |
+| **Gender, designation, expertise, age min/max** | Demographic filters |
+
+**Activity:**
+
+| Filter | Description |
+|--------|-------------|
+| `created_after` / `created_before` | Date range on registration |
+| `created_in_last_days` | "registered within last N days" |
+| `last_login_after` / `last_login_before` / `active_in_last_days` / `inactive_for_days` | Activity windows |
+| `is_locked`, `failed_login_attempts_min`, `failed_login_attempts_max` | Account security state |
 
 ### Cross-Service Filters
 
-The user list supports advanced filters that query data from other microservices:
+The user list joins data from other microservices when those service databases are reachable:
 
-| Filter | Source Service | Description |
-|--------|---------------|-------------|
-| **Has enrollment** | Learning Service | Users enrolled in a specific course |
-| **Has certificate** | Learning Service | Users who earned certificates |
-| **Has quiz attempts** | Quiz Service | Users who attempted quizzes |
-| **Has assignments** | Learning Service | Users with assignment submissions |
+| Filter | Source service | Description |
+|--------|----------------|-------------|
+| `has_enrollments` | Learning | Users with at least one enrollment |
+| `enrollment_status` | Learning | `active`, `completed`, `cancelled`, `expired`, `suspended` |
+| `enrolled_program_type`, `enrolled_program_ids` | Learning | Filter to specific course/program types or IDs |
+| `progress_min`, `progress_max` | Learning | Learners within a progress range |
+| `total_time_spent_min` | Learning | Minimum aggregate learning time |
+| `last_learning_activity_after` | Learning | Active in learning since a given date |
 
-### Sorting
+> Cross-service filters require the auth-service to have a working DB connection to the learning-service database. Failures are non-fatal — affected filters are simply skipped.
 
-Sort users by:
-- Name (A-Z, Z-A)
-- Email
-- Registration date (newest/oldest)
-- Last login date
-- Status
+### Filter Values & Suggestions
 
-### Pagination
+- `GET /v1/users/filter-values` — returns all available values for static filters (statuses, roles, countries, oauth_providers, auth_methods, etc.).
+- `GET /v1/users/field-values` — paginated dynamic field-value lookup for autocomplete (e.g. while typing a designation).
 
-- Results are paginated with configurable page size
-- Shows total user count
+### Sorting & Pagination
+
+Sort by name, email, registration date, last login, or status. Page size is configurable; total count is returned with each page.
 
 ## Creating a New User
 
-Admins can create user accounts directly without requiring the user to register.
+Admins can create user accounts directly without registration.
 
-### Steps
+1. Click **Create User** at `/admin/users/create` (requires `user.create`).
+2. Fill in the form:
 
-1. Click **Create User** (requires `user.create` permission)
-2. Fill in the user details:
+| Field | Required | Notes |
+|-------|----------|-------|
+| **Name** | Yes | Display name |
+| **Email** | Conditional | Required if no phone |
+| **Phone** | Conditional | Required if no email |
+| **Username** | No | 3+ chars, lowercase letters/digits/`.-_`, unique per tenant |
+| **Password** | No | If omitted, the user must reset before logging in |
+| **Status** | Yes | Default: `active` |
+| **User type flags** | At least one | `is_admin`, `is_instructor`, `is_learner` |
+| **Roles** | Required for admin/instructor | Pick at least one role for those types |
+| **Direct permissions** | No | Optional one-off grants |
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| **Name** | Yes | User's display name |
-| **Email** | Conditional | Email address (required if no phone) |
-| **Phone** | Conditional | Phone number (required if no email) |
-| **Username** | No | Optional login username |
-| **Password** | No | Set initial password (if not set, user must reset) |
-| **Status** | Yes | Initial account status (default: active) |
-| **User Type** | Yes | Admin, Instructor, and/or Learner flags |
-| **Roles** | No | Assign one or more roles |
-| **Permissions** | No | Assign individual direct permissions |
+3. Click **Create**.
 
-3. Click **Create**
-4. The user account is created immediately
-5. If email is provided, verification may be sent depending on configuration
+API: `POST /v1/users`.
 
 ## Editing a User
 
-1. Find the user in the user list
-2. Click the **Edit** action (requires `user.update` permission)
-3. Modify any fields:
-   - Personal information (name, bio, address, etc.)
-   - Contact info (email, phone, username)
-   - Account status
-   - User type flags
-   - Role assignments
-   - Direct permission assignments
-4. Click **Save**
+Open a user's edit form at `/admin/users/{userID}/edit/edit-user` (requires `user.update`). The edit form is split into multiple tabs:
+
+| Tab | Path | What it does |
+|-----|------|--------------|
+| Overview | `…/edit/overview` | Profile snapshot |
+| Edit user | `…/edit/edit-user` | Main form (name, email, phone, username, password, status, roles, profile fields) |
+| Sessions | `…/edit/users-sessions` | View / terminate sessions |
+| Impersonation | `…/edit/impersonation` | Start impersonation or masquerade |
+| Audit logs & admin notes | `…/edit/audit-logs-admin-notes` | Per-user audit trail |
+| Unique ID generation | `…/edit/unique-id-generation` | Generate or update unique ID |
+| Account deletion | `…/edit/account-deletation` | Initiate user account deletion |
+
+### Admin Direct Credential Edits
+
+The edit form lets admins **change another user's email, phone, username, or password directly** — **no OTP, no password-reset email, no user consent required**. This is intentionally privileged: admins are trusted to perform out-of-band identity verification.
+
+- Endpoint: `PUT /v1/users/{user_id}` (requires `user.update`)
+- Affected fields: `email`, `phone`, `username`, `password`
+- A successful credential change is published as an audit event so the admin who performed it is recorded.
+- Best practice: terminate the user's existing sessions after a password change so any stale tokens stop working.
+
+### Updating Status
+
+Status changes flow through the same edit endpoint — set `status` to one of:
+
+| Value | Effect |
+|-------|--------|
+| `pending_verification` | Forces the user back through email/phone verification on next login |
+| `active` | Normal operating state |
+| `inactive` | Temporarily disables login |
+| `suspended` | Disables login with a "suspended" message |
+| `deleted` | Soft delete — same effect as user-initiated deletion |
 
 ### Updating Unique ID
 
-Administrators can update a user's unique identifier:
-1. Open the user's edit form
-2. Modify the **Unique ID** field
-3. Save changes
-4. Requires `user.update` permission
+Open the **Unique ID Generation** tab to assign or change a user's tenant-unique identifier.
+
+- Endpoint: `PUT /v1/users/{user_id}/unique-id` (requires `user.update`)
 
 ## Deleting Users
 
 ### Single User Delete
 
-1. Find the user in the user list
-2. Click the **Delete** action (requires `user.delete` permission)
-3. Confirm the deletion
-4. The user is **soft-deleted** (data retained, account deactivated)
-5. All user sessions are terminated
+1. Click **Delete** in the user row or from the user's edit page (requires `user.delete`).
+2. Confirm.
+3. The user is **soft-deleted** (`deleted_at` set, status set to `deleted`).
+4. All sessions are terminated.
+
+API: `DELETE /v1/users/{user_id}`.
 
 ### Bulk Delete
 
-1. Select multiple users or apply filters
-2. Click **Bulk Delete** (requires `user.delete` permission)
-3. Confirm the action
-4. All selected users are soft-deleted
+1. Apply filters or select multiple users.
+2. Click **Bulk Delete** (requires `user.delete`).
+3. Confirm.
+
+API: `DELETE /v1/users/bulk/delete`.
+
+See [Account Deletion](/docs/knowledgebase/auth-module/account-deletion) for what soft-delete preserves and how reactivation works.
 
 ## Exporting Users
 
-Export user data as a CSV file for reporting or external use.
+Export user data as a CSV for reporting or external analysis.
 
-### Steps
+1. Apply your filters (the export respects current filters).
+2. Click **Export** (requires `user.export`).
+3. A CSV download includes name, email, phone, username, status, user type, registration / last login timestamps, country, timezone, and all profile fields.
 
-1. Click **Export** (requires `user.export` permission)
-2. Apply any filters (the export respects current filters)
-3. A CSV file is downloaded containing:
-   - Name, Email, Phone, Username
-   - Status, User Type
-   - Registration date, Last login
-   - Country, Timezone
-   - All profile fields
-
-## User Details View
-
-Click on a user to see their full profile:
-
-- **Profile Information** — All personal details
-- **Roles & Permissions** — Assigned roles and individual permissions
-- **Sessions** — Active login sessions with device/location info
-- **Activity Logs** — Account events and actions
-- **Impersonate Button** — Switch to this user's session (see [User Impersonation](/docs/knowledgebase/auth-module/user-impersonation))
+API: `GET /v1/users/bulk/export`.
 
 ## Managing User Sessions (Admin)
 
-Admins can manage any user's sessions:
+From the **Sessions** tab on a user's edit page:
 
-1. Open a user's profile
-2. Go to the **Sessions** tab
-3. View all active sessions with device/location details
-4. **Terminate** individual sessions or **Terminate All**
+- View all active sessions with device + IP-geolocation details.
+- Terminate a single session: `DELETE /v1/users/{user_id}/sessions/{session_id}`
+- Terminate all of a user's sessions: `DELETE /v1/users/{user_id}/sessions`
+
+Both require `user.update`.
 
 ## OAuth Account Linking (Admin)
 
-Admins can link or unlink OAuth providers for users:
+Admins can link/unlink OAuth providers programmatically:
 
-### Link OAuth Account
+- Link: `POST /v1/users/{user_id}/oauth/link`
+- Unlink: `POST /v1/users/{user_id}/oauth/unlink`
 
-1. Open a user's profile
-2. Click **Link OAuth**
-3. Select the provider (Google, Facebook, GitHub, Apple)
-4. The provider is linked to the user's account
+These accept a `provider_user_id` and are intended for **scripted account migration** rather than ad-hoc UI use, since admins typically don't have the user's raw provider ID.
 
-### Unlink OAuth Account
+## User Statistics & Analytics
 
-1. Open a user's profile
-2. Click **Unlink OAuth**
-3. Select the provider to unlink
-4. The provider is removed from the user's account
+Available straight from the user-management area:
 
-## User Statistics
+| Endpoint | Use |
+|----------|-----|
+| `GET /v1/users/stats` | Counts by status, type, verification, recent registrations |
+| `GET /v1/users/analytics/overview` | Quick stats dashboard (period-over-period) |
+| `GET /v1/users/analytics/growths` | Daily / weekly / monthly growth time series |
 
-Access quick statistics about platform users:
-
-1. Navigate to **Admin → User Management → Stats**
-2. View:
-   - **Total users** by status and type
-   - **Recent registrations** (last 7 days)
-   - **Active vs. inactive** counts
-   - **Per-type breakdown** (admins, instructors, learners)
-
-## Filter Values & Suggestions
-
-When building filters, the system provides:
-
-- **Available filter values** — All possible values for status, user type, country, timezone
-- **Field value suggestions** — Dynamic autocomplete for text fields as you type
+See [User Analytics](/docs/knowledgebase/auth-module/user-analytics) for details. Backed by the `mv_user_quick_stats` materialized view, refreshed every 2 minutes.
 
 ## System API (Inter-Service)
 
-The auth service exposes system APIs for other microservices:
+The auth-service exposes **system-protected** APIs (separate auth scheme via system token, not user JWT) for other microservices to consume:
 
 | Endpoint | Purpose |
 |----------|---------|
-| **Get or Create User** | Other services can resolve users by email/phone |
-| **Search Users** | Cross-service user lookup |
-| **Batch Fetch by IDs** | Get multiple users at once |
-| **Assign Roles/Permissions** | System-level role management |
-| **Update User Flags** | Set admin/instructor/learner flags from other services |
+| `POST /v1/system/users/get-or-create` | Idempotent upsert by email/phone — used during invitations and cross-service user resolution |
+| `GET /v1/system/users/search` | Cross-service user search |
+| `GET /v1/system/users/by-ids` | Batch fetch by ID list |
+| `POST /v1/system/users/{user_id}/roles` | Assign roles |
+| `POST /v1/system/users/{user_id}/permissions` | Assign direct permissions |
+| `PATCH /v1/system/users/{user_id}/flags` | Set `is_admin` / `is_instructor` / `is_learner` |
+| `GET /v1/system/roles` | Look up role by name |
 
-These endpoints are protected by a system API token and are not accessible to regular users.
+These are not accessible to regular users.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Can't see User Management | Ensure you have `user.list` permission |
-| Can't create users | Ensure you have `user.create` permission |
-| Can't delete users | Ensure you have `user.delete` permission |
-| Export not working | Ensure you have `user.export` permission |
-| Filters not returning results | Check filter combinations. Try clearing all filters first |
-| Cross-service filters slow | These query external databases and may take longer |
+| Can't see User Management | Ensure you have `user.list` |
+| Can't create users | Ensure you have `user.create` |
+| Can't delete users | Ensure you have `user.delete` |
+| Export not working | Ensure you have `user.export`, and try fewer filters |
+| Cross-service filters return nothing | The learning-service DB may be unreachable — check service health |
+| Direct password edit didn't end the user's existing sessions | Terminate sessions explicitly from the Sessions tab |
+| Bulk filters slow | Cross-service joins (enrollment, progress) can be slow on large datasets — narrow the time window first |
