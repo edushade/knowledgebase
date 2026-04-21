@@ -1,0 +1,98 @@
+---
+title: "Audit Middleware"
+description: "Drop-in Gin middleware that auto-publishes audit events for every POST/PUT/PATCH/DELETE on an admin route group"
+module: "audit"
+feature: "audit-middleware"
+order: 5
+---
+
+# Audit Middleware
+
+`events.AuditMiddleware` is a Gin middleware in `common/pkg/events/audit_middleware.go`. Mount it on an admin route group and every mutating call gets an audit row with **zero handler-level boilerplate**. The middleware does **not** filter by response status — successful and failed mutations are both recorded.
+
+## When To Use It
+
+Use the middleware when:
+
+- You want a **uniform mutation trail** for an entire admin surface (e.g. all of `/v1/admin/learning/...`).
+- You don't need per-action `before_value` / `after_value` snapshots — the middleware records that an API call happened, not the diff.
+- You're standing up a new admin module and want audit coverage from day one.
+
+Prefer **manual publishing** (`events.PublishAuditEvent(...)`) when:
+
+- You want to record before/after JSON snapshots of the affected resource.
+- You want a domain-specific `resource_type` (e.g. `course`, `enrollment`) instead of the generic `api_call`.
+- You want to publish on something other than a mutating HTTP call (e.g. a domain event from a worker), or you want to skip publishes on failed responses.
+
+The two paths can coexist on the same route — but you'll get **two audit rows** for that call. Pick one.
+
+## Wiring
+
+```go
+import "edushade-common/pkg/events"
+
+admin := v1.Group("/admin/learning")
+admin.Use(authMiddleware, tenantMiddleware)
+admin.Use(events.AuditMiddleware(publisher, "learning"))
+
+admin.POST("/courses", handlers.CreateCourse)
+admin.PUT("/courses/:id", handlers.UpdateCourse)
+admin.DELETE("/courses/:id", handlers.DeleteCourse)
+```
+
+The `module` argument is the string that ends up on every produced row's `module` column — pick something searchable and consistent (`auth`, `learning`, `billing`, etc.).
+
+## What Each Row Looks Like
+
+The middleware produces an `AuditEventPayload` with:
+
+| Field | Source |
+|-------|--------|
+| `tenant_id` | `middlewares.GetTenantID(c)` |
+| `actor_id` | `middlewares.GetUserID(c)` |
+| `actor_type` | always `"user"` |
+| `action` | mapped from HTTP method (see below) |
+| `resource_type` | always `"api_call"` |
+| `resource_id` | the matched route's `c.FullPath()` (falls back to `c.Request.URL.Path`) |
+| `module` | the string passed when wiring the middleware |
+| `ip_address` | `ipinfo.GetPublicIP(c.ClientIP(), c.Request)` |
+| `user_agent` | `c.Request.UserAgent()` |
+| `metadata` | `{ "endpoint": ..., "method": ..., "status_code": ... }` |
+
+### Method → Action Mapping
+
+```
+POST          → "created"
+PUT, PATCH    → "updated"
+DELETE        → "deleted"
+```
+
+Any other method falls through with the verb itself, but that path never executes — see the next section.
+
+## Behaviour
+
+The middleware is intentionally minimal:
+
+1. **Only POST/PUT/PATCH/DELETE produce rows.** Every other HTTP method (GET, HEAD, OPTIONS, etc.) short-circuits with `c.Next()` and no publish. Activity logs cover read traffic when services explicitly publish.
+2. **Handler runs first.** The middleware calls `c.Next()` and only then assembles the payload. The captured `status_code` is the actual response status — failed mutations are recorded with their 4xx/5xx code in `metadata.status_code`.
+3. **Tenant + user must be present.** If either `GetTenantID` or `GetUserID` returns the zero UUID, the middleware silently skips publish. Routes outside of `authMiddleware` + `tenantMiddleware` won't produce rows even if mutating.
+4. **Publish is asynchronous.** The middleware spawns a goroutine and calls `PublishAuditEvent`. Response latency is unaffected — but if the publish call itself returns an error, that error is **dropped silently** (`_ =`). Subscriber-side retry handles transient Redis hiccups; complete publish failure is invisible by design.
+
+## Common Pitfalls
+
+| Pitfall | Why it happens | Fix |
+|---------|----------------|-----|
+| No rows for a route | Route is outside the group `Use`-ing the middleware, or the auth/tenant middleware didn't run | Mount the middleware after `authMiddleware` and `tenantMiddleware` on the same group |
+| Two rows per mutation | Both the middleware and a manual `PublishAuditEvent` are firing | Pick one — the middleware for generic coverage, manual for snapshot detail |
+| `resource_id` looks like a path, not a UUID | This is by design — the middleware uses the matched route. UUIDs end up in the URL but `resource_type` is `"api_call"` | If you need UUID-rooted filters (e.g. "everything that touched course X"), publish manually with `resource_type="course"` and `resource_id=<uuid>` |
+| Middleware silently skips | `tenantID == ""` or `userID == ""` — usually means auth middleware was bypassed or the tenant resolver failed | Verify upstream middleware order and that the route requires auth |
+
+## Relationship To Activity Logs
+
+`AuditMiddleware` only publishes to `audit.events`. There is **no corresponding `ActivityMiddleware`**. If you need activity events for a route, the handler must call `events.PublishActivityEvent(...)` itself — see [Event Ingestion](/docs/knowledgebase/audit-module/event-ingestion).
+
+## Source
+
+- Middleware: `common/pkg/events/audit_middleware.go`
+- Publisher helpers: `common/pkg/events/audit_events.go`
+- Topic constants: `common/pkg/events/topics.go`

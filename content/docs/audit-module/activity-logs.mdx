@@ -1,0 +1,132 @@
+---
+title: "Activity Logs"
+description: "Admin-visible trail of all user activity — logins, enrollments, HTTP calls, and impersonation"
+module: "audit"
+feature: "activity-logs"
+order: 2
+---
+
+# Activity Logs
+
+Activity logs answer the question **"what did users do?"** Where [audit logs](/docs/knowledgebase/audit-module/audit-logs) record privileged mutations, activity logs record the broader stream of user behaviour: logins, enrolments, quiz attempts, profile edits, and the underlying HTTP requests that drove them.
+
+## Where to Find Them
+
+Sign in as an admin with `audit.read` permission and go to **Admin → Audit → Activity Logs** (`/admin/activity-logs`).
+
+End users can also see **their own** activity from inside their account — see [My Activity Logs](/docs/knowledgebase/audit-module/my-activity-logs).
+
+## What Each Row Captures
+
+Activity logs are stored in the `activity_logs` table.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | UUID | Primary key |
+| `tenant_id` | UUID | Nullable — system events without a tenant context can be logged here, but read APIs still require tenant scope |
+| `user_id` | UUID | The acting user (nullable for fully anonymous events) |
+| `impersonated_by` | UUID | If an admin was acting through impersonation/masquerade, their ID is here |
+| `title` | string | Human-readable headline like "User logged in" or "Submitted quiz" |
+| `action` | string | Action code — `login`, `logout`, `enroll`, `submit_quiz`, etc. |
+| `module` | string | Source service: `auth`, `learning`, `quiz`, `billing`, `notification`, `engagement`, `ecommerce`, `api`, `web` |
+| `description` | text | Optional extra detail |
+| `endpoint` | string | API path that produced the event (when applicable) |
+| `method` | string | HTTP method: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |
+| `status_code` | int | HTTP response status (validated 100–599) |
+| `ip_address` | INET | Client IP at the time |
+| `user_agent` | text | Client user agent at the time |
+| `metadata` | JSONB | Free-form context |
+| `created_at` | timestamptz | Server timestamp at insert (or `Timestamp` from the source event if set) |
+
+> **Both actors enriched.** The handler (`loadUsersForActivityLogs` in `activity_log_handler.go`) collects every distinct `user_id` and `impersonated_by` across the page, de-duplicates them, and hits the RBAC database with a **single** `UserAssociationService.GetUsersByIDs` call. The returned map then populates the `user` and `impersonated_as` blocks on the response — so a page of 50 rows costs one lookup regardless of how many impersonation events are mixed in.
+
+## What the UI Shows
+
+The admin list view (`src/components/admin/audit/activity-logs-table.tsx`) renders these columns:
+
+| Column | Behavior |
+|--------|----------|
+| **Timestamp** | Human-formatted, sortable |
+| **Title** | Bold, the headline of the event |
+| **Action** | Capitalised `action` code |
+| **User** | Name + email if loaded; otherwise truncated `user_id` |
+| **Method** | Coloured HTTP method badge — blue/green/yellow/red for `GET`/`POST`/`PUT`+`PATCH`/`DELETE` |
+| **Endpoint** | Monospace, truncated — full path is in the detail drawer |
+| **Status** | Coloured status badge — **green** for 2xx, **yellow** for 4xx, **red** for 5xx, **gray** for everything else (including 3xx) |
+| **Module** | Capitalised module name |
+
+Click a row to open the **detail drawer** (`activity-log-detail.tsx`) which lays out every field, including the impersonator if present and the full `metadata` JSON in a pretty-printed code block.
+
+### Built-in Filters
+
+The toolbar exposes:
+
+| Filter | Options |
+|--------|---------|
+| **Method** | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |
+| **Module** | `auth`, `learning`, `quiz`, `billing`, `notification`, `engagement`, `ecommerce`, `api`, `web` |
+
+The underlying API also supports filtering by `action`, `status_code`, `start_date`/`end_date`, and `user_id` — see [Filters & Search](/docs/knowledgebase/audit-module/filters-and-search). A bulk Export button is also present in the toolbar (currently routes through the same generic export plumbing as audit logs).
+
+## API
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/v1/admin/audit/activity-logs` | Paginated list across **all users** in the tenant |
+| GET | `/v1/admin/audit/activity-logs/:id` | Single activity log by ID (admin can fetch any row) |
+| GET | `/v1/user/audit/activity-logs` | Same shape, but **scoped to the calling user** — see [My Activity Logs](/docs/knowledgebase/audit-module/my-activity-logs) |
+| GET | `/v1/user/audit/activity-logs/:id` | Single row, scoped to the calling user |
+
+Admin endpoints require `audit.read`. User endpoints require only a valid JWT — they enforce a `WHERE user_id = <caller>` filter.
+
+### Pagination Defaults
+
+- Default page size: **50** rows
+- Default sort: `created_at DESC`
+- `sort_by` accepts any column name; if it doesn't already contain a `.`, the alias `acl.` is automatically prepended
+
+## Impersonation
+
+If an admin acts through **Impersonation** (read-only) or **Masquerade** (full access), the resulting activity row carries:
+
+- `user_id` — the impersonated user (the one whose perspective the actions appeared to be from)
+- `impersonated_by` — the admin who initiated the impersonation
+
+The detail drawer surfaces both clearly, so audit reviewers can always answer "was this really the user, or an admin acting as them?".
+
+See [User Impersonation](/docs/knowledgebase/auth-module/user-impersonation) for how impersonation sessions are issued.
+
+## How a Row Gets Created
+
+Like audit logs, activity logs are inserted **only** by the audit-service after consuming an event from the `activity.events` topic. Publishing services build an `ActivityEventPayload` and call `events.PublishActivityEvent(...)`. The most common publishers are:
+
+- `auth-service` — login, logout, register, password change, OAuth events, impersonation transitions
+- `learning-service` — enrolments, course completion, lesson views
+- `quiz-service` — quiz starts, quiz submissions
+- Any service using the `AuditMiddleware` will *also* publish to the activity stream where appropriate (the middleware is primarily an audit publisher; activity logging stays on the explicit-publish path)
+
+See [Event Ingestion](/docs/knowledgebase/audit-module/event-ingestion) for the full payload contract and retry semantics.
+
+## Indexes & Query Behaviour
+
+The `activity_logs` table is indexed for the dominant access patterns:
+
+| Index | Purpose |
+|-------|---------|
+| `idx_activity_logs_tenant_id` | Tenant-leading scans |
+| `idx_activity_logs_user_id` | Per-user history lookups |
+| `idx_activity_logs_action` | Filter by action code |
+| `idx_activity_logs_module` | Per-module filtering |
+| `idx_activity_logs_created_at` | Time-range scans |
+| `idx_activity_logs_tenant_created (tenant_id, created_at DESC)` | Hot path — admin list view default sort + tenant filter |
+| `idx_activity_logs_tenant_user (tenant_id, user_id)` | Hot path — "show me this user's activity" |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Login happened but no activity row | Check `auth-service` logs for publish failures; Redis may have been briefly unreachable |
+| User column shows only an ID | The user was hard-deleted from `edushade_auth` — row is preserved but enrichment can't resolve |
+| Status code is missing on some rows | `status_code` is only populated for events that originate from an HTTP handler; pure domain events (e.g. published from a worker) won't have one |
+| Impersonator is set but `user` is missing | The acting admin is loaded into `impersonated_as`; the impersonated user's row may be missing from RBAC if they were deleted |
+| Cannot see Activity Logs in the sidebar | You lack the `audit.read` permission; ask an admin to grant it |

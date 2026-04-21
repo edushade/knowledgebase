@@ -1,0 +1,16 @@
+{
+  "title": "Audit Module",
+  "icon": "ScrollText",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "audit-logs",
+    "activity-logs",
+    "my-activity-logs",
+    "event-ingestion",
+    "audit-middleware",
+    "filters-and-search",
+    "export",
+    "retention-and-cleanup"
+  ]
+}
