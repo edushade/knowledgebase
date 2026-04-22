@@ -39,8 +39,66 @@ Provider availability is also gated by tenant/deployment config — if a provide
 ### Step-by-Step Flow
 
 1. **Click the provider button** on the login or register page.
+
+<figure className="text-center">
+  <img
+    src="/content/images/register_via_social_media.png"
+    alt="Login and registration page with social login button"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+</figure>
+
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_icon_login_page.png"
+    alt="Login and registration page with social login buttons"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social login buttons on the login and registration pages. 
+  </figcaption>
+</figure>
 2. Frontend calls `GET /v1/oauth/{provider}` and receives a `redirect_url`.
 3. Browser navigates to the provider's authorization page.
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_google1.png"
+    alt="Social login options on the login page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_google2.png"
+    alt="Social Login via Google"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_google3.png"
+    alt="Social Login via Google"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+   <figcaption className="mt-2 text-sm text-gray-500">
+    Google Interface.
+  </figcaption>
+</figure>
+
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_facebook5.png"
+    alt="Social Login via Facebook"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Facebook Interface.
+  </figcaption>
+</figure>
+
 4. User grants EduShade permission to access their basic profile.
 5. Provider redirects back to `/auth/oauth/{provider}/callback?code=...&state=...`.
 6. Frontend posts the `code` and `state` to `POST /v1/oauth/{provider}/callback`.
@@ -49,6 +107,29 @@ Provider availability is also gated by tenant/deployment config — if a provide
    - Email matches an existing account → **link provider, then log in**
    - Neither → **create new account, then log in**
 8. Tokens are returned and stored; the user is redirected to their dashboard (or the `intended` URL captured before the OAuth flow).
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_google.png"
+    alt="Social Login via Google"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Dashboard after Google login.
+  </figcaption>
+</figure>
+
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_facebook3.png"
+    alt="Social Login via Facebook"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Dashboard after Facebook login.
+  </figcaption>
+</figure>
+
+
 
 ### What Gets Auto-Populated on First Sign-Up
 
