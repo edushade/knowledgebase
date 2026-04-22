@@ -1,0 +1,112 @@
+---
+title: "File Manager Module - Overview"
+description: "Complete guide to the EduShade File Manager — uploads, folders, previews, permissions, and storage backends"
+module: "filemanager"
+order: 0
+---
+
+# File Manager Module
+
+The **File Manager Module** is the centralised media and document management system of the EduShade platform. It handles everything from file uploads and folder trees to presigned S3 downloads, RBAC, attachments, and integrations with the learner dashboard, admin console, and website builder.
+
+## What This Module Covers
+
+| Feature | Description |
+|---------|-------------|
+| [Browsing Files](/docs/knowledgebase/filemanager-module/browsing-files) | List directory contents with pagination, search, and sorting |
+| [Folders](/docs/knowledgebase/filemanager-module/folders) | Create, rename, delete, and nest folders — paths auto-computed by the database |
+| [File Upload](/docs/knowledgebase/filemanager-module/file-upload) | Single-file (XHR) and multipart uploads with tenant-level size limits |
+| [Multipart Upload (Uppy)](/docs/knowledgebase/filemanager-module/multipart-upload) | The Uppy AwsS3 companion protocol used for large files |
+| [File Preview & Download](/docs/knowledgebase/filemanager-module/file-preview) | Presigned redirect URLs and inline streaming — by file ID or full path |
+| [File Management](/docs/knowledgebase/filemanager-module/file-management) | Rename and delete files and folders — soft-delete in DB, hard-delete in storage |
+| [Learner Uploads](/docs/knowledgebase/filemanager-module/learner-uploads) | The `/user/files` surface learners use for assignment submissions |
+| [Attachments](/docs/knowledgebase/filemanager-module/attachments) | Link files to other entities (lessons, notices, products, assignments) |
+| [Frontend Integration](/docs/knowledgebase/filemanager-module/frontend-integration) | Dialogs, hooks, and form fields used across the admin and learner UI |
+| [Website Builder Integration](/docs/knowledgebase/filemanager-module/website-builder-integration) | How blocks and forms in website-builder-v2 pick files |
+| [Roles & Permissions](/docs/knowledgebase/filemanager-module/roles-and-permissions) | The `file.*` permission set and how RBAC is enforced |
+| [Storage Backends](/docs/knowledgebase/filemanager-module/storage-backends) | S3 / MinIO configuration, bucket key layout, and URL signing |
+| [System API](/docs/knowledgebase/filemanager-module/system-api) | Inter-service routes for migrations, tenant cleanup, and batch checks |
+| [Security & Limits](/docs/knowledgebase/filemanager-module/security-and-limits) | Tenant isolation, upload caps, presigned URL expiry, and soft deletes |
+| [Audit & Events](/docs/knowledgebase/filemanager-module/audit-and-events) | Activity and audit events emitted by every write operation |
+
+## Architecture Overview
+
+The file manager is a standalone microservice (`filemanager`) that other backend services, the Next.js admin/learner frontend, and the website-builder-v2 app all talk to.
+
+### Key Components
+
+- **Backend**: Go (Gin framework) with Bun ORM on PostgreSQL
+- **Storage**: S3-compatible object storage (AWS S3 or MinIO) via the AWS SDK v2
+- **Frontend**: Wrapped with `@softimist/filemanager` for the React UI (file browser, pickers, dropzones)
+- **Multi-Tenancy**: Every file, folder, and bucket key is scoped to a tenant — no cross-tenant access is possible
+- **Events**: Every write emits both an **activity event** (for user-visible logs) and an **audit event** (for compliance trails)
+
+### Service Surfaces
+
+The service exposes four route groups, each with a different authentication model:
+
+| Surface | Prefix | Auth | Purpose |
+|---------|--------|------|---------|
+| **Admin** | `/api/v1/admin/files` | `AuthMiddleware` + RBAC | Full file-manager for admins and instructors |
+| **Public** | `/api/v1/files` | None | Direct file preview / download by ID or path |
+| **User** | `/api/v1/user/files` | `AuthMiddleware` | Learner upload surface (assignments, submissions) |
+| **System** | `/api/v1/system/files` | `SystemAPIAuthMiddleware` | Inter-service calls (migrations, tenant cleanup, batch checks) |
+
+### Data Model
+
+The file manager uses a **single unified `media` table** for both files and folders, discriminated by a `type` column (`file` or `folder`). Folder hierarchy is self-referential via `parent_id`, and the `full_path` column is auto-computed by PostgreSQL triggers.
+
+| Column | Description |
+|--------|-------------|
+| `id` | UUID primary key (generated) |
+| `tenant_id` | Tenant that owns the item |
+| `parent_id` | Parent folder ID — `NULL` means root |
+| `name` | Display name (file or folder) |
+| `full_path` | Auto-computed path, e.g. `/lesson-assets/images/cover.jpg` |
+| `type` | `"file"` or `"folder"` |
+| `mime_type` | Content-Type (empty string for folders) |
+| `bucket_key` | S3 object key — `{tenantID}/{YYYY-MM-DD}/{fileID}{ext}` |
+| `size_in_bytes` | File size (0 for folders) |
+| `metadata` | `JSONB` — flexible per-item metadata |
+| `created_at`, `updated_at` | Timestamps (auto-maintained) |
+| `deleted_at` | Soft-delete marker (`NULL` when active) |
+| `created_by`, `updated_by`, `deleted_by` | Actor user IDs (audit trail) |
+
+A separate `attachments` table links files to entities elsewhere in the platform — see [Attachments](/docs/knowledgebase/filemanager-module/attachments).
+
+> **Uniqueness:** `UNIQUE (tenant_id, parent_id, name)` — no two items can share a name inside the same folder, per tenant. Uploading or renaming into a collision returns `409 Conflict`.
+
+## How File Upload Works (High-Level Flow)
+
+```
+1. Frontend requests upload permission (optional pre-check)
+2. Small file (<= configured threshold) → POST /upload (multipart/form-data)
+   OR
+   Large file → Uppy multipart flow:
+     a. POST /upload/s3/multipart  → initiate, DB row created, uploadId returned
+     b. GET  /upload/s3/multipart/:upload_id/:part_number?key=...  → signed PUT per part
+     c. POST /upload/s3/multipart/:upload_id/complete?key=...       → assemble parts
+3. File record is now active in the media table
+4. Activity + audit events are emitted (file.uploaded, created)
+5. Frontend receives the file ID and can render / link it immediately
+```
+
+## Getting Started
+
+If you're an **end user** (learner), start with:
+1. [Learner Uploads](/docs/knowledgebase/filemanager-module/learner-uploads) — How to attach files to assignment submissions
+2. [File Preview & Download](/docs/knowledgebase/filemanager-module/file-preview) — How preview URLs work
+
+If you're an **administrator**, read:
+1. [Browsing Files](/docs/knowledgebase/filemanager-module/browsing-files) — Navigating the file library
+2. [File Upload](/docs/knowledgebase/filemanager-module/file-upload) — Uploading assets
+3. [Folders](/docs/knowledgebase/filemanager-module/folders) — Organising content
+4. [Roles & Permissions](/docs/knowledgebase/filemanager-module/roles-and-permissions) — Who can do what
+5. [Attachments](/docs/knowledgebase/filemanager-module/attachments) — Linking files to lessons, notices, and products
+
+If you're a **platform operator / developer**, also read:
+1. [Storage Backends](/docs/knowledgebase/filemanager-module/storage-backends) — Configuring S3 or MinIO
+2. [Multipart Upload](/docs/knowledgebase/filemanager-module/multipart-upload) — The Uppy AwsS3 companion protocol
+3. [System API](/docs/knowledgebase/filemanager-module/system-api) — Integrating other services
+4. [Security & Limits](/docs/knowledgebase/filemanager-module/security-and-limits) — Tenant isolation, upload caps
+5. [Audit & Events](/docs/knowledgebase/filemanager-module/audit-and-events) — What gets emitted on every change

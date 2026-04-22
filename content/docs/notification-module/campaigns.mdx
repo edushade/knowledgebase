@@ -1,0 +1,233 @@
+---
+title: "Campaigns"
+description: "Admin-authored broadcasts — transactional, marketing, and announcement campaigns with a 5-step wizard, lifecycle controls, and bulk operations"
+module: "notification"
+feature: "campaigns"
+order: 6
+---
+
+# Campaigns
+
+A **Campaign** is an admin-authored broadcast — a pre-built message pushed to a segment of users across one or more channels on a chosen schedule. Campaigns carry their own lifecycle (`DRAFT → SCHEDULED → RUNNING → COMPLETED`), their own analytics, and their own audit trail.
+
+## Accessing Campaigns
+
+1. Sign in as an **Admin** with `notification.view`.
+2. Navigate to **Admin → Notification → Campaigns** (`/admin/notification/campaigns`).
+3. Required permissions vary by action:
+
+| Action | Permission |
+|--------|------------|
+| View list & detail | `notification.view` |
+| Create campaign | `notification.create` |
+| Edit campaign | `notification.update` |
+| Delete campaign | `notification.delete` |
+| Send / rerun / pause / resume / cancel | `notification.send` |
+| View analytics | `notification.view` |
+| Export delivery logs | `notification.export` |
+
+## Campaign Types
+
+Every campaign is one of:
+
+| Type | Use case | Compliance behaviour |
+|------|----------|----------------------|
+| `TRANSACTIONAL` | Receipts, reminders, confirmations tied to a user action | Bypasses `MARKETING` preference suppression; no unsubscribe footer |
+| `MARKETING` | Promotional content | Subject to `MARKETING` type preference; unsubscribe footer auto-injected for email |
+| `ANNOUNCEMENT` | Platform-wide announcements | Subject to `SYSTEM_ANNOUNCEMENT` type preference; admins can force-deliver critical announcements via campaign settings |
+
+The type is picked in step 1 of the wizard and determines which [Notification Types](/docs/knowledgebase/notification-module/notification-types) the generated notifications will carry.
+
+## The Campaign Wizard
+
+Creating a campaign opens a 5-step wizard (`<CampaignWizard />`). Each step validates before advancing, and every step is revisit-able.
+
+### Step 1 — Campaign Details
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| **Name** | Yes | Admin-facing label; not shown to recipients |
+| **Type** | Yes | `TRANSACTIONAL` / `MARKETING` / `ANNOUNCEMENT` |
+| **Description** | No | Internal note |
+| **Tags** | No | Free-form labels for filtering the campaign list |
+
+### Step 2 — Select Audience
+
+Pick one [Segment](/docs/knowledgebase/notification-module/segments). The wizard calls `GET /v1/admin/notify/segments/{id}/size` to preview the expected recipient count before the admin continues.
+
+A segment must exist first — segments are built in the Segments area; the wizard cannot create one inline.
+
+### Step 3 — Template & Channels
+
+Pick one [Template](/docs/knowledgebase/notification-module/templates) and multi-select the target [Channels](/docs/knowledgebase/notification-module/channels) in a single step. For each selected channel, the UI indicates:
+
+- Whether the chosen template has non-empty content for the channel.
+- Whether at least one active [Provider](/docs/knowledgebase/notification-module/providers) is configured for the channel.
+
+Both problems are non-blocking at save time but are surfaced as warnings in the review step. Hovering a template shows a preview button that opens `<TemplatePreviewModal />` rendering every channel side-by-side.
+
+### Step 4 — Schedule
+
+Pick a `ScheduleType`:
+
+| Type | Description |
+|------|-------------|
+| `IMMEDIATE` | Start as soon as the campaign is sent |
+| `SCHEDULED` | One-off start at `scheduled_at` (ISO timestamp, stored in UTC; the UI takes a timezone hint via `settings.timezone`) |
+| `RECURRING` | Repeat according to `recurrence_rule` — an iCalendar RRULE string |
+
+See [Scheduling](/docs/knowledgebase/notification-module/scheduling) for RRULE examples, timezone handling, and the re-evaluation cadence.
+
+This step also exposes the **Campaign Settings** block:
+
+| Setting | Description |
+|---------|-------------|
+| `quiet_hours_enabled` | Campaign-level DND override — see [Quiet Hours](/docs/knowledgebase/notification-module/quiet-hours) |
+| `quiet_hours_start` / `quiet_hours_end` | `HH:MM` in `settings.timezone` |
+| `skip_recent_contacts` | Skip users who have received *any* notification in the last `skip_recent_days` days |
+| `skip_recent_days` | Number of days for the skip-recent window |
+| `ab_test_enabled` | Enable [A/B Testing](/docs/knowledgebase/notification-module/ab-testing) — early-preview toggle |
+| `ab_test_percentage` | Test-group split as a percent of the segment |
+| `timezone` | IANA timezone the schedule is interpreted in |
+
+### Step 5 — Review & Confirm
+
+A final summary with every prior choice. At this step the admin chooses between **Save as Draft** (status → `DRAFT`) and **Send** (status → `RUNNING` for an immediate campaign, or `SCHEDULED` if `scheduled_at` is in the future).
+
+## Campaign Statuses
+
+| Status | Description | Next states |
+|--------|-------------|-------------|
+| `DRAFT` | Being authored | `SCHEDULED`, `RUNNING`, `CANCELLED` |
+| `SCHEDULED` | Awaiting `scheduled_at` | `RUNNING`, `CANCELLED` |
+| `RUNNING` | Dispatching to recipients | `PAUSED`, `COMPLETED`, `FAILED`, `CANCELLED` |
+| `PAUSED` | Dispatch halted | `RUNNING`, `CANCELLED` |
+| `COMPLETED` | Every recipient processed | (terminal; can be rerun) |
+| `CANCELLED` | Admin cancelled | (terminal) |
+| `FAILED` | Terminal failure | (terminal) |
+
+## Campaign Controls
+
+The campaign list row, the detail page, and bulk toolbars all expose the same lifecycle actions:
+
+| Action | Endpoint | Allowed from |
+|--------|----------|--------------|
+| **Send** | `POST /v1/admin/notify/campaigns/{id}/send` | `DRAFT`, `SCHEDULED` |
+| **Pause** | `POST /v1/admin/notify/campaigns/{id}/pause` | `RUNNING` |
+| **Resume** | `POST /v1/admin/notify/campaigns/{id}/resume` | `PAUSED` |
+| **Rerun** | `POST /v1/admin/notify/campaigns/{id}/rerun` | `COMPLETED`, `FAILED`, `CANCELLED` |
+| **Cancel** | `POST /v1/admin/notify/campaigns/{id}/cancel` | Any non-terminal state |
+| **Duplicate** | `POST /v1/admin/notify/campaigns/{id}/duplicate` | Any state |
+
+Rerun creates a fresh dispatch against the segment's *current* membership — so a segment that has grown since the original send will receive new contacts too. Duplicate copies the campaign to a fresh `DRAFT`.
+
+## Campaign Counters
+
+Each campaign row carries live counters, updated as the dispatch progresses:
+
+| Counter | Description |
+|---------|-------------|
+| `total_contacts` | Recipients resolved at send time |
+| `sent_count` | Notifications successfully handed to a provider |
+| `delivered_count` | Provider-confirmed deliveries |
+| `opened_count` | Email opens + push confirmed deliveries + inbox reads |
+| `clicked_count` | Link clicks in any channel |
+| `bounced_count` | Hard bounces |
+| `failed_count` | Provider-rejected sends |
+
+See [Analytics](/docs/knowledgebase/notification-module/analytics) for derived rates (delivery rate, open rate, click rate) and timeline charts.
+
+## Campaign List — Filters & Bulk Actions
+
+The list (`/admin/notification/campaigns`) is backed by `<CampaignsDataTable />`.
+
+### Filters
+
+| Filter | Description |
+|--------|-------------|
+| **Search** | Fuzzy match on name, description, tags |
+| **Status** | Any of the seven campaign statuses |
+| **Type** | `TRANSACTIONAL` / `MARKETING` / `ANNOUNCEMENT` |
+| **Channel** | Any of the seven channels |
+| **Created by** | Admin who created the campaign |
+| **Created date range** | `created_after` / `created_before` |
+| **Scheduled date range** | For `SCHEDULED` campaigns |
+
+### Bulk Actions
+
+Select multiple rows to:
+
+- Bulk delete (`useCampaignBulkDelete`)
+- Bulk cancel
+- Bulk duplicate
+- Export selected campaign metadata as CSV
+
+The list UI reserves a **conflict-warning panel** (`<CampaignConflictDetector />`) that surfaces overlapping campaigns against the same segment — a common foot-gun for multi-push marketing weeks. The panel is wired into the list layout today but the underlying detection is still a stub with sample data; treat the warnings as advisory, not authoritative.
+
+## Campaign Detail Page
+
+Route: `/admin/notification/campaigns/{id}`.
+
+Sections:
+
+| Section | Contents |
+|---------|----------|
+| **Header** | Name, status badge, type, created by, schedule summary, lifecycle action buttons |
+| **Summary** | Segment, template, channels, settings snapshot |
+| **Counters** | Live counters as above |
+| **Analytics** | Link to the full analytics dashboard at `/admin/notification/campaigns/analytics/{id}` |
+| **Contacts** | Paginated list of recipients (`GET /v1/admin/notify/campaigns/{id}/contacts`) — includes per-user status and timestamps |
+| **Delivery Logs** | Paginated delivery-log table (`GET /v1/admin/notify/campaigns/{id}/delivery-logs`) — per-attempt, per-channel entries |
+| **Audit trail** | Who scheduled / paused / resumed / edited, with before/after diffs |
+
+## Editing a Campaign
+
+Route: `/admin/notification/campaigns/{id}/edit`.
+
+- `DRAFT` and `SCHEDULED` campaigns are fully editable.
+- `RUNNING` / `PAUSED` campaigns allow edits only to `settings` (e.g. quiet hours, schedule) — the segment, template, and channels are frozen to protect analytics.
+- `COMPLETED` / `CANCELLED` / `FAILED` campaigns are read-only; use **Duplicate** to iterate.
+
+API: `PUT /v1/admin/notify/campaigns/{id}` (requires `notification.update`).
+
+## API Reference
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/v1/admin/notify/campaigns` | GET | List campaigns (paginated, filterable) |
+| `/v1/admin/notify/campaigns` | POST | Create campaign |
+| `/v1/admin/notify/campaigns/{id}` | GET | Fetch single campaign |
+| `/v1/admin/notify/campaigns/{id}` | PUT | Update campaign |
+| `/v1/admin/notify/campaigns/{id}` | DELETE | Delete campaign (hard-delete for DRAFTs, soft-delete otherwise) |
+| `/v1/admin/notify/campaigns/{id}/send` | POST | Send now (or schedule) |
+| `/v1/admin/notify/campaigns/{id}/pause` | POST | Pause a running campaign |
+| `/v1/admin/notify/campaigns/{id}/resume` | POST | Resume a paused campaign |
+| `/v1/admin/notify/campaigns/{id}/rerun` | POST | Rerun against current segment membership |
+| `/v1/admin/notify/campaigns/{id}/cancel` | POST | Cancel a non-terminal campaign |
+| `/v1/admin/notify/campaigns/{id}/duplicate` | POST | Clone the campaign into a new DRAFT |
+| `/v1/admin/notify/campaigns/{id}/analytics` | GET | Full analytics payload |
+| `/v1/admin/notify/campaigns/{id}/contacts` | GET | Paginated recipient list |
+| `/v1/admin/notify/campaigns/{id}/delivery-logs` | GET | Paginated delivery-log list |
+
+## Related Features
+
+- [Templates](/docs/knowledgebase/notification-module/templates) — reusable per-channel content
+- [Segments](/docs/knowledgebase/notification-module/segments) — audience selection
+- [Scheduling](/docs/knowledgebase/notification-module/scheduling) — schedule types and RRULE
+- [A/B Testing](/docs/knowledgebase/notification-module/ab-testing) — split-testing recipients
+- [Quiet Hours](/docs/knowledgebase/notification-module/quiet-hours) — DND windows
+- [Analytics](/docs/knowledgebase/notification-module/analytics) — campaign metrics
+- [Delivery Logs](/docs/knowledgebase/notification-module/delivery-logs) — per-notification delivery status
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Can't save — "Template missing content for channel X" | Either add content for that channel in the template or deselect the channel in step 4 |
+| Campaign stuck in `SCHEDULED` past its `scheduled_at` | Scheduler worker may be backed up; check provider health at `/v1/admin/notify/system/providers/health` |
+| Segment size shown as 0 | The segment filter matches no users; open the segment and preview the filter |
+| Recipient count at send time differs from pre-send estimate | Expected — the segment is re-resolved at send time to reflect latest user state |
+| Rerun sent to users who already got it | Rerun intentionally targets the current segment; use `skip_recent_contacts` + `skip_recent_days` to suppress recent recipients |
+| Can't edit a `RUNNING` campaign's template | Correct — templates are frozen after dispatch starts. Duplicate and iterate |
+| Pause didn't stop all deliveries | In-flight per-recipient messages already handed to a provider complete; queued ones are held |
+| Counters never reach `total_contacts` | Some recipients failed all their channels (preferences off + no deliverable channel); check delivery logs with status `FAILED` |

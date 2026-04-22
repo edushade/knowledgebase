@@ -1,0 +1,160 @@
+---
+title: "Inbox"
+description: "The in-app notification centre — bell icon, popover/sheet, unread badge, infinite scroll, and mark-as-read"
+module: "notification"
+feature: "inbox"
+order: 1
+---
+
+# Inbox
+
+Every signed-in user on the EduShade platform has a personal **Inbox** — an in-app notification centre that mirrors every notification the system sent them (regardless of which channels also delivered it). The inbox is the canonical record the user can always return to.
+
+## Where the Inbox Lives
+
+The inbox surface differs slightly between the learner and the admin area, but the underlying data and APIs are identical.
+
+| Surface | UI entry point | Display style |
+|---------|----------------|---------------|
+| **Learner** | Bell icon in the left sidebar (`/dashboard/*`) | Slide-out **Sheet** from the right |
+| **Admin** | Bell icon in the top bar (`/admin/*`) | **Popover** anchored to the bell, max height 500 px |
+
+Both surfaces use the same `useNotifications()` hook, the same data-table of items, and the same mark-as-read behaviour.
+
+## The Bell Icon
+
+The bell icon shows an **unread count badge** when there are unread notifications. The badge caps at `9+` — if you have 10 or more unread, it will show `9+` rather than the raw number.
+
+The badge number is maintained by a lightweight polling hook (`useUnreadCount()`) that:
+
+- Fetches `GET /v1/user/notify/inbox/unread-count` on mount
+- Refetches every **60 seconds** in the background
+- Also refetches whenever you mark any notification(s) as read
+
+There is no WebSocket or SSE — the inbox is polling-based. Browser push notifications (see [Push Notifications](/docs/knowledgebase/notification-module/push-notifications)) provide the real-time experience; the inbox is the durable record.
+
+## Notification List
+
+Opening the bell reveals a scrollable list of the user's notifications, newest first.
+
+### What You See Per Item
+
+Each row displays:
+
+| Element | Description |
+|---------|-------------|
+| **Icon** | Picked by `type` — e.g. `COURSE_UPDATE` → open book, `QUIZ_REMINDER` → clipboard, `CERTIFICATE` → award (full mapping in [Notification Types](/docs/knowledgebase/notification-module/notification-types)) |
+| **Title** | Short, bold headline |
+| **Body** | One or two lines of context |
+| **Timestamp** | Relative time (e.g. "5 minutes ago") via `formatDistanceToNow`, locale-aware (English and Bengali) |
+| **Unread dot** | A small blue dot on the right if `is_read` is false |
+| **Styling** | Unread items use a stronger font weight and higher-contrast colour |
+
+Items are clickable. Clicking an item:
+
+1. Records a click via `POST /v1/user/notify/inbox/{id}/click` (used for engagement analytics)
+2. Marks the notification as read (same call implicitly updates `is_read` + `read_at`)
+3. Navigates to the notification's `action_url` if present (opens in the same tab by default)
+
+### Pagination — Cursor-Based Infinite Scroll
+
+The inbox uses **cursor-based pagination** via `GET /v1/user/notify/inbox`:
+
+- Initial page: default page size (typically 20)
+- A `loadMoreRef` sentinel at the bottom of the list triggers `fetchNextPage()` as it scrolls into view
+- The response carries `{ has_next, has_previous, next_cursor, prev_cursor, total? }`
+- When `has_next` is `false`, a footer line reads **"You're all caught up!"**
+
+Cursor pagination is chosen over offset pagination because a user's inbox can grow large and new inserts at the head would otherwise shift offsets mid-scroll.
+
+## Marking as Read
+
+There are three ways a notification transitions to read.
+
+### 1. Click
+
+Clicking the row implicitly marks it as read (see above).
+
+### 2. Explicit Mark — Single
+
+Each item exposes a context action to mark it as read without navigating. Underlying call: `POST /v1/user/notify/inbox/read` with body `{ notification_ids: [id] }`.
+
+### 3. Mark All as Read
+
+A **Mark All as Read** button in the footer of the sheet/popover clears the entire unread list for the current user in one call: `POST /v1/user/notify/inbox/read-all`. The unread-count badge drops to zero immediately via optimistic update.
+
+While either mark-as-read operation is in flight, the button shows a loading state (`isMarkingAsRead` / `isMarkingAllAsRead`).
+
+## Empty & Loading States
+
+| State | UI |
+|-------|----|
+| **Initial load** | Centered spinner with "Loading notifications…" (localized via `Notification.Loading`) |
+| **Empty (no notifications ever)** | Illustration + "No notifications yet" (`Notification.NoNotifications`) |
+| **End of list** | "You're all caught up!" (`Notification.EndOfList`) |
+| **Fetching next page** | Spinner at the bottom of the list |
+| **Error** | Toast via Sonner; list falls back to last known data |
+
+## Data Model
+
+The inbox response returns `InboxNotification` objects:
+
+| Field | Description |
+|-------|-------------|
+| `id` | UUID of the notification |
+| `type` | One of the canonical notification type values (see [Notification Types](/docs/knowledgebase/notification-module/notification-types)) |
+| `title` | Bold headline shown in the row |
+| `body` | Short description |
+| `icon` | Optional override icon URL (otherwise the type's default icon is used) |
+| `image_url` | Optional hero image |
+| `action_url` | Optional deep link the row navigates to on click |
+| `action_type` / `action_id` | Optional structured action metadata (e.g. `{action_type: "course", action_id: "<uuid>"}`) |
+| `metadata` | Free-form JSON for sender-specific context |
+| `is_read` | Boolean read flag |
+| `read_at` | ISO timestamp when read (or null) |
+| `created_at` | ISO timestamp of creation |
+
+## API Reference
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/v1/user/notify/inbox` | GET | Cursor-paginated list of the current user's notifications |
+| `/v1/user/notify/inbox/unread-count` | GET | Returns the unread count (used by the badge poller) |
+| `/v1/user/notify/inbox/read` | POST | Body `{ notification_ids: string[] }` — mark specified notifications as read |
+| `/v1/user/notify/inbox/read-all` | POST | Mark every unread notification for the user as read |
+| `/v1/user/notify/inbox/{id}/click` | POST | Record a click (also flips `is_read` → true) |
+
+All endpoints are scoped to the authenticated user — there is no cross-user inbox access, even for admins. Admins wanting to see another user's notifications should use [Delivery Logs](/docs/knowledgebase/notification-module/delivery-logs) instead.
+
+## Localisation
+
+The inbox UI strings live under the `Notification` and `LearnerSidebar` keys in the dictionary (`/dictionary/en.json`, `/dictionary/bn.json`):
+
+| Key | English | Bengali |
+|-----|---------|---------|
+| `Notification.Title` | "Notification" | "নোটিফিকেশন" |
+| `Notification.MarkAsRead` | "Mark as read" | "পঠিত হিসেবে চিহ্নিত করুন" |
+| `Notification.ViewAll` | "View All Notifications" | "সব নোটিফিকেশন দেখুন" |
+| `Notification.Loading` | "Loading notifications…" | "নোটিফিকেশন লোড হচ্ছে…" |
+| `Notification.NoNotifications` | "No notifications yet" | "এখনও কোনো নোটিফিকেশন নেই" |
+| `Notification.EndOfList` | "You're all caught up!" | "সব নোটিফিকেশন পড়া হয়েছে" |
+
+Relative timestamps use `date-fns` with the user's active locale.
+
+## Performance Notes
+
+- The inbox list is backed by React Query with cache key `["notifications", "inbox"]`.
+- The unread-count query uses `["notifications", "unread-count"]` and `refetchInterval: 60_000`.
+- Mark-as-read mutations optimistically update both cache entries, then invalidate on settle.
+- Each page from the cursor API typically contains 20 items; tune via the `limit` option on `useNotifications({ limit })`.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Bell badge never updates | Confirm the user is authenticated; open devtools and verify `unread-count` is being polled every 60 s |
+| Notifications arriving on other channels but not in inbox | Check the sender — transient server-side channels (SMS, webhook-only) may intentionally skip the inbox copy. See [Channels](/docs/knowledgebase/notification-module/channels) |
+| Click navigates to the wrong page | Ensure the sender is populating `action_url` correctly; unknown links fall back to the dashboard home |
+| Mark-all-as-read takes too long | The endpoint is O(N) for unread items; for power users with thousands of unread notifications the call may be visibly slow |
+| Infinite scroll stops prematurely | The `loadMoreRef` must be visible — if it's hidden by a layout change, scroll will not trigger |
+| Unread count doesn't match visible items | The count is authoritative — reload the inbox; local state may have drifted if mark-as-read calls were cancelled |

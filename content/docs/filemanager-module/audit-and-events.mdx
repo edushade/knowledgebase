@@ -1,0 +1,193 @@
+---
+title: "Audit & Events"
+description: "Activity and audit events emitted by every write — upload, delete, rename, folder create, multipart transitions"
+module: "filemanager"
+feature: "audit-and-events"
+order: 15
+---
+
+# Audit & Events
+
+Every write to the file manager emits one or two events asynchronously after the HTTP response has been returned. Downstream services consume these independently — the audit service stores a compliance-grade trail; the activity feed surfaces user-visible history.
+
+The event publisher is the shared `events.EntityEventPublisher` (same bus used by auth, tenant, and the other services). All events carry `module = "filemanager"`.
+
+## Two Event Streams
+
+### Activity Events
+
+Written to the activity log and surfaced to admins via **Audit Logs** (requires `audit.view` in the audit service) and to users via their own activity feed.
+
+| `Action` | Triggered by | Metadata |
+|----------|-------------|----------|
+| `file.uploaded` | XHR upload on admin / user / system routes | `file_id`, `name`, `size_in_bytes`, `mime_type` |
+| `file.multipart_started` | Multipart initiate (both Uppy and system variants) | `name`, `size_in_bytes` |
+| `file.multipart_completed` | Multipart complete | `upload_id`, `bucket_key` |
+| `file.multipart_aborted` | Multipart abort | `upload_id`, `bucket_key` |
+| `file.deleted` | Learner deleting their own file (`DELETE /user/files/{id}`) | `file_id` |
+| `media.deleted` | Admin delete via `DELETE /admin/files/{item_id}` (files or folders) | `item_id` |
+| `media.renamed` | Rename via `PATCH /admin/files/{item_id}` | `item_id`, `new_name` |
+| `directory.created` | Folder create in root or nested | `dir_id`, `name`, and `parent_id` (when nested) |
+
+Each event carries the actor (`UserID`), `TenantID`, `Module = "filemanager"`, `Title` (human-readable), `IPAddress`, `UserAgent`, and `Timestamp`.
+
+### Audit Events
+
+Written to the audit log and used for compliance reporting.
+
+| `Action` | `ResourceType` | Triggered by |
+|----------|----------------|-------------|
+| `created` | `file` | XHR upload, multipart complete |
+| `created` | `directory` | Folder create |
+| `created` | `multipart_upload` | Multipart initiate |
+| `updated` | `media` | Rename |
+| `deleted` | `media` | Admin delete (file or folder) |
+| `deleted` | `multipart_upload` | Multipart abort |
+
+Each audit event carries `TenantID`, `ActorID`, `Action`, `ResourceType`, `ResourceID`, `Module = "filemanager"`, a `Description`, an optional `BeforeValue` / `AfterValue`, `IPAddress`, `UserAgent`, and `Timestamp`.
+
+## Why Two Streams?
+
+Activity events are designed for **user-facing feeds** — short, descriptive, high-volume. They can be aggregated or truncated without affecting compliance. Audit events are **compliance-grade** — longer retention, explicit `before`/`after` values, and stricter access control.
+
+Having two streams means a tenant can retain audit logs for years while pruning activity logs aggressively, without custom logic in the file manager.
+
+## Event Fan-Out
+
+```
+Upload a file
+ └→ activity: { action: "file.uploaded", title: "Uploaded file: lecture.pdf", ... }
+ └→ audit:    { action: "created", resource_type: "file", resource_id: "<file_id>", ... }
+```
+
+```
+Start + complete multipart
+ 1. Initiate → activity: "file.multipart_started"   audit: "created" / "multipart_upload"
+ 2. Complete → activity: "file.multipart_completed" audit: "created" / "file"
+```
+
+```
+Abort multipart
+ └→ activity: "file.multipart_aborted"
+ └→ audit:    "deleted" / "multipart_upload"
+```
+
+```
+Rename a file or folder
+ └→ activity: "media.renamed", metadata.new_name
+ └→ audit:    "updated" / "media", after_value: { name }
+```
+
+```
+Delete a file or folder (admin)
+ └→ activity: "media.deleted"
+ └→ audit:    "deleted" / "media"
+```
+
+```
+Delete own file (learner route)
+ └→ activity: "file.deleted", title: "Deleted own file"
+ └→ audit:    (none — activity only)
+```
+
+Every entry carries the actor, tenant ID, target ID, IP, user agent, and timestamp.
+
+## Asynchronous Publishing
+
+Events are published in **goroutines** after the HTTP response is written:
+
+```go
+c.JSON(http.StatusOK, response.Success("File uploaded successfully", file))
+
+go events.PublishActivityEvent(c.Request.Context(), h.eventPublisher, &events.ActivityEventPayload{ ... })
+go events.PublishAuditEvent(c.Request.Context(), h.eventPublisher, &events.AuditEventPayload{ ... })
+```
+
+Implications:
+
+- **The caller gets `200 OK` before events are published.** If the bus is down, the operation still succeeds.
+- **Event ordering is best-effort.** For a rapid sequence of writes, events may arrive out of order downstream. Consumers that need strict ordering should sort by `Timestamp`.
+- **No event retry on failure.** If `PublishActivityEvent` returns an error it is logged and dropped. For critical audit trails, ensure the event bus is highly available.
+
+## Actor Resolution
+
+| Source | Actor ID |
+|--------|----------|
+| Admin route | `middlewares.GetUserID(c)` — user_id from JWT |
+| User route | Same — learner's user_id |
+| System route | System user ID embedded in the system-api token |
+
+Tenant is always `middlewares.GetTenantID(c)`.
+
+## IP Address Handling
+
+Activity events use `ipinfo.GetPublicIP(c.ClientIP(), c.Request)` which prefers the first non-private IP in the `X-Forwarded-For` chain — so behind a load balancer the real client IP is recorded, not the LB's IP. Audit events use `c.ClientIP()` directly.
+
+## Metadata Fields
+
+Each event type has a specific metadata shape. Examples:
+
+```json
+// file.uploaded activity metadata
+{
+  "file_id": "0190d1e5-....",
+  "name": "lecture.pdf",
+  "size_in_bytes": 2881234,
+  "mime_type": "application/pdf"
+}
+
+// media.renamed activity metadata
+{
+  "item_id": "0190d1e5-....",
+  "new_name": "lecture-final.pdf"
+}
+
+// directory.created activity metadata (nested)
+{
+  "dir_id": "0190cf2d-....",
+  "name": "covers",
+  "parent_id": "0190cf2c-...."
+}
+```
+
+## What Isn't Emitted
+
+The file manager deliberately does **not** emit events for:
+
+- **Preview / download calls.** Signing a presigned URL is high-volume and low-signal for audit. If you need download audits, wrap the storage layer with a logging adapter.
+- **List / browse calls.** Same reasoning.
+- **System API reads.** Batch existence checks and tenant deletions emit events for the *write* half only.
+
+If you need broader audit coverage, consider adding audit events at the service-method level rather than in every handler — or instrument the storage adapter.
+
+## Downstream Consumers
+
+The events are consumed by other services (names may vary by deployment):
+
+| Consumer | Uses |
+|----------|------|
+| **audit-service** | Stores every audit event for long-term compliance reporting |
+| **notification-service** | Optionally turns activity events into in-app notifications (e.g. "Your submission was uploaded") |
+| **analytics pipeline** | Aggregates activity events for dashboards (uploads per tenant, storage growth trends) |
+
+Each consumer subscribes independently. The file manager is oblivious to who is listening — if no consumer is attached, events just drop on the bus.
+
+## Viewing Events
+
+- **Admin audit log:** available via the audit-service's `/v1/audit/events` endpoint with `audit.view`. Filter by `module = "filemanager"` to see only file manager events.
+- **Activity feed for a user:** available via the audit-service activity endpoints; filter by `user_id`.
+- **Direct DB query:** audit events are stored in the audit-service's `audit_events` table (owned by that service, not the file manager).
+
+See the [auth-module security-features](/docs/knowledgebase/auth-module/security-features#audit--activity-event-publishing) doc for the equivalent auth-side event list and the audit / activity event shape.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| No events in the audit log after uploading | Check the event bus is running and the audit-service is subscribed. The file manager itself doesn't know — look at the audit-service logs |
+| Events have wrong IP | Ensure your load balancer sets `X-Forwarded-For` and the service is configured to trust it (`ipinfo.GetPublicIP`) |
+| Events arriving out of order | Expected — publishing is async. Sort downstream by `Timestamp` |
+| Events missing for learner delete | Learner delete emits activity only, not audit. If you need an audit record, extend the handler |
+| Preview calls not audited | Intentional — not emitted. Wrap the storage layer if you need download audits |
+| Events have null `parent_id` for a nested folder | Only nested `directory.created` events include `parent_id` in metadata. Root-folder creation omits it |
+| Actor is an empty string | The caller used the system-api token but the JWT subject was blank. Verify `system_api.auth_token` is a properly-signed JWT with a `user_id` claim |

@@ -1,0 +1,153 @@
+---
+title: "File Upload"
+description: "Single-file XHR uploads and the multipart flow, with tenant-level size limits and idempotent IDs"
+module: "filemanager"
+feature: "file-upload"
+order: 3
+---
+
+# File Upload
+
+The file manager supports two upload paths: a simple single-file XHR upload (for small files) and a multipart flow that directly streams large files to S3 via presigned URLs. The frontend picks automatically based on file size.
+
+## Upload Paths
+
+| Method | When to use | Transport | Endpoint |
+|--------|-------------|-----------|----------|
+| **XHR Upload** | Small files, simple UI dropzones | `multipart/form-data` through the service | `POST /v1/admin/files/upload` (admin) or `POST /v1/user/files/upload` (learner) |
+| **Multipart Upload** | Large files (> 16 MiB in practice) | Browser streams parts directly to S3 | Uppy-compatible flow — see [Multipart Upload](/docs/knowledgebase/filemanager-module/multipart-upload) |
+| **Presigned PUT** | Single-shot direct-to-S3 for Uppy AwsS3 plugin | Browser sends one `PUT` straight to S3 | `GET /v1/admin/files/upload/s3/params` |
+
+Both paths end with a row in the `media` table (`type = 'file'`) and emit the same activity/audit events.
+
+## Single-File XHR Upload
+
+### Request
+
+- **Endpoint:** `POST /v1/admin/files/upload` (admin) or `POST /v1/user/files/upload` (learner)
+- **Auth:** `AuthMiddleware` + `file.upload` (admin only — the learner route has no RBAC)
+- **Content-Type:** `multipart/form-data`
+
+**Form fields:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `file` | file | Yes | The file to upload |
+| `dir_id` | UUID (form or `?dir_id=`) | No | Target folder. Omit for root |
+| `file_id` | UUID (form field) | No | Deterministic file ID — used by the migration service for idempotent uploads |
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "File uploaded successfully",
+  "data": {
+    "file_id": "0190d1e5-...",
+    "dir_id": "0190cf2c-...",
+    "tenant_id": "0000....-0001",
+    "name": "lecture.pdf",
+    "size_in_bytes": 2881234,
+    "mime_type": "application/pdf",
+    "bucket_key": "0000....-0001/2025-04-22/0190d1e5-....pdf",
+    "path": "/lesson-assets/lecture.pdf",
+    "created_at": "2025-04-22T09:30:11Z",
+    "created_by": "0190a7d2-..."
+  }
+}
+```
+
+### What Happens Server-Side
+
+1. Tenant ID and user ID are extracted from the JWT.
+2. The optional `file_id` is parsed; if present **and** already exists in the tenant's `media` table, the upload is **skipped** and the existing row is returned (migration idempotency).
+3. File size is validated against the tenant's `Media.MaxUploadFileSize` (or `Media.MaxUploadFileSizeForLearner` on `/user/` routes) — see [Size Limits](#size-limits).
+4. A new row is inserted into `media` with `type = 'file'`, auto-generated UUID v7 if no `file_id` was passed, and `bucket_key = {tenantID}/{YYYY-MM-DD}/{fileID}{ext}`.
+5. The service streams the file to S3 using `UploadMultipart` — even the "single-file XHR" path uses S3 multipart under the hood for files > 16 MiB to avoid MinIO's per-PUT chunk limit.
+6. On storage failure the DB row is deleted to avoid orphaned metadata.
+7. Activity + audit events are published asynchronously.
+
+## Size Limits
+
+Upload size is **tenant-configurable** through the tenant service's `TenantSettings.Media` block:
+
+| Setting | Applies to | Unit |
+|---------|-----------|------|
+| `Media.MaxUploadFileSize` | Admin + system uploads | **MB** |
+| `Media.MaxUploadFileSizeForLearner` | `/user/files/*` uploads only, if > 0 | **MB** |
+
+If a learner-specific value is not set (or is 0), the learner route falls back to `Media.MaxUploadFileSize`. If neither is set, there is **no explicit cap** from the file manager — only the service's own enforcement and storage limits apply.
+
+When a file exceeds the limit, the server responds `400 Bad Request` with:
+
+> "File size exceeds the allowed limit of `{N}` MB. Please upload a smaller file."
+
+The underlying detail message (in the error payload) is `"size {N} bytes exceeds max {M} bytes"`.
+
+## Learner Route Detection
+
+The service decides whether the learner limit applies by checking whether the request's **full path starts with `/api/v1/user/`**. Admin and system routes use the standard admin limit.
+
+## Idempotent Uploads (`file_id`)
+
+The `file_id` form field lets an upstream caller (typically the migration service) choose the file's UUID ahead of time:
+
+- If the given `file_id` **already exists** in the tenant, the handler returns the existing record with `200 OK` and does **not** re-upload.
+- If it does not exist, a new record is created with that exact ID.
+
+This is used by `POST /v1/system/files/check` (see [System API](/docs/knowledgebase/filemanager-module/system-api)) to pre-filter files that were already migrated.
+
+## Name Collisions
+
+If a file with the same `name` already exists in the same parent folder, the upload fails with:
+
+- **HTTP:** `409 Conflict`
+- **Message:** "A file with this name already exists in the specified directory. Please choose a different name or delete the existing file."
+
+The DB-level `UNIQUE (tenant_id, parent_id, name)` constraint is what rejects the insert; the service maps that to `ErrDuplicate`.
+
+## MIME Type Detection
+
+The stored `mime_type` comes from the browser's `Content-Type` header on the multipart part (`f.Header.Get("Content-Type")`). The service does **not** re-sniff the content. If the browser sends `application/octet-stream` for an image, that is what gets stored.
+
+The `config.yaml` field `storage.allowed_types` lists allowed MIME types (`image/jpeg`, `image/png`, `image/gif`, `application/pdf`, `text/plain`, Word documents) but this is part of the base config and the filemanager handlers do **not** currently enforce it at the application level — enforcement is primarily driven by the tenant size limit and by frontend `accept` attributes.
+
+## Bucket Key Layout
+
+Every uploaded file is stored at:
+
+```
+{tenant_id}/{YYYY-MM-DD}/{file_id}{extension}
+```
+
+Example: `0000....-0001/2025-04-22/0190d1e5-....pdf`
+
+The date prefix is the upload date (UTC). This layout gives you natural partitioning for S3 lifecycle rules and tenant-scoped cleanup (see [System API — Delete Tenant Files](/docs/knowledgebase/filemanager-module/system-api#delete-all-tenant-files)).
+
+## Events Emitted
+
+On a successful XHR upload:
+
+| Event | Fields |
+|-------|--------|
+| **Activity** | `action = "file.uploaded"`, `module = "filemanager"`, title `"Uploaded file: {name}"`, metadata `{file_id, name, size_in_bytes, mime_type}` |
+| **Audit** | `action = "created"`, `resource_type = "file"`, `resource_id = {file_id}`, `after_value = {name, size_in_bytes, mime_type}` |
+
+Both are published in background goroutines after the response is returned.
+
+## Rate Limiting
+
+The `filemanager` service config defines a **global rate limit of 1000 requests/minute** and a **per-user rate limit of 100 requests/minute** (`rate_limit.global` and `rate_limit.per_user` in `config.yaml`). Uploads share this budget with every other call to the service. There are no upload-specific rate limit rules at the time of writing.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "File size exceeds the allowed limit of X MB" | Tenant upload cap — raise `media.max_upload_file_size` in tenant settings, or ask an admin |
+| `409` "A file with this name already exists" | Rename the file, or delete the existing one in that folder |
+| "No file provided or file upload failed" | The request is missing the `file` form field, or multipart was malformed |
+| "Invalid directory ID format" | `dir_id` must be a valid UUID — omit to upload to root |
+| `500` with partial upload | Storage layer failed; the DB row is rolled back. Retry — if it repeats, check S3 credentials/endpoint |
+| Upload hangs at "pending" | The frontend may be waiting for S3 multipart — use the browser network tab to confirm which path is active and see [Multipart Upload](/docs/knowledgebase/filemanager-module/multipart-upload) |
+| `403` Forbidden on `/admin/files/upload` | Missing `file.upload` permission — see [Roles & Permissions](/docs/knowledgebase/filemanager-module/roles-and-permissions) |
+| MinIO returns 400 on large files | The client is using single-PUT instead of multipart — files above 16 MiB must use the multipart flow |

@@ -1,0 +1,134 @@
+---
+title: "Bulk Operations"
+description: "Bulk CSV export and bulk delete for categories — how filters apply, what's in the CSV, and safety rules"
+module: "misc"
+feature: "bulk-operations"
+order: 6
+---
+
+# Bulk Operations
+
+The misc module exposes two bulk operations today, both for **categories**: **bulk CSV export** and **bulk delete**. Both respect the standard category list filters, so you can scope either operation to exactly the subset you want.
+
+> Tags do not have a bulk API in misc-service. If you need to clear many tags at once, use the admin UI's row-by-row delete or script it against `DELETE /api/v1/admin/tags/{tag_id}`.
+
+## Bulk Export (Categories)
+
+Download a CSV of categories — optionally filtered — for reporting, backup, or migration to another tenant.
+
+- **Endpoint:** `GET /api/v1/admin/categories/bulk/export`
+- **Permission:** `category.view`
+- **UI:** from the Categories list page, apply your filters and click **Export**.
+- **Response:** a streamed CSV download
+
+### Filename
+
+The filename follows `categories-YYYY-MM-DD-HH-MM-SS.csv` based on the server's current time.
+
+### CSV Columns
+
+The export includes every category field that's stored on the row:
+
+| Column | Source field |
+|--------|--------------|
+| `ID` | `id` |
+| `Name` | `name` |
+| `Description` | `description` |
+| `Slug` | `slug` |
+| `Parent ID` | `parent_id` |
+| `Level` | `level` |
+| `Path` | `path` |
+| `Order Index` | `order_index` |
+| `Status` | `status` |
+| `Icon` | `icon` |
+| `Color` | `color` |
+| `Thumbnail` | `thumbnail` |
+| `Created By` | `created_by` |
+| `Created At` | `created_at` |
+| `Updated At` | `updated_at` |
+
+Associations and statistics are **not** included in the CSV — export is a snapshot of the category rows themselves, not a denormalized view.
+
+### Filters
+
+Every filter from the normal category list applies to export:
+
+| Filter | Query param |
+|--------|-------------|
+| Search | `search` |
+| Status | `status` |
+| Parent | `parent_id` |
+| Level | `level` |
+| Entity type / ID | `entity_type`, `entity_id` |
+| Include / only IDs | `include_ids`, `only_ids` |
+
+Pagination params (`page`, `per_page`) are ignored on the wire — under the hood, the handler paginates server-side at a hard-coded **5000 rows per page** and iterates until it has written every matching row to the CSV stream. You always receive every row matching your filters in a single streamed response.
+
+### Use Cases
+
+- **Backup before a migration** — export, migrate your data, re-import via scripts if needed.
+- **Audit or compliance** — the CSV includes `Created By`, `Created At`, and `Updated At` for every category.
+- **Hand-off to another team** — share the taxonomy without giving them DB access.
+
+## Bulk Delete (Categories)
+
+Delete multiple categories in a single request.
+
+- **Endpoint:** `DELETE /api/v1/admin/categories/bulk/delete`
+- **Permission:** `category.delete`
+- **UI:** select categories with the row checkboxes on the list page, then click **Bulk Delete** and confirm.
+
+### Required Parameter
+
+Bulk delete **requires** the `only_ids` query parameter — a comma-separated list of category UUIDs to delete. This is a **safety requirement**: the service refuses to run a bulk delete without `only_ids` to prevent accidentally deleting an entire tenant's taxonomy.
+
+```
+DELETE /api/v1/admin/categories/bulk/delete?only_ids=<uuid1>,<uuid2>,<uuid3>
+```
+
+Omitting `only_ids` returns `400 Bad Request` with a "only_ids is required" error.
+
+### Behavior
+
+- The matching categories are **soft-deleted** (`deleted_at` set) in a single SQL `UPDATE` scoped to the provided IDs.
+- Unlike the single-delete endpoint, **bulk delete does not enforce the "no children" safety rule** — `DeleteCategories` only validates that `OnlyIDs` is non-empty and then runs the update directly. Any children belonging to the deleted parents become orphans (their `parent_id` still points at the now-soft-deleted row) until you reassign or also delete them. If you want the child guard, either pre-check or delete children individually with `DELETE /admin/categories/{id}`.
+- Returns a count of categories soft-deleted on success.
+
+### Events Published on Bulk Delete
+
+A single `AuditEvent` is published for the batch:
+
+- `action = "bulk_deleted"`
+- `resource_type = "category"`
+- `resource_id = ""` (empty — the batch is not tied to a single category)
+- `module = "misc"`
+- Description is `"Bulk deleted <N> categories"` (the audit row does not itself enumerate the deleted UUIDs — consumers needing the full ID list must read it from the request or a separate source)
+
+No per-category `EntityDeleted` events are published in the bulk path — downstream consumers that need per-category notifications should either refetch after `bulk_deleted` or combine the audit log with a list query.
+
+### Confirming What Will Be Deleted
+
+Because bulk delete is destructive, the standard pattern is:
+
+1. Apply filters in the list to narrow down to the target rows
+2. Review the results
+3. Select rows (the frontend stores the selected `ids` client-side)
+4. Click **Bulk Delete**, which sends those IDs as `only_ids`
+5. Confirm the modal
+
+The count shown in the success toast comes from the API response.
+
+## Tag Bulk Delete (UI-Only)
+
+The tag admin page also exposes a "Bulk Delete" action, but it calls the per-tag `DELETE /api/v1/admin/tags/{tag_id}` endpoint once per selected tag — there is no dedicated tag bulk endpoint in misc-service. Behavior is effectively identical from the admin's perspective, but it's worth knowing if you script against the API that tag bulk deletion is a client-side fan-out, not a single server call.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Export returns a huge file / browser times out | Narrow with filters before exporting — `status`, `parent_id`, `level`, or `search` all apply |
+| "`only_ids` is required" on bulk delete | Always pass at least one UUID. The service refuses empty bulk deletes on purpose |
+| Bulk delete left orphaned children | Expected — bulk delete skips the per-row child guard that single delete enforces. Reassign or delete children before running the bulk delete, or clean them up afterwards |
+| Export columns missing for some rows | Optional fields (`icon`, `color`, `thumbnail`, `description`) may be empty for categories where they were never set — that's expected |
+| Need JSON instead of CSV | Not supported — use the paginated `GET /admin/categories` endpoint and aggregate client-side |
+| No tag export available | Not implemented in misc-service — aggregate from the paginated `GET /admin/tags` endpoint client-side or extend the backend |

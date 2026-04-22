@@ -1,0 +1,157 @@
+---
+title: "Localization"
+description: "Per-locale title and description indexing, per-locale highlights, and the language filter"
+module: "search"
+feature: "localization"
+order: 14
+---
+
+# Localization
+
+Edushade is multi-lingual by default. Every searchable document stores `title` and `description` as **localized maps** (`locale → content`), not as single strings. Typesense indexes each locale, returns per-locale highlights, and lets the client render results in whatever language the UI is currently in.
+
+Localization flows through three layers:
+
+1. **Indexing** — the mapper writes `title` / `description` as `map[string]string`.
+2. **Querying** — Typesense searches all locales inside the nested object and returns matched locales in the highlight payload.
+3. **Rendering** — the frontend picks the locale to display based on the current UI language, with a fallback chain.
+
+## Document Shape
+
+From [Indexing Pipeline](/docs/knowledgebase/search-module/indexing-pipeline#document-shape):
+
+| Field | Type | Locale behaviour |
+|-------|------|-------------------|
+| `title` | `object` (nested enabled) | `{ en: "...", ar: "...", bn: "..." }` — required |
+| `description` | `object` (nested enabled), optional | Same shape |
+| `slug` | `string`, optional | **Not** localized — routes compose locale + slug on the client |
+| `language` | `string`, optional | The entity's **primary** language — used as a filter, not a fallback hint |
+| `tags` | `string[]`, optional | Not localized |
+
+`EnableNestedFields: true` is set on the Typesense schema so every locale inside `title` and `description` is individually indexed and highlightable.
+
+### How the Mapper Fills It
+
+The entity mappers (`models/mappers.go`) accept two shapes for a given field:
+
+- **Localized source** (`map[string]interface{}`): copied key-by-key into the destination map, skipping empty strings.
+- **Plain string source**: wrapped under the `"en"` key by `stringToEnLocale` so the document is always a valid map.
+
+So entities that haven't yet been migrated to the LocalizedString type still index successfully — they just index under `en` only. Mixed-shape corpora are safe.
+
+## Querying
+
+The search service always sets:
+
+```
+query_by = "title,description,tags"
+```
+
+Because `title` and `description` are objects with nested fields enabled, Typesense expands them to cover every locale inside the document. A query for `"diseño"` matches a Spanish-localized `title.es`; a query for `"تصميم"` matches `title.ar`.
+
+> There is no `query_by_locale`. Cross-locale matching is intentional — a user typing in English still finds content that only has Arabic text when the English query happens to appear in tags, and vice-versa.
+
+### Language Filter vs Localization
+
+`language` is a **filter**, not a display hint. When present on a request:
+
+```
+filter_by: "... && language:=en"
+```
+
+It restricts the result set to documents whose **primary** language is `en`. It does **not** hide non-English locales inside those documents, and it does **not** re-rank by locale match. See [Filters & Entity Types](/docs/knowledgebase/search-module/filters-and-entity-types#language) for the full filter contract.
+
+If you want "results in the user's UI language, with fallback to English":
+
+- Pass `language=<ui-locale>` on the first call.
+- If the result set is too small, re-query without the filter.
+
+## Highlights
+
+Typesense returns highlights keyed by field, then by locale. The shape is:
+
+```
+{
+  "title": {
+    "en": { "snippet": "<mark>figma</mark> basics", "matched_tokens": ["figma"] },
+    "ar": { "snippet": "أساسيات <mark>فيغما</mark>",   "matched_tokens": ["فيغما"] }
+  }
+}
+```
+
+The search service normalises this via `parseLocalizedHighlights` (`services/highlight_helpers.go`) into the `SearchHit.highlights` array on the response:
+
+```
+highlights: [
+  {
+    "field": "title",
+    "languages": {
+      "en": { "snippets": ["<mark>figma</mark> basics"], "matched_tokens": ["figma"] },
+      "ar": { "snippets": ["..."],                       "matched_tokens": ["..."] }
+    }
+  }
+]
+```
+
+A helper `extractHighlightText(highlightData, field, preferredLocale)` is also available inside the service — it picks the snippet for the preferred locale, falling back to the first available language. The handler does **not** call it today; the normalised array is returned as-is and the frontend picks the locale itself.
+
+## Frontend Locale Resolution
+
+The [Search Results](/docs/knowledgebase/search-module/search-results) component renders titles using the helper pattern:
+
+1. Prefer `document.title[currentUILocale]`.
+2. Fall back to `document.title.en`.
+3. Fall back to the first non-empty value in the map.
+4. Fall back to an empty string (rendered as `—`).
+
+The same chain applies to `description`. Highlights use the locale key directly — if the UI is in `en` and `highlight.languages.en` is absent, the fallback is the first locale in the map (same order as the title fallback).
+
+> The frontend never asks the search service for the "right" locale — it picks one and renders. This keeps the service stateless about UI language.
+
+## Routing With Slugs
+
+`slug` is **not** localized. The routing helper in `search-result-item.tsx` composes the URL from:
+
+- Current UI locale (prefix).
+- Entity type (path segment).
+- `document.slug` (or `document.id` fallback).
+
+So the same document is reachable at `/en/courses/figma-basics` and `/ar/courses/figma-basics` with the same slug. The destination page is responsible for picking the right locale from the entity when rendering.
+
+## Autocomplete Locale Behaviour
+
+[Autocomplete](/docs/knowledgebase/search-module/autocomplete) uses `query_by = title,description` (no `tags`), but because `title` and `description` are localized objects with nested fields enabled, prefix matches still work across every indexed locale. The response contains the full document, so the frontend applies the same fallback chain as the search results list.
+
+## Edge Cases
+
+### Query in One Locale, Match in Another
+
+A search for `"design"` can match a document whose `title.en` is `"Design systems"` *and* a document whose `title.es` is `"Diseño gráfico"` (Typesense typo tolerance plus a token overlap). Both get highlights for the matching locale. Which one ranks higher depends on `_text_match` and `published_at`.
+
+### Empty Locale Buckets
+
+The mapper skips empty strings. A document with `title = { en: "X", es: "" }` ends up with `{ en: "X" }` in the index. Querying won't surface it under `es`, and there's no highlight for `es`.
+
+### Mixed Fallback and Localized
+
+Two documents indexed side-by-side — one with `title = { en: "A" }` (migrated from plain string) and one with `title = { en: "B", ar: "ب" }` (new localized entity) — both work. The first never shows Arabic; the second does.
+
+## Parameters & Limits
+
+| Parameter | Value |
+|-----------|-------|
+| Indexed locale fields | `title`, `description` |
+| Default `query_by` | `title,description,tags` |
+| Fallback chain | preferred locale → `en` → first non-empty → empty |
+| Nested fields enabled | Yes (`EnableNestedFields: true`) |
+| Primary language filter | `language:={code}` (whole-document filter) |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Search returns a result with no title rendered | The locale chain ended on empty. Check the mapper's output — an entity may have only `ar` content while the UI is `en` with no fallback fallback value |
+| Highlights appear in the wrong language | Expected — Typesense highlights whichever locale matched the query, not the UI locale. The UI can choose to only render the highlight when its locale matches, or show a "matched in X" hint |
+| `language` filter seems to exclude content that should match | `language` is the document's primary-language field, not its indexed locales. A bilingual course with `language: en` won't appear under `language=ar` even though `title.ar` exists |
+| New locale added to an entity but search can't find it | The owning service needs to republish `search.document.updated` — the search-service only reflects the event stream. See [Indexing Pipeline](/docs/knowledgebase/search-module/indexing-pipeline) |
+| Old documents are `en`-only after enabling localization | Plain-string titles index under `en` via `stringToEnLocale`. Backfill them by republishing through the owning service once the source data is localized |

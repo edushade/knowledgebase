@@ -1,0 +1,232 @@
+---
+title: "Notices (Admin)"
+description: "Admin workflows for authoring, editing, filtering, exporting, and bulk-deleting notices — including the full REST surface and audit events"
+module: "comm"
+feature: "notices"
+order: 1
+---
+
+# Notices (Admin)
+
+The admin notices area is where operators broadcast information to the platform. A notice is a single rich-text message with a targeted audience, a priority, a publishing lifecycle, and optional attachments and a thumbnail. This page covers the admin surface end-to-end — creating, editing, filtering, exporting, and deleting notices. For the learner side, see [Notice Board](/docs/knowledgebase/comm-module/notice-board). For the audience rules, see [Audience Targeting](/docs/knowledgebase/comm-module/audience-targeting). For statuses and scheduling, see [Scheduling & Status](/docs/knowledgebase/comm-module/scheduling-and-status).
+
+## Accessing the Admin Surface
+
+1. Sign in as an admin with the relevant notice permissions.
+2. Navigate to **Admin → Communication → Notices** (`/admin/communication/notices`).
+3. Required permissions:
+   - `notice.list` to load the list
+   - `notice.view` to open a single notice and to export
+   - `notice.create` to author a new notice
+   - `notice.update` to edit
+   - `notice.delete` to delete single or in bulk
+
+## Notice List
+
+A comprehensive, filterable, paginated table of every notice in the tenant — backed by `GET /api/v1/admin/notices`.
+
+### Columns
+
+- **Thumbnail** — small preview; falls back to a placeholder when unset
+- **Title + body preview** — title bold, first ~50 characters of body below
+- **Audience Type** — rendered with a human-readable label (e.g., `learning_path` → "Learning Path")
+- **Priority** — colour-coded badge (see [Overview](/docs/knowledgebase/comm-module) for the palette)
+- **Status** — badge; one of `draft`, `scheduled`, `published`, `archived`
+- **Pinned** — Yes/No badge
+- **Created At** — formatted datetime
+- **Row actions** — Edit / Delete
+
+### Filters
+
+All filters may be combined freely.
+
+| Filter | Description |
+|--------|-------------|
+| `search` | Case-insensitive match on title and body |
+| `audience_type` | One of: `role`, `course`, `quiz`, `event`, `cohort`, `learning_path`, `user_individual`, or empty string for "all" |
+| `priority` | `low`, `normal`, `high`, `urgent` |
+| `status` | `draft`, `scheduled`, `published`, `archived` |
+| `creator_id` | Restrict to notices created by a specific user |
+| `pinned` | Show only pinned (`true`) or unpinned (`false`) |
+
+> **Note:** An `end_date` field exists in the filter DTO but is honoured **only** by the bulk-delete endpoint (for "delete everything expiring before this date"). It is ignored by the list and export endpoints.
+
+### Pagination
+
+Offset pagination with a default page size of **10**. Pass `per_page` to override. The response includes `total` so the admin table can render pager controls.
+
+## Creating a Notice
+
+1. Click **Create Notice** → routes to `/admin/communication/notices/create` (requires `notice.create`).
+2. Fill in the form:
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| **Title** | Yes | 1–255 characters |
+| **Body** | Yes | Rich text, up to 10,000 characters. Backed by the TipTap editor with file-manager integration |
+| **Audience Type** | Yes | Choose from: All, Role, Course, Quiz, Event, Learning Path, Cohort, Users |
+| **Audience** | Conditional | Required (1–100 entries) when Audience Type is anything other than All |
+| **Priority** | Yes | Low / Normal / High / Urgent |
+| **Status** | Yes | Draft / Scheduled / Published / Archived |
+| **Published At** | Conditional | Required when Status = Scheduled |
+| **Expires At** | No | Informational — there is no auto-expiry job today (see [Scheduling & Status](/docs/knowledgebase/comm-module/scheduling-and-status)) |
+| **Thumbnail** | No | Upload an image (via file manager); preview rendered inline |
+| **Attachments** | No | Multi-file uploader — any type, with duplicate detection |
+| **Is Recurring** | No | Flag stored but not acted upon today |
+| **Pinned** | No | Sticky at the top of listings |
+| **Read Tracking** | No | Advisory flag; read-receipts are recorded regardless |
+
+3. Click **Create Notice**.
+4. Toast on success; redirect back to the list.
+
+> **Validation:** If Status = Scheduled, `published_at` must be set. If Audience Type is anything other than All, at least one audience ID is required and no more than 100. These rules are enforced both client-side (Zod schema) and server-side (DTO validator).
+
+## Editing a Notice
+
+1. Click a row (or the Edit icon) → routes to `/admin/communication/notices/{id}/edit` (requires `notice.update`).
+2. The form pre-fills with the current values. You may change any subset of fields — only the provided fields are written.
+3. On submit → `PUT /api/v1/admin/notices/{id}`:
+   - Only fields present in the request body are updated.
+   - `updated_by` and `updated_at` are refreshed automatically.
+   - `attachment_ids` is synchronised via `AttachmentService.Sync` — additions are linked, removals are unlinked. Files themselves are **not** deleted from the file manager.
+
+## Deleting a Notice
+
+### Single Delete
+
+1. Click the Delete icon on a row → confirm in dialog.
+2. `DELETE /api/v1/admin/notices/{id}` (requires `notice.delete`).
+3. **Hard delete** — the row is removed from the `notices` table. Any related `notice_reads` rows are removed by the foreign-key `ON DELETE CASCADE`.
+
+> **Warning:** Deletion is permanent. There is no soft-delete flag on notices today, and deleted notices cannot be restored through the UI. Prefer the `archived` status when you want to retire a notice without losing the history.
+
+### Bulk Delete
+
+1. Select rows or filter the list, then click **Bulk Delete**.
+2. `DELETE /api/v1/admin/notices/bulk/delete` (requires `notice.delete`) accepts the same filter DTO as the list endpoint, **plus `end_date`** — rows with `expires_at <= end_date` are also included in the delete set. `end_date` has no effect on any other endpoint.
+3. The response returns the number of rows deleted.
+
+## Exporting to CSV
+
+1. Apply any filters you want.
+2. Click **Export**.
+3. `GET /api/v1/admin/notices/bulk/export` (requires `notice.view`) streams a CSV of every matching notice. The CSV contains 17 columns, in order: `ID`, `Title`, `Body`, `Audience Type`, `Audience IDs`, `Priority`, `Status`, `Published At`, `Expires At`, `Pinned`, `Is Recurring`, `Read Tracking`, `Thumbnail`, `Created At`, `Updated At`, `Created By`, `Updated By`.
+
+## Admin Mark-as-Read
+
+`POST /api/v1/admin/notices/{id}/read` (requires `notice.view`)
+
+This endpoint exists primarily for testing and for admin-as-user impersonation flows. It inserts a `notice_reads` row for the current admin user and is idempotent — calling it twice does not create a duplicate.
+
+## API Reference
+
+| Method | Path | Permission | Purpose |
+|--------|------|-----------|---------|
+| `GET` | `/api/v1/admin/notices` | `notice.list` | List with filters and pagination |
+| `POST` | `/api/v1/admin/notices` | `notice.create` | Create a notice |
+| `GET` | `/api/v1/admin/notices/{id}` | `notice.view` | Fetch single with attachments, creator, target entities |
+| `PUT` | `/api/v1/admin/notices/{id}` | `notice.update` | Partial update; sync attachments |
+| `DELETE` | `/api/v1/admin/notices/{id}` | `notice.delete` | Hard delete; cascades `notice_reads` |
+| `POST` | `/api/v1/admin/notices/{id}/read` | `notice.view` | Mark-as-read for the current admin user |
+| `GET` | `/api/v1/admin/notices/bulk/export` | `notice.view` | CSV export with filter |
+| `DELETE` | `/api/v1/admin/notices/bulk/delete` | `notice.delete` | Bulk delete with filter |
+
+## Request Payloads
+
+### Create
+
+```json
+{
+  "title": "Spring term enrolment is now open",
+  "body": "<p>Enrolment closes March 31.</p>",
+  "audience_type": "cohort",
+  "audience_ids": ["cohort-uuid"],
+  "priority": "high",
+  "status": "published",
+  "published_at": null,
+  "expires_at": "2026-03-31T23:59:00Z",
+  "pinned": true,
+  "is_recurring": false,
+  "read_tracking": true,
+  "thumbnail": "https://.../banner.jpg",
+  "attachment_ids": ["file-uuid-1", "file-uuid-2"]
+}
+```
+
+### Update (partial)
+
+```json
+{
+  "priority": "urgent",
+  "pinned": true
+}
+```
+
+### List filter (query-string example)
+
+```
+?audience_type=course
+&priority=high
+&status=published
+&pinned=true
+&page=1
+&per_page=50
+&search=enrolment
+```
+
+## Response Shape
+
+`GET /api/v1/admin/notices/{id}` returns the notice with eager-loaded associations where applicable:
+
+```json
+{
+  "id": "uuid",
+  "title": "string",
+  "body": "string",
+  "audience_type": "cohort",
+  "audience_ids": ["uuid"],
+  "priority": "high",
+  "status": "published",
+  "published_at": null,
+  "expires_at": "2026-03-31T23:59:00Z",
+  "pinned": true,
+  "is_recurring": false,
+  "read_tracking": true,
+  "thumbnail": "https://.../banner.jpg",
+  "created_at": "2026-04-22T10:30:00Z",
+  "updated_at": "2026-04-22T10:30:00Z",
+  "created_by": "uuid",
+  "updated_by": "uuid",
+  "is_read": false,
+  "creator": { "id": "uuid", "name": "...", "email": "..." },
+  "attachments": [ ... ],
+  "cohort": { "id": "uuid", "name": "..." }
+}
+```
+
+Depending on `audience_type`, the response includes **one** of `role`, `course`, `quiz`, `event`, `cohort`, `learning_path`, or `user` — always the singular form, populated from the **first** entry in `audience_ids`. For multi-ID audiences, only the first entity is eager-loaded; the frontend is responsible for resolving the remaining IDs if it needs to display them.
+
+> **Note on `is_read`:** The field is always present on the response (for schema parity with the user surface) but is not computed on the admin surface — it defaults to `false`. Treat it as meaningless when reading admin endpoints.
+
+## Events Emitted
+
+| Action | Audit action | Activity title |
+|--------|--------------|----------------|
+| `POST /admin/notices` | `created` | — |
+| `PUT /admin/notices/{id}` | `updated` | — |
+| `DELETE /admin/notices/{id}` | `deleted` | — |
+| `POST /admin/notices/{id}/read` | `updated` (notice_read created) | — (admin path emits only an audit event, no activity) |
+| `DELETE /admin/notices/bulk/delete` | `deleted` (N rows) | — |
+
+All admin mutations publish an `AuditEvent` with `module=comm`, `resource_type=notice`.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "published_at is required when status is scheduled" (400) | Set `published_at` to a future timestamp — or flip the status to `published`/`draft` |
+| "audience_ids must have between 1 and 100 entries" (400) | If Audience Type is anything other than All, provide 1–100 audience IDs |
+| Notice not visible to target users | Confirm Status is `published` (or Status is `scheduled` and `published_at` has passed — note that auto-publish is not implemented; a scheduled notice needs a manual flip). Also verify the target entities resolve correctly via the [Calendar Service](/docs/knowledgebase/comm-module/audience-targeting) |
+| Attachments disappear after edit | The update endpoint calls `AttachmentService.Sync`. If you submit without `attachment_ids`, no change is made; if you submit an empty array, all attachments are unlinked. Re-include the existing IDs when editing |
+| Bulk export returns an empty CSV | Your filter matched 0 rows. The export reuses the list DTO exactly — confirm the filter in the list view first |
+| Deleted notice shows "notice not found" but `notice_reads` rows remain | They should not. The FK is `ON DELETE CASCADE`. If stale rows exist, verify the migration applied and the FK is present |

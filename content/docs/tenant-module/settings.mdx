@@ -1,0 +1,342 @@
+---
+title: "Settings"
+description: "Per-tenant settings — Platform branding, Organization contact, Security, Media, Gamification, User policy, Analytics, and Social Links — with a deep-merge PUT that only overwrites fields the client explicitly sends"
+module: "tenant"
+feature: "settings"
+order: 7
+---
+
+# Settings
+
+Every tenant owns exactly **one** row in the `settings` table (`UNIQUE(tenant_id)`). That row holds every piece of tenant-scoped configuration that isn't a first-class column on `tenants` itself — contact info, password / 2FA policy, media upload limits, leaderboard and streak rules, user ID patterns, analytics trackers, social-media links.
+
+The settings object is split into **eight blocks**, each a JSONB column on the settings table (plus a virtual `platform` block that reads / writes fields on the `tenants` row):
+
+| Block | JSONB column | Semantic owner |
+|-------|--------------|----------------|
+| `platform` | — (written back to `tenants`) | Branding: name, subdomain, domain, logo_dark, logo_light, favicon |
+| `organization` | `organization` | Contact details for the owning legal entity |
+| `social_links` | `social_links` | Facebook / X / LinkedIn / Instagram / YouTube |
+| `security` | `security` | Auth, data-privacy, audit-log toggles |
+| `media` | `media` | Upload limits, allowed file types, video controls |
+| `gamification` | `gamification` | Leaderboard + daily streak toggles |
+| `user` | `user` (quoted) | Unique-ID patterns, deleted-account policy, profile completion rules |
+| `analytics` | `analytics` | Google / Facebook / Clarity / Hotjar / TikTok / Twitter / Plausible / Fathom / Mixpanel / custom scripts |
+
+A settings row is **lazy-created** — it does not exist until the first authenticated `GET` or `PUT`. Before that, the public `GET /public/tenant/settings` returns `sql.ErrNoRows` as a hard failure, so new tenants need at least one authenticated hit to bootstrap.
+
+## Route Tiers
+
+| Tier | Endpoint | Auth |
+|------|----------|------|
+| **Public** | `GET /api/v1/public/tenant/settings` | None — resolves tenant from host / `X-Tenant-ID` |
+| **Admin** | `GET /api/v1/admin/tenant/settings` | JWT + `TenantMiddleware` + `Can("settings.view")` |
+| **Admin** | `PUT /api/v1/admin/tenant/settings` | JWT + `TenantMiddleware` + `Can("settings.update")` |
+| **Org-admin** | `GET /api/v1/orgadmin/organizations/:organization_id/settings/edit` | JWT + `CanAnyWithOrganization("settings.view" / "organization.manage")` |
+| **Org-admin** | `PUT /api/v1/orgadmin/organizations/:organization_id/settings` | JWT + `CanAnyWithOrganization("settings.update" / "organization.manage")` |
+| **Sysadmin** | `GET /api/v1/sysadmin/tenants/:id/settings` | Static system token |
+| **Sysadmin** | `PUT /api/v1/sysadmin/tenants/:id/settings` | Static system token |
+| **Sysadmin** | `DELETE /api/v1/sysadmin/tenants/:id/settings` | Static system token |
+
+> The public `GET` and the admin `GET` **differ** — the public variant calls `GetSettings` directly (no lazy-create and no fallback), while the admin `GET` calls `GetOrCreateSettings` which lazy-creates defaults on first visit. The sysadmin `GET` further falls back to the full default template (with `platform` populated from the tenant row) if no settings row exists — so sysadmin can always render the edit UI even for a brand-new tenant.
+
+## The `platform` block
+
+`platform` is **not** stored on the settings row — it mirrors a subset of the `tenants` row so the admin settings UI can edit branding and settings together.
+
+Fields accepted on `PUT`:
+
+| Field | Effect |
+|-------|--------|
+| `name` | Updates `tenants.name` |
+| `subdomain` | Updates `tenants.subdomain` (validation on the tenant side still applies) |
+| `domain` | Updates `tenants.domain` (validation + uniqueness still apply) |
+| `logo_dark` | Updates `tenants.logo_dark` |
+| `logo_light` | Updates `tenants.logo_light` |
+| `favicon` | Updates `tenants.favicon` |
+
+Changing `subdomain` or `domain` through settings bypasses the normal tenant update flow's audit description — the `AuditEvent` that fires is `resource_type: "settings"`, not `"tenant"`. Use the tenant endpoints directly when you want a cleaner audit trail for URL changes.
+
+## The `organization` block
+
+Contact info for the legal entity. All fields except `name` are optional string pointers.
+
+```json
+{
+  "organization": {
+    "name": "Acme Corp",
+    "email": "ops@acme.com",
+    "phone": "+1-555-0100",
+    "address": "1 Acme Way",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip": "94107",
+    "country": "US"
+  }
+}
+```
+
+On `PUT`, only **non-empty** `name` and non-nil pointer fields are applied — so sending `{"organization": {"email": "..."}}` leaves every other field untouched. The organization block is the only block where the update is merged field-by-field at the Go struct level; the others use the raw-body JSONB merge described below.
+
+## The `security` block
+
+```json
+{
+  "security": {
+    "authentication": {
+      "self_registration": true,
+      "required_fields_on_signup": ["email", "password"],
+      "email_verification_required": true,
+      "password_min_length": 6,
+      "password_complexity": true,
+      "two_factor_authentication": "optional",
+      "session_timeout_duration": 43200,
+      "max_concurrent_sessions": 5
+    },
+    "data_privacy": {
+      "gdpr_compliance": false,
+      "cookie_consent": true
+    },
+    "audit_logs": {
+      "track_admin_actions": true,
+      "user_activity_logs": true,
+      "data_access_logs": false
+    }
+  }
+}
+```
+
+| Field | Notes |
+|-------|-------|
+| `two_factor_authentication` | One of `disabled`, `optional`, `required` |
+| `session_timeout_duration` | Minutes — the default is 30 days (`60 * 24 * 30`) |
+| `password_min_length` | Auth-service treats anything less than `1` as `6` on read |
+
+## The `media` block
+
+```json
+{
+  "media": {
+    "max_upload_file_size": 100,
+    "max_upload_file_size_for_learner": 25,
+    "allowed_file_types": ["image/jpeg", "image/png", "video/mp4"],
+    "video_speed_controls": true,
+    "video_quality_controls": true,
+    "video_downloads": false,
+    "restrict_paid_download": true,
+    "auth_page_image": "https://cdn.../bg.jpg"
+  }
+}
+```
+
+| Field | Notes |
+|-------|-------|
+| `max_upload_file_size` | Megabytes; `0` = unlimited |
+| `max_upload_file_size_for_learner` | Only applied when the user's **only** role is `learner`. Multi-role users (admin / instructor + learner) always get `max_upload_file_size` |
+| `allowed_file_types` | List of MIME strings. Enforced on upload at the file service, not here |
+| `restrict_paid_download` | When true, paid content cannot be downloaded or printed |
+
+## The `gamification` block
+
+```json
+{
+  "gamification": {
+    "leaderboard": {
+      "site_wide_leaderboard_enabled": true,
+      "site_wide_leaderboard_time_range": "all_time",
+      "gender_based_leaderboard_enabled": false,
+      "gender_based_leaderboard_time_range": "all_time"
+    },
+    "daily_streak": {
+      "daily_streak_enabled": true
+    }
+  }
+}
+```
+
+`time_range` accepts `all_time`, `monthly`, `weekly`, `daily`.
+
+## The `user` block
+
+Owns anything that governs how users are provisioned and deprovisioned.
+
+```json
+{
+  "user": {
+    "unique_id_generation_rules": {
+      "learner_id_pattern": "{YEAR:2}-{MONTH}-{RANDOM:6}",
+      "instructor_id_pattern": "{YEAR:2}-{MONTH}-{RANDOM:6}",
+      "admin_id_pattern": "{YEAR:2}-{MONTH}-{RANDOM:6}",
+      "__serials": { "learner": 0, "instructor": 0, "admin": 0 }
+    },
+    "deleted_account": {
+      "re_registration_policy": "reactivate",
+      "retention_period": 180
+    },
+    "profile_completion": {
+      "enabled": false,
+      "gender":        { "enabled": true, "required": false },
+      "date_of_birth": { "enabled": true, "required": false },
+      "phone":         { "enabled": true, "required": false },
+      "bio":           { "enabled": true, "required": false },
+      "address":       { "enabled": true, "required": false },
+      "designation":   { "enabled": true, "required": false },
+      "expertise":     { "enabled": true, "required": false },
+      "continent":     { "enabled": true, "required": false },
+      "country":       { "enabled": true, "required": false },
+      "state":         { "enabled": true, "required": false },
+      "city":          { "enabled": true, "required": false },
+      "timezone":      { "enabled": true, "required": false },
+      "locale":        { "enabled": true, "required": false }
+    }
+  }
+}
+```
+
+| Sub-field | Notes |
+|-----------|-------|
+| `*_id_pattern` | Tokens: `{YEAR:N}`, `{MONTH}`, `{RANDOM:N}`, `{SERIAL:N}`. `__serials` is maintained server-side when a pattern uses `{SERIAL:N}` |
+| `re_registration_policy` | `reactivate` (default), `freeze`, `block` — controls what happens when a soft-deleted user tries to sign up again |
+| `retention_period` | Days before a soft-deleted user's data is eligible for hard-delete. Default 180 |
+| `profile_completion.*` | Each field has `enabled` (ask at all?) + `required` (block until filled?). `enabled: false` at the top level disables the whole flow |
+
+## The `analytics` block
+
+A generous union of third-party tracker configs. Every sub-object is independently nullable — send only the ones you want to change.
+
+```json
+{
+  "analytics": {
+    "google_analytics":   { "enabled": true, "measurement_id": "G-..." },
+    "google_tag_manager": { "enabled": false, "container_id": "GTM-..." },
+    "facebook_pixel":     { "enabled": false, "pixel_id": "..." },
+    "microsoft_clarity":  { "enabled": true, "project_id": "..." },
+    "hotjar":             { "enabled": false, "site_id": "..." },
+    "tiktok_pixel":       { "enabled": false, "pixel_id": "..." },
+    "twitter_pixel":      { "enabled": false, "pixel_id": "..." },
+    "plausible":          { "enabled": false, "domain": "acme.com", "custom_host": "plausible.acme.com" },
+    "fathom":             { "enabled": false, "site_id": "...", "custom_host": "fathom.acme.com" },
+    "mixpanel":           { "enabled": false, "project_token": "..." },
+    "custom_scripts":     { "head_scripts": "<script>…</script>", "body_scripts": "" }
+  }
+}
+```
+
+> **Analytics merge is special:** unlike the other blocks, analytics is merged field-by-field in Go — `enabled` (a bool) is always written when the client sends the sub-object, while string IDs are only written when non-empty. This means sending `{"google_analytics": {"enabled": false}}` will flip the flag, but cannot **clear** the measurement ID (non-empty ID would need the string id to equal `""`; an empty-string doesn't trigger the update). If you need to clear a tracker ID, delete+update or go through the sysadmin settings delete.
+
+## The `social_links` block
+
+```json
+{
+  "social_links": {
+    "facebook":  "https://facebook.com/acme",
+    "twitter":   "https://twitter.com/acme",
+    "linkedin":  "https://linkedin.com/company/acme",
+    "instagram": "https://instagram.com/acme",
+    "youtube":   "https://youtube.com/@acme"
+  }
+}
+```
+
+Every field is an optional string pointer. Partial PUT behaves as a deep-merge at the JSONB level — see below.
+
+## Deep-merge on `PUT`
+
+`PUT /settings` does **not** overwrite the full settings row. Its body is parsed twice:
+
+1. **Typed parse** (`UpdateSettingsDto`) — used to decide which top-level blocks were sent (a nil pointer means "not sent"; anything else means "merge this").
+2. **Raw-body parse** (`json.RawMessage`) — the bytes of the incoming request. For each block the client touched, the raw JSON is deep-merged onto the existing stored value at the **map** level:
+   - Marshal existing value → map.
+   - Parse the client's raw bytes → map (contains only keys the client sent).
+   - Recursively overwrite keys in existing with keys in client.
+   - Marshal back and re-typecheck into the Go struct.
+
+Result: fields you didn't send stay exactly as they were. **Go zero-values from an undesired typed `json.Unmarshal` never leak into the stored JSON** — only what was literally in the bytes wins.
+
+### Caveat: Organization and Analytics bypass the raw merge
+
+- `organization` is merged at the Go struct level (pointer-field semantics). Sending `{"name": ""}` will NOT clear the name because the code treats empty string as "not provided".
+- `analytics` is merged field-by-field in Go (see the block above). This is the one place the deep-merge behaviour is not symmetric across fields.
+
+Everything else (`social_links`, `security`, `media`, `gamification`, `user`) uses the raw-body merge.
+
+## Retrieve Settings
+
+### Public — tenant-branded landing pages
+
+- **Endpoint:** `GET /api/v1/public/tenant/settings`
+- **Auth:** None — tenant is resolved via host / `X-Tenant-ID`
+
+Returns the settings row exactly as stored, with `platform` populated from the tenant. **Does not** lazy-create — if no row exists yet, the endpoint returns `500` with "Failed to get settings" (`sql.ErrNoRows` surfaces). Hit the admin `GET` at least once to bootstrap.
+
+### Admin — tenant admin editing own tenant
+
+- **Endpoint:** `GET /api/v1/admin/tenant/settings`
+- **Permission:** `settings.view`
+
+Calls `GetOrCreateSettings`, so the first admin visit **lazy-creates** a row using the default template (with the tenant's organization name) and returns it.
+
+### Org-admin — managing a tenant in own org
+
+- **Endpoint:** `GET /api/v1/orgadmin/organizations/:organization_id/settings/edit`
+- **Permissions:** `settings.view` or `organization.manage`
+
+Same semantics as the admin `GET` (lazy-create). Tenant resolution here is via `OrganizationContextMiddleware` — the request's target tenant must belong to the org in the path.
+
+### Sysadmin — platform-wide
+
+- **Endpoint:** `GET /api/v1/sysadmin/tenants/:id/settings`
+
+Reads the settings row. If none exists, returns the full **default template** with `platform` populated from the tenant row — this is what you want for a brand-new tenant you're about to configure for the customer. Does **not** persist the defaults; the next `PUT` creates the real row.
+
+## Update Settings
+
+- **Admin:** `PUT /api/v1/admin/tenant/settings` — `settings.update`
+- **Org-admin:** `PUT /api/v1/orgadmin/organizations/:organization_id/settings` — `settings.update` or `organization.manage`
+- **Sysadmin:** `PUT /api/v1/sysadmin/tenants/:id/settings`
+
+Body accepts any subset of the eight blocks. Returns the post-update settings object (with `platform` populated).
+
+The admin / org-admin variants use the signed-in user's JWT ID for `actor_id` on the audit event. The sysadmin variant uses `uuid.Nil` if no JWT is present.
+
+### Auto-create on first update
+
+`UpdateSettings` calls `GetOrCreateSettings` internally, so the first `PUT` on a fresh tenant both **creates** the settings row and **applies** the client's merge on top of the defaults.
+
+### Audit event
+
+| Caller | Description |
+|--------|-------------|
+| Admin / Org-admin | `Updated settings` |
+| Sysadmin | `Updated settings for tenant` |
+
+All with `action: "updated", resource_type: "settings", module: "tenant"`.
+
+## Delete Settings (Sysadmin)
+
+- **Endpoint:** `DELETE /api/v1/sysadmin/tenants/:id/settings`
+
+Soft-deletes the settings row. The next admin / sysadmin `GET` will lazy-create (or return the default template) again, so this is effectively a "reset settings to default" button — without touching any other part of the tenant.
+
+Publishes `AuditEvent { action: "deleted", resource_type: "settings" }`.
+
+The [tenant reset](/docs/knowledgebase/tenant-module/tenant-lifecycle#reset-a-tenant) flow also wipes the settings row (the `settings` table has a `tenant_id` column, so the sweep catches it). If you want to delete *just* the settings row, use this endpoint; if you want to wipe all tenant-scoped data, use reset.
+
+## Events & Audit
+
+| Action | `resource_type` | Triggered by |
+|--------|-----------------|--------------|
+| `"updated"` | `"settings"` | `PUT /admin/tenant/settings`, `PUT /orgadmin/.../settings`, `PUT /sysadmin/tenants/:id/settings` |
+| `"deleted"` | `"settings"` | `DELETE /sysadmin/tenants/:id/settings` |
+
+Creation is **not** audited on its own — the lazy-create during the first GET is silent. The first `PUT` publishes `updated`, which captures both the create and the client's changes in a single event.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Public `GET /public/tenant/settings` returns 500 | No settings row exists yet. Have the tenant admin hit `GET /admin/tenant/settings` once (or the sysadmin hit the sysadmin GET-and-PUT path) to create the row |
+| PUT silently dropped a field | Either the field was sent inside `organization` (empty-string check skips it) or inside `analytics` (empty-string ID skip). For other blocks, verify the raw JSON actually contains the key — the deep-merge only touches keys that are literally present |
+| Changing `platform.domain` or `platform.subdomain` lost uniqueness | Uniqueness is enforced on the tenant row at the DB level — if the write fails, the settings PUT will return 500. Hit the tenant endpoint (`PUT /api/v1/sysadmin/tenants/:id` or `PUT /api/v1/orgadmin/organizations/:organization_id/tenants/:id`) directly to get the more specific `409 subdomain already in use` / `domain already in use` errors. Admin-tier users have no direct tenant-update endpoint — they can only change these fields through the settings PUT |
+| Analytics measurement ID I sent as `""` did not clear | Expected — the analytics code treats empty string as "not provided". Call the sysadmin `DELETE /tenants/:id/settings` to reset everything, or `PUT` the whole analytics block with the tracker entirely removed |
+| Default template fields appearing in a production tenant | `GetOrCreateSettings` / the sysadmin `GET` fallback populate defaults the first time they run. If this is unwanted, pre-create the settings row via a targeted `PUT` before exposing admin surfaces |

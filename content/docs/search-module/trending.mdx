@@ -1,0 +1,136 @@
+---
+title: "Trending Searches & Results"
+description: "Queries and documents with the highest growth rate across two consecutive windows"
+module: "search"
+feature: "trending"
+order: 9
+---
+
+# Trending Searches & Results
+
+Trending is ranked by **growth**, not by absolute count. The service compares two adjacent windows of identical length and returns queries (or result documents) whose activity grew the most in the current window relative to the previous one.
+
+Two endpoints share the same windowing logic:
+
+- `/trending` — trending search *queries* (ranked by `search_count` growth).
+- `/trending/results` — trending *documents* (ranked by click-through growth, i.e. `clicked_result_id` counts in `search_history`).
+
+## Trending Searches
+
+### Endpoint
+
+- **Public:** `GET /api/v1/public/search/trending`
+- **Admin:** `GET /api/v1/admin/search/trending` (authenticated)
+- **Handler:** `search-service/api/handlers/trending_handler.go::GetTrending`
+- **Service:** `search-service/services/trending_service.go::GetTrendingSearches`
+
+### Query Parameters
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `window` | string | `search_features.trending_window_days` (default `7d`) | Window size. Accepted as a day count (e.g. `"7"` or `"7d"`). The handler parses digits only |
+| `limit` | int | `search_features.trending_limit` (default `10`) | Max entries. **Hard-capped at 50** |
+
+### Response
+
+```
+{
+  "searches": [
+    { "query": "generative ai",     "search_count": 42, "trend_score": 180.0 },
+    { "query": "prompt engineering","search_count": 30, "trend_score": 100.0 }
+  ],
+  "window": "7d"
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `query` | Query string as recorded in `search_analytics` |
+| `search_count` | Total searches in the **current** window |
+| `trend_score` | Growth rate as a percentage (see below) |
+| `window` | Echoes the applied window (e.g. `"7d"`) |
+
+### Growth Formula
+
+Given `current_count` and `previous_count`:
+
+| Case | `trend_score` |
+|------|---------------|
+| `previous > 0` | `(current − previous) / previous × 100` |
+| `previous == 0` and `current > 0` (brand-new query) | `100.0` — flat boost so new queries surface |
+| `previous == 0` and `current == 0` | Skipped entirely |
+| `trend_score ≤ 0` | Skipped — only positive growth is considered trending |
+
+The list is sorted by `trend_score` DESC and truncated to `limit`.
+
+## Trending Results
+
+### Endpoint
+
+- **Public:** `GET /api/v1/public/search/trending/results`
+- **Admin:** `GET /api/v1/admin/search/trending/results` (authenticated)
+- **Handler:** `search-service/api/handlers/trending_handler.go::GetTrendingResults`
+- **Service:** `search-service/services/trending_service.go::GetTrendingResults`
+
+### Query Parameters
+
+Same as Trending Searches — `window`, `limit`.
+
+### Response
+
+```
+{
+  "results": [
+    {
+      "document": { "id": "course_abc", "title": { "en": "..." }, "entity_type": "course", … },
+      "click_count": 12,
+      "trend_score": 140.0
+    }
+  ],
+  "window": "7d"
+}
+```
+
+Each entry embeds a full [search document](/docs/knowledgebase/search-module/indexing-pipeline) — same shape the regular `/search` response returns — plus the click count and trend score.
+
+### How It Works
+
+1. Aggregate `clicked_result_id` counts from `search_history` for the current window (`WHERE clicked_result_id IS NOT NULL`). See [Click Tracking](/docs/knowledgebase/search-module/click-tracking).
+2. Aggregate the same for the **previous** window of the same length.
+3. Compute per-document trend scores with the same formula as Trending Searches.
+4. Sort descending, truncate to `limit`.
+5. Batch-fetch the corresponding documents from Typesense using an `id` filter: `tenant_id:={tenantID} && (id:=id1 || id:=id2 || …)`.
+6. Zip the documents back into result order, dropping any whose ID didn't come back from Typesense (a safety net if a document has been deleted).
+
+> Because click data comes from `search_history` directly (not `search_analytics`), trending results stay responsive to real-time clicks without waiting for the analytics aggregator to run.
+
+## Frontend Integration
+
+- The [Search Bar](/docs/knowledgebase/search-module/search-bar) calls `getTrendingSearches({ limit: 5 })` and renders them under a **Trending** heading when the input is empty and there are no recent searches.
+- The [Search Results](/docs/knowledgebase/search-module/search-results) component calls `getTrendingResults({ limit: 20, window: "7d" })` **only** when a query returns zero hits, and renders them under a **Trending Results** heading as a recovery fallback.
+
+## Cold Start Behaviour
+
+- **Trending Searches** depends on `search_analytics` for both windows. On a fresh deployment, both windows are empty → the endpoint returns `{ searches: [], window }`.
+- **Trending Results** depends on `clicked_result_id` rows in `search_history`. Until at least one user has clicked a result, the endpoint returns `{ results: [], window }`.
+
+## Parameters & Limits
+
+| Parameter | Value |
+|-----------|-------|
+| Default window | `7d` (configurable via `search_features.trending_window_days`) |
+| Default limit | `10` (configurable via `search_features.trending_limit`) |
+| Max limit | `50` (hard-capped) |
+| Brand-new-query/result boost | `100.0` trend score |
+| Per-page Typesense fetch | `limit + 20` when hydrating result documents |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `searches: []` with heavy traffic | The aggregator hasn't written the new queries into `search_analytics` yet — wait up to one hour |
+| `results: []` with obvious hot content | No one clicked them. Trending Results requires **click events**, not just views or queries |
+| A brand-new query dominates trending | Expected: first-appearance gets a flat 100% trend score. Revisit ranking with a popularity filter if you need stricter guardrails |
+| Document missing from trending results | Possibly deleted from the index since the click fired — the service silently drops entries that can't be hydrated |
+| Window format `7d` vs `7` | The handler parses digits, so both work. The response always echoes the canonical `{N}d` form |
+| Different tenants see the same items | They shouldn't — `tenant_id` is applied at every stage (history, analytics, and Typesense) |

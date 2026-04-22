@@ -1,0 +1,88 @@
+---
+title: "Related Searches"
+description: "Popular sibling queries surfaced when a search returns zero results"
+module: "search"
+feature: "related-searches"
+order: 7
+---
+
+# Related Searches
+
+When a search returns zero results, the service attaches a list of **related searches** to the response — the most popular queries across the tenant (excluding the current one) over the last 30 days. The client renders them as pills so users can recover from a dead end in one click.
+
+Like [Did You Mean](/docs/knowledgebase/search-module/did-you-mean), related searches are computed inline during the search request and returned via `metadata.related_searches`.
+
+## When It Runs
+
+Populated on the `/search` and `/search/facets` responses when **all** of the following are true:
+
+1. Non-empty `q`.
+2. Typesense returned zero hits.
+3. `suggestionsService` is wired (it is, in the default build).
+4. `tenant_id` parses as a valid UUID.
+
+The value is an array of up to **5** query strings (hard-coded default in the search service call site).
+
+## Algorithm
+
+Defined in `search-service/services/search_suggestions_service.go::GetRelatedSearches`.
+
+1. Query `search_analytics` for rows between 30 days ago and one hour ago (excluding the very recent window to avoid spikes).
+2. Group by `query`, sum `search_count`.
+3. Exclude the current query case-insensitively via `WHERE LOWER(query) != LOWER(?)`.
+4. Order by total count DESC, limit **5** (customisable per call; max 20).
+5. Return only the query strings — counts are intentionally dropped in the response.
+
+## Response Shape
+
+```
+metadata: {
+  related_searches: ["design systems", "accessibility", "figma basics", …]
+}
+```
+
+The entries are plain strings — the UI renders them as a flex-wrapped pill group.
+
+## Frontend Rendering
+
+The `SearchResults` component reads `metadata.related_searches` on a zero-result query:
+
+1. Renders a section heading **"Related Searches"**.
+2. Renders each entry as an outline-style size-sm button.
+3. On click, calls `onSuggestionClick?.(relatedSearch)` — the parent re-runs the search with the new query.
+
+Related searches are rendered alongside [Did You Mean](/docs/knowledgebase/search-module/did-you-mean) when both are present; the UI shows "Did you mean?" first, then the "Related Searches" row, then the [Trending Results](/docs/knowledgebase/search-module/trending#trending-results) fallback once its query resolves (the trending query is gated on the main `/search` returning zero hits).
+
+## Parameters & Limits
+
+| Parameter | Value | Where |
+|-----------|-------|-------|
+| Lookback window | `30 days` | `GetRelatedSearches` hard-codes the window internally |
+| Exclude bucket | Last `1 hour` | Same function — excludes the latest hour from aggregation to dampen spikes |
+| Default limit | `5` | Hard-coded in the `/search` call site |
+| Max limit | `20` | Clamped in `GetRelatedSearches` |
+| Ordering | By summed `search_count` DESC | — |
+
+## Cold Start Behaviour
+
+Same caveat as [Did You Mean](/docs/knowledgebase/search-module/did-you-mean): the source is `search_analytics`, which is only populated once the [Search Analytics](/docs/knowledgebase/search-module/search-analytics) aggregator has run. On a fresh deployment or a tenant with no historical activity, `related_searches` will be omitted.
+
+## Why Not Popular Searches Directly?
+
+The same `SearchSuggestionsService` backs [Popular Searches](/docs/knowledgebase/search-module/popular-searches) — but that endpoint is called explicitly and returns counts. Related searches are:
+
+- Anonymous (no counts surfaced to the client).
+- Scoped to one-shot zero-result recovery.
+- Case-insensitively de-duplicated against the current query.
+- Returned inline, not via a dedicated endpoint.
+
+Both read from the same underlying table, so they stay consistent.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `related_searches` missing even though popular queries exist | Check the query is zero-result — related searches are only computed when `found === 0` |
+| Returns the exact same list for every query | Expected: it's globally popular queries for the tenant, minus the current one |
+| Contains the current query anyway | Shouldn't happen — case-insensitive exclusion runs in SQL. If you see this, check whether the aggregator is deduping whitespace differently than the caller |
+| Some queries look noisy (test runs, probes) | Aggregator counts everything, including test queries. Consider cleaning `search_history` before launch so only organic traffic shapes the suggestions |

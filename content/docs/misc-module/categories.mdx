@@ -1,0 +1,267 @@
+---
+title: "Categories"
+description: "Create, filter, edit, and delete hierarchical categories for organizing platform content"
+module: "misc"
+feature: "categories"
+order: 1
+---
+
+# Categories
+
+**Categories** are the primary tool for organizing and classifying content across EduShade. They are hierarchical (parent → child), tenant-scoped, and can be attached to any entity — courses, events, and more.
+
+This page covers the core CRUD experience for a single category. For parent-child structure, tree queries, and the public tree, see [Category Tree](/docs/knowledgebase/misc-module/category-tree). For linking categories to courses/events/etc., see [Category Associations](/docs/knowledgebase/misc-module/category-associations).
+
+## Accessing Categories
+
+1. Sign in as an administrator with category management permissions.
+2. Navigate to **Admin → Categories** (`/admin/categories`).
+3. Required permissions (see [Roles & Permissions](/docs/knowledgebase/auth-module/roles-and-permissions)):
+   - `category.list` — view the list
+   - `category.view` — open a single category or its stats
+   - `category.create` — create new categories
+   - `category.update` — edit or attach/detach associations
+   - `category.delete` — delete or bulk-delete categories
+
+## Category Data Model
+
+Every category has the following fields:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | auto | Primary key |
+| `tenant_id` | UUID | auto | Tenant scope — set from request context |
+| `name` | string (1–255) | Yes | Display name |
+| `description` | text (0–2000) | No | Rich description |
+| `slug` | string (1–255) | Auto | URL-friendly slug; auto-generated from `name` at ORM-insert time if omitted (via the Category `BeforeAppendModel` hook, `github.com/gosimple/slug`) |
+| `parent_id` | UUID | No | Parent category (null = root) |
+| `level` | int | auto | Depth in hierarchy (0 = root) — computed by the server |
+| `path` | text | auto | Materialized path, e.g. `/<parent-uuid>/<category-uuid>/` |
+| `order_index` | int | No | Display order within the parent; default 0 |
+| `status` | enum | **Yes on create** | One of `published`, `draft`, `archived`. The `CreateCategoryDto` marks this field `Required`, so callers must supply it. The server falls back to `"published"` if somehow still empty, and the DB column default is also `'published'`, but neither kicks in under normal use because the DTO validator rejects missing status first |
+| `icon` | string (0–100) | No | Icon identifier |
+| `color` | string (exactly 7 chars) | No | Hex color `#RRGGBB` |
+| `thumbnail` | string (0–500) | No | URL to thumbnail image |
+| `created_by` | UUID | auto | User ID of creator |
+| `updated_by` | UUID | auto | User ID of last editor |
+| `created_at` / `updated_at` | timestamp | auto | Standard audit timestamps |
+| `deleted_at` | timestamp | auto | Soft-delete marker |
+
+`level` and `path` are never accepted from the client — the backend recalculates them whenever `parent_id` changes and propagates the new path down to every descendant.
+
+## Category List
+
+A searchable, filterable, paginated table of all categories (`GET /api/v1/admin/categories`).
+
+### Available Columns
+
+- **Thumbnail** — small image preview if set
+- **Name** (with slug as a subtitle)
+- **Description** (truncated)
+- **Parent category** (name, or "—" for roots)
+- **Status** badge
+- **Created at** (formatted)
+
+The row click and the **Edit** action both open the edit page; rows also expose a **Delete** action.
+
+### Filtering Categories
+
+The category list backs onto the `CategoryFilterDto` (see `misc-service/dto/category_dto.go`). All filters combine freely.
+
+| Filter | Query param | Description |
+|--------|-------------|-------------|
+| **Search** | `search` | Case-insensitive `ILIKE` match on `name` |
+| **Status** | `status` | One of `published`, `draft`, `archived` |
+| **Parent** | `parent_id` | Filter to direct children of a given category. When `parent_id` is supplied, the `level` filter is ignored — the two are mutually exclusive in the query builder |
+| **Level** | `level` | Filter by hierarchy depth (only applied when `parent_id` is not supplied) |
+| **Only IDs** | `only_ids` | Comma-separated UUIDs to **restrict** the result set to exactly those IDs |
+| **Include IDs** | `include_ids` | Comma-separated UUIDs to **prioritize** at the top of the first page (used when pre-selecting values in dropdowns). Ordering only adjusts on page 1 — later pages use the normal sort |
+
+> `entity_type` and `entity_id` appear on the filter DTO and are validated (`entity_type` must be `"course"` or `"event"`), but the category list service **does not currently apply them** to the SQL query — the filter is silently ignored. If you need "categories attached to entity X," query `category_associations` directly, or fetch via the owning service's own catalog endpoint. Tag listing, by contrast, **does** honor `entity_type` + `entity_id` (it joins `tag_associations`).
+
+### Sorting & Pagination
+
+| Param | Default | Notes |
+|-------|---------|-------|
+| `page` | `1` | |
+| `per_page` | `100` | |
+| `sort_by` | `created_at` | Any category column |
+| `sort_dir` | `desc` | `asc` or `desc` |
+
+Total count is returned with every page.
+
+## Creating a Category
+
+1. Click **Create Category** at `/admin/categories/create` (requires `category.create`).
+2. Fill the form:
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| **Name** | Yes | 1–255 chars. The slug is auto-generated from this value. |
+| **Slug** | Yes | Auto-filled while typing the name, editable. Unique per tenant, excluding soft-deleted records. |
+| **Description** | No | Up to 2000 chars, rich text. |
+| **Parent category** | No | Pick from a tree selector. Leave blank for a root category. |
+| **Icon** | No | Icon name/identifier. |
+| **Color** | No | Exactly 7 chars hex `#RRGGBB` (the validator enforces length 7; it does not parse the `#`). |
+| **Thumbnail** | No | Image URL (up to 500 chars). |
+| **Order index** | No | Numeric sort order within the parent; default `0`. |
+| **Status** | Yes | `published`, `draft`, or `archived`. Required by the create DTO — the admin form always sends a value. |
+
+3. Click **Save**.
+
+API: `POST /api/v1/admin/categories`. On success, the server returns the full category object with computed `level` and `path`.
+
+### Slug Uniqueness
+
+- Slug uniqueness is enforced per tenant via a **partial** unique index `idx_categories_tenant_slug_unique (tenant_id, slug) WHERE deleted_at IS NULL`. Soft-deleted rows keep their slugs without blocking new inserts.
+- If a slug is provided, the handler pre-checks availability via `SlugAvailable` and returns `400 Bad Request` with "This slug is already taken" on collision.
+- If the pre-check is raced and the DB unique index fires on insert/update, the service translates PostgreSQL error code `23505` into the same "slug is already taken" message.
+- On create, if you leave slug blank the Category ORM `BeforeAppendModel` hook auto-fills it as `slug.Make(name)` (e.g. `"Web Development" → "web-development"`). The CreateCategory service itself does not call `GetNextSlug`, so if that auto-slug collides you'll get the 23505-mapped error — retry with an explicit slug.
+
+### Events Published on Create
+
+- `EntityCreated` — consumed by any service caching categories
+- `AuditEvent` with `action = "created"`, `resource_type = "category"`, `module = "misc"`
+
+## Viewing a Single Category
+
+- UI: click a row in the list to open `/admin/categories/{id}/edit`.
+- API: `GET /api/v1/admin/categories/{category_id}` (requires `category.view`).
+
+Returns the full category object. Returns `404` if the ID is unknown or soft-deleted.
+
+## Editing a Category
+
+1. Open `/admin/categories/{id}/edit` (requires `category.update`).
+2. All fields are optional on edit — only the ones you send are updated:
+
+| Field | Validation |
+|-------|------------|
+| `name` | 0–255 chars (update DTO allows empty) |
+| `slug` | 0–255 chars, unique per tenant (excluding current id) |
+| `description` | 0–2000 chars |
+| `parent_id` | UUID or null — **always applied**, see note below |
+| `order_index` | any int |
+| `status` | `published` / `draft` / `archived` (optional on update) |
+| `icon` | 0–100 chars |
+| `color` | exactly 7 chars, hex |
+| `thumbnail` | 0–500 chars |
+
+3. Click **Save**.
+
+API: `PUT /api/v1/admin/categories/{category_id}`.
+
+> `parent_id` is the only field on update that is copied through **unconditionally** — the handler assigns `category.ParentID = req.ParentID` regardless of whether the client sent it. This means omitting `parent_id` (or sending `null`) on an update will **move the category to the root**. If you're doing a partial update of only, say, `color`, send the current `parent_id` back with the request. All other fields use the "only-update-if-present" pattern and can be safely omitted.
+
+### What Happens When You Change `parent_id`
+
+When the parent changes, the service:
+
+1. Recomputes `level` based on the new parent's level + 1 (or `0` for root).
+2. Recomputes `path` as `<new-parent-path><category-id>/`.
+3. **Cascades the new path and level to every descendant** — each child's path prefix is rewritten and its level is shifted by the same delta.
+
+This keeps the materialized path consistent without you having to touch children manually. See [Category Tree](/docs/knowledgebase/misc-module/category-tree) for why paths matter.
+
+### Events Published on Update
+
+- `EntityUpdated`
+- `AuditEvent` with `action = "updated"` (includes before/after snapshots)
+
+## Deleting a Category
+
+1. Click **Delete** in the row or from the edit page (requires `category.delete`).
+2. Confirm.
+3. The category is **soft-deleted** — its `deleted_at` is set and it disappears from all listing queries.
+
+API: `DELETE /api/v1/admin/categories/{category_id}`.
+
+### Children Must Be Empty (Single Delete Only)
+
+The **single-delete** endpoint (`DELETE /:category_id`) refuses to proceed if the target has any child category rows — it returns `500 Internal Server Error` with the message "cannot delete category with children". Move or delete the children first.
+
+> This rule is only enforced in the **single-delete** path. [Bulk delete](/docs/knowledgebase/misc-module/bulk-operations#bulk-delete-categories) does **not** check for children — it soft-deletes every matching row regardless. Be careful with bulk delete of hierarchical subtrees.
+
+Descendants of a soft-deleted category are **not** cascaded automatically by soft delete; they remain in the tree, but their previous parent is now gone and they become orphans until you reassign them.
+
+### Existing Associations
+
+Both `category_associations.category_id` and `categories.parent_id` have **DB-level `ON DELETE CASCADE`**:
+
+- If a category row is **physically** deleted, its associations and all child category rows cascade-delete with it.
+- Soft delete (the normal path, setting `deleted_at`) does **not** trigger cascade — associations and children stay put.
+
+The admin API only does soft deletes, so the cascade only matters if you (or a DBA) physically `DELETE FROM categories` via SQL.
+
+### Events Published on Delete
+
+- `EntityDeleted`
+- `AuditEvent` with `action = "deleted"`
+
+See [Bulk Operations](/docs/knowledgebase/misc-module/bulk-operations) for deleting many categories at once.
+
+## Category Statistics
+
+Find out how many entities are attached to a specific category.
+
+- API: `GET /api/v1/admin/categories/{category_id}/stats` (requires `category.view`)
+
+Returns a `CategoryStatsDto`:
+
+| Field | Description |
+|-------|-------------|
+| `category_id` | The category ID |
+| `category_name` | Display name |
+| `entity_counts` | Map of `entity_type → count` with exactly two hard-coded keys: `"course"` and `"event"`. Zero counts are still included |
+| `total_count` | Sum of the course and event counts |
+
+Category stats only counts **courses and events** — the two entity types currently used for category associations. If your service introduces a new `entity_type`, it won't be reflected here without a backend change (unlike tag stats, which iterates over a known list of types).
+
+Useful for deciding whether a category is safe to delete or retire.
+
+## Status Lifecycle
+
+| Status | Behavior |
+|--------|----------|
+| `draft` | Only shows in admin listings; hidden from the public category tree |
+| `published` | Shows in admin listings **and** the public category tree |
+| `archived` | Shows in admin listings only (hidden from public) — used for retired-but-kept taxonomy |
+
+Status is independent of soft delete — a soft-deleted category is gone from every query regardless of status.
+
+## Category Presets (Seed Templates)
+
+The misc-service ships a small set of preset JSON files at `misc-service/data/category_presets/`:
+
+| Preset | Description |
+|--------|-------------|
+| `default.json` | General-purpose starter (Technology, Business, Design, Education, Personal Development, each with subcategories) |
+| `islamic.json` | Islamic-education taxonomy (Quranic Studies, Islamic History, Islamic Sciences, etc.) |
+| `taibah.json` | Custom preset for the Taibah tenant |
+
+These files are **templates, not seeds**. Nothing is imported automatically on tenant creation — administrators can use them as a starting point when they want to hand-roll a fresh taxonomy.
+
+## Frontend Notes
+
+The category admin UI lives at:
+
+| Page | Path |
+|------|------|
+| Categories list | `/admin/categories` |
+| Create category | `/admin/categories/create` |
+| Edit category | `/admin/categories/{id}/edit` |
+
+Validation is client-side (Zod schema in `frontend/src/lib/categories/schema.ts`) and re-enforced server-side.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Slug already exists" | Pick a different slug, or restore the soft-deleted record that owns it if you want that slug back |
+| "Cannot delete category with children" | Delete or reassign the children first |
+| Changing parent didn't update my children | It does — reload the list; the server cascades `level` and `path` synchronously in the same transaction |
+| Can't see categories created by a teammate | Check tenant — every category is tenant-scoped; cross-tenant reads are not allowed |
+| Cannot see Categories in sidebar | Verify you have `category.list` on one of your roles |
+| Edit fails with `404` | Category may have been soft-deleted — check with an admin who can query the DB directly |
+| Partial update moved my category to root | `parent_id` is copied through unconditionally on update — re-send the existing `parent_id` whenever you `PUT /categories/{id}` |
+| Filtering by `entity_type=course&entity_id=...` returns everything | The category service currently ignores `entity_type`/`entity_id` filters — list comes back unfiltered on those params. Tag list does honor them |

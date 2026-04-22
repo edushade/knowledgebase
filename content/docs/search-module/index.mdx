@@ -1,0 +1,117 @@
+---
+title: "Search Module - Overview"
+description: "Complete guide to the EduShade Search system — full-text search, autocomplete, facets, history, trending, analytics, and indexing"
+module: "search"
+order: 0
+---
+
+# Search Module
+
+The **Search Module** is the site-wide discovery engine of the EduShade platform. It powers the global search bar, typeahead autocomplete, faceted filtering, recent and trending searches, result click tracking, and the daily analytics that drive "Did you mean?", related, popular, and trending suggestions.
+
+## What This Module Covers
+
+| Feature | Description |
+|---------|-------------|
+| [Search Bar](/docs/knowledgebase/search-module/search-bar) | Command-palette search trigger with typeahead, recent searches, and trending fallback |
+| [Search Results](/docs/knowledgebase/search-module/search-results) | Paginated result list with highlights, "did you mean", related searches, and a trending fallback for zero-result queries |
+| [Autocomplete](/docs/knowledgebase/search-module/autocomplete) | Prefix-based typeahead suggestions with per-locale highlights |
+| [Filters & Entity Types](/docs/knowledgebase/search-module/filters-and-entity-types) | Filter by entity type, status, language, and whether drafts are included |
+| [Facets](/docs/knowledgebase/search-module/facets) | Facet counts for entity type, status, and language |
+| [Did You Mean](/docs/knowledgebase/search-module/did-you-mean) | Typo-tolerant query suggestions computed with Levenshtein distance against popular queries |
+| [Related Searches](/docs/knowledgebase/search-module/related-searches) | Popular sibling queries surfaced when a query returns few or zero results |
+| [Popular Searches](/docs/knowledgebase/search-module/popular-searches) | Top queries over a rolling window, aggregated from search analytics |
+| [Trending Searches & Results](/docs/knowledgebase/search-module/trending) | Queries and documents with the highest growth rate across two consecutive windows |
+| [Search History](/docs/knowledgebase/search-module/search-history) | Per-user (authenticated) or per-session (anonymous) recent searches with deduplication |
+| [Click Tracking](/docs/knowledgebase/search-module/click-tracking) | Records which result a user clicked for each logged search, feeding trending and analytics |
+| [Search Analytics](/docs/knowledgebase/search-module/search-analytics) | Daily aggregation job and retention cleanup for the `search_analytics` table |
+| [Indexing Pipeline](/docs/knowledgebase/search-module/indexing-pipeline) | Typesense collections, per-tenant isolation, and the pub/sub subscribers that index documents |
+| [Localization](/docs/knowledgebase/search-module/localization) | Localized `title`/`description` maps and per-locale highlighting |
+| [Admin Search](/docs/knowledgebase/search-module/admin-search) | Authenticated admin endpoints, draft visibility, and status override |
+| [Search Integration](/docs/knowledgebase/search-module/search-integration) | Where search is wired into the platform — website header blocks, learner AI modal, admin filters |
+
+## Architecture Overview
+
+The search system is built as a standalone microservice (`search-service`) that stores documents in **Typesense** and keeps a PostgreSQL database for history, analytics, and click tracking.
+
+### Key Components
+
+- **Backend**: Go (Gin framework) with Bun ORM on PostgreSQL, backed by Typesense for full-text indexing
+- **Search Engine**: [Typesense](https://typesense.org) — per-tenant collections named `search_{tenantID}`
+- **Frontend**: React components in `website-builder-v2` (`SearchBar`, `SearchResults`, `SearchResultItem`, `SearchHistoryList`) that call the API client methods (`search`, `getAutocomplete`, `getSearchHistory`, etc.)
+- **Event Pipeline**: Pub/sub subscribers consume `search.document.created`, `search.document.updated`, and `search.document.deleted` events from other services and keep the index in sync
+- **Background Jobs**: `AnalyticsAggregatorJob` aggregates `search_history` into daily `search_analytics` rows and runs retention cleanup at midnight
+
+### Entity Types
+
+A single unified search document shape represents every searchable entity on the platform. The `entity_type` field is faceted and filterable.
+
+| `entity_type` | Source |
+|---------------|--------|
+| `course` | Learning service — courses |
+| `learning_path` | Learning service — learning paths |
+| `post` | Content/blog service — blog posts |
+| `page` | Website service — static/landing pages |
+| `product` | E-commerce service — products |
+| `booking` | Booking service — meeting / consultation plans |
+| `event` | Events service — live events |
+| `cohort` | Learning service — cohort offerings |
+| `bundle` | E-commerce service — course/product bundles |
+
+> The service supports additional entity types at the schema level (`meeting_plan`, etc.). The list above matches the entity types that frontend clients currently route.
+
+### Document Shape (Unified)
+
+Every indexed document conforms to the same shape regardless of source entity:
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | string | `{entity_type}_{entity_id}` — unique per document |
+| `tenant_id` | string (UUID) | Facetable — enforced in every query |
+| `entity_type` | string | Facetable (see table above) |
+| `entity_id` | string | Source entity's primary key |
+| `title` | object (locale → string) | Localized, always present |
+| `description` | object (locale → string) | Localized, optional |
+| `slug` | string | Optional — used for URL routing |
+| `thumbnail` | string | Optional — URL |
+| `status` | string | `draft`, `published`, `archived` — facetable |
+| `published_at` | int64 (Unix seconds) | Sortable, optional |
+| `tags` | string[] | Facetable, optional |
+| `language` | string | Facetable, optional — the document's primary language |
+| `metadata` | object | Optional — entity-specific fields |
+| `created_at` | int64 (Unix seconds) | Sortable |
+| `updated_at` | int64 (Unix seconds) | Sortable |
+
+### How Search Works (High-Level Flow)
+
+```
+1. A source service (learning, website, e-commerce, …) mutates an entity
+2. It publishes `search.document.created` | `.updated` | `.deleted` on the bus
+3. search-service's SubscriberService consumes the event
+4. It maps the payload to a SearchDocument and upserts into Typesense
+   (per-tenant collection: `search_{tenantID}`)
+5. A user queries the public or admin search endpoint
+6. search-service runs the query against Typesense with tenant scope
+7. If no results, it queries popular searches to compute "did you mean"
+   and related searches from `search_analytics`
+8. The query + filters + result_count are recorded in `search_history`
+   (keyed by user_id when logged in, or by a hashed session_id otherwise)
+9. AnalyticsAggregatorJob rolls `search_history` up into daily `search_analytics`
+   (every hour), and deletes rows older than 90 days at midnight
+10. Trending and popular endpoints read from `search_analytics` with
+    growth-rate or count-based ranking
+```
+
+## Getting Started
+
+If you're integrating search into a **public site**, start with:
+1. [Search Bar](/docs/knowledgebase/search-module/search-bar) — Drop the command-palette trigger into your page
+2. [Search Results](/docs/knowledgebase/search-module/search-results) — Render paginated, highlighted results
+3. [Autocomplete](/docs/knowledgebase/search-module/autocomplete) — Wire typeahead suggestions
+4. [Search Integration](/docs/knowledgebase/search-module/search-integration) — See how the website builder's header block already exposes `search_bar` as an action
+
+If you're an **administrator or operator**, also read:
+1. [Admin Search](/docs/knowledgebase/search-module/admin-search) — Authenticated search with `include_drafts` and status overrides
+2. [Indexing Pipeline](/docs/knowledgebase/search-module/indexing-pipeline) — How documents get into Typesense
+3. [Search Analytics](/docs/knowledgebase/search-module/search-analytics) — Aggregation cadence, retention, and the queries that drive suggestions
+4. [Trending Searches & Results](/docs/knowledgebase/search-module/trending) — How growth is computed and what "window" means

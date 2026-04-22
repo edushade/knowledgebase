@@ -1,0 +1,143 @@
+---
+title: "Notification Types"
+description: "The canonical catalogue of system notification types, their default icons, and which are user-suppressible"
+module: "notification"
+feature: "notification-types"
+order: 3
+---
+
+# Notification Types
+
+Every notification on EduShade carries a **`type`** — a short uppercase identifier such as `COURSE_UPDATE` or `PAYMENT_CONFIRMATION`. The type determines the inbox icon, whether the notification is user-suppressible, and how it rolls up into analytics.
+
+## Type Catalogue
+
+The platform ships with fourteen canonical types. Source services should always use one of these values; unrecognised types fall back to the default bell icon and are treated as user-suppressible.
+
+### Security & Account Lifecycle
+
+These types are **always delivered** — users cannot suppress them in [Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences). They also bypass digest batching and quiet hours so they never arrive late.
+
+| Type | Icon | Triggers |
+|------|------|----------|
+| `WELCOME_MESSAGE` | ShieldCheck | Account creation (post-verification) |
+| `ACCOUNT_VERIFICATION` | ShieldCheck | Email / phone OTP or verification link |
+| `PASSWORD_RESET` | ShieldCheck | Forgot-password flow, admin-initiated reset |
+| `ACCOUNT_UPDATE` | UserCog | Email, phone, username, password changed; status changes |
+
+### Learning & Engagement
+
+User-controllable via the per-type toggle in Preferences.
+
+| Type | Icon | Triggers |
+|------|------|----------|
+| `COURSE_UPDATE` | BookOpen | New content published, schedule changes, instructor announcements |
+| `ENROLLMENT` | GraduationCap | Enrollment confirmation, waitlist acceptance, program completion |
+| `ASSIGNMENT_UPDATE` | FileEdit | Assignment published, feedback given, grade posted |
+| `QUIZ_REMINDER` | ClipboardCheck | Quiz scheduled, starting soon, deadline approaching |
+| `CLASS_ALERT` | Video | Live class starting, cancelled, rescheduled |
+| `CERTIFICATE` | Award | Certificate issued on program completion |
+| `DISCUSSION` | MessageSquare | New reply on a followed thread, `@mention` in a post |
+
+### Commerce
+
+User-controllable.
+
+| Type | Icon | Triggers |
+|------|------|----------|
+| `PAYMENT_CONFIRMATION` | CreditCard | Order success, refund issued, subscription renewed |
+
+### System & Marketing
+
+User-controllable.
+
+| Type | Icon | Triggers |
+|------|------|----------|
+| `SYSTEM_ANNOUNCEMENT` | Megaphone | Platform-wide announcements from admins |
+| `MARKETING` | Tag | Promotional campaigns authored in the [Campaigns](/docs/knowledgebase/notification-module/campaigns) builder |
+
+## Default Fallback Icon
+
+Unknown types, or notifications without a type, render with a generic **Bell** icon. This is intentional so that a new type introduced by an upstream service still displays sensibly before the frontend is updated.
+
+## Icon Mapping Implementation
+
+Icons are chosen client-side by the `<NotificationItem />` component (`/src/components/shared/notification-items.tsx`). The mapping is:
+
+| Type | Icon (lucide-react) |
+|------|---------------------|
+| `WELCOME_MESSAGE` / `ACCOUNT_VERIFICATION` / `PASSWORD_RESET` | `ShieldCheck` |
+| `COURSE_UPDATE` | `BookOpen` |
+| `QUIZ_REMINDER` | `ClipboardCheck` |
+| `PAYMENT_CONFIRMATION` | `CreditCard` |
+| `SYSTEM_ANNOUNCEMENT` | `Megaphone` |
+| `CLASS_ALERT` | `Video` |
+| `CERTIFICATE` | `Award` |
+| `DISCUSSION` | `MessageSquare` |
+| `ENROLLMENT` | `GraduationCap` |
+| `ASSIGNMENT_UPDATE` | `FileEdit` |
+| `ACCOUNT_UPDATE` | `UserCog` |
+| `MARKETING` | `Tag` |
+| (fallback) | `Bell` |
+
+A sender can override the default by setting `icon` on the notification payload to a URL — the UI prefers a custom icon URL over the type-default when present.
+
+## User-Suppressibility Matrix
+
+| Type | Suppressible? | Reason |
+|------|---------------|--------|
+| `WELCOME_MESSAGE` | No | Onboarding receipt |
+| `ACCOUNT_VERIFICATION` | No | Security — user explicitly requested the OTP/link |
+| `PASSWORD_RESET` | No | Security — user explicitly requested the reset |
+| `ACCOUNT_UPDATE` | No | Security — unauthorised change detection |
+| `COURSE_UPDATE` | Yes | Content preference |
+| `ENROLLMENT` | Yes | Receipt-style, useful but not critical |
+| `ASSIGNMENT_UPDATE` | Yes | Content preference |
+| `QUIZ_REMINDER` | Yes | Content preference |
+| `PAYMENT_CONFIRMATION` | Yes | Transaction receipts are also in Order History, so suppression is allowed |
+| `CLASS_ALERT` | Yes | Content preference |
+| `CERTIFICATE` | Yes | Achievement; certificate is also visible in the profile |
+| `DISCUSSION` | Yes | Content preference |
+| `SYSTEM_ANNOUNCEMENT` | Yes | Admin can force-deliver via campaign settings if critical |
+| `MARKETING` | Yes | CAN-SPAM / GDPR compliance requires suppression |
+
+> Security-critical types (`ACCOUNT_VERIFICATION`, `PASSWORD_RESET`) additionally bypass quiet hours so the user's own action always completes promptly.
+
+## How Types Interact With Other Features
+
+### Preferences
+
+The `notification_type_preferences` map in the user's [Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences) keys by the exact strings above. Missing keys default to `true`.
+
+### Campaigns
+
+When authoring a [Campaign](/docs/knowledgebase/notification-module/campaigns), the **Type** (`CampaignType`) the admin picks — `TRANSACTIONAL`, `MARKETING`, or `ANNOUNCEMENT` — determines which default notification `type` values the campaign uses for the generated notifications, and which compliance rules apply (e.g. `MARKETING` campaigns must honour unsubscribe).
+
+### Templates
+
+Templates carry a `TemplateType` (`TRANSACTIONAL` / `MARKETING` / `ANNOUNCEMENT`) that mirrors the campaign type. See [Templates](/docs/knowledgebase/notification-module/templates) for how the template type affects which unsubscribe footer is injected and whether variables can reference learner-specific fields.
+
+### Analytics
+
+Campaign analytics group by notification type so admins can see "which type of notification has the best open rate". See [Analytics](/docs/knowledgebase/notification-module/analytics).
+
+## Introducing a New Type
+
+Adding a new notification type is a backend change:
+
+1. Add the type constant to the `notification-service` enum.
+2. Seed the default preference value (`true` unless explicitly opt-in).
+3. Update the frontend icon map in `/src/components/shared/notification-items.tsx` so the new type has a proper icon. Until this frontend update ships, the type will render with the default `Bell`.
+4. Update the localisation dictionary so the label appears on the Preferences page (if the type is user-controllable).
+5. Add entries to this doc.
+
+System services can safely emit the new type immediately — it will simply render with the fallback icon until step 3 ships.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Notifications show the generic bell icon | The `type` value is either missing or not present in the frontend mapping — update `/src/components/shared/notification-items.tsx` |
+| User turned a type off but still receives it | The type is security-critical and not suppressible; or the type string on the notification doesn't match the key in `notification_type_preferences` |
+| Marketing campaigns arriving to users who unsubscribed | Check the user's `MARKETING` toggle and confirm the campaign is `MARKETING` type, not `TRANSACTIONAL` |
+| Certificate notifications not going out | `CERTIFICATE` is user-controllable — confirm the user hasn't turned it off, and that the certificate-service publishes to the notification stream |

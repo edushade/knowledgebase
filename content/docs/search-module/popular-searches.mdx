@@ -1,0 +1,95 @@
+---
+title: "Popular Searches"
+description: "Top queries across a rolling window, aggregated from search analytics"
+module: "search"
+feature: "popular-searches"
+order: 8
+---
+
+# Popular Searches
+
+The **popular searches** endpoint returns the tenant's top queries across a configurable rolling window, sorted by total search count. It's the closest thing to a "browse" experience for a discovery surface — useful for empty-state UI, SEO landing pages, or admin dashboards.
+
+Unlike [Related Searches](/docs/knowledgebase/search-module/related-searches) (inline, zero-result only) or [Did You Mean](/docs/knowledgebase/search-module/did-you-mean) (inline, similarity-based), popular searches are explicitly fetched and return **counts** with each entry.
+
+## Endpoint
+
+- **Public:** `GET /api/v1/public/search/suggestions`
+- **Admin:** `GET /api/v1/admin/search/suggestions` (authenticated)
+- **Handler:** `search-service/api/handlers/search_suggestions_handler.go::GetSuggestions`
+- **Service:** `search-service/services/search_suggestions_service.go::GetPopularSearches`
+
+### Query Parameters
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `days` | int | `30` | Rolling window size (how many days back to aggregate) |
+| `limit` | int | `search_features.suggestions_limit` (default `10`) | Max number of suggestions to return. **Hard-capped at 50** |
+
+### Response
+
+```
+{
+  "suggestions": [
+    { "query": "ui ux design",   "search_count": 214 },
+    { "query": "figma basics",   "search_count": 137 },
+    { "query": "design systems", "search_count": 89 }
+  ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `query` | The exact query string as recorded in `search_history` (whitespace and casing preserved) |
+| `search_count` | Sum of `search_count` across the window in `search_analytics` |
+
+## Algorithm
+
+1. Compute the window: `[now - days, now - 1 hour)`. The last hour is excluded to avoid temporary spikes dominating the top.
+2. `SELECT query, SUM(search_count) FROM search_analytics` grouped by `query`, scoped to the tenant.
+3. Order by sum DESC, limit to the requested `limit` (capped at 50).
+
+> Aggregation granularity is **daily** — the analytics rows are written per-query-per-day by the hourly aggregator job. See [Search Analytics](/docs/knowledgebase/search-module/search-analytics).
+
+## Use Cases
+
+| UI | How it uses the endpoint |
+|----|--------------------------|
+| "Popular searches this week" sidebar | `?days=7` |
+| "Trending topics" module on the homepage | Consider [Trending Searches](/docs/knowledgebase/search-module/trending) instead — that one is ranked by growth, not absolute count |
+| Admin analytics dashboard | Pass a larger `limit` (up to 50) for a flat table view |
+| Query suggestion backend | Consumed internally by `QuerySuggestionService` to seed [Did You Mean](/docs/knowledgebase/search-module/did-you-mean) |
+
+## Frontend Integration
+
+The API client exposes:
+
+```ts
+apiClient.getSearchSuggestions({ days?, limit? }, isAdmin)
+  → ServerResponse<SearchSuggestionsResponse>
+```
+
+The default website builder components do not call this endpoint directly today — the search bar uses autocomplete, recent, and trending as its three surfaces. The endpoint is wired and available for custom pages that want a "Popular this month" section.
+
+## Parameters & Limits
+
+| Parameter | Value |
+|-----------|-------|
+| Default `days` | `30` |
+| Default `limit` | `10` (configurable via `search_features.suggestions_limit`) |
+| Max `limit` | `50` (hard-capped in the service) |
+| Excluded window | Last `1 hour` — dampens spikes |
+
+## Cold Start Behaviour
+
+Popular searches are computed purely from `search_analytics`. Until the [aggregator](/docs/knowledgebase/search-module/search-analytics) runs for the first time, the endpoint returns `{ suggestions: [] }`. This cascades to [Did You Mean](/docs/knowledgebase/search-module/did-you-mean) and [Related Searches](/docs/knowledgebase/search-module/related-searches) being empty as well, since they all read from the same table.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Returns `[]` despite heavy search activity | Confirm the `AnalyticsAggregatorJob` is running. `search_history` alone is not read by this endpoint; only `search_analytics` is |
+| Counts look low | The window excludes the last hour. Very recent activity won't appear until it ages in |
+| Same query appears in two rows with different casing | The aggregator groups by exact `query` string. Standardise casing in the client (`trim().toLowerCase()`) before submitting searches if you want case-folded counts |
+| Admin sees different numbers than public | There's only one underlying query; the only difference is the auth requirement. Differences usually mean you're calling different tenants |
+| Suggestions pinned to test queries | Clean `search_history` before launch so the aggregator's first-few-day window reflects real traffic |

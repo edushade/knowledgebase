@@ -1,0 +1,149 @@
+---
+title: "Tenant Lifecycle (Activate / Deactivate / Reset)"
+description: "How a tenant moves between active, inactive, suspended, and soft-deleted, and how the reset flow wipes tenant data across every service database"
+module: "tenant"
+feature: "tenant-lifecycle"
+order: 2
+---
+
+# Tenant Lifecycle
+
+Every tenant has a **status** that controls whether users can sign in to it, plus a **soft-delete marker** that hides it from every list view. Beyond those two knobs, the platform also exposes a **reset** operation that wipes a tenant's data across every service database — useful for winding a trial workspace back to zero without tearing down the tenant record itself.
+
+This page covers the three distinct lifecycle operations: **activate**, **deactivate**, **reset** (sysadmin-only), plus how **soft-delete** differs from reset.
+
+## Statuses
+
+The tenant `status` column accepts:
+
+| Status | Description | Set by |
+|--------|-------------|--------|
+| `active` | Default for new tenants. Users can sign in, admin can edit, the tenant is routable | Default on create, or `PATCH /:id/activate` |
+| `inactive` | Tenant exists but is "paused" — the frontend is expected to render an "unavailable" page | `PATCH /:id/deactivate` |
+| `suspended` | Harder pause — typically used for billing / abuse situations. Treated like `inactive` for access but signals a different reason to admins | Set via `PUT /:id { "status": "suspended" }` |
+
+The [`DELETE /:id`](#soft-delete) path also sets a soft-delete marker on top of whatever the status was.
+
+## Activate a Tenant
+
+- **Sysadmin endpoint:** `PATCH /api/v1/sysadmin/tenants/:id/activate`
+- **Org-admin endpoint:** `PATCH /api/v1/orgadmin/organizations/:organization_id/tenants/:id/activate`
+- **Permissions (org-admin):** `tenant.update` or `organization.manage`
+
+Sets `status = "active"` on the tenant row. Always returns the updated tenant.
+
+- Idempotent — activating an already-active tenant is a no-op write that still publishes an audit event.
+- Does not touch `deleted_at`. A soft-deleted tenant stays hidden from list endpoints even after activation.
+- Publishes `AuditEvent { action: "updated", resource_type: "tenant", description: "Activated tenant" }`.
+
+## Deactivate a Tenant
+
+- **Sysadmin endpoint:** `PATCH /api/v1/sysadmin/tenants/:id/deactivate`
+- **Org-admin endpoint:** `PATCH /api/v1/orgadmin/organizations/:organization_id/tenants/:id/deactivate`
+- **Permissions (org-admin):** `tenant.update` or `organization.manage`
+
+Sets `status = "inactive"`. Same rules as activate — idempotent, audit-logged, does not remove data.
+
+To put a tenant into `suspended`, use the generic update endpoint:
+
+```
+PUT /api/v1/sysadmin/tenants/:id
+{ "status": "suspended" }
+```
+
+## Soft-Delete
+
+The standard `DELETE` endpoint is a **soft-delete** — it sets `deleted_at` on the row and hides the tenant from every list/get, but does **not** remove the row or any tenant-scoped data elsewhere.
+
+- **Sysadmin:** `DELETE /api/v1/sysadmin/tenants/:id`
+- **Org-admin:** `DELETE /api/v1/orgadmin/organizations/:organization_id/tenants/:id`
+- **Permissions (org-admin):** `tenant.delete` or `organization.manage`
+
+### What persists
+
+Soft-deletion preserves every related record:
+
+- The tenant row itself stays in `tenants`
+- The tenant's RBAC roles, permissions, users, and sessions stay in the auth database
+- All data in learning, misc, file, comm, billing, and quiz databases stays intact
+- Audit and activity trails remain queryable
+
+This is what you want for archival, data-retention compliance, or "possibly reversible" cancellations. Tenant recovery is a manual operation today — a DBA clears `deleted_at` on the `tenants` row (and any related `organization_members` rows).
+
+### What is blocked
+
+A soft-deleted tenant cannot be resolved by `TenantMiddleware`, so users cannot sign in to it and admin endpoints scoped to its ID will return `404 Not Found`.
+
+## Reset a Tenant
+
+Reset is a **destructive, sysadmin-only** operation that wipes every tenant-scoped row across every wired service database — use it to return a demo / trial / QA tenant to a clean state without having to delete and recreate it.
+
+- **Endpoint:** `POST /api/v1/sysadmin/tenants/:id/reset`
+- **Auth:** Sysadmin (static system token)
+
+### What it does, in order
+
+1. Loads the tenant by ID. If the tenant does not exist **and** the service is in single-tenant mode **and** the requested ID matches the configured default tenant ID, the reset flow **creates the default tenant** (and a default organization if none exists yet). In multi-tenant mode, a missing tenant returns `404 Not Found`.
+2. Iterates over the configured service databases — `tenant`, `quiz`, `file`, `comm`, `learning`, `misc`, `auth`, `billing`. Missing (nil) DB handles are skipped.
+3. For each database:
+   - Queries `information_schema.columns` for all tables in schema `public` that have a `tenant_id` column.
+   - Queries `information_schema` for foreign-key constraints among those tables and builds a dependency graph.
+   - Topologically sorts the tables (Kahn's algorithm) so **children are deleted before parents**. Cycles are tolerated — any unsortable remainder is appended at the end.
+   - The `tenants` table itself is always **skipped** during the sweep — the tenant row is preserved.
+   - Deletes rows in **10,000-row batches** (`ctid IN (SELECT ctid … LIMIT ?)`) and loops until the affected-row count is less than the batch size. Per-table errors are logged and the flow continues with other tables and other databases.
+4. Deletes every object under the prefix `<tenant-id>/` in the configured object store (S3 / MinIO). Storage failures are logged, not fatal.
+5. Resets `status` back to `active` on the tenant row in a transaction.
+6. Publishes `AuditEvent { action: "updated", resource_type: "tenant", description: "Reset tenant" }`.
+
+### Why children-before-parents
+
+Without ordering, deleting a parent row first would violate a foreign-key constraint and fail the batch. The dependency-aware sort delays parents until every child table that references them (via `tenant_id`) has been drained. If the FK graph lookup itself fails, the service logs a warning and deletes in the tables' original order — this will still succeed for independent tables and only fail on tightly coupled ones.
+
+### Databases touched
+
+All of these DBs are swept when wired:
+
+| DB | Used for |
+|----|----------|
+| `tenant` | `organizations`, `organization_members`, `invitations`, `settings` |
+| `auth` | users, sessions, roles, user_roles, permissions-on-users, OAuth identities, etc. |
+| `learning` | courses, lessons, curriculum_items, assignments, enrollments, bundles, learning paths |
+| `misc` | categories, tags, associations |
+| `file` | file objects, uploads |
+| `comm` | notifications, templates, audit/activity payloads (if scoped by tenant) |
+| `quiz` | quizzes, questions, quiz attempts |
+| `billing` | subscriptions, invoices, transactions |
+
+Any table in any of those databases that has a `tenant_id` column is fair game — the sweep is **schema-driven**, not a hand-maintained list. Add a new tenant-scoped table anywhere and it is automatically included in future resets.
+
+### What is preserved
+
+- The `tenants` row itself (name, subdomain, domain, org link).
+- Anything in any database that does **not** have a `tenant_id` column — for example, seeded geo data in misc-service and global permission definitions in auth-service.
+- Audit-log events already published — they live in the audit subsystem, not keyed by the tenant row being reset. Reset publishes its own audit event on top.
+
+### After a reset
+
+The tenant comes back with `status = "active"` and an empty workspace. Because no settings or members remain, calling `GET /admin/tenant/settings` immediately after a reset will lazy-create a fresh default `settings` row, and the next admin sign-in (via [Impersonation](/docs/knowledgebase/tenant-module/impersonation) or a sysadmin-bootstrapped member) will trigger [Role Seeding](/docs/knowledgebase/tenant-module/role-seeding) again as needed.
+
+## Events & Audit
+
+| Action | `resource_type` | Description set by backend |
+|--------|-----------------|----------------------------|
+| Activate | `"tenant"` | `"Activated tenant"` |
+| Deactivate | `"tenant"` | `"Deactivated tenant"` |
+| Soft-delete | `"tenant"` | `"Deleted tenant"` |
+| Reset | `"tenant"` | `"Reset tenant"` |
+
+All four carry `module = "tenant"` and `after_value` with the tenant's post-op name + status (reset and delete may omit name/status details).
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Users still see the tenant after deactivation | The client / CDN has a cached bundle. Deactivation only changes the DB row; make sure the tenant-facing frontend re-fetches `/public/tenant/info` on load |
+| Reset returns `404` but tenant exists | The configured default tenant ID does not match the requested ID and the service is in multi-tenant mode. Pass the correct UUID |
+| Reset completes but some tables still have data | One of the DBs was nil at service startup (connection string missing) — those DBs are skipped silently. Check the service logs for `No tables with tenant_id found in <db>` |
+| Reset is slow on a large tenant | Each table is drained in 10,000-row batches and logs progress (`Deleted N rows so far from <db>.<table>…`). Watch the logs for the specific table — a missing index on `tenant_id` will be the culprit |
+| FK cycle error during reset | The topological sort tolerates cycles by appending remaining tables at the end, which may violate FKs. If this happens, break the cycle manually (usually by nulling out one direction) or delete the offending table first |
+| Soft-deleted tenant stuck — subdomain "already in use" on recreate | Soft-deletion keeps the unique constraint slot. Either pick a different subdomain or hard-delete the old row at the DB |

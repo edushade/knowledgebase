@@ -1,0 +1,222 @@
+---
+title: "Templates"
+description: "Reusable per-channel message templates with Unlayer visual email editor, variable substitution, versioning, presets, and test sends"
+module: "notification"
+feature: "templates"
+order: 7
+---
+
+# Templates
+
+A **Template** is a reusable, multi-channel content bundle. One template carries a subject + HTML body for email, a short body for SMS, a title + body for push, and a body for each messaging channel — all keyed by the same variables so a single substitution fills every surface.
+
+## Accessing Templates
+
+1. Sign in as an **Admin** with `notification.view`.
+2. Navigate to **Admin → Notification → Templates** (`/admin/notification/templates`).
+
+| Action | Permission |
+|--------|------------|
+| View list & detail | `notification.view` |
+| Create template | `notification.create` |
+| Edit template | `notification.update` |
+| Delete template | `notification.delete` |
+| Send a test | `notification.send` |
+
+## Template Anatomy
+
+A template is one row with a content block per channel:
+
+| Field | Description |
+|-------|-------------|
+| `name` | Admin label |
+| `description` | Internal note |
+| `type` | `TRANSACTIONAL` / `MARKETING` / `ANNOUNCEMENT` |
+| `version` | Auto-incremented on every save |
+| `email_subject` | Email subject line |
+| `email_body_html` | Rendered HTML body (produced by Unlayer or authored by hand) |
+| `email_design_json` | Unlayer editor design JSON — allows the template to round-trip back into the visual builder |
+| `sms_body` | Plain-text SMS body |
+| `push_title`, `push_body` | Push notification content |
+| `whatsapp_body` | WhatsApp message text |
+| `telegram_body` | Telegram message text |
+| `slack_body` | Slack mrkdwn or block JSON |
+| `discord_body` | Discord markdown or embed JSON |
+| `variables` | Array of variable names referenced by any channel — auto-extracted on save |
+| `active` | Soft-disable flag; inactive templates are hidden from the campaign wizard |
+| `created_at` / `updated_at` / `created_by` | Audit-related fields |
+
+## Template Types
+
+The `type` drives unsubscribe behaviour and which variables are allowed:
+
+| Type | Unsubscribe footer injected? | Variable scope |
+|------|------------------------------|----------------|
+| `TRANSACTIONAL` | No | Full — user, order, course, any context |
+| `MARKETING` | Yes, automatically, for email | Full, plus marketing-specific like `{{utm_campaign}}` |
+| `ANNOUNCEMENT` | Optional | Tenant-wide variables only |
+
+Mismatching the type with the content risks compliance issues — a promotional email authored as `TRANSACTIONAL` will skip the unsubscribe footer, which violates CAN-SPAM / GDPR in most jurisdictions.
+
+## The Email Editor — Unlayer
+
+Email authoring uses the **Unlayer** drag-and-drop visual builder, exposed through `<UnlayerEmailEditor />`.
+
+- The editor produces `email_design_json` (the canonical source of truth) and its compiled `email_body_html`.
+- Saving always stores both — the JSON so the admin can re-edit later, the HTML so the runtime doesn't need to re-compile.
+- The editor includes brand-safe presets, merge-tag chips for every declared variable, and a dark-mode preview.
+
+### Email Template Presets
+
+The platform ships with **14 ready-made email presets** (`email-template-presets.ts`) spanning the common transactional and marketing shapes:
+
+- Blank Canvas and Simple Text starters
+- Basic with Header for branded announcements
+- Promotional Sale, Flash Sale, Product Update
+- Newsletter, Event Invitation
+- Order Confirmation, Payment Receipt
+- Password Reset, Welcome Email
+- Course Enrollment, Assignment Reminder
+
+Open `<EmailTemplateSelector />` from the template form — pick a preset, the editor pre-fills `email_design_json`, and the admin continues from there.
+
+## SMS, Push, and Messaging Bodies
+
+Each non-email channel has a plain-text editor with a character counter:
+
+| Channel | Guidance |
+|---------|----------|
+| SMS | Keep under 160 chars to fit one SMS segment; avoid emoji in GSM-7 providers |
+| Push | Title ≤ 50 chars, body ≤ 200 chars, for reliable rendering on small screens |
+| WhatsApp | Must match the pre-approved WhatsApp Business template when using the Cloud API |
+| Telegram / Slack / Discord | Markdown support varies — the editor shows the exact flavour per channel |
+
+## Variables
+
+Variables are written `{{ snake_case }}` anywhere in any content block. On save, the backend parses every channel and produces a deduped `variables` array.
+
+### Built-in Variables
+
+| Scope | Examples |
+|-------|----------|
+| **User** | `{{ user.name }}`, `{{ user.email }}`, `{{ user.first_name }}`, `{{ user.locale }}` |
+| **Tenant** | `{{ tenant.name }}`, `{{ tenant.logo_url }}`, `{{ tenant.support_email }}` |
+| **Campaign** | `{{ campaign.name }}`, `{{ campaign.unsubscribe_url }}` |
+| **Event** | `{{ event.course.title }}`, `{{ event.order.total }}`, `{{ event.certificate.url }}` (whatever the source service supplies on dispatch) |
+
+`<TemplateVariableValidator />` highlights unknown or malformed variables in real time and blocks save if a required variable is missing.
+
+## Test Sends
+
+Every template has a **Send Test** action (`<SendTestDialog />`):
+
+1. Pick target channels (must be subset of channels with non-empty content).
+2. Enter destinations — an email address per enabled channel, a phone for SMS, a device ID or email for push.
+3. Provide values for any non-inferred variables (user-scoped variables default to the admin's own profile).
+4. Click **Send Test**.
+
+API: `POST /v1/admin/notify/templates/{id}/test` (requires `notification.send`).
+
+A test dispatch does **not** create a delivery log against a real recipient — it routes through the same providers but logs separately so campaign analytics aren't polluted.
+
+## Versioning
+
+Every save increments `version` and stores an immutable snapshot. Campaigns reference a template **at a specific version** at send time — editing a template after a campaign starts does not retroactively change already-dispatched notifications.
+
+Version history is available via `GET /v1/admin/notify/templates/{id}/versions` and surfaces in the detail page as a timeline with before/after diffs.
+
+## Template Preview
+
+`<TemplatePreviewModal />` renders every channel in one dialog so an admin can spot-check before a send:
+
+- **Email**: rendered HTML body in an iframe with light + dark backgrounds.
+- **SMS**: stylised phone mock-up with the exact character count.
+- **Push**: OS-style notification mock (macOS, Windows, Android).
+- **Messaging**: bubble-style mock for WhatsApp, Telegram, Slack, Discord.
+
+Variable chips in the preview show the sample values used — the admin can override any of them inline.
+
+## Template List — Filters & Bulk Actions
+
+Route: `/admin/notification/templates`.
+
+### Filters
+
+| Filter | Description |
+|--------|-------------|
+| **Search** | Match against name, description, variables |
+| **Type** | `TRANSACTIONAL` / `MARKETING` / `ANNOUNCEMENT` |
+| **Active** | Show only active / only inactive |
+| **Channel** | Templates that contain non-empty content for a specific channel |
+| **Created by** | Admin filter |
+
+### Bulk Actions
+
+- Bulk delete (`useTemplateBulkDelete`)
+- Bulk activate / deactivate
+- Bulk duplicate
+
+## Creating a Template
+
+Route: `/admin/notification/templates/create`.
+
+1. Fill in **Name**, **Description**, and **Type**.
+2. Open the **Email** tab and either pick a preset or start from scratch in the Unlayer editor.
+3. Fill the other channel tabs (SMS, Push, WhatsApp, Telegram, Slack, Discord) as needed.
+4. Use the variable chips toolbar to insert merge tags.
+5. Run **Preview** to spot-check.
+6. Run **Send Test** to validate.
+7. **Save** — the backend extracts variables and creates version `1`.
+
+API: `POST /v1/admin/notify/templates` (requires `notification.create`).
+
+## Editing a Template
+
+Route: `/admin/notification/templates/{id}/edit`.
+
+- Edits bump `version`.
+- In-flight campaigns keep rendering against the previous version; new campaigns pick up the latest version.
+- Changing the `type` from `MARKETING` to `TRANSACTIONAL` removes the auto-injected unsubscribe footer — the admin must manually confirm this is correct.
+
+API: `PUT /v1/admin/notify/templates/{id}` (requires `notification.update`).
+
+## Deactivating / Deleting
+
+| Action | Effect |
+|--------|--------|
+| **Deactivate** (`active: false`) | Template is hidden from the campaign wizard; existing campaigns continue to use it |
+| **Delete** | Soft-delete unless no campaign has ever used the template, in which case it's hard-deleted |
+
+API:
+- Deactivate: `PUT /v1/admin/notify/templates/{id}` with `active: false`
+- Delete: `DELETE /v1/admin/notify/templates/{id}` (requires `notification.delete`)
+
+## API Reference
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/v1/admin/notify/templates` | GET | List templates (paginated, filterable) |
+| `/v1/admin/notify/templates` | POST | Create template |
+| `/v1/admin/notify/templates/{id}` | GET | Fetch template |
+| `/v1/admin/notify/templates/{id}` | PUT | Update template (bumps version) |
+| `/v1/admin/notify/templates/{id}` | DELETE | Delete or soft-delete the template |
+| `/v1/admin/notify/templates/{id}/test` | POST | Send a test message |
+| `/v1/admin/notify/templates/{id}/versions` | GET | List historical versions with diffs |
+
+## Related Features
+
+- [Campaigns](/docs/knowledgebase/notification-module/campaigns) — where templates are used
+- [Channels](/docs/knowledgebase/notification-module/channels) — per-channel content fields
+- [Providers](/docs/knowledgebase/notification-module/providers) — who actually delivers the rendered message
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Unlayer editor doesn't reopen cleanly | The template was imported without `email_design_json`; export the current HTML to a fresh design to regain editability |
+| Variable shows `{{user.name}}` literally at send | Either the variable name doesn't match the dispatch payload or the sender didn't populate that key — check the delivery log to see the resolved context |
+| SMS body exceeded 1 segment | Reduce length below 160 chars (GSM-7) or 70 chars (UCS-2 with emoji/non-Latin) |
+| Test send not arriving | Confirm the target channel has an active provider; tests still pass through the real provider pipeline |
+| Unsubscribe footer missing | Template type must be `MARKETING` for auto-injection; otherwise add one manually |
+| Version count skyrocketing | Any save bumps the version — encourage admins to preview before saving rather than iterating on saved versions |
+| Can't delete a template | A campaign still references it — deactivate instead, or delete the referencing campaigns first |

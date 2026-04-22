@@ -1,0 +1,114 @@
+---
+title: "Autocomplete"
+description: "Prefix-based typeahead suggestions with per-locale highlighting and entity-type filtering"
+module: "search"
+feature: "autocomplete"
+order: 3
+---
+
+# Autocomplete
+
+The autocomplete endpoint powers the typeahead suggestions inside the [Search Bar](/docs/knowledgebase/search-module/search-bar). It runs a prefix-matched search against the Typesense collection and returns a small, deduplicated list of suggestions with highlights and matched tokens.
+
+## Endpoint
+
+- **Public:** `GET /api/v1/public/search/autocomplete`
+- **Admin:** `GET /api/v1/admin/search/autocomplete` (authenticated)
+- **Handler:** `search-service/api/handlers/autocomplete_handler.go::Autocomplete`
+- **Service:** `search-service/services/autocomplete_service.go::AutocompleteService.Autocomplete`
+
+### Query Parameters
+
+| Param | Required | Description |
+|-------|----------|-------------|
+| `q` | Yes | The query string. An empty `q` returns an empty list of suggestions without hitting Typesense |
+| `entity_type` | No | Restrict suggestions to a single entity type (e.g. `course`, `post`, `page`) |
+| `limit` | No | Max suggestions to return. Defaults to `SearchFeatures.AutocompleteLimit` (default `10`). **Capped at 20** server-side |
+
+### Response
+
+```
+{
+  "query": "<the input query>",
+  "suggestions": [
+    {
+      "text": "Intro to UI/UX",
+      "highlight": "Intro to <mark>UI/UX</mark>",
+      "type": "course",
+      "matched_tokens": ["ui", "ux"]
+    }
+  ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `text` | Plain localized text used to populate the input when the suggestion is chosen |
+| `highlight` | HTML snippet with matching tokens wrapped (e.g. `<mark>`) — rendered with `dangerouslySetInnerHTML` |
+| `type` | The suggestion's entity type, surfaced so the UI can badge or group suggestions |
+| `matched_tokens` | The token(s) Typesense matched, useful for analytics or custom rendering |
+
+## How It Works
+
+The autocomplete service builds a Typesense search with:
+
+| Param | Value |
+|-------|-------|
+| `q` | The raw input query |
+| `query_by` | `title,description` |
+| `sort_by` | `_text_match:desc` |
+| `per_page` | The requested limit (capped at 20) |
+| `page` | `1` |
+| `filter_by` | `tenant_id:={tenantID} && status:=published [&& entity_type:={entity_type}]` |
+
+Typesense's default prefix-matching handles "starts-with" behaviour for the last token — typing `ui` matches `UI/UX Fundamentals`.
+
+**Post-processing:**
+
+1. Marshal the hit back into a `SearchDocument`.
+2. Pick the `text` with locale fallback: preferred locale → `en` → any other populated locale. If `title` is empty, fall back to the first 50 characters of `description` with an ellipsis.
+3. Deduplicate by `text.toLowerCase()`.
+4. Pick the `highlight` from `hit.highlight` or `hit.highlights` — the title field is preferred, then description, still with the same locale fallback.
+5. Stop once the limit is reached.
+
+> Autocomplete **always** restricts to `status:=published`. It never surfaces drafts, even on the admin endpoint. Admins who want to type-ahead against drafts should instead use the full search endpoint with `include_drafts=true` — see [Admin Search](/docs/knowledgebase/search-module/admin-search).
+
+## Frontend Integration
+
+In the search bar, autocomplete is wired via React Query:
+
+```
+queryKey:  ["search-autocomplete", autocompleteQuery, locale]
+queryFn:   apiClient.getAutocomplete({ q: autocompleteQuery, limit: 5 }, false)
+enabled:   autocompleteQuery.length >= 2 && open
+```
+
+The input is debounced by **300 ms** before the query fires, and the hook is gated behind a 2-character minimum so single-keystroke typing doesn't spam Typesense.
+
+## Locale Handling
+
+- The service reads `title` and `description` as `map[string]string` (locale → text).
+- Suggestions prefer **`en`** for the visible `text` and `highlight`, with a fallback to any available locale.
+- The caller's current locale is **not** plumbed through the endpoint today — the frontend relies on React Query's cache key (`[..., locale]`) to re-fetch when locale changes, but the server itself still prefers `en`.
+- If your content has no `en` localization, suggestions will fall through to whichever locale key exists on the document.
+
+See [Localization](/docs/knowledgebase/search-module/localization) for the full picture.
+
+## Rate & Limits
+
+| Parameter | Value |
+|-----------|-------|
+| Default `limit` | `10` (configurable via `search_features.autocomplete_limit`) |
+| Max `limit` | `20` (hard-capped in the service regardless of request) |
+| Empty query | Returns `{ suggestions: [] }` without a Typesense call |
+| Typesense timeout | `2 s` (connection timeout; see `typesense.connection_timeout_seconds`) |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| No suggestions for a known phrase | Confirm the underlying document is **`published`** — autocomplete filters `status:=published` unconditionally |
+| Suggestions return but `highlight` equals `text` | No match highlight was produced by Typesense (often happens when the match is on a non-queried field like `tags`) |
+| Duplicates appear | They shouldn't — the service dedupes by `text.toLowerCase()`. If you see duplicates, check that distinct entities don't share an identical title |
+| Only English suggestions on a multi-language tenant | Expected: the service prefers `en`. To surface other languages, ensure the document's other locales are populated and the `en` entry is not |
+| Request returns 401 on admin path | The admin path enforces `AuthMiddleware`; call the public path instead or include a valid access token |

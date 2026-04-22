@@ -1,0 +1,199 @@
+---
+title: "Comments"
+description: "Hierarchical threaded comments on any engagement entity — with cursor pagination, strategy-based filtering, and admin moderation"
+module: "engagement"
+feature: "comments"
+order: 2
+---
+
+# Comments
+
+Comments are the conversation layer of the platform. Any authenticated, enrolled learner can post a comment on a course, quiz, event, cohort, learning path, lesson, assignment, or discussion, and reply to any existing comment to form a thread. There is no nesting limit — replies to replies to replies are all valid. Admins have full moderation powers via a parallel admin surface.
+
+## Quick Facts
+
+| Attribute | Value |
+|-----------|-------|
+| Entity types supported | `course`, `quiz`, `event`, `cohort`, `learning_path`, `discussion`, `lesson`, `assignment` |
+| Content length | 1–5,000 characters |
+| Threading | Self-referencing `parent_id`; no depth limit |
+| Pagination | Cursor on `created_at` (DESC) |
+| Delete mode | Soft delete (sets `deleted_at`) |
+| Admin endpoint prefix | `/api/v1/admin/comments` |
+| User endpoint prefix | `/api/v1/user/comments` |
+| Required admin permissions | `comment.list`, `comment.view`, `comment.create`, `comment.update`, `comment.delete` |
+
+## Data Model
+
+A comment row (`comments` table) has the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | UUID | Primary key |
+| `tenant_id` | UUID | Tenant scope |
+| `entity_type` | string | Engagement entity type (see Quick Facts) |
+| `entity_id` | UUID | Specific entity the comment is attached to |
+| `parent_id` | UUID \| null | `null` = root comment; non-null = reply to this comment |
+| `content` | text | Comment body (1–5,000) |
+| `created_at` | timestamp | Set on insert |
+| `updated_at` | timestamp \| null | **Null until the comment is edited** — treat null as "never edited" |
+| `created_by` | UUID | Author |
+| `updated_by` | UUID | Last editor |
+| `deleted_at` | timestamp \| null | Soft delete marker |
+
+### Root Comments vs Replies
+
+Two helper methods live on the model:
+
+- `Comment.IsComment()` → `parent_id == nil` (root-level comment)
+- `Comment.IsReply()` → `parent_id != nil` (a reply inside a thread)
+
+Discussion metrics use these to split `comments_count` from `replies_count` — see [Discussion Metrics](/docs/knowledgebase/engagement-module/discussion-metrics).
+
+## User-Facing Workflows
+
+### Listing Comments on an Entity
+
+1. The learner opens a discussion, lesson, assignment, or any other entity that supports comments.
+2. The frontend calls `GET /api/v1/user/comments?entity_type={type}&entity_id={id}` (optionally with pagination and search).
+3. The service filters by the learner's enrolled entities and returns an **already-hierarchical** tree — the backend calls `ConvertToHierarchical()` + `SortHierarchicalComments()` internally before responding, so each root comment already has its `children[]` populated and every level is sorted `created_at DESC`.
+4. If the filter includes `parent_id`, the response is flat (the direct children of that parent only). Otherwise, the response is the nested tree.
+
+### Posting a Comment or Reply
+
+1. The learner types a comment and clicks **Post**.
+2. The frontend calls `POST /api/v1/user/comments` with:
+   - `entity_type` and `entity_id` (mandatory),
+   - `parent_id` (optional — provide to reply to an existing comment),
+   - `content` (1–5,000 characters).
+3. If `parent_id` is provided, the service verifies the parent comment:
+   - exists,
+   - is not soft-deleted,
+   - belongs to the **same** `entity_type` + `entity_id`.
+4. The service verifies the learner is enrolled in the entity, inserts the row with `updated_at = null`, and returns the new comment with its creator profile and linked entity eager-loaded.
+
+> **Note:** The service enforces entity consistency between a reply and its parent — you cannot attach a reply on `course/X` to a parent that lives on `lesson/Y`. Cross-entity threading is not supported.
+
+### Editing Your Own Comment
+
+1. The learner clicks **Edit** on their own comment.
+2. The frontend calls `PUT /api/v1/user/comments/{comment_id}` with `{ content: "new text" }`.
+3. The service verifies:
+   - the comment exists,
+   - `created_by` matches the current user,
+   - the user is still enrolled in the entity.
+4. `content` is updated, `updated_at = now()`, `updated_by = user_id`. The original `created_at` is preserved.
+
+### Deleting Your Own Comment
+
+1. The learner clicks **Delete** on their own comment.
+2. The frontend calls `DELETE /api/v1/user/comments/{comment_id}`.
+3. The service soft-deletes the row.
+4. **Replies are not cascade-deleted.** A deleted parent still has visible children — the frontend typically displays a "this comment was deleted" placeholder while keeping the reply thread open.
+
+## Admin-Facing Workflows
+
+The admin surface is a flat table at `/admin/engagement/comments` (or wherever your tenant's admin navigation exposes it) gated by `comment.*` permissions.
+
+| Method | Path | Permission | Purpose |
+|--------|------|------------|---------|
+| `GET` | `/api/v1/admin/comments` | `comment.list` | List all comments across entities |
+| `GET` | `/api/v1/admin/comments/{id}` | `comment.view` | Fetch a single comment |
+| `POST` | `/api/v1/admin/comments` | `comment.create` | Post a comment without enrollment check |
+| `PUT` | `/api/v1/admin/comments/{id}` | `comment.update` | Edit any comment |
+| `DELETE` | `/api/v1/admin/comments/{id}` | `comment.delete` | Soft-delete any comment |
+| `DELETE` | `/api/v1/admin/comments/bulk/delete` | `comment.delete` | Bulk soft-delete by `comment_ids[]` body |
+
+Admins can filter the list by `entity_type`, `entity_id`, `parent_id`, `created_by`, `search` (case-insensitive content match), `only_ids` (restrict to a specific UUID list), `exclude_ids` (omit these UUIDs), or `include_ids` (union with the filter).
+
+## Filter Strategies
+
+`CommentFilterService` picks the cheapest SQL path based on which filters are set. Understanding the strategy helps avoid accidentally expensive queries:
+
+| Strategy | When it is picked | SQL shape |
+|----------|------------------|-----------|
+| `StrategyBasic` | No filters set | `WHERE tenant_id = ?` only |
+| `StrategyEntityType` | Only `entity_type` set | Adds `AND entity_type = ?` |
+| `StrategyEntityID` | Only `entity_id` set | Adds `AND entity_id = ?` |
+| `StrategyParentID` | Only `parent_id` set | Finds all replies to one parent |
+| `StrategyCreatedBy` | Only `created_by` set | Finds all comments by one user |
+| `StrategySearch` | Only `search` set | `AND content ILIKE %term%` |
+| `StrategyOnlyIDs` | Only `only_ids` array set | Fetches specific IDs and filters tenant client-side |
+| `StrategyCombined` | Any combination | Combines all applicable WHERE clauses |
+
+> **Tip:** On the admin list, prefer setting `entity_id` alongside `search` rather than searching across the whole tenant. The combined strategy is much faster because the `entity_id` index narrows the row set before the `ILIKE` scan.
+
+## Cursor Pagination
+
+Comment lists use **cursor pagination** with `created_at DESC` as the cursor field. Each page returns:
+
+- `data[]` — the comments for this page,
+- `next_cursor` — the cursor to pass on the next request,
+- `prev_cursor` — the cursor for the previous page,
+- `has_next`, `has_prev` — booleans.
+
+Pass `?cursor={token}&per_page=20` on follow-up requests. Do not mix cursor pagination with page/per-page offset pagination in the same request.
+
+## Hierarchical Response Helpers (Backend)
+
+Two helpers live in the engagement-service's `dto` package and are applied before the response is serialised:
+
+- `ConvertToHierarchical(comments)` — builds a `children` array on each comment by matching `parent_id`.
+- `SortHierarchicalComments(tree)` — sorts every level by `created_at DESC` recursively.
+
+The list endpoint returns the nested tree directly unless the request includes `parent_id`, in which case the response is flat (just the direct children of that parent). The frontend does not need to rebuild the tree; it just renders what the backend provides.
+
+## API Reference
+
+### User Endpoints
+
+| Method | Path | Purpose | Notes |
+|--------|------|---------|-------|
+| `GET` | `/api/v1/user/comments` | List comments scoped to enrolled entities | Cursor pagination |
+| `GET` | `/api/v1/user/comments/{id}` | Get a single comment | Enrollment required |
+| `POST` | `/api/v1/user/comments` | Post a comment or reply | Enrollment required; parent-entity match enforced |
+| `PUT` | `/api/v1/user/comments/{id}` | Edit own comment | Ownership + enrollment |
+| `DELETE` | `/api/v1/user/comments/{id}` | Soft-delete own comment | Ownership + enrollment |
+
+### Admin Endpoints
+
+| Method | Path | Purpose | Permission |
+|--------|------|---------|------------|
+| `GET` | `/api/v1/admin/comments` | List all comments | `comment.list` |
+| `GET` | `/api/v1/admin/comments/{id}` | Get any comment | `comment.view` |
+| `POST` | `/api/v1/admin/comments` | Create a comment without enrollment check | `comment.create` |
+| `PUT` | `/api/v1/admin/comments/{id}` | Edit any comment | `comment.update` |
+| `DELETE` | `/api/v1/admin/comments/{id}` | Soft-delete any comment | `comment.delete` |
+| `DELETE` | `/api/v1/admin/comments/bulk/delete` | Bulk soft-delete by `comment_ids[]` body | `comment.delete` |
+
+## Bulk Delete Request Shape
+
+`DELETE /api/v1/admin/comments/bulk/delete` accepts only a fixed body:
+
+```json
+{ "comment_ids": ["<uuid>", "<uuid>", ...] }
+```
+
+It is an ID-list operation, not a filter-based mass delete. The response returns `"Deleted N comments"`.
+
+## Events Emitted
+
+| Action | Audit action | Activity title |
+|--------|--------------|----------------|
+| `POST /user/comments` | `created` | "Posted a comment" |
+| `PUT /user/comments/{id}` | `updated` | "Updated a comment" |
+| `DELETE /user/comments/{id}` | `deleted` | "Deleted a comment" |
+
+All mutations publish an `AuditEvent` with `module=engagement`, `resource_type=comment`.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "parent comment not found" (400) | The `parent_id` is invalid, soft-deleted, or belongs to a different entity. Confirm `entity_type` and `entity_id` match the parent's |
+| "you are not enrolled in this program" (403) | Learner is not enrolled in the entity referenced by `entity_type` + `entity_id` |
+| "you can only update your own comments" / "you can only delete your own comments" (403) | Only the author can edit/delete via the user endpoint. Use the admin endpoint with `comment.update`/`comment.delete` |
+| Replies missing after deleting parent | Replies are preserved on purpose; a deleted parent has `deleted_at` set, but its children remain. Frontend usually renders a "deleted comment" placeholder |
+| Editing does not change `created_at` | Correct — only `updated_at` and `updated_by` are refreshed on edit |
+| `updated_at` is null on a freshly created comment | Correct — `updated_at` is only populated on edit. A fresh comment has `updated_at: null` |
+| Search is slow across the whole tenant | Narrow the query with `entity_id` (or at least `entity_type`) so the combined strategy uses an index before the `ILIKE` scan |

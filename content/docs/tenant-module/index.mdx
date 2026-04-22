@@ -1,0 +1,156 @@
+---
+title: "Tenant Module - Overview"
+description: "Complete guide to the EduShade Tenant service — tenants, organizations, members, invitations, domains, settings, and sysadmin impersonation"
+module: "tenant"
+order: 0
+---
+
+# Tenant Module
+
+The **Tenant Module** (backed by the `tenant-service` microservice) is the control plane that provisions and operates every customer workspace on the EduShade platform. It owns the **tenant** (a branded workspace with its own subdomain, custom domain, settings, and per-tenant RBAC), the **organization** that contains one or more tenants, the **members** that link users to an organization, and the **invitations** used to bring new users in.
+
+Every other microservice — auth, learning, misc, billing, files, comms, quiz — scopes its data by the `tenant_id` this module hands out. If a record does not carry a valid tenant reference, it does not belong on the platform.
+
+## What This Module Covers
+
+| Feature | Description |
+|---------|-------------|
+| [Tenants](/docs/knowledgebase/tenant-module/tenants) | Create, update, list, and inspect tenants — including tenant stats and the comprehensive tenant summary |
+| [Tenant Lifecycle](/docs/knowledgebase/tenant-module/tenant-lifecycle) | Activate, deactivate, soft-delete, and **reset** a tenant (wipe all data across every service database) |
+| [Organizations](/docs/knowledgebase/tenant-module/organizations) | Organization CRUD, the parent-child hierarchy, and organization stats |
+| [Members](/docs/knowledgebase/tenant-module/members) | Attach users to an organization and its tenants — used by org-admin routing and by tenant-admin bootstrap |
+| [Invitations](/docs/knowledgebase/tenant-module/invitations) | Token-based invitation flow with roles, permissions, expiry, resend, and cancel |
+| [Domains](/docs/knowledgebase/tenant-module/domains) | Subdomain + custom-domain routing, DNS verification, and Caddy on-demand TLS integration |
+| [Settings](/docs/knowledgebase/tenant-module/settings) | Per-tenant settings (Platform, Organization, Social, Security, Media, Gamification, User, Analytics) with JSONB deep-merge |
+| [Impersonation](/docs/knowledgebase/tenant-module/impersonation) | Sysadmin-level login as a tenant's super-admin — auto-creates the super-admin user if one does not exist |
+| [Role Seeding](/docs/knowledgebase/tenant-module/role-seeding) | How `roles.json` and `permissions.json` are loaded for every newly created tenant |
+
+## Architecture Overview
+
+The tenant module is a standalone Go microservice (`tenant-service`) that exposes four distinct route tiers behind a single REST API and publishes audit events for every mutation.
+
+### Key Components
+
+- **Backend**: Go (Gin framework) with Bun ORM on PostgreSQL
+- **Frontend**: Next.js admin pages at `/sysadmin/tenants`, `/orgadmin/organizations/:id`, `/admin/tenant/settings`
+- **Multi-Tenancy**: Every tenant has its own `tenant_id`; organizations group tenants and are themselves tenant-scoped at the data layer
+- **Pub/Sub**: `AuditEvent` is published for every mutation (`module = "tenant"`); invitation acceptance also publishes `ActivityEvent`
+- **RBAC**: Admin routes guarded by granular permissions (`tenant.*`, `organization.*`, `invitation.*`, `settings.*`); sysadmin routes guarded by a static system token
+- **Soft Deletes**: Tenants, organizations, members, invitations, and settings all use `deleted_at` — nothing is physically destroyed except by the [tenant reset](/docs/knowledgebase/tenant-module/tenant-lifecycle#reset-a-tenant) flow
+- **Cross-Service Calls**: Tenant service talks to `auth-service` over REST for user creation, role assignment, and permission assignment during invitation acceptance and sysadmin member add
+
+### Route Tiers
+
+The tenant service exposes **four** authentication tiers, each with its own middleware chain and its own set of capabilities:
+
+| Tier | Base path | Auth | Audience |
+|------|-----------|------|----------|
+| **Sysadmin** | `/api/v1/sysadmin/…` | `SysAdminAuthMiddleware` — static token from `SystemAPI.AuthToken` | Platform owner / superuser |
+| **Org-admin** | `/api/v1/orgadmin/organizations/:organization_id/…` | JWT + `OrganizationContextMiddleware` + `CanAnyWithOrganization` | An organization-level admin managing one or more tenants under a single org |
+| **Admin** | `/api/v1/admin/…` | JWT (`AuthMiddleware`) + `TenantMiddleware` + `Can(permission)` | A tenant admin managing their own tenant |
+| **Public** | `/api/v1/public/tenant/…`, `/api/v1/caddy/verify-domain` | `TenantMiddleware` only | Unauthenticated traffic — used by public pages, Caddy TLS, invitation links |
+
+See each feature's page for the exact set of endpoints each tier exposes.
+
+### Operational Endpoints (sysadmin-only)
+
+Beyond the feature endpoints, the service exposes two utility routes that are not owned by any feature page:
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /api/v1/sysadmin/login` | Validates a sysadmin token against `SystemAPI.AuthToken`. Returns `200 OK` on match (no JWT issued) and `401` otherwise. See [Tenants → Sysadmin Authentication](/docs/knowledgebase/tenant-module/tenants#sysadmin-authentication) |
+| `Any /api/v1/sysadmin/queue/monitoring/*any` | Embeds the **Asynq** job-queue monitoring web UI (`asynqmon`), scoped to tenant-service's Redis-backed job queue. Accepts any HTTP method / sub-path so the asynqmon SPA can serve its static assets and API. Guarded by `SysAdminAuthMiddleware`, so every request must carry the sysadmin token |
+
+The queue monitoring endpoint exists so operators can inspect scheduled, pending, retrying, and failed background jobs (tenant reset sweeps, slow cross-service calls, deferred audit writes). The underlying library is `github.com/hibiken/asynq` with the `asynqmon` HTTP handler mounted at `/api/v1/sysadmin/queue/monitoring`. It is not safe to expose to the public internet — behind the sysadmin token, but you should also firewall / VPN it.
+
+### Data Model at a Glance
+
+| Table | Purpose |
+|-------|---------|
+| `organizations` | Top-level legal / commercial container. Has parent-child hierarchy (`parent_id`), type (company/department/…), status |
+| `tenants` | A branded workspace — unique `subdomain`, optional unique `domain`, status, theming (`logo_dark`, `logo_light`, `favicon`) |
+| `settings` | One row per tenant. Stores JSONB blocks for security, media, gamification, user, analytics, social, and organization metadata |
+| `organization_members` | Links a user to an organization and a specific tenant with a status (active/inactive/suspended) |
+| `invitations` | Token-based invites to join an org + tenant with pre-assigned `role_ids` and `permission_ids` |
+
+## Tenants vs Organizations — When to Use Which
+
+Organizations and tenants look similar but play different roles:
+
+| Property | Organization | Tenant |
+|----------|-------------|--------|
+| **Purpose** | Legal / billing / hierarchy container | The actual workspace users log into |
+| **Hierarchy** | Parent-child tree (subsidiary, branch, team, …) | Flat — each tenant has exactly one organization |
+| **URL surface** | None — it's a data concept | Has a `subdomain` and optionally a custom `domain` |
+| **RBAC** | Permissions like `organization.view`, `organization.update` | Permissions like `tenant.view`, `tenant.update`, `settings.update`, `invitation.create`, etc. |
+| **Settings / branding** | — | Owns logo, favicon, analytics, and all per-tenant settings (note: the `theme` block was removed from settings — `has_custom_theme` is always `false` in the summary response) |
+| **Creation** | Sysadmin or org-admin | Sysadmin or org-admin. Creating a tenant **auto-seeds** its RBAC roles and permissions |
+
+A common real-world layout: one **organization** per customer company; one **tenant** per brand or region (e.g. `acme-us.edushade.com`, `acme-eu.edushade.com`).
+
+## Tenant Lifecycle at a Glance
+
+```
+1. Organization created                        → models.Organization{status:"active"}
+2. Tenant created under that organization      → models.Tenant{status:"active"}
+                                                → roles + permissions seeded for the tenant
+                                                → default settings row lazy-created on first GET
+3. Members added (orgadmin or sysadmin)        → user row created in auth-service (if needed)
+4. Invitations sent for additional users       → token email → AcceptInvitation creates member
+5. Tenant is deactivated / suspended / reset   → middleware blocks traffic; reset wipes data
+6. Tenant is soft-deleted                      → deleted_at set; row preserved for audit
+```
+
+## Single-Tenant Mode
+
+The service supports a **single-tenant mode** driven by config (`cfg.Tenant.IsSingleTenantMode()`). In this mode:
+
+- Lookups for the configured default tenant ID (or `uuid.Nil`) that miss the database fall back to a **synthetic default tenant** built from the configured slug instead of returning `404`.
+- The [tenant reset](/docs/knowledgebase/tenant-module/tenant-lifecycle#reset-a-tenant) flow will **auto-create** the default tenant (and a default organization if there are none) the first time it is hit, so that a fresh deployment can be reset to "bootstrap state" without any seed data.
+
+Multi-tenant mode is the default for production SaaS deployments.
+
+## Events & Audit
+
+Every mutation publishes an `AuditEvent` tagged with `module = "tenant"`. `resource_type` identifies the target:
+
+| Action | `resource_type` |
+|--------|-----------------|
+| Tenant CRUD + activate/deactivate/reset | `"tenant"` |
+| Organization CRUD | `"organization"` |
+| Invitation create / accept / resend / cancel | `"invitation"` |
+| Settings create / update / delete | `"settings"` |
+| Member create / update / delete | `"member"` |
+| Impersonation | `"impersonation"` |
+
+Invitation acceptance additionally publishes a platform `ActivityEvent` (`action = "invitation.accepted"`), so it appears in the user's own activity feed as well as in the tenant audit log.
+
+See [Audit Module](/docs/knowledgebase/audit-module) for how `AuditEvent` records are consumed by the platform audit log.
+
+## Getting Started
+
+If you're a **system administrator** bootstrapping the platform or provisioning a new customer:
+
+1. Acquire a sysadmin token — see [Tenants → Authentication](/docs/knowledgebase/tenant-module/tenants#sysadmin-authentication)
+2. Create an **organization** for the customer at `POST /sysadmin/organizations` — see [Organizations](/docs/knowledgebase/tenant-module/organizations)
+3. Create a **tenant** under it at `POST /sysadmin/tenants` — see [Tenants](/docs/knowledgebase/tenant-module/tenants#create-a-tenant). Roles and permissions are seeded automatically.
+4. Create the first **tenant admin user** with `POST /sysadmin/tenants/:id/members` — see [Members](/docs/knowledgebase/tenant-module/members#bootstrap-a-tenant-admin-sysadmin-only)
+5. Share the tenant's URL — either `{subdomain}.edushade.com` or a configured custom [domain](/docs/knowledgebase/tenant-module/domains)
+
+If you're an **organization administrator** managing tenants under your own org:
+
+1. Sign in and navigate to `/orgadmin/organizations/:organization_id`
+2. Create and manage tenants under your org — see [Tenants](/docs/knowledgebase/tenant-module/tenants) and [Organizations](/docs/knowledgebase/tenant-module/organizations)
+3. Invite users with [Invitations](/docs/knowledgebase/tenant-module/invitations)
+
+If you're a **tenant administrator** operating your own tenant:
+
+1. Edit branding and policy at `/admin/tenant/settings` — see [Settings](/docs/knowledgebase/tenant-module/settings)
+2. Invite users with [Invitations](/docs/knowledgebase/tenant-module/invitations)
+3. Attach a custom domain via [Domains](/docs/knowledgebase/tenant-module/domains)
+
+If you're a **developer** integrating another service with tenant-service:
+
+1. Every request should carry a valid `tenant_id`; the service's `TenantMiddleware` resolves the tenant from subdomain / custom domain / explicit header
+2. Subscribe to tenant `AuditEvent` messages if your service needs to react to create / update / delete / reset
+3. Use the public endpoints (`/public/tenant/info`, `/public/tenant/subdomain/:subdomain`, `/public/tenant/domain/:domain`, `/public/tenant/settings`) for unauthenticated branding lookups from the tenant-facing frontend

@@ -1,0 +1,144 @@
+---
+title: "Tag Associations"
+description: "Attach tags to any supported entity — courses, events, products, posts, and more — using the polymorphic association system"
+module: "misc"
+feature: "tag-associations"
+order: 5
+---
+
+# Tag Associations
+
+A **tag association** is a link between a tag and any other entity in the platform. Like [category associations](/docs/knowledgebase/misc-module/category-associations), tag associations are **polymorphic** — the association table stores an `entity_type` string (e.g. `"course"`, `"post"`) and an `entity_id`, so a single tag can be attached to many kinds of entities without coupling them to the tag schema.
+
+## Association Data Model
+
+**Table:** `tag_associations`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | UUID | Primary key |
+| `tenant_id` | UUID | Tenant scope |
+| `tag_id` | UUID | Reference to `tags.id` (cascade delete) |
+| `entity_type` | string (≤50) | e.g. `"course"`, `"post"`, `"user"` |
+| `entity_id` | UUID | ID of the entity being tagged |
+| `created_at` | timestamp | When the association was created |
+
+### Uniqueness
+
+A unique constraint covers (`tag_id`, `entity_type`, `entity_id`) — you cannot attach the same tag to the same entity twice. Duplicate attaches are silently skipped at the service layer.
+
+### Foreign-Key Behavior
+
+`tag_id` is a foreign key to `tags.id` with `ON DELETE CASCADE`. Physically deleting a tag removes its associations; soft deletion leaves them untouched.
+
+## REST API — Single Association
+
+### Create Association
+
+- **Endpoint:** `POST /api/v1/admin/tags/{tag_id}/associations/{entity_type}/{entity_id}`
+- **Permission:** `tag.update`
+- **Path params:**
+  - `tag_id` — the tag to attach
+  - `entity_type` — free-form string (see [Supported Entity Types](#supported-entity-types))
+  - `entity_id` — UUID of the entity
+- **Body:** none
+- **Returns:** `201 Created` with a success message
+- **Events:** `AuditEvent` with `action = "created"`, `resource_type = "tag_association"` (distinct from `"tag"` used by tag CRUD), `resource_id = tag_id`, `module = "misc"`
+
+Idempotent — creating the same association twice does not error.
+
+### Delete Association
+
+- **Endpoint:** `DELETE /api/v1/admin/tags/{tag_id}/associations/{entity_type}/{entity_id}`
+- **Permission:** `tag.update`
+- **Returns:** `204 No Content` on success
+- **Events:** `AuditEvent` with `action = "deleted"`, `resource_type = "tag_association"`, `resource_id = tag_id`
+
+If the association doesn't exist, the operation is a no-op.
+
+## Service-Level Helpers (Batch Operations)
+
+For services integrating directly against the misc-service's Go client, `TagAssociationService` exposes richer batch operations — these are **not exposed as HTTP endpoints**, but are used by other Go services when they need to sync many tags at once.
+
+| Method | Purpose |
+|--------|---------|
+| `Attach(tenantID, entityType, entityID, tagIDs)` | Attach many tags to one entity in one call; duplicates skipped |
+| `Detach(tenantID, entityType, entityID, tagIDs...)` | Remove associations — if `tagIDs` is empty, removes **all** tags for the entity; otherwise removes just the specified ones |
+| `Remove(tenantID, entityType, entityID, tagIDs)` | Remove a specific list of tags from an entity |
+| `Sync(tenantID, entityType, entityID, tagIDs)` | Replace the entity's tags with exactly the given list |
+| `Exists(tenantID, tagID, entityType, entityID)` | Check whether a specific association exists |
+| `GetTagsByEntity(tenantID, entityType, entityID)` | Fetch every tag attached to an entity |
+| `GetTagsByEntities(tenantID, entityType, entityIDs)` | Batch fetch tags for many entities — returns `map[entityID] → []Tag` |
+| `GetEntitiesByTag(tenantID, tagID, entityType)` | Reverse lookup — UUIDs of every entity of `entityType` that has `tagID` |
+
+A typical course/post service integration uses `Sync` from its own save handler: the user edits the tag list in the UI, the frontend submits the full desired set, and the consumer calls `Sync` to reconcile in one DB transaction.
+
+## Filtering Tags by Attached Entity
+
+The tag list endpoint accepts `entity_type` and `entity_id` to narrow results to the tags attached to a specific entity:
+
+```
+GET /api/v1/admin/tags?entity_type=course&entity_id=<uuid>
+```
+
+This is what the admin UI uses on an entity edit page (e.g. a course) to pre-load the tags that are already attached.
+
+## Filtering Entities by Tag (Reverse Lookup)
+
+Like with categories, misc-service does not expose an HTTP endpoint for "list all entities with tag X." Each consuming service owns that query — typically by calling `GetEntitiesByTag` on the Go service, or by joining `tag_associations` in its own catalog query.
+
+## Supported Entity Types
+
+The backend does not validate `entity_type` — any string up to 50 chars is accepted. In practice, the following types are used across the platform and are counted by the tag stats endpoint:
+
+| Entity type | Owner service |
+|-------------|---------------|
+| `product` | Commerce |
+| `course` | Learning |
+| `event` | Events |
+| `learning_path` | Learning |
+| `bundle` | Commerce / Learning |
+| `lesson` | Learning |
+| `assignment` | Learning |
+| `cohort` | Learning |
+| `user` | Auth |
+| `post` | Content |
+| `article` | Content |
+
+If your service introduces a new type, associations still work — the only caveat is that [tag stats](/docs/knowledgebase/misc-module/tags#tag-statistics) won't include it until the list is extended.
+
+## Events on Attach / Detach
+
+Both attach and detach publish:
+
+- `AuditEvent`
+  - `resource_type = "tag"`
+  - `resource_id = tag_id`
+  - `action = "created"` or `"deleted"`
+  - `module = "misc"`
+  - Description includes the entity type and ID
+  - Actor, IP address, user agent, and timestamp come from the request context
+
+As with categories, attach/detach does not publish `EntityCreated`/`EntityUpdated`/`EntityDeleted` events — only an audit record. (Even on tag create/update/delete itself, the service only emits `AuditEvent`.)
+
+## Working With the Tag Set for an Entity
+
+The typical UI pattern for "edit tags on entity X":
+
+1. Load current tags: `GET /admin/tags?entity_type=course&entity_id={id}`
+2. Show them in an input with add/remove controls against the full tag list (`GET /admin/tags`)
+3. On save:
+   - For each added tag: `POST /admin/tags/{tag_id}/associations/course/{id}`
+   - For each removed tag: `DELETE /admin/tags/{tag_id}/associations/course/{id}`
+
+If you control both ends (i.e. the consumer is a trusted backend service), prefer the Go `Sync` helper instead of N HTTP calls — it's atomic and avoids the chance of partial-state failures.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Attach returns `201` but the tag doesn't show in the list | Check `tenant_id` and `entity_type` spellings — associations are namespaced by both |
+| Can't see stats counts for my custom entity type | Tag stats count a fixed list of entity types; extend the backend `GetTagStats` method to include yours, or query `tag_associations` directly |
+| Deleting a tagged entity left orphaned associations | Only tag deletion cascades. The owning service must clean up its own tag associations when the entity is deleted |
+| Sync partial failures via HTTP | Use the `Sync` service method from a trusted backend, or wrap the N HTTP calls in a retry — the individual attach/detach endpoints are idempotent |
+| Permission denied on attach | Attach / detach both require `tag.update`, not `tag.create`/`tag.delete` |

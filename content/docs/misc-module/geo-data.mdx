@@ -1,0 +1,174 @@
+---
+title: "Geo Data (Countries, States, Cities)"
+description: "Public reference data for countries, states, and cities — used to populate dropdowns, profiles, and location filters across the platform"
+module: "misc"
+feature: "geo-data"
+order: 7
+---
+
+# Geo Data (Countries, States, Cities)
+
+The misc module ships a shared **geographic reference dataset** that the rest of the platform uses to populate country/state/city dropdowns, render profile locations, filter users by country, and drive any feature that needs consistent geo data across tenants.
+
+Unlike categories and tags, geo data is **global, read-only, and public** — it's not tenant-scoped, it's not editable via the API, and every endpoint is unauthenticated.
+
+## Data Shape
+
+The dataset is modelled as three tables: `countries`, `states`, and `cities`, with foreign keys from states → countries and cities → states + countries.
+
+### Country
+
+**Table:** `countries`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | bigint | Primary key |
+| `name` | varchar(255) | Country name, unique |
+| `iso3` | varchar(3) | ISO 3166-1 alpha-3 (e.g. `BGD`) |
+| `iso2` | varchar(2) | ISO 3166-1 alpha-2 (e.g. `BD`) |
+| `numeric_code` | string | ISO 3166-1 numeric |
+| `phone_code` | string | International dialing code (e.g. `+880`) |
+| `capital` | string | Capital city name |
+| `currency` | string | Currency code (ISO 4217) |
+| `currency_name` | string | Full currency name |
+| `currency_symbol` | string | Currency symbol |
+| `tld` | string | Top-level domain |
+| `native` | string | Native country name |
+| `region` / `region_id` | string | Geographic region (e.g. `Asia`) |
+| `subregion` / `subregion_id` | string | Geographic subregion (e.g. `Southern Asia`) |
+| `nationality` | string | Demonym / nationality |
+| `latitude` / `longitude` | decimal | Approximate country centroid |
+| `emoji` | string | Country flag emoji |
+| `emoji_u` | string | Emoji unicode codepoint(s) |
+
+### State
+
+**Table:** `states`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | bigint | Primary key |
+| `name` | varchar(255) | State / province name |
+| `country_id` | bigint | FK to `countries.id` (cascade delete) |
+| `state_code` | string | State code |
+| `state_name` | string | Full state name |
+| `country_code` | string | Denormalized from the country |
+| `country_name` | string | Denormalized from the country |
+| `iso2` | string | ISO 3166-2 code |
+| `iso3` | string | ISO 3166-3 code |
+| `fips_code` | string | FIPS code (US states) |
+| `type` | string | Subdivision type |
+| `level` | string | Administrative level |
+| `parent_id` | bigint | Parent state (if hierarchical) |
+| `latitude` / `longitude` | decimal | Approximate centroid |
+| `timezone` | string | IANA timezone |
+
+Unique on (`name`, `country_id`). Useful indexes: `idx_states_country_id`, `idx_states_name`, `idx_states_state_code`.
+
+### City
+
+**Table:** `cities`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | bigint | Primary key |
+| `name` | varchar(255) | City name |
+| `state_id` | bigint | FK to `states.id` (cascade delete) |
+| `country_id` | bigint | FK to `countries.id` (cascade delete) |
+| `state_code` | string | Denormalized |
+| `state_name` | string | Denormalized |
+| `country_code` | string | Denormalized |
+| `country_name` | string | Denormalized |
+| `latitude` / `longitude` | decimal | Approximate coordinates |
+| `timezone` | string | IANA timezone |
+| `wiki_data_id` | string | WikiData identifier |
+
+Unique on (`name`, `state_id`, `country_id`).
+
+## Endpoints
+
+All three endpoints are **public** — no authentication, no permission check, no tenant middleware.
+
+### List Countries
+
+- **Endpoint:** `GET /api/v1/countries`
+- **Sort:** by `name ASC`
+- **Query params:**
+
+| Param | Description |
+|-------|-------------|
+| `search` | Case-insensitive match on `name`, `iso2`, or `iso3` |
+| `region` | Case-insensitive filter on `region` |
+| `subregion` | Case-insensitive filter on `subregion` |
+| `page` | Page number (default `1`) |
+| `per_page` | Page size |
+
+Returns a paginated list of countries with all fields included.
+
+### List States
+
+- **Endpoint:** `GET /api/v1/states`
+- **Sort:** by `name ASC`
+- **Query params:**
+
+| Param | Description |
+|-------|-------------|
+| `search` | Case-insensitive LIKE match on state `name` |
+| `country` | Filter by country — accepts either the **ISO code** (case-insensitive) or the full country **name** |
+| `include_country` | Pass `true` to preload the `country` relation on each state row |
+| `page` / `per_page` | Pagination |
+
+Returns a paginated list of states.
+
+### List Cities
+
+- **Endpoint:** `GET /api/v1/cities`
+- **Sort:** by `name ASC`
+- **Query params:**
+
+| Param | Description |
+|-------|-------------|
+| `search` | Case-insensitive LIKE match on city `name` **or** `state_name` |
+| `country` | Filter by country — ISO code or name |
+| `state` | Filter by `state_code` (case-insensitive) |
+| `is_capital` | **⚠ Broken — do not use.** The handler accepts this parameter and, when present, adds `WHERE is_capital = ?` to the SQL, but the `cities` table/model has no `is_capital` column. Passing `true` or `false` here will return a `500` / SQL error; omitting the parameter works normally. Tracked as a backend defect. |
+| `include_country` | Pass `true` to preload the `country` relation |
+| `page` / `per_page` | Pagination |
+
+Returns a paginated list of cities.
+
+## Typical Consumers
+
+The geo endpoints are consumed by:
+
+- **User profile** forms — country/state/city selectors on sign-up, profile edit, and the [profile completion wizard](/docs/knowledgebase/auth-module/profile-completion)
+- **Session location display** — although live session geolocation comes from IP lookup (see [Session Management](/docs/knowledgebase/auth-module/session-management)), the country/city names shown to admins can be cross-referenced against this dataset
+- **User filters** — the [Admin → Users](/docs/knowledgebase/auth-module/user-management) list filters by `country`, `city`, `state`, and `timezone`
+- **Event / course location fields** — wherever the platform collects a physical location
+
+## Data Source & Lifecycle
+
+Geo data is **seeded, not user-managed**. It comes from open datasets (ISO standards, GeoNames, OpenStreetMap-derived lists) and is loaded once during service setup.
+
+- There are no admin endpoints to create, update, or delete countries, states, or cities via the misc-service API.
+- The dataset is shared across **all tenants** — there is no `tenant_id` on any of the geo tables.
+- Updates happen out-of-band: a DBA or a migration script rewrites the dataset; no API call is involved.
+
+If a tenant needs to override the labels (e.g. local-language country names), that belongs in the tenant's own config — not in the geo tables.
+
+## Performance Notes
+
+- Response payloads are ordered by `name ASC` — expect O(log n) lookups via the `name` indexes on all three tables.
+- `states` and `cities` benefit from preloading the `country` relation when `include_country=true` — avoids N+1 on the client.
+- For truly large dropdowns (cities worldwide are ~150K+ rows), always combine `country` + `state` filters before paginating, or use `search` to narrow the set.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Empty response for a country's states | Verify the `country` param — it accepts both ISO code (`BD`, `bgd`) and full name (`Bangladesh`, `bangladesh`), but must match one of them |
+| Cities for a country come back without state context | Pass `include_country=true` to preload the country, and combine with `state` to scope to the right province |
+| Data looks outdated (e.g. new country split) | Geo data is seeded — updating it means a DBA re-import, not an API call |
+| A city is missing | The dataset is comprehensive but not exhaustive; the fallback is free-text entry in your own form |
+| `is_capital` filter returns `500` | Known backend defect — the handler queries a non-existent `is_capital` column. Filter capital cities client-side, or match by name against `countries.capital` until the backend is patched |
+| Auth errors on `/countries` | There shouldn't be any — these are public routes. If you're getting `401`, something in front of the misc-service is enforcing auth. Check your reverse proxy / gateway config |

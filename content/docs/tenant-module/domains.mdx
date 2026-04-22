@@ -1,0 +1,235 @@
+---
+title: "Domains"
+description: "Subdomain and custom-domain resolution for tenants, DNS verification, and the Caddy on-demand TLS endpoint that gates which hostnames get a certificate"
+module: "tenant"
+feature: "domains"
+order: 6
+---
+
+# Domains
+
+Every tenant is reachable at two possible URLs:
+
+1. A **SaaS subdomain** under a configured platform domain — e.g., `acme.edushade.com`. The subdomain is mandatory and stored on the tenant row.
+2. An **optional custom domain** the tenant owns — e.g., `learn.acme.com`. Custom domains must be unique across the platform and are served through Caddy's on-demand TLS so certificates are issued only for verified, active tenants.
+
+The domain module surface is small but critical: a tenant-admin availability check, a tenant-admin DNS instruction + verification pair, and a public endpoint Caddy hits before issuing every certificate.
+
+## Where domain data lives
+
+Domains are not a separate table — they're columns on the **`tenants`** row:
+
+| Column | Meaning |
+|--------|---------|
+| `subdomain` | Required. Lowercased slug, unique, serves traffic at `<subdomain>.<SaaS-base-domain>` |
+| `domain` | Optional. Unique custom domain (full FQDN). Lowercased on read / compare |
+| `status` | Must be `active` for Caddy to issue a certificate and for the tenant to resolve |
+
+See [Tenants](/docs/knowledgebase/tenant-module/tenants) for the full tenant schema and the CRUD endpoints that manage these two fields.
+
+## SaaS base domains
+
+A **SaaS base domain** is any host listed under `tenant.saas_domains` in the tenant-service config (or the defaults). These are the hostnames under which subdomain extraction is allowed.
+
+Defaults (when `saas_domains` is unset):
+
+```yaml
+tenant:
+  saas_domains:
+    - edushade.com
+    - edushade.test
+```
+
+For a request arriving at `acme.edushade.com`:
+
+- The resolver splits the host into `["acme", "edushade", "com"]`.
+- The last two parts (`edushade.com`) are compared against `saas_domains`.
+- If the base matches, the first part (`acme`) is returned as the subdomain. If not, the host is treated as a **custom domain** and looked up directly against `tenants.domain`.
+
+Any host with fewer than three labels (e.g., `edushade.com` itself) yields no subdomain — it is treated as the SaaS base domain, not a tenant subdomain.
+
+## Route Tiers
+
+| Tier | Endpoints | Auth |
+|------|-----------|------|
+| **Admin** | `/api/v1/admin/domains/*` — availability check + DNS config + DNS verify | JWT + `TenantMiddleware` |
+| **Public** | `/api/v1/caddy/verify-domain` — Caddy on-demand TLS gate | None |
+| **Public** | `/api/v1/public/tenant/subdomain/:subdomain`, `/api/v1/public/tenant/domain/:domain` | None — used by frontends to resolve a tenant from its URL |
+
+> The admin domain routes do **not** currently require an explicit RBAC permission — `TenantMiddleware` + the bearer JWT is the only gate. Lock this down in config if you deploy to a tenant where any signed-in user should not be able to check arbitrary domain names.
+
+## Check Domain Availability
+
+- **Endpoint:** `GET /api/v1/admin/domains/check-availability?domain=<fqdn>`
+- **Auth:** Admin tier (JWT + TenantMiddleware)
+
+### Query params
+
+| Param | Rules |
+|-------|-------|
+| `domain` | Required, 1–255 chars, valid domain (`is.Domain` — rejects bare slugs and things like `foo` without a TLD) |
+
+### Response
+
+```json
+{
+  "domain": "learn.acme.com",
+  "available": true,
+  "message": "Domain is available"
+}
+```
+
+If the domain is already attached to another tenant the response carries the occupying tenant's ID / name and `available = false`:
+
+```json
+{
+  "domain": "learn.acme.com",
+  "available": false,
+  "message": "Domain is already in use",
+  "tenant_id": "…",
+  "tenant_name": "Acme EU"
+}
+```
+
+Matching is case-insensitive; the stored `domain` is compared via `LOWER(domain) = LOWER(?)`.
+
+## Get DNS Configuration
+
+- **Endpoint:** `GET /api/v1/admin/domains/:domain/dns-config`
+- **Auth:** Admin tier
+
+Returns the DNS records the tenant admin needs to configure at their registrar to point the custom domain at the platform. The domain must already be attached to a tenant — unknown domains return `404 Not Found`.
+
+### Response
+
+```json
+{
+  "domain": "learn.acme.com",
+  "records": [
+    { "type": "A", "name": "@",   "value": "YOUR_SERVER_IP", "ttl": 3600, "priority": 0 },
+    { "type": "A", "name": "www", "value": "YOUR_SERVER_IP", "ttl": 3600, "priority": 0 }
+  ],
+  "description": "Configure these DNS records in your domain registrar to point your domain to our servers"
+}
+```
+
+> **Known gap:** the service code currently hard-codes `serverIP := "YOUR_SERVER_IP"` as a TODO placeholder. Before shipping to a real customer, replace the placeholder in `services/domain_service.go` with the public IP (or pull it from config / environment) — otherwise the DNS records you surface here will be uninstructive.
+
+## Verify DNS Configuration
+
+- **Endpoint:** `GET /api/v1/admin/domains/:domain/verify-dns?domain=<fqdn>`
+- **Auth:** Admin tier
+
+Performs live DNS lookups via the service's resolver and reports, per expected record, whether the lookup matched.
+
+### What is checked
+
+For each record returned by `GetDNSConfiguration`:
+
+- **A record:** `net.LookupIP(host)` — iterates IPv4 results; matches if any resolved IP equals `record.value`. A found-but-mismatched IP surfaces the first resolved IP as `found_value`.
+- **CNAME record:** `net.LookupCNAME(host)` — strips the trailing dot before comparing to `record.value`.
+- **TXT record:** `net.LookupTXT(host)` — matches if any TXT entry **contains** `record.value` (substring). Useful for DMARC-style prefixes or verification strings.
+- Any other record type is returned with `configured = false` and `"DNS record type <X> verification not implemented"`.
+
+### Response
+
+```json
+{
+  "domain": "learn.acme.com",
+  "verified": false,
+  "results": [
+    {
+      "record": { "type": "A", "name": "@", "value": "1.2.3.4", "ttl": 3600, "priority": 0 },
+      "configured": true,
+      "found_value": "1.2.3.4",
+      "expected_value": "1.2.3.4",
+      "message": "DNS A record is correctly configured"
+    },
+    {
+      "record": { "type": "A", "name": "www", "value": "1.2.3.4", "ttl": 3600, "priority": 0 },
+      "configured": false,
+      "expected_value": "1.2.3.4",
+      "message": "DNS A record not found or not yet propagated"
+    }
+  ],
+  "message": "Some DNS records are not correctly configured or not yet propagated"
+}
+```
+
+`verified = true` only when **every** record in the expected set passes.
+
+> This is a best-effort probe — DNS propagation is asynchronous, and a single resolver run can miss records that are already live at another resolver. Re-check a few minutes later if you suspect caching.
+
+## Caddy On-Demand TLS Verification
+
+- **Endpoint:** `GET /api/v1/caddy/verify-domain?domain=<fqdn>`
+- **Auth:** None — called by Caddy during certificate issuance
+
+This endpoint is the **access gate** for Caddy's [on_demand](https://caddyserver.com/docs/automatic-https#on-demand-tls) feature. Caddy calls it with the incoming SNI hostname; a 200 response tells Caddy to issue a certificate, anything else refuses.
+
+### Response behaviour
+
+- `200 OK` — Caddy may issue a certificate
+- `403 Forbidden` — Caddy must **not** issue a certificate
+
+No response body. The handler never returns 500 — any internal error becomes `403` so a failing DB does not become a certificate-issuance storm.
+
+### Resolution order
+
+For a given `domain` parameter, the service tries these in sequence and returns `200` at the first match:
+
+1. **Custom domain match** — `tenants WHERE LOWER(domain) = LOWER(?) AND status = 'active'`. If a row is found and the tenant is active, allow.
+2. **SaaS base domain match** — strip any `:port`, compare the result case-insensitively against each entry in `cfg.Tenant.GetSaaSDomains()`. If a match is found, allow (this is how `edushade.com` itself gets a cert).
+3. **SaaS subdomain match** — split the host on `.`; if there are at least three labels, take the last two as the base and the first as the subdomain. If the base is in `saas_domains` **and** `tenants WHERE LOWER(subdomain) = LOWER(?) AND status = 'active'` matches, allow.
+4. Otherwise, deny.
+
+### Why the base domain step matters
+
+Without step 2, Caddy could never issue a certificate for bare `edushade.com` (which has no subdomain label and no custom-domain row). That is the platform's own marketing / admin host — it needs its own cert.
+
+### Why the `status = active` filter matters
+
+A **deactivated**, **suspended**, or **soft-deleted** tenant fails this check. Once the cert lifetime expires (or if Caddy's on-demand cache is evicted) the tenant's custom domain stops serving TLS altogether — letting domain control revert to nothing instead of a broken banner page.
+
+## Public Tenant Resolution
+
+Frontends and non-authenticated middleware need to turn an incoming host into a tenant. Two public endpoints exist for this:
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/v1/public/tenant/subdomain/:subdomain` | Look up a tenant by its `subdomain` slug |
+| `GET /api/v1/public/tenant/domain/:domain` | Look up a tenant by its custom `domain` |
+
+Both return a minimal public tenant object (id, name, subdomain, domain, status, theming) — **never** internal fields like `deleted_at`. They are the canonical way to render a tenant-branded marketing or invitation page before the user has authenticated.
+
+See [Tenants → Public tenant resolution](/docs/knowledgebase/tenant-module/tenants#public-tenant-resolution) for the exact response shape.
+
+## How the request middleware uses all of this
+
+`TenantMiddleware` (shared across every service) resolves the tenant for each request by calling the common `TenantResolver`, which roughly:
+
+1. Reads `X-Tenant-ID` if set and `allow_tenant_override` is true → tenant comes from the header.
+2. Otherwise, parses the request's host:
+   - If the host's base is a SaaS base domain → extract the first label, look the tenant up by `subdomain`.
+   - Otherwise → look the tenant up by `domain`.
+3. If that fails **and** the service is in single-tenant mode, fall back to a synthetic default tenant built from config.
+
+Domains configured through this module are what feed step 2. If a tenant does not resolve, no downstream `Can(...)` check will run — the request is rejected at the middleware layer.
+
+## Events & Audit
+
+Domain reads (availability check, DNS config, DNS verify, Caddy verify) are **not** audited — they are pure read operations.
+
+Attaching / detaching a custom domain happens through the **tenants** `PUT` endpoint (`PUT /sysadmin/tenants/:id` or `PUT /orgadmin/organizations/:organization_id/tenants/:id`), which publishes the standard tenant `updated` `AuditEvent`. The domain value appears in `after_value`. There is no admin-tier tenant PUT — admin users cannot attach or detach a domain from their own tenant directly and must go through an org-admin or sysadmin.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `domain not found` on DNS-config / verify-DNS | The custom domain must already be attached to a tenant. Add it via `PUT .../tenants/:id { "domain": "…" }` before calling these endpoints |
+| `Domain is already in use` on availability check | Another tenant holds this `domain`. Availability is case-insensitive — free the slot on the other tenant first or pick a different domain |
+| Caddy issues certificates for subdomains the tenant no longer owns | The tenant is still `active` and has a matching `subdomain`. Deactivate, suspend, or delete the tenant to make `VerifyDomainForCaddy` return `403` |
+| Caddy refuses a SaaS base domain | Your host is not listed under `tenant.saas_domains`. Add it to config (note: the `edushade.com` / `edushade.test` defaults only kick in when the list is empty) |
+| DNS verification reports "not found" but `dig` shows the record | The service uses Go's default resolver, which caches shorter than recursive resolvers. Wait a few minutes and re-check, or confirm the record is live at `1.1.1.1` / `8.8.8.8` |
+| DNS instructions show `YOUR_SERVER_IP` | The hard-coded placeholder in `services/domain_service.go` has not been replaced. Wire the real server IP through config before shipping |
+| Public tenant lookup returns 404 for a known subdomain | Either the tenant is `deleted_at != NULL`, or the lookup host is not a SaaS base domain and the resolver fell through to custom-domain lookup. Confirm the SaaS-domain config matches the host in use |

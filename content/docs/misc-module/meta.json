@@ -1,0 +1,15 @@
+{
+  "title": "Misc Module",
+  "icon": "Tags",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "categories",
+    "category-tree",
+    "category-associations",
+    "tags",
+    "tag-associations",
+    "bulk-operations",
+    "geo-data"
+  ]
+}

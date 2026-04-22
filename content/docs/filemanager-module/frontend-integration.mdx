@@ -1,0 +1,211 @@
+---
+title: "Frontend Integration"
+description: "How the Next.js admin/learner frontend wraps @softimist/filemanager — dialogs, hooks, and form fields"
+module: "filemanager"
+feature: "frontend-integration"
+order: 9
+---
+
+# Frontend Integration
+
+The EduShade Next.js frontend uses the shared `@softimist/filemanager` React package and wraps it with two app-specific components that inject auth, asset URLs, and the correct upload endpoint. Every place in the UI that picks or uploads a file ultimately goes through one of these.
+
+## The Two Wrappers
+
+| Component | Path | Purpose | Upload endpoint |
+|-----------|------|---------|-----------------|
+| `FileManagerDialog` | `frontend/src/components/filemanager/file-manager-dialog.tsx` | Full file browser + picker for admins | `POST /api/v1/admin/files/upload` |
+| `FileUploadDialog` | `frontend/src/components/filemanager/file-upload-dialog.tsx` | Upload-only dialog for learners | `POST /api/v1/user/files/upload`, `DELETE /api/v1/user/files/{fileId}` |
+
+Both wrappers pass a `getAuthToken()` callback and an `assetBaseUrl` config into the filemanager package so that API calls include the user's JWT and file URLs resolve correctly in both localhost and tenant-domain deployments.
+
+### Configuration
+
+`frontend/src/lib/config.ts` exposes:
+
+| Config | Value in dev (localhost) | Value in production |
+|--------|--------------------------|---------------------|
+| `apiBaseUrl` | `NEXT_PUBLIC_API_BASE_URL` env (typically `http://localhost:<port>`) | `/api` (relative — tenant-aware) |
+| `assetBaseUrl` | `apiBaseUrl` | Empty string — asset URLs are tenant-relative |
+
+The token refresh URL is derived as `${apiBaseUrl}/api/v1/auth/refresh`. Access tokens are read from `localStorage` under the key `es_auth_access_token` — see the [auth module](/docs/knowledgebase/auth-module/login#token-management).
+
+## Opening the Dialogs
+
+### Admin Picker
+
+```tsx
+<FileManagerDialog
+  trigger={<Button>Add Files</Button>}
+  mode="default"
+  multiple
+  onSelect={(files: FileItem[]) => {
+    form.setValue("attachment_ids", files.map(f => f.id));
+  }}
+/>
+```
+
+- `mode="default"` renders the full browser with folder tree, search, upload button, and multi-select.
+- `mode="dropzone"` collapses the trigger into a compact drag-target inline on the form. Clicking still opens the full browser modal — the difference is purely visual (smaller trigger, accepts drag-drop directly onto the field). Used where the visual footprint must be small or the field is single-file.
+- `acceptedTypes={['image/*']}` restricts what the picker will show and upload.
+- `multiple={true}` enables multi-file selection.
+
+### Learner Upload Dialog
+
+```tsx
+<FileUploadDialog
+  acceptedTypes={['application/pdf']}
+  multiple
+  onUploaded={(files) => setAttachmentIds(prev => [...prev, ...files.map(f => f.id)])}
+  onUploadRemoved={(fileId) => {
+    // Optional notification — the wrapper has already deleted the file server-side.
+    setAttachmentIds(prev => prev.filter(id => id !== fileId));
+  }}
+/>
+```
+
+- The wrapper resolves `maxFileSize` automatically from `usePublicTenantSettings()` — preferring `max_upload_file_size_for_learner` and falling back to `max_upload_file_size` (both in MB). Callers do not pass it.
+- `onUploadRemoved` is called when the user removes a just-uploaded file before submitting. The **wrapper itself** issues `DELETE /api/v1/user/files/{fileId}` first (best-effort, errors are logged) and then invokes the caller's callback with the same `fileId` — use it to drop the ID from form state, not to issue another delete.
+
+## Where Dialogs Are Used
+
+| Surface | Component | Used for |
+|---------|-----------|----------|
+| Course builder (`/admin/courses/{id}/builder`) | `SelectFileModal` → `FileManagerDialog` | Lesson resources, file attachments |
+| Assignment modal | `AssignmentModal` | Attachments on assignment questions |
+| Lesson attachments | `AttachmentsSection` | Lesson supplementary files |
+| Notice form | `NoticeForm` | Notice attachments + rich-text media |
+| Product gallery (`/admin/products/{id}/edit`) | `ProductImagesField` | Multi-image product showcase |
+| Event / webinar settings | `MediaSettings` | Joining-instruction media |
+| Tenant settings | `DynamicField` (type=file) | Logo, favicon, custom assets |
+| Avatar picker | Uses `useFileUpload` hook + crop dialog | Profile avatar |
+| Assignment submission (`/dashboard/assignments/{id}`) | `FileUploadDialog` | Learner submission files |
+| Rich text editor | `RichTextEditor` with `fileManagerAdd` flag | Images / audio / video inserted into prose |
+
+## The `useFileUpload` Hook
+
+`frontend/src/hooks/use-file-upload.ts` is a low-level primitive used by the avatar picker and a few custom flows. It does **not** call the file manager API — it just manages local drag-drop state and validation.
+
+### Signature
+
+```ts
+const [state, actions] = useFileUpload({
+  maxFiles: 1,
+  maxSize: 10 * 1024 * 1024,    // bytes
+  accept: 'image/*',
+  multiple: false,
+  onFilesAdded: (files) => { ... },
+  onFilesChange: (files) => { ... },
+});
+```
+
+### State Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `files` | `FileWithPreview[]` | Currently staged files, each with an object URL preview |
+| `isDragging` | `boolean` | True when a drag is over the dropzone |
+| `errors` | `string[]` | Validation errors (oversize, wrong type, duplicate) |
+
+### Action Methods
+
+| Action | Description |
+|--------|-------------|
+| `addFiles(files)` | Validate and stage files; trigger `onFilesAdded` |
+| `removeFile(id)` | Remove a file, revoke its object URL |
+| `clearFiles()` | Reset state |
+| `handleDrop`, `handleDragEnter`, `handleDragLeave`, `handleDragOver` | DOM D&D handlers |
+| `getInputProps()` | Spread on an `<input type="file">` to wire up the ref |
+
+The hook **does not** upload; callers are responsible for calling the upload endpoint separately (the avatar picker, for example, converts the image to base64 and passes it to the auth-service).
+
+## Helpers Re-exported from `@softimist/filemanager`
+
+`frontend/src/components/filemanager/index.ts` re-exports several helpers with the local `assetBaseUrl` already injected:
+
+| Helper | Purpose |
+|--------|---------|
+| `getFileUrl(fileId)` | Builds a preview URL — typically `/v1/files/preview-id/{fileId}` in production |
+| `getFileItemFromResponse(file)` | Normalises a backend file response into the package's `FileItem` shape |
+| `formatFileSize(bytes)` | Human-readable size (`"12 MB"`, `"240 KB"`) |
+| `generateUniqueId()` | Client-side UUID (used for local staging) |
+| `getFileIcon(mimeType)` | Returns an icon component based on MIME |
+| `rootDir` | Constant representing the root folder node |
+
+## Impersonation Gate
+
+The `FrontendApiClient` singleton wraps every request. While a support admin is using **impersonation** mode (read-only), write operations — including file uploads and deletes — are blocked with a toast:
+
+> "This action is not allowed in impersonation mode."
+
+Switching to **masquerade** mode lifts this restriction. See the [auth module user-impersonation docs](/docs/knowledgebase/auth-module/user-impersonation) for how the two modes differ.
+
+## Tenant Settings Lookup
+
+Both dialogs respect tenant-level upload caps by reading `usePublicTenantSettings()`:
+
+```tsx
+const { data } = usePublicTenantSettings();
+const media = data?.data?.media;
+const maxFileSize =
+  media?.max_upload_file_size_for_learner || media?.max_upload_file_size;
+```
+
+The endpoint is `/api/v1/public/tenant/settings` — it does not require auth and returns only the fields safe to expose to learners. The response shape includes a `media` block with `max_upload_file_size` and `max_upload_file_size_for_learner` (both in MB).
+
+## Common Patterns
+
+### Pattern 1 — Modal Selection (Admin)
+
+1. Click **Add Files** or a similar trigger.
+2. `FileManagerDialog` opens with the admin file library.
+3. Browse folders, select file(s).
+4. Click **Select** — `onSelect(files)` fires with the chosen `FileItem[]`.
+5. Parent form stores the IDs.
+
+### Pattern 2 — Inline Upload (Learner)
+
+1. Click **Add File** on a submission form.
+2. `FileUploadDialog` opens — drop files or browse.
+3. Each file is uploaded immediately to `POST /v1/user/files/upload`.
+4. The `file_id`s are held in form state until the submission is sent.
+5. Removing a staged file triggers the wrapper's auto-cleanup — `DELETE /v1/user/files/{fileId}` is issued in the background and `onUploadRemoved(fileId)` fires so the caller can drop the ID from its state.
+
+### Pattern 3 — Dropzone Form Field
+
+1. A form field renders `FileManagerDialog` in `mode="dropzone"`.
+2. User drops a single file (or clicks the dropzone).
+3. On select, the file's URL is stored directly into the form field.
+
+### Pattern 4 — Rich Text Media
+
+1. User clicks the **Add Media** button in the rich text toolbar.
+2. `FileManagerDialog` opens scoped to `['image/*', 'audio/*', 'video/*']`.
+3. Selection inserts an `<img>`, `<audio>`, or `<video>` tag into the prose with `src = /v1/files/preview-id/{file_id}`.
+
+## Error Handling
+
+| Scenario | UI behaviour |
+|----------|--------------|
+| File exceeds max size | Toast: `"File exceeds the maximum size of X MB"` |
+| Duplicate file in multi-select | Silently skipped; optional toast summarising skipped items |
+| Invalid MIME | Toast: `"File is not an accepted file type"` |
+| Network failure on upload | Toast surfaced, retry available; partial uploads are best-effort cleaned up |
+| Attempted write during impersonation | Toast: `"This action is not allowed in impersonation mode"` |
+| Session expired mid-upload | Frontend auto-refreshes via `/v1/auth/refresh` and retries once |
+
+## Route Schema
+
+There is no dedicated `/admin/filemanager` page — the file manager is always embedded as a modal or inline field on the page that needs it. Navigation state (current folder, breadcrumb) lives in React state inside the dialog, not in the URL. This means the dialog cannot be deep-linked; it always opens at the root.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Dialog opens but shows no files | Check `assetBaseUrl` and `apiBaseUrl` — the package may be hitting the wrong host. Also verify the token refresh URL |
+| "Unauthorized" after long idle | Token refresh failed; log out and back in. See [auth login → Automatic Token Refresh](/docs/knowledgebase/auth-module/login#automatic-token-refresh) |
+| File URLs render 404 in dev | `assetBaseUrl` may be empty but the API is on a different host — set `NEXT_PUBLIC_API_BASE_URL` |
+| Picker shows wrong file types | Pass the correct `acceptedTypes` prop to `FileManagerDialog` |
+| Learner upload dialog stuck on "Uploading" | Check the browser console — often a CORS or size-limit issue. Confirm `max_upload_file_size_for_learner` is set appropriately |
+| Rich-text media insert picks the wrong URL | The editor uses the injected `getFileUrl()` helper — ensure the wrapper component is up-to-date |
+| Orphaned learner uploads piling up | The wrapper auto-issues `DELETE /v1/user/files/{id}` on removal, but crashed tabs and network failures still leak. Run a periodic cleanup comparing `media` (with `created_by` = a learner) against `attachments` rows |

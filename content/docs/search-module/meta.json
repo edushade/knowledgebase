@@ -1,0 +1,24 @@
+{
+  "title": "Search Module",
+  "icon": "Search",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "search-bar",
+    "search-results",
+    "autocomplete",
+    "filters-and-entity-types",
+    "facets",
+    "did-you-mean",
+    "related-searches",
+    "popular-searches",
+    "trending",
+    "search-history",
+    "click-tracking",
+    "search-analytics",
+    "indexing-pipeline",
+    "localization",
+    "admin-search",
+    "search-integration"
+  ]
+}

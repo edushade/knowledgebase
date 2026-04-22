@@ -1,0 +1,228 @@
+---
+title: "Push Notifications"
+description: "Browser web push via Firebase Cloud Messaging — device registration, service worker, permission prompts, and foreground/background handling"
+module: "notification"
+feature: "push-notifications"
+order: 5
+---
+
+# Push Notifications
+
+Push is EduShade's real-time channel for in-browser alerts. It is backed by **Firebase Cloud Messaging (FCM)** and delivered through a Service Worker registered on first visit. Configuration is fetched dynamically per-tenant so the same codebase can serve many FCM projects.
+
+## How It Works
+
+```
+1. Page loads → hook fetches /v1/public/notify/settings to get the tenant's FCM config
+2. Firebase SDK is initialised in the main thread
+3. Service Worker is registered (/firebase-messaging-sw.js)
+4. The page posts the Firebase config to the SW via postMessage
+5. User triggers the permission prompt → browser asks "Allow notifications?"
+6. On grant: FCM issues a push token
+7. The page calls /v1/public/notify/devices (or /v1/user/notify/devices if authenticated) to register:
+     { device_id, device_name, platform: "web", push_provider: "fcm",
+       push_token, app_version, os_version, timezone, language }
+8. Notifications then arrive as FCM messages:
+     - Foreground: onMessage callback fires → rendered as a Sonner toast
+     - Background: service worker onBackgroundMessage handles + self.registration.showNotification()
+9. Token is rotated every 6 hours to keep freshness
+```
+
+## Permission States
+
+| State | Meaning |
+|-------|---------|
+| `default` | User hasn't answered the prompt |
+| `granted` | User allowed — token obtained, device registered |
+| `denied` | User blocked — re-prompt suppressed; user must unblock via browser settings |
+| `unsupported` | Browser has no `Notification` / `PushManager` / `serviceWorker` (e.g. some privacy modes, older Safari) |
+
+The UI surfaces a friendly fallback in the `unsupported` case — the inbox continues to work unchanged.
+
+## Permission Prompt
+
+The prompt component (`<PermissionPrompt />`) supports four presentation variants:
+
+| Variant | When to use |
+|---------|-------------|
+| `card` | Sits inline on a dashboard tile |
+| `banner` | Full-width strip near the top of a page |
+| `inline` | Embedded inside a settings form |
+| `popup` | Floating modal |
+
+The `useShouldShowPushPrompt()` hook decides whether to surface the prompt at all:
+
+- Suppressed if the browser is `unsupported`.
+- Suppressed if permission is `granted` (already on) or `denied` (user said no — don't badger).
+- If the user clicks **Not Now**, the dismissal is stored in `localStorage` with a **7-day cooldown** before re-prompting.
+
+Dismissal bookkeeping keys in `localStorage`:
+
+| Key | Description |
+|-----|-------------|
+| `push_permission_dismissed` | Boolean dismissal flag |
+| `push_permission_dismissed_at` | Timestamp used to expire the cooldown |
+
+## Device Registration
+
+A "device" is a browser + user combination. Registering produces a `device_id` (UUID) that the backend uses to deduplicate the same browser across sign-ins.
+
+`DeviceRegistration` payload:
+
+| Field | Description |
+|-------|-------------|
+| `device_id` | Client-generated UUID persisted in `localStorage` under `push_device_id` |
+| `device_name` | Human-readable, e.g. "Chrome on Windows" |
+| `platform` | Always `web` for browser push |
+| `push_provider` | Always `fcm` today |
+| `push_token` | The FCM registration token |
+| `app_version` | Frontend build version (for debugging) |
+| `os_version` | User agent OS hint |
+| `timezone` | IANA timezone, used by quiet hours |
+| `language` | BCP-47 language tag |
+
+### Registration Endpoints
+
+| Endpoint | Method | When used |
+|----------|--------|-----------|
+| `/v1/public/notify/devices` | POST | Guest (pre-login) registration — the device is linked to the user later on successful login |
+| `/v1/user/notify/devices` | POST | Authenticated registration — also used to *re-register* after login so a guest device gets linked to the now-signed-in user |
+| `/v1/user/notify/devices/{device_id}` | DELETE | Unregister from this browser (e.g. on explicit "Disable Push") |
+
+The push provider component listens for two lifecycle events:
+
+- `auth:login` — the device re-registers so it gets linked to the now-signed-in user.
+- `auth:logout` — currently a no-op placeholder in `<PushNotificationProvider />`; the registered device stays in place across logout. Call `unregister()` explicitly from application code if you want a full sign-out to drop the device.
+
+## Token Refresh
+
+FCM tokens can expire or be rotated by the browser. The provider automatically calls `refreshToken()` every **6 hours** while the page is open, and whenever the SW reports a token change. A fresh token is pushed back to the backend via a re-registration call.
+
+On terminal failures (404/410 from FCM), the backend marks the device inactive and the provider clears its local token + device ID so the next permission grant starts cleanly.
+
+## Dynamic Firebase Config
+
+Unlike a statically-built app, the FCM config is fetched at runtime:
+
+`GET /v1/public/notify/settings` returns:
+
+| Field | Description |
+|-------|-------------|
+| `enabled` | Whether push is enabled for the tenant |
+| `api_key`, `auth_domain`, `project_id`, `storage_bucket`, `messaging_sender_id`, `app_id` | Firebase project credentials |
+| `vapid_key` | VAPID public key used by the Web Push API |
+
+The config is cached in `localStorage` under `web_push_config` so the Service Worker can read it at boot. The page posts the config to the SW via `postMessage` on registration.
+
+## Service Worker Responsibilities
+
+`/firebase-messaging-sw.js` handles:
+
+| Event | Behaviour |
+|-------|-----------|
+| `install` | Calls `self.skipWaiting()` so a new SW activates immediately |
+| `activate` | Calls `self.clients.claim()` to take control of open clients |
+| `message` (from page) | On `FIREBASE_CONFIG`, initialises Firebase inside the SW; on `SKIP_WAITING`, skips. Acks back via `MessageChannel` port |
+| `push` (fallback) | Parses raw Web Push data and calls `showNotification()` only when Firebase has not initialised yet |
+| `onBackgroundMessage` (FCM) | Parses payload and calls `self.registration.showNotification()` with title, body, icon, badge, image, `vibrate`, actions, tag, and `requireInteraction` |
+| `notificationclick` | Closes the notification and opens `data.click_action` / `data.url` (or the matching action URL when an action button was clicked) via `clients.openWindow()`, re-focusing an existing same-origin window when one is open |
+| `notificationclose` | Currently logs the `notification_id` to the console; the analytics hook is a TODO in the SW |
+
+## Push Payload Shape
+
+The FCM payload dispatched by the backend uses this shape so both foreground and background handlers can render consistently:
+
+| Section | Field | Notes |
+|---------|-------|-------|
+| `notification` | `title` | Mandatory |
+| | `body` | Mandatory |
+| | `icon` | URL (tenant logo by default) |
+| | `badge` | URL (monochrome) |
+| | `image` | Optional hero image URL |
+| `data` | `click_action` | Primary URL on click |
+| | `url` | Fallback if `click_action` is missing |
+| | `tag` | Groups / replaces earlier notifications with the same tag |
+| | `require_interaction` | `"true"` to keep the notification on-screen until explicitly dismissed |
+| | `notification_id` | EduShade notification UUID — used for click/dismiss analytics |
+| | `actions` | JSON-encoded array of `{ action, url }` button specs |
+
+## Foreground vs Background
+
+| Situation | Handler | UI |
+|-----------|---------|----|
+| Tab open and focused | `onMessage` in-page | Sonner toast with title + body + action (if the provider component is mounted with `showToasts: true`) |
+| Tab open but blurred / another tab | `onMessage` still fires; may also trigger an SW notification depending on payload | Toast + browser notification |
+| Tab closed | SW `onBackgroundMessage` only | Browser notification |
+
+The provider component exposes `onNotification(callback)` so application code can react to foreground messages (e.g. optimistically refresh a specific query cache).
+
+## Hook — `usePushNotifications()`
+
+Options:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `isAuthenticated` | `false` | When true, re-register the device to link it to the user on login / unlink on logout |
+| `onNotification` | — | Foreground-message callback |
+| `autoInit` | `true` | Auto-fetch config and register the SW on mount |
+
+Returned state + actions:
+
+| Key | Description |
+|-----|-------------|
+| `isSupported` | Browser capability check (matches the `unsupported` permission state) |
+| `isConfigLoaded` | Config fetched from `/v1/public/notify/settings` |
+| `isEnabled` | `permissionStatus === "granted"` AND token present |
+| `permissionStatus` | One of `default` / `granted` / `denied` / `unsupported` |
+| `isLoading` | Any in-flight push operation |
+| `token` | FCM token (or null) |
+| `deviceId` | Device UUID (or null) |
+| `error` | Last error message |
+| `initialize()` | Manually run the boot sequence (useful when `autoInit: false`) |
+| `requestPermission()` | Trigger the browser prompt and register the device on grant |
+| `unregister()` | Unregister the device and clear the token |
+| `refreshToken()` | Manually rotate the FCM token |
+| `reRegisterDevice()` | Re-register with the authenticated user (fired internally on `auth:login`) |
+
+## LocalStorage Keys
+
+| Key | Owner |
+|-----|-------|
+| `push_device_id` | `usePushNotifications` |
+| `push_permission_dismissed` | `useShouldShowPushPrompt` |
+| `push_permission_dismissed_at` | `useShouldShowPushPrompt` |
+| `fcm_token` | `usePushNotifications` |
+| `web_push_config` | Firebase initialiser — read by both the main thread and the SW |
+
+Clearing any of these forces the next page load to re-run the push bootstrap.
+
+## Permissions & API Reference
+
+| Endpoint | Method | Auth | Purpose |
+|----------|--------|------|---------|
+| `/v1/public/notify/settings` | GET | Public | Fetch per-tenant Firebase config |
+| `/v1/public/notify/devices` | POST | Public | Register a guest device |
+| `/v1/user/notify/devices` | POST | User | Register / re-register an authenticated device |
+| `/v1/user/notify/devices/{device_id}` | DELETE | User | Unregister the device |
+| `/v1/user/notify/devices` | GET | User | List the user's registered devices |
+
+The authenticated endpoints require only a valid user JWT — no additional permission.
+
+## Relationship to Other Features
+
+- **Inbox**: Push is the real-time front-end; the [Inbox](/docs/knowledgebase/notification-module/inbox) is the durable record. A push message does **not** create an inbox row unless the sender also sets the `push` channel on a campaign that targets the inbox.
+- **Preferences**: `push_enabled` in [Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences) gates push at the user level. Unregistering a device is independent and removes the device outright.
+- **Providers**: FCM itself is configured as an `push` provider in [Providers](/docs/knowledgebase/notification-module/providers).
+- **Campaigns**: Select the `push` channel in the campaign wizard and provide `push_title` / `push_body` in the chosen [Template](/docs/knowledgebase/notification-module/templates).
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Prompt never shows | Ensure `useShouldShowPushPrompt()` returns true; a recent dismissal has a 7-day cooldown; permission may already be `granted` or `denied` |
+| "Permission denied" permanent | The user must unblock notifications in the browser settings — EduShade cannot re-prompt for a denied origin |
+| Notifications not arriving in background | Confirm the Service Worker is registered and the `web_push_config` is stored; check the Application panel in devtools for FCM errors |
+| Notifications arrive twice | Usually means two tabs registered the same device at once — close extras; duplicates deduplicate after token refresh |
+| Old device showing in `/v1/user/notify/devices` | Call `DELETE /v1/user/notify/devices/{device_id}` for the stale entry; tokens that return 404 from FCM are cleaned up automatically |
+| Click does nothing | Payload is missing `click_action` / `url` — update the sender to populate one of them |
+| Works on desktop but not mobile Safari | iOS Web Push requires the site to be installed to the home screen and uses APNs via FCM — check Safari's "Notifications" setting and verify the site is installed |

@@ -1,0 +1,17 @@
+{
+  "title": "Tenant Module",
+  "icon": "Building2",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "tenants",
+    "tenant-lifecycle",
+    "organizations",
+    "members",
+    "invitations",
+    "domains",
+    "settings",
+    "impersonation",
+    "role-seeding"
+  ]
+}

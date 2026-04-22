@@ -1,0 +1,197 @@
+---
+title: "Role Seeding"
+description: "How tenant-service loads roles.json and permissions.json from auth-service and bootstraps per-tenant roles + platform-wide permissions on every new tenant"
+module: "tenant"
+feature: "role-seeding"
+order: 9
+---
+
+# Role Seeding
+
+Every new tenant is born with an empty auth database slice — no roles, no permissions, no `super_admin`. Role seeding is the bootstrap that fills it in. It runs automatically inside `CreateTenant` and is available **on demand** from [impersonation](/docs/knowledgebase/tenant-module/impersonation) for tenants that somehow shipped without it.
+
+The seed data lives in the **auth-service** repo, not tenant-service:
+
+- `auth-service/data/roles.json` — the canonical list of built-in roles and the permission names each grants
+- `auth-service/data/permissions.json` — the canonical list of permission definitions (name / label / description / group)
+
+Tenant-service's `RoleSeedingService` reads both files at runtime and writes them into the auth DB. That means **rolling out a new role or permission is a shared-repo change** — edit the JSON in auth-service, redeploy tenant-service (or auth-service, wherever those files live on disk), and every subsequent seed picks it up.
+
+## When seeding runs
+
+| Trigger | File / function | Behaviour on failure |
+|---------|-----------------|----------------------|
+| `POST /sysadmin/tenants`, `POST /orgadmin/organizations/:id/tenants` | `TenantService.CreateTenant` → `SeedRolesForTenant` | Tenant row is **rolled back** (physically deleted) and the error is returned. Create is atomic: either roles exist and the tenant is usable, or neither exists |
+| `POST /sysadmin/tenants/:id/impersonate` on a tenant missing `super_admin` | `ImpersonationService.createSuperAdminUser` → `SeedRolesForTenant` | If seeding fails, impersonation fails with `super_admin role not found, failed to auto-seed roles`. The tenant row is untouched — you can retry after fixing the seed files |
+
+> Seed data is **idempotent**. Every step checks "does it already exist?" before inserting, so running seed against a fully-seeded tenant is a no-op (see [Idempotence](#idempotence) below).
+
+## What gets created
+
+### Permissions (global)
+
+Permissions are **not tenant-scoped** — they live once in the auth DB's `permissions` table, keyed by `name`. Seeding inserts any permission from `permissions.json` whose name doesn't already exist.
+
+Each permission row has:
+
+| Column | Source |
+|--------|--------|
+| `name` | `permissions.json`'s `.groups.<group>.permissions[].name` (or the flat `.permissions[].name`) |
+| `label` | `label` from JSON |
+| `description` | `description` from JSON |
+| `group` | `group` from JSON, or the group key if the permission lived inside `groups.<key>.permissions` |
+| `guard` | Hard-coded to `"web"` |
+| `id` | Freshly generated UUID |
+
+### Roles (tenant-scoped)
+
+Roles **are** tenant-scoped — each tenant gets its own copy. Seeding inserts every role from `roles.json` that doesn't already exist for the target tenant:
+
+| Column | Source |
+|--------|--------|
+| `name` | `roles.json` `.roles[].name` (e.g. `super_admin`, `admin`, `user_manager`, `developer`, `moderator`, `auditor`) |
+| `tenant_id` | The target tenant |
+| `guard` | Hard-coded to `"web"` |
+| `id` | Freshly generated UUID |
+
+> The `label` and `description` fields in `roles.json` are **not** read by the tenant-service seeder — only `name` and `permissions` are used. If you need labels on role rows, that is an auth-service responsibility.
+
+Each role's `permissions` list in the JSON is translated into `role_permissions` pivot rows, using the permission UUIDs resolved in the previous step. Unknown permission names (referenced in `roles.json` but not defined in `permissions.json`) are **silently skipped** — no error, no warning at the seeder level.
+
+## The roles that ship out of the box
+
+Every tenant ends up with the roles defined in `auth-service/data/roles.json`. At the time of writing the canonical set is:
+
+| Role | Purpose |
+|------|---------|
+| `super_admin` | Full access. Empty `permissions` list in the JSON — `super_admin` is wildcarded elsewhere in auth-service, not by permission grants |
+| `admin` | Most platform operations — user / role / permission / tenant management, file / notification / analytics manage, settings view/update |
+| `user_manager` | User CRUD + role/permission listing. No tenant or platform-level access |
+| `developer` | Tenant + user + file + notification + analytics. Intended for internal engineers |
+| `moderator` | Read-heavy access to users + roles + files + notifications + analytics view |
+| `auditor` | Analytics view and export only |
+
+Since the source of truth is the JSON file, consult `auth-service/data/roles.json` for the live list before making assumptions — the seeder picks up whatever the file contains.
+
+## File discovery
+
+The seeder searches these paths **in order** for both `roles.json` and `permissions.json`:
+
+```
+../auth-service/data/roles.json
+../../auth-service/data/roles.json
+./auth-service/data/roles.json
+auth-service/data/roles.json
+```
+
+(the path list is the same for `permissions.json`). The first path that resolves and opens wins. This means:
+
+- Running `tenant-service` from `/backend/tenant-service/` (the common dev layout) picks up `../auth-service/data/...`.
+- Deploying with both services in the same Docker image requires mounting `auth-service/data/` at `./auth-service/data/` relative to the tenant-service process's CWD.
+- Running from a different CWD falls through to "could not find roles.json in any of the expected paths" — the tenant create rolls back.
+
+There is no config option to override these paths today — the list is hard-coded in `services/role_seeding_service.go`.
+
+## Permissions file structure
+
+The seeder accepts two formats, both can coexist in the same file:
+
+### New grouped format (preferred)
+
+```json
+{
+  "metadata": { "version": "2.0.0", "last_updated": "2026-03-18" },
+  "groups": {
+    "user": {
+      "name": "User Management",
+      "description": "User management and profile permissions",
+      "permissions": [
+        { "name": "user.view", "label": "View User", "description": "Allow viewing user information" },
+        { "name": "user.list", "label": "List Users", "description": "Allow listing all users" }
+      ]
+    }
+  }
+}
+```
+
+When a permission doesn't specify its own `group`, the seeder falls back to the outer group key (`user` in the example above). That's why you can omit `group` on each permission entry — the enclosing `groups.<key>` is enough.
+
+### Legacy flat format
+
+```json
+{
+  "permissions": [
+    { "group": "user", "name": "user.view", "label": "View User", "description": "…" }
+  ]
+}
+```
+
+The seeder concatenates both lists, so a migration file can carry a mix of old flat entries and new grouped entries while you transition.
+
+## Idempotence
+
+`SeedRolesForTenant` is safe to run repeatedly:
+
+- **Permissions:** existence check is `SELECT 1 FROM permissions WHERE name = ?`. Matching rows are reused by ID; missing rows are created. No UPDATEs — if you edit a `label` or `description` in `permissions.json`, the **existing DB row is not refreshed**. You need a separate migration to update the text on already-seeded permissions.
+- **Roles:** existence check is `SELECT 1 FROM roles WHERE name = ? AND tenant_id = ? AND deleted_at IS NULL`. Matching rows are **skipped entirely** — permission grants are not re-applied. That means adding a new permission to an existing role in `roles.json` will not propagate to already-seeded tenants.
+
+The net effect: the seeder is good at bootstrapping new tenants and filling gaps on tenants missing the basics, but it is **not** a reconciler. Evolving an existing role requires a targeted migration.
+
+### Consequences for the impersonation auto-seed
+
+The impersonation flow hits the seeder when `super_admin` is missing. Typical cases:
+
+- A reset-tenant run where the `tenants` row was preserved but auth-side data was wiped — seeding adds `super_admin` and the other roles back.
+- A tenant that predates seeding entirely — seeding fills from scratch.
+- A tenant whose roles exist but where `super_admin` was manually renamed or soft-deleted — the auto-seed inserts a fresh `super_admin`, leaving the stale row alone. Reconcile manually if you care.
+
+## Failure handling during tenant create
+
+```go
+if err := s.roleSeedingService.SeedRolesForTenant(ctx, tenant.ID); err != nil {
+    // Clean up tenant if role seeding fails to ensure consistency
+    _, deleteErr := s.db.NewDelete().
+        Model((*models.Tenant)(nil)).
+        Where("id = ?", tenant.ID).
+        Exec(ctx)
+    ...
+}
+```
+
+The tenant row is created, seeding runs, and if seeding errors the tenant row is **hard-deleted** (not soft-deleted). The caller sees `failed to seed roles for tenant: <original error>` with a 5xx response. This is intentional: a tenant that nobody can log into as `super_admin` has no value and would confuse the sysadmin list UI.
+
+If the rollback delete *also* fails — e.g. the DB connection dropped — the caller sees a combined error string listing both the seeding error and the cleanup error. In that case a tenant row exists in the database with no roles. Clean it up manually (`DELETE FROM tenants WHERE id = ?`) and fix the seed files before retrying.
+
+## Failure handling during impersonation auto-seed
+
+```go
+if s.roleSeedingService == nil {
+    return nil, fmt.Errorf("super_admin role not found for tenant and role seeding service is not configured")
+}
+if seedErr := s.roleSeedingService.SeedRolesForTenant(ctx, tenantID); seedErr != nil {
+    return nil, fmt.Errorf("super_admin role not found, failed to auto-seed roles: %w", seedErr)
+}
+```
+
+The tenant row is **not** touched here — only the seed is attempted. Failures return `500` with the wrapped seed error. Fix the seed files and retry the impersonation.
+
+## Events & Audit
+
+Role seeding does **not** publish its own audit event. It is considered a side effect of:
+
+- `TenantCreate` — which publishes `AuditEvent { action: "created", resource_type: "tenant" }`. The seed happens inside that same request.
+- `Impersonation` — which publishes `AuditEvent { action: "created", resource_type: "impersonation" }`. The on-demand seed happens inside that same request.
+
+If you need granular visibility into seed activity, watch for the absence of `super_admin` / other roles in the `roles` table or instrument `SeedRolesForTenant` with a custom log line.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `could not find roles.json in any of the expected paths` | The tenant-service process's CWD doesn't reach `auth-service/data/`. Launch tenant-service from the `backend/tenant-service` directory, or mount the auth-service data directory at one of the hard-coded relative paths |
+| `failed to seed roles for tenant` + tenant creation 500 | The seeder threw during tenant create. Check the wrapped cause — malformed JSON, DB connection, or a permission name collision. The tenant row is already rolled back; retry the create once the seed files are healthy |
+| New permission added to `roles.json` didn't appear on existing tenants | Seeding is create-only. Write a migration that inserts the missing `role_permissions` row for each tenant, or bulk-re-seed via a one-off script |
+| Updated `label` / `description` in `permissions.json` not reflected | Same — existence-only checks skip UPDATEs. Run a migration to rewrite the columns, or delete the specific permission rows and let the next seed re-create them (dangerous: invalidates existing role grants) |
+| `permission.name` in `roles.json` that doesn't exist in `permissions.json` | Silently skipped. Role is created without that permission. Add the permission definition and re-seed (or migrate) — the bad role grant is not reported at all, so reconcile by inspecting `role_permissions` |
+| Impersonation seeded `super_admin` but the impersonated user has no other roles | By design — the `System Super Admin` user is only assigned `super_admin`. Grant any additional roles through the normal auth-service endpoints if needed |
+| Role renamed in `roles.json` but old role still present on seeded tenants | Seeding doesn't rename. Write a migration that updates the role `name`, or soft-delete the old row and re-seed to create the new one (re-seed only creates missing names; a renamed role in JSON with a new name will be created alongside the old) |

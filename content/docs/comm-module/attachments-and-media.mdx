@@ -1,0 +1,137 @@
+---
+title: "Attachments & Media"
+description: "Rich-text body, thumbnail banner, and file attachments on notices — how they are uploaded, synced, and rendered"
+module: "comm"
+feature: "attachments-and-media"
+order: 5
+---
+
+# Attachments & Media
+
+A notice carries three layers of content: a **rich-text body** (HTML), an optional **thumbnail image** at the top, and any number of **file attachments** the reader can download. All three are managed alongside the notice record itself — no separate "media" surface — and all three are synced through the platform's file manager so they show up in the normal file library and audit trail.
+
+## Rich-Text Body
+
+The body is stored as HTML (up to 10,000 characters) in the `body` column of the `notices` table.
+
+### Editor
+
+- Powered by the platform's TipTap-based `RichTextEditor` component.
+- Supports headings, bold/italic/underline, lists, links, images, and file-manager media insertion.
+- Inserting an image opens the file manager; the selected file is uploaded (if new) and its URL is embedded directly in the HTML body.
+
+### Rendering on the User Side
+
+- The detail page uses `RichTextContent` with `prose` styling from the platform's design system.
+- Images embedded in the body are served straight from the file manager and are subject to the same signed-URL rules as attachments.
+
+> **Note:** The body is stored as raw HTML. If you are injecting user-generated content into a notice body programmatically, sanitise it before insertion — the backend does not strip unsafe tags.
+
+## Thumbnail
+
+A single image URL attached to the notice and rendered as a banner at the top of the detail page (and as the thumbnail cell in the admin table).
+
+### Uploading
+
+1. In the admin form, click **Upload Thumbnail**.
+2. The file manager opens; pick an existing image or upload a new one.
+3. The form stores the image's public URL in `thumbnail`.
+
+### Fallback
+
+- When `thumbnail` is empty, the admin table renders a placeholder icon.
+- The learner notice board does not render a thumbnail in the dropdown or sheet row — only in the detail page header.
+
+## File Attachments
+
+Any number of attachments can be linked to a single notice. There is no server-side type or size constraint — the file manager is authoritative for what is acceptable.
+
+### Data Model
+
+Attachments are modelled as a many-to-many association between `notices` and the file-manager's file catalog, persisted in the file-manager's own association table (not inside `comm-service`'s database).
+
+- `comm-service` never stores the file bytes or metadata itself.
+- `comm-service` calls `AttachmentService` (from `filemanager`) to attach, sync, and load the files by entity reference `(entity_type="notice", entity_id=<notice_id>)`.
+
+### Uploading Attachments
+
+1. In the admin form, open the attachments section.
+2. Drag-and-drop a file or click to browse.
+3. Each file is uploaded to the file manager immediately; the form records the resulting `file_id`.
+4. On form submit, the comm-service receives `attachment_ids: [uuid, uuid, ...]` and links them to the notice via `AttachmentService.Attach`.
+
+### Editing Attachments
+
+On `PUT /admin/notices/{id}`, the provided `attachment_ids` array is **the new source of truth**. The backend calls `AttachmentService.Sync`:
+
+- IDs present in the request but not currently linked → linked.
+- IDs currently linked but absent from the request → unlinked.
+- IDs present in both → left alone.
+
+> **Warning:** If you submit an update with `attachment_ids = []`, every existing attachment is unlinked. If you submit without `attachment_ids` at all, no change is made. Always re-include the current attachment IDs when editing unless you explicitly mean to remove them.
+
+### Unlinking vs Deleting
+
+`AttachmentService.Sync` only *unlinks* — it does not delete the underlying file from the file manager. The file remains discoverable in the file library and can be re-attached to a different notice or referenced from other resources.
+
+To permanently delete a file, use the file manager directly.
+
+### Duplicate Detection
+
+The admin form flags attempts to attach the same file twice. The file manager assigns stable IDs on upload, so re-dragging the same file is detected and ignored.
+
+## Attachment Rendering on the User Side
+
+When a learner opens a notice's detail page, attachments are rendered in a dedicated section beneath the body:
+
+| Column | Source |
+|--------|--------|
+| Icon | Derived from the file's MIME type |
+| Filename | `AttachmentService` metadata |
+| Size | `AttachmentService` metadata |
+| Download | Signed URL that expires per the file manager's policy |
+
+The list is empty (and the section hidden) when the notice has no attachments.
+
+## Integration Points
+
+Everything in this page flows through two services:
+
+| Service | Responsibility |
+|---------|----------------|
+| `filemanager → AttachmentService` | Links / unlinks / loads files by entity reference |
+| `RichTextEditor` (frontend) | Composes the HTML body, inserts file-manager images inline |
+
+On the backend, `NoticeService` calls:
+
+- `AttachmentService.Attach(ctx, tenantID, "notice", noticeID, attachmentIDs)` on create.
+- `AttachmentService.Sync(ctx, tenantID, "notice", noticeID, attachmentIDs)` on update.
+- `AttachmentService.GetAttachmentsByEntity(ctx, tenantID, "notice", noticeID)` on single read.
+- `AttachmentService.GetAttachmentsByEntities(ctx, tenantID, "notice", ids)` on list read (batch).
+
+## API Fields
+
+The create and update request bodies carry two media-related fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `thumbnail` | string (URL) | Optional banner image |
+| `attachment_ids` | `UUID[]` | List of file IDs to attach; acts as the source of truth on update |
+
+On the response, the notice object is enriched with:
+
+| Field | Description |
+|-------|-------------|
+| `thumbnail` | Same URL as stored |
+| `attachments` | Array of attachment metadata from `AttachmentService` (id, filename, mime type, size, download URL) |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Attachment missing from the detail page | Confirm the file is still linked on the notice. `AttachmentService.Sync` unlinks anything not present in the last update payload — re-edit the notice with the full list of attachment IDs |
+| Thumbnail not displayed | `thumbnail` is an opt-in field. Admin-table thumbnails render a placeholder when empty; the detail page hides the header image entirely when unset |
+| File exists in the file manager but not showing in the form | The file was deleted or the current admin doesn't have read permission on it. Check file permissions in the file manager |
+| Embedded body image broken | The image URL inside the body HTML is rendered as-is. If the source file was deleted, the `<img>` tag will fail — edit the body to remove or replace it |
+| Large attachment failed to upload | The file manager enforces upload size limits; `comm-service` does not. Check the file manager for the applicable policy and error message |
+| Attachments count on update endpoint not matching | `PUT /admin/notices/{id}` only syncs when `attachment_ids` is present in the body. Omitting it is "no change"; sending `[]` is "detach everything" |

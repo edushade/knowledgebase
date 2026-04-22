@@ -1,0 +1,142 @@
+---
+title: "Audience Targeting"
+description: "Eight audience types — all, role, course, quiz, event, cohort, learning path, and individual users — and how the calendar service filters notices per viewer"
+module: "comm"
+feature: "audience-targeting"
+order: 3
+---
+
+# Audience Targeting
+
+Every notice carries an `audience_type` + `audience_ids` pair that describes who should see it. When a user opens their notice board, the comm-service asks the learning-service's `CalendarService` to resolve which notices that specific user can access — so targeting is enforced server-side, not on the frontend.
+
+This page covers the full targeting matrix, how each audience type is resolved, and the edge cases you will hit when combining audiences, enrollments, and roles.
+
+## Audience Types
+
+| Audience Type | Value | Meaning |
+|---------------|-------|---------|
+| All | `` (empty string) | Broadcast to every authenticated user in the tenant |
+| Role | `role` | Users who hold any of the listed roles |
+| Course | `course` | Learners enrolled in any of the listed courses |
+| Quiz | `quiz` | Users associated with any of the listed quizzes |
+| Event | `event` | Registrants on any of the listed events |
+| Cohort | `cohort` | Members of any of the listed cohorts |
+| Learning Path | `learning_path` | Learners on any of the listed learning paths |
+| User Individual | `user_individual` | Hand-picked list of user IDs |
+
+`audience_type` is stored as a string in PostgreSQL. The empty string is interpreted as "All" throughout the service.
+
+## Validation Rules
+
+- If `audience_type` is non-empty, `audience_ids` must contain **1–100 UUIDs**.
+- If `audience_type` is empty (All), `audience_ids` should be omitted or sent as `[]`.
+- `audience_ids` is stored as a JSONB array column and is indexed implicitly by the rest of the filter.
+
+> **Note:** The 100-ID ceiling is a DTO-level guardrail to prevent accidental giant broadcasts. If you need to target more than 100 entities, prefer an audience type that naturally aggregates them — for example, `cohort` or `learning_path` rather than 100 individual course IDs.
+
+## How Access Is Resolved
+
+When a user calls `GET /api/v1/user/notices` (or `GET /api/v1/user/notices/{id}`), the service calls:
+
+```
+CalendarService.GetNoticeboardEvents(ctx, tenantID, learnerID, filter, unreadOnly ...bool)
+```
+
+This learning-service method hard-filters `status = 'published'` (so `draft`, `scheduled`, and `archived` notices are never returned). It then iterates notices and asks `isNoticeRelevantToUser` per row. Resolution per audience type:
+
+| Audience Type | Rule |
+|---------------|------|
+| All | Always visible |
+| `role` | Visible if the user holds at least one of `audience_ids` as a role |
+| `course` | Visible if the user is enrolled in at least one of `audience_ids` |
+| `quiz` | **Not resolved today** — falls through to `return false`; no user ever sees a quiz-audience notice (see "Known gap" note below) |
+| `event` | Visible if the user is registered for at least one of `audience_ids` |
+| `cohort` | Visible if the user is a member of at least one of `audience_ids` |
+| `learning_path` | Visible if the user is on at least one of `audience_ids` |
+| `user_individual` | Visible if the user's ID is contained in `audience_ids` |
+
+> **Known gap — `quiz` audience:** `isNoticeRelevantToUser` does not have a case for `AudienceTypeQuiz`, so any notice authored with `audience_type = quiz` is accepted on create but **never reaches any user**. Until the calendar service adds a quiz resolver, use a different audience type (for example `course` or `user_individual`) for quiz-related broadcasts.
+
+> **No `expires_at` filter on the user surface.** The calendar service does **not** filter by `expires_at`. A `published` notice is returned to the user regardless of whether `expires_at` is in the past. Any expiry filtering must be done on the frontend. The variadic `unreadOnly` flag on `GetNoticeboardEvents` exists but is always called with `false` by comm-service today.
+
+> **Security:** Access resolution is authoritative — if the calendar service says no-access, the comm-service returns 404 on direct fetches. Do not rely on the frontend to hide notices; even a malicious client cannot read notices they are not entitled to.
+
+## Admin Form: Picking an Audience
+
+When authoring a notice, the admin form presents two controls:
+
+1. **Audience Type** — a dropdown that maps to the values above.
+2. **Audience** — a multi-select that dynamically loads options from the appropriate endpoint based on the chosen audience type. Switching the audience type clears the current selection.
+
+| Audience Type | Selector | Backing data source |
+|---------------|----------|---------------------|
+| All | Hidden (no selector needed) | — |
+| Role | ServerDataSelect — roles | `auth-service` roles endpoint |
+| Course | ServerDataSelect — courses | `learning-service` courses endpoint |
+| Quiz | ServerDataSelect — quizzes | `quiz-service` quizzes endpoint |
+| Event | ServerDataSelect — events | `learning-service` events endpoint |
+| Cohort | ServerDataSelect — cohorts | `learning-service` cohorts endpoint |
+| Learning Path | ServerDataSelect — learning paths | `learning-service` learning paths endpoint |
+| User Individual | ServerDataSelect — users | `auth-service` users endpoint |
+
+All selectors are searchable, debounce their queries, and support paging when the underlying list grows beyond the initial window.
+
+## Admin List: Filtering by Audience
+
+In the admin notices list:
+
+- Filter the `audience_type` dropdown to narrow the table to one kind of broadcast.
+- The table renders the audience type with a human-readable label (`learning_path` → "Learning Path") and resolves the associated entity name through `EntityAssociationService` for single-target audiences.
+
+## Response Enrichment
+
+When a notice is returned (on either the admin or user surface), the service eager-loads **one** associated entity based on `audience_type` — always populated from the first entry in `audience_ids`:
+
+| Audience Type | Response field |
+|---------------|----------------|
+| `role` | `role` |
+| `course` | `course` |
+| `quiz` | `quiz` |
+| `event` | `event` |
+| `cohort` | `cohort` |
+| `learning_path` | `learning_path` |
+| `user_individual` | `user` |
+| All | (nothing added) |
+
+The response always uses the **singular** form. There is no plural `roles[]` / `courses[]` field today. If `audience_ids` contains multiple UUIDs, only the first one's entity is eager-loaded; the frontend is responsible for resolving the remaining IDs if it wants to display them.
+
+## Combining Audiences
+
+A single notice has exactly one `audience_type`. If you need to broadcast to "learners on Learning Path A **and** members of Cohort B", you have two options:
+
+1. **Create two notices** — one targeting `learning_path` and one targeting `cohort`. Their bodies can be identical.
+2. **Target a superset** — use `role` if the audience happens to match a single role, or `user_individual` with a hand-picked union.
+
+There is no "any-of" or "all-of" composition at the notice level today.
+
+## Scope Boundaries
+
+- **Tenant isolation.** Every notice and every `notice_reads` row is filtered by `tenant_id`. Notices never cross tenants.
+- **Calendar authority.** Audience resolution is done entirely inside the learning-service's calendar. If learning-service is unavailable, the user surface returns empty results — by design, we would rather show nothing than leak cross-audience content.
+- **Role vs audience type.** `role` is an audience type; it is **not** the same as the [RBAC roles](/docs/knowledgebase/auth-module/roles-and-permissions) used for permission checks — it resolves through the same role catalog but is used for *targeting*, not *authorisation*.
+
+## Events & Auditing
+
+Audience decisions are embedded in the notice itself — when a notice is created or updated, the audit trail records the entire payload including `audience_type` and `audience_ids`. There is no separate event for "audience resolved".
+
+| Action | Logged fields |
+|--------|---------------|
+| Create notice | `audience_type`, `audience_ids`, `title`, `priority`, `status` |
+| Update notice | Previous and new `audience_type` + `audience_ids` if changed |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "audience_ids must have between 1 and 100 entries" (400) | For any non-All audience type, provide between 1 and 100 audience IDs. Use cohort/learning_path audiences when you need to target more than 100 entities |
+| Users not seeing a notice targeted at their role | Confirm the user actually holds the role. Role-type audiences resolve through the same role catalog as [RBAC](/docs/knowledgebase/auth-module/roles-and-permissions); a newly-granted role may not be present in the calendar service's cache yet — force a refetch |
+| Users not seeing a notice targeted at a course they're on | Verify the user's enrollment is `active` on that course. The calendar service typically excludes `cancelled`, `expired`, and `suspended` enrollments |
+| Individual-user notice invisible to the targeted user | Make sure the audience is set to `user_individual` (not `role`) and the user's UUID is present in `audience_ids` — case-sensitive match |
+| Notice visible to all users despite audience type | Check the stored `audience_type` in the database. An empty string is treated as "All"; an accidental empty value will broadcast to everyone |
+| Audience entity disappears from the response | `EntityAssociationService` returned nothing — the target (course, cohort, etc.) may have been deleted. The notice itself still exists; the frontend should render a fallback like "Audience unavailable" |

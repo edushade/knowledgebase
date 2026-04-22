@@ -1,0 +1,80 @@
+---
+title: "Did You Mean"
+description: "Typo-tolerant query suggestions computed with Levenshtein distance against popular queries"
+module: "search"
+feature: "did-you-mean"
+order: 6
+---
+
+# Did You Mean
+
+When a search returns zero hits, the service tries to compute a **"did you mean"** suggestion by comparing the typed query against the tenant's popular queries over the last 30 days.
+
+There is no dedicated endpoint — the suggestion is returned inline in the `/search` response's `metadata.did_you_mean` field so the client can render it as a one-click re-query button.
+
+## When It Runs
+
+`did_you_mean` is only populated when **all** of the following are true:
+
+1. The `/search` request has a non-empty `q`.
+2. `found === 0` after the Typesense query.
+3. `querySuggestionService` and `suggestionsService` are both wired on the search service (they are, in the default build).
+4. `tenant_id` parses as a valid UUID.
+
+Otherwise the field is absent from `metadata`.
+
+## Algorithm
+
+Defined in `search-service/services/query_suggestion_service.go::GetSuggestion`.
+
+1. Fetch the top **100 popular queries** from `search_analytics` over the last 30 days (excluding the last hour to avoid momentary spikes). See [Popular Searches](/docs/knowledgebase/search-module/popular-searches).
+2. Lowercase and trim the typed query.
+3. For each popular query:
+   - Skip if it's an **exact** case-insensitive match (no correction needed).
+   - Compute **Levenshtein similarity**: `1 - distance / max(len)`.
+   - If one string contains the other, average in a **substring bonus** of `shorter.length / longer.length`.
+   - Add a **popularity boost** of `+0.05` when the candidate has more than 10 searches.
+4. Keep the highest-scoring candidate.
+5. Return it only when `score ≥ 0.6` (the minimum similarity threshold).
+
+## Frontend Rendering
+
+The `SearchResults` component reads `metadata.did_you_mean` after a zero-result query:
+
+1. Renders a section heading **"Did you mean?"**.
+2. Renders the suggestion as a single full-width outline button.
+3. On click, calls `onSuggestionClick?.(didYouMean)` — the parent (e.g. the search bar) updates its query and re-runs the search, which replaces the results view with the corrected query's results.
+
+## Parameters & Limits
+
+| Parameter | Value | Where |
+|-----------|-------|-------|
+| Lookback window | `30 days` | `GetSuggestion` → calls `GetPopularSearches(..., 30, 100)` |
+| Candidate pool size | `100` | Same call |
+| Minimum similarity | `0.6` (60%) | Constant in `GetSuggestion` |
+| Popularity boost threshold | `> 10` searches | Constant in `GetSuggestion` |
+| Popularity boost amount | `+0.05` | Constant in `GetSuggestion` |
+
+## Cold Start Behaviour
+
+If `search_analytics` hasn't been populated (e.g. a fresh deployment or a new tenant), `GetPopularSearches` returns an empty list and `GetSuggestion` returns `""`. The `metadata.did_you_mean` field is then left unset. This is the expected "no suggestion" state — the client simply won't render the button.
+
+> `search_analytics` is populated by the [Search Analytics](/docs/knowledgebase/search-module/search-analytics) aggregator job, which runs every hour. Wait for the first aggregation tick before expecting suggestions.
+
+## Related But Distinct
+
+Do not confuse **did you mean** with:
+
+- [Related Searches](/docs/knowledgebase/search-module/related-searches) — returned in the same metadata, but they're the **top popular queries excluding the current one**, regardless of similarity.
+- [Autocomplete](/docs/knowledgebase/search-module/autocomplete) — prefix matching during typing, not typo correction after submission.
+- Typesense typo tolerance — Typesense does handle minor typos itself inside `query_by` fields, but that returns *hits*, not a suggestion. `did_you_mean` is the fallback for when even Typesense's fuzzy matching can't find anything.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `did_you_mean` is never set | Usually means `search_analytics` is empty for the tenant — run a few searches and wait one aggregation tick |
+| `did_you_mean` still empty after many searches | Minimum similarity is 60%. For very short queries (`"ux"` vs `"ui"`) or obscure misspellings, no candidate may clear the threshold |
+| Suggestion is the same as the query | Shouldn't happen — exact case-insensitive matches are explicitly skipped |
+| Suggestion is off-topic | The algorithm is Levenshtein + popularity. Rare domain-specific terms won't be corrected to general popular queries because of the 60% threshold |
+| The first-character correction isn't picked | Levenshtein is uniform per operation; transposing the first character is weighted the same as any other edit |

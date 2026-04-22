@@ -1,0 +1,173 @@
+---
+title: "Multipart Upload (Uppy AwsS3 Companion)"
+description: "The four-step Uppy-compatible multipart flow that lets browsers stream large files directly to S3"
+module: "filemanager"
+feature: "multipart-upload"
+order: 4
+---
+
+# Multipart Upload
+
+The file manager exposes an **Uppy AwsS3 Companion–compatible** protocol so the frontend can stream large files directly to S3 without ever routing the bytes through the Go service. This is the path taken for any file above ~16 MiB (and any file where the Uppy plugin is configured).
+
+The exact same handler set is mounted on both the admin (`/v1/admin/files/upload/s3/*`) and learner (`/v1/user/files/upload/s3/*`) surfaces.
+
+## The Four Steps
+
+```
+1. POST   /upload/s3/multipart                          → initiate, get uploadId + key
+2. GET    /upload/s3/multipart/:upload_id/:part_number  → sign each part (repeat per part)
+3. POST   /upload/s3/multipart/:upload_id/complete      → assemble parts
+   OR
+   DELETE /upload/s3/multipart/:upload_id               → abort
+```
+
+The browser talks to the service for *signing*, and directly to S3 for the actual byte transfer.
+
+## Step 1 — Initiate
+
+- **Endpoint:** `POST /v1/admin/files/upload/s3/multipart`
+- **Auth:** `file.upload`
+- **Body:**
+  ```json
+  {
+    "filename": "lecture.mp4",
+    "type": "video/mp4",
+    "metadata": {
+      "dir_id": "0190cf2c-...",
+      "size": "524288000"
+    }
+  }
+  ```
+
+**Behaviour:**
+- `filename` is required. If `type` is omitted, the service defaults to `application/octet-stream`.
+- `metadata.dir_id` (optional) is the target folder. Omit for root.
+- `metadata.size` (optional but recommended) is used to pre-check the tenant upload limit. If absent the check happens later at complete time.
+- A row is inserted into `media` with the computed `bucket_key`. An S3 `CreateMultipartUpload` is issued; the returned `UploadId` is stored and returned to the client.
+
+**Response** (not wrapped in the standard envelope — Uppy expects this shape verbatim):
+
+```json
+{
+  "uploadId": "S3-issued-upload-id",
+  "key": "0000....-0001/2025-04-22/0190d1e5-....mp4"
+}
+```
+
+## Step 2 — Sign Each Part
+
+Uppy issues one GET per part (in parallel, typically 4–6 concurrent):
+
+- **Endpoint:** `GET /v1/admin/files/upload/s3/multipart/{upload_id}/{part_number}?key={bucket_key}`
+- **Response:**
+  ```json
+  { "url": "https://s3.bucket.com/...?X-Amz-Signature=..." }
+  ```
+
+The browser then `PUT`s the part bytes directly to that presigned URL. The returned `ETag` header from S3 is captured by Uppy for the final complete call.
+
+> **Signature lifetime:** part-upload URLs are signed with a **10-second** expiry inside `S3MultipartURL`. Uppy uses them immediately, so this is safe; if you need a longer lifetime for a custom integration, extend the expiry in `filemanager/internal/svc/filemanager.go::S3MultipartURL`.
+
+### Listing Parts
+
+- **Endpoint:** `GET /v1/admin/files/upload/s3/multipart/{upload_id}`
+- **Response:** `[]` — an empty array
+
+Uppy pings this endpoint to resume a stalled upload. The service always returns an empty list (it does not persist per-part state), so Uppy will re-upload any missing part.
+
+## Step 3a — Complete
+
+Once every part has succeeded, Uppy calls:
+
+- **Endpoint:** `POST /v1/admin/files/upload/s3/multipart/{upload_id}/complete?key={bucket_key}`
+- **Body:**
+  ```json
+  {
+    "parts": [
+      { "ETag": "\"abc...\"", "PartNumber": 1 },
+      { "ETag": "\"def...\"", "PartNumber": 2 }
+    ]
+  }
+  ```
+
+**Behaviour:**
+- The service calls `CompleteMultipartUpload` on S3 with the provided ETag/PartNumber pairs.
+- If successful, the `media` row is fetched by `bucket_key` and returned.
+- If S3 rejects the completion (bad ETag, missing part, wrong order) the `media` row is soft-deleted via `DeleteFile` to avoid orphaned metadata.
+
+**Response:** `{ "file": <media-object> }` — again, deliberately un-wrapped for Uppy compatibility.
+
+## Step 3b — Abort
+
+If the user cancels or the upload stalls past a retry threshold:
+
+- **Endpoint:** `DELETE /v1/admin/files/upload/s3/multipart/{upload_id}?key={bucket_key}`
+- **Response:** `{}` (empty object)
+
+Server actions:
+1. The `media` DB row is deleted (`DeleteFile`).
+2. `AbortMultipartUpload` is called on S3 to clean up accumulated parts.
+
+## Presigned PUT (Single-Part Variant)
+
+For files that fit in a single `PUT` but still want to avoid routing bytes through the service, Uppy's `AwsS3` plugin can fetch a presigned PUT URL directly:
+
+- **Endpoint:** `GET /v1/admin/files/upload/s3/params?filename={name}&type={mime}&metadata[dir_id]={dir}`
+- **Response:**
+  ```json
+  {
+    "method": "PUT",
+    "url": "https://s3.bucket.com/...",
+    "fields": {},
+    "headers": { "Content-Type": "<mime>" }
+  }
+  ```
+
+This creates the DB row immediately and returns a URL valid for **10 minutes**. The browser issues a single `PUT` with the provided headers. There is no "complete" call — S3 stores the object on the `PUT` response.
+
+## Events Emitted
+
+Each stage emits its own activity + audit pair:
+
+| Step | Activity `action` | Audit `action`/`resource_type` |
+|------|-------------------|-------------------------------|
+| Initiate | `file.multipart_started` | `created` / `multipart_upload` |
+| Complete | `file.multipart_completed` | `created` / `file` |
+| Abort | `file.multipart_aborted` | `deleted` / `multipart_upload` |
+
+On the **system-API** variants (`/v1/system/files/upload/s3/*`) the same events are emitted — see [System API](/docs/knowledgebase/filemanager-module/system-api).
+
+## Size Threshold
+
+The S3 client inside the service (`internal/storage/s3.go`) uses these defaults for its own internal multipart behaviour:
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| **Multipart threshold** | 15 MB | Below this, a single `PutObject` is used |
+| **Part size** | 5 MB (minimum) — up to 16 MiB cap | S3 minimum is 5 MiB; capped to avoid MinIO chunk errors |
+| **Max parts** | 10 000 | S3 absolute maximum |
+
+The Uppy frontend is independent of these; it chooses parts based on its own configuration (typically 5 MiB parts).
+
+## Tenant Upload Cap
+
+The tenant upload limit is enforced at **two** points in the multipart flow:
+
+1. **Initiate** — if `metadata.size` is provided, the check runs before the DB row is created.
+2. **Complete** — there is no post-hoc size check; the cap is considered a pre-check.
+
+If `metadata.size` is omitted or falsified the cap is **not** re-applied at complete time — rely on the frontend to send an honest `size`, or add a secondary check in the `S3MultipartComplete` service method if you need hard enforcement.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "A file with this name already exists" on initiate | Duplicate `(tenant_id, parent_id, name)` — rename or delete the existing file |
+| `400` "key query parameter is required" at complete/abort | Pass `?key=<bucket_key>` — Uppy sends this automatically; custom clients must too |
+| 403 on part `PUT` | Presigned URL expired (10-second window) — Uppy should re-sign automatically |
+| Upload stuck at 99% | Complete call is failing — check `parts` array order and ETag quoting |
+| `403 AccessDenied` from MinIO | Credentials mismatch — verify `storage.s3.access_key_id` / `secret_access_key` match your MinIO server |
+| Completion succeeds but no DB row | Rare race; the service looks up the row by `bucket_key` post-complete. Check logs for `"multipart complete: file record not found for bucket key"` |
+| Abort leaves parts in S3 | The abort call may have failed silently — check for orphaned `UploadId`s with `aws s3api list-multipart-uploads` |
+| Files > 16 MiB silently succeed then 400 | MinIO rejects single-PUT chunks over 16 MiB — ensure the frontend is using the multipart flow for large files |

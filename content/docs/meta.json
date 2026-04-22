@@ -1,4 +1,4 @@
 {
   "root": true,
-  "pages": ["---Modules---", "auth-module", "audit-module"]
+  "pages": ["---Modules---", "auth-module", "tenant-module", "audit-module", "notification-module", "comm-module", "engagement-module", "filemanager-module", "search-module", "misc-module"]
 }

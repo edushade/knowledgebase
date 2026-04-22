@@ -1,0 +1,13 @@
+{
+  "title": "Comm Module",
+  "icon": "Megaphone",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "notices",
+    "notice-board",
+    "audience-targeting",
+    "scheduling-and-status",
+    "attachments-and-media"
+  ]
+}

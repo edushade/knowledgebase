@@ -1,0 +1,134 @@
+---
+title: "Search Results"
+description: "Paginated results with highlights, did-you-mean, related searches, and a trending fallback for zero-result queries"
+module: "search"
+feature: "search-results"
+order: 2
+---
+
+# Search Results
+
+The **`SearchResults`** component renders the result list for a query. It handles pagination, localized highlighting, click tracking, empty states, and a trending-results fallback when nothing matches.
+
+Component path: `website-builder-v2/src/components/website/search/search-results.tsx`
+
+Item component: `website-builder-v2/src/components/website/search/search-result-item.tsx`
+
+## Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `query` | `string` | The search query. The component is disabled when `query.length < 2` |
+| `entityType` | `string` | Optional — restrict results to one entity type (`course`, `post`, `page`, …) |
+| `status` | `string` | Optional — restrict by status (`published`, `draft`, `archived`) |
+| `language` | `string` | Optional — restrict by document language |
+| `onResultClick` | `(result: SearchResult) => void` | Optional callback fired in addition to the click tracking + navigation |
+| `onSuggestionClick` | `(suggestion: string) => void` | Optional — fired when the user clicks a "did you mean" or related search chip |
+
+## Endpoint
+
+- **Endpoint:** `GET /api/v1/public/search` (or `/api/v1/admin/search` when called with `isAdmin = true`)
+- **Query params:** `q`, `entity_type`, `status`, `language`, `include_drafts`, `page`, `per_page`
+- **Defaults:** `per_page = 20`, `page = 1`. The backend caps `per_page` at **100**.
+- **Returns:** `{ data: SearchHit[], pagination, metadata: { history_id?, did_you_mean?, related_searches?, facets? } }`
+
+See [Filters & Entity Types](/docs/knowledgebase/search-module/filters-and-entity-types) for how filters are applied and [Facets](/docs/knowledgebase/search-module/facets) for the `/facets` variant.
+
+## Result Shape
+
+Each row in `data` is a `SearchHit`:
+
+| Field | Description |
+|-------|-------------|
+| `document` | The unified [search document](/docs/knowledgebase/search-module/indexing-pipeline) — localized title/description, entity type, slug, thumbnail, tags, dates |
+| `highlights` | Array of `{ field, languages: { [locale]: { snippets[], matched_tokens[] } } }` — see [Localization](/docs/knowledgebase/search-module/localization) |
+| `text_match` | Typesense's text-match score |
+
+## Rendering Behaviour
+
+The component has four visible states. They are mutually exclusive.
+
+| State | When |
+|-------|------|
+| **Loading** | Initial fetch for the current query or during pagination |
+| **Error** | Query fetch threw — renders "Error loading search results. Please try again." |
+| **Has results** | `data.data.length > 0` — renders the result list with a "Found N results" header and pagination footer |
+| **No results** | `data.data.length === 0` — renders the empty state with suggestions, then trending results if any |
+
+### Results List
+
+Results are rendered one per row using `SearchResultItem`:
+
+1. **Thumbnail** — 24×24 rounded cover image, falls back to `CourseThumbnailPlaceholder` if missing or if it errors out.
+2. **Title** — localized for the current locale, with the highlighted snippet injected via `dangerouslySetInnerHTML` when a highlight is present for that field.
+3. **Entity-type badge** — e.g. `course`, `learning path`, `post` (underscores are replaced with spaces).
+4. **Description** — clamped to 2 lines, same highlighting behaviour as the title.
+5. **Tags** — small pills, plus a formatted `published_at` timestamp when present.
+
+The row is wrapped in a `<Link>` when the entity type routes to a known path (see table below); otherwise it falls back to a `<button>`.
+
+### Routing
+
+`SearchResultItem` resolves an entity to its public URL via:
+
+| `entity_type` | Route |
+|---------------|-------|
+| `course` | `getCoursePath(entity_id, pageSettings)` |
+| `event` | `getEventPath(entity_id, pageSettings)` |
+| `page` | `/${slug}` |
+| `learning_path` | `getLearningPathPath(entity_id, pageSettings)` |
+| `post` | `getPostPath(slug ?? entity_id, pageSettings)` |
+| `booking` | `getMeetingPath(slug, pageSettings)` when a slug is present, else unroutable |
+| `product` | `getProductPath(entity_id, pageSettings)` |
+| _default_ | `/${entity_type}s/${entity_id}` — plural fallback |
+
+## Empty State
+
+When the query returns zero results:
+
+1. Renders `Sorry, no results found for "{query}"`.
+2. If the server included a `did_you_mean` in `metadata`, it appears as a single full-width "outline" button — clicking it calls `onSuggestionClick?.(didYouMean)` so the parent can re-run the search with the corrected term. See [Did You Mean](/docs/knowledgebase/search-module/did-you-mean).
+3. If `metadata.related_searches` is non-empty, each is rendered as a pill — clicking it calls `onSuggestionClick?.(relatedSearch)`. See [Related Searches](/docs/knowledgebase/search-module/related-searches).
+4. The component then automatically fetches **trending results** (`getTrendingResults({ limit: 20, window: "7d" })`) and renders them under a **"Trending Results"** header with a trending-up icon. Each trending row uses the same `SearchResultItem` component — they are fully clickable and route like normal results.
+
+The trending fetch is gated: it only runs once the initial query has resolved (`!isLoading && !error && data !== undefined`) and only when the result count is zero. See [Trending Searches & Results](/docs/knowledgebase/search-module/trending).
+
+## Pagination
+
+- Rendered only when `pagination.total_pages > 1`.
+- Controls: **Previous** / **Page N of M** / **Next**.
+- `Previous` is disabled on page 1; `Next` is disabled on the last page.
+- Changing page increments a local React state and re-runs the query (`searchParams` is memoized as part of the React Query key).
+
+## Click Tracking
+
+When a user clicks any result row, the component calls:
+
+- **Endpoint:** `POST /api/v1/public/search/click`
+- **Body:** `{ history_id, result_id }`
+- `history_id` comes from `data.metadata.history_id` — which the server writes back into the search response after recording the query in `search_history`.
+- On success, the `search-history` React Query is invalidated so the user's recent searches list reflects the freshly-clicked result.
+
+See [Click Tracking](/docs/knowledgebase/search-module/click-tracking) for what this data drives (analytics aggregation and [Trending Results](/docs/knowledgebase/search-module/trending#trending-results)).
+
+## Localized Highlighting
+
+Per result and per field, the component picks the snippet to render using this priority:
+
+1. `highlights[field].languages[currentLocale].snippets[0]`
+2. The first snippet from any other locale available on that field
+3. The default text: the localized title/description itself for the current locale (via `getLocalizedValue`)
+
+This means a result can match on the Arabic title and still render a useful highlight even if the visitor is browsing in English, and vice-versa.
+
+See [Localization](/docs/knowledgebase/search-module/localization).
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `data` never loads | `query.length` must be `≥ 2`; the React Query hook is disabled below that |
+| Trending fallback never renders | It only appears on zero results after the initial query resolves; it is suppressed if the trending endpoint itself is still loading |
+| Click tracking silently fails | `history_id` is only available once the search was recorded server-side (the server skips recording when `q` is empty). `trackSearchClick` is a best-effort mutation — errors don't block navigation |
+| Results link to a 404 | Check the `entity_type → route` table above; entities without a mapped route fall through to `/${entity_type}s/${entity_id}` |
+| Highlights don't render markup | They are injected with `dangerouslySetInnerHTML`; confirm the backend is returning the `<mark>`-wrapped snippet (Typesense default) and that no sanitizer is stripping the markup |

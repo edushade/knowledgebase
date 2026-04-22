@@ -1,0 +1,172 @@
+---
+title: "Channels"
+description: "The seven notification delivery channels, their content fields, per-channel templates, and how multi-channel fanout works"
+module: "notification"
+feature: "channels"
+order: 4
+---
+
+# Channels
+
+A **channel** is a delivery surface — Email, SMS, Push, and so on. The notification service fans a single logical message out to any subset of channels, picking the right per-channel content from a shared template.
+
+## Supported Channels
+
+EduShade supports seven channels. Any campaign or template can address any combination of them.
+
+| Channel | Value | Typical provider family |
+|---------|-------|-------------------------|
+| **Email** | `email` | SendGrid, SMTP (and any other adapter your backend exposes, e.g. SES, Mailgun) |
+| **SMS** | `sms` | Twilio (and any other adapter your backend exposes, e.g. AWS SNS) |
+| **Push** | `push` | Firebase Cloud Messaging |
+| **WhatsApp** | `whatsapp` | WhatsApp Cloud API |
+| **Telegram** | `telegram` | Telegram Bot API |
+| **Slack** | `slack` | Slack incoming webhook |
+| **Discord** | `discord` | Discord incoming webhook |
+
+See [Providers](/docs/knowledgebase/notification-module/providers) for how specific provider implementations are configured per channel.
+
+## Per-Channel Content
+
+Each channel has its own content shape — a template or one-off notification carries a separate body per channel so the same logical message can be tuned for each surface.
+
+### Email
+
+| Field | Description |
+|-------|-------------|
+| `email_subject` | Subject line |
+| `email_body_html` | HTML body (fully styled) |
+| `email_design_json` | Optional Unlayer editor JSON — round-trips into the visual builder |
+
+See [Templates](/docs/knowledgebase/notification-module/templates) for the Unlayer editor, variable substitution, and preset library.
+
+### SMS
+
+| Field | Description |
+|-------|-------------|
+| `sms_body` | Plain text — frontend schema caps length at 1600 chars; keep under ~160 chars per SMS segment for single-segment delivery |
+
+The sender is expected to keep the body under provider segment limits — the UI shows a character counter in the template editor.
+
+### Push
+
+| Field | Description |
+|-------|-------------|
+| `push_title` | Notification title — frontend schema caps length at 100 chars |
+| `push_body` | Notification body — frontend schema caps length at 500 chars |
+
+Additional push-specific fields (icon, badge, image, tag, `require_interaction`, action buttons, `click_action`) are passed through the `data` payload — see [Push Notifications](/docs/knowledgebase/notification-module/push-notifications) for the full payload shape and service-worker handling.
+
+### WhatsApp
+
+| Field | Description |
+|-------|-------------|
+| `whatsapp_body` | Message text — frontend schema caps length at 4096 chars |
+
+WhatsApp Cloud API additionally requires a pre-approved **message template** for business-initiated conversations — the provider wrapper maps the EduShade template variables into the WhatsApp template parameters.
+
+### Telegram
+
+| Field | Description |
+|-------|-------------|
+| `telegram_body` | Message text — frontend schema caps length at 4096 chars (supports Telegram Markdown / HTML styling depending on provider mode) |
+
+### Slack
+
+| Field | Description |
+|-------|-------------|
+| `slack_body` | Message text — frontend schema is a plain string with **no length cap** today, so keep your template honest; Slack's own limits still apply on send. A JSON block-kit payload can be passed as a string when the provider adapter accepts one, but the frontend does not validate block structure |
+
+### Discord
+
+| Field | Description |
+|-------|-------------|
+| `discord_body` | Message text — frontend schema caps length at 2000 chars (matches Discord's own cap). Discord markdown is supported; embeds-via-JSON depend on the provider adapter — the frontend only validates the string, not the embed structure |
+
+## Choosing Channels Per Campaign
+
+When authoring a [Campaign](/docs/knowledgebase/notification-module/campaigns), one of the wizard steps is **Channels** — a multi-select of any subset of the seven. Each selected channel must:
+
+1. Have a non-empty content block in the chosen template, **and**
+2. Have at least one active [Provider](/docs/knowledgebase/notification-module/providers) configured for the tenant.
+
+Unsatisfied channels surface a warning in the wizard review step; the campaign can still be saved but will mark those channels as failed at send time.
+
+## Multi-Channel Fanout
+
+A single notification logically targets *one recipient* but can dispatch to *multiple channels* in parallel. The fanout itself is a **backend dispatcher concern** — the frontend hands the backend a campaign that carries a list of channels, and the dispatcher walks each recipient × channel independently. The dispatcher's logical flow, for reference:
+
+```
+for each channel in campaign.channels:
+    if user.preferences[channel]_enabled == false:  skip
+    if user.preferences.notification_type_preferences[type] == false and type is suppressible: skip
+    if user.in_quiet_hours() and type is not security-critical: defer to post-DND
+    if user.frequency_preference != IMMEDIATE and type is suppressible:
+        roll into digest for that channel
+    else:
+        pick highest-priority active provider for this channel
+        enqueue a per-channel delivery attempt
+```
+
+Each per-channel attempt produces its own [Delivery Log](/docs/knowledgebase/notification-module/delivery-logs) entry so a single logical notification can appear multiple times in delivery analytics — once per channel actually attempted. Exact ordering, retry policy, and digest-folding live in the dispatch service; treat the pseudocode above as the intended contract.
+
+## Channel Availability Rules
+
+A channel is considered **available** for a recipient when all of the following are true:
+
+| Rule | Explanation |
+|------|-------------|
+| **User has a contact point for the channel** | Email requires a verified email; SMS requires a verified phone; Push requires a registered device; WhatsApp/Telegram/Slack/Discord require a linked account |
+| **User preference for the channel is `true`** | From the per-user `NotificationPreference` record |
+| **Tenant has an active provider for the channel** | From [Providers](/docs/knowledgebase/notification-module/providers) |
+| **Channel is enabled at the tenant level** | Tenant settings may turn a whole channel off globally |
+
+Any failing rule suppresses that channel — but other channels on the same campaign still proceed.
+
+## Bounces, Failures, and Unsubscribes
+
+Each channel handles negative delivery signals differently:
+
+| Channel | Bounce / unsubscribe handling |
+|---------|-------------------------------|
+| **Email** | Hard bounces mark the user's email as unreachable and flip `email_enabled` to `false` until the user updates their address. Unsubscribe link in every marketing email flips `MARKETING` type preference to `false` |
+| **SMS** | STOP replies are captured via the provider's inbound hook and flip `sms_enabled` to `false` |
+| **Push** | A 404/410 from FCM on a stale token unregisters the device and clears the token; `push_enabled` is preserved in case the user re-enables on a new device |
+| **WhatsApp** | User-initiated block or "report spam" flips `whatsapp_enabled` to `false` |
+| **Telegram / Slack / Discord** | User-initiated bot removal flips the corresponding channel toggle to `false` |
+
+The frontend surfaces a banner in [Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences) when a channel has been auto-disabled by a bounce so the user can re-enable it after updating the underlying contact point.
+
+## Channel-Level Analytics
+
+[Analytics](/docs/knowledgebase/notification-module/analytics) breaks down every campaign by channel via `campaign.analytics.channel_breakdown`. Per-channel metrics include:
+
+- Sent count
+- Delivery rate
+- Open rate (Email + Push)
+- Click rate (Email + Push + messaging)
+- Bounce rate
+- Failure rate
+
+Open/click tracking is only meaningful for channels that expose them. SMS/WhatsApp/Telegram deliver read receipts only when the provider supports them — otherwise those rates are reported as `null`, not zero.
+
+## API Reference
+
+Most channel-level operations are expressed via provider + template endpoints — see [Providers](/docs/knowledgebase/notification-module/providers) and [Templates](/docs/knowledgebase/notification-module/templates). The one direct channel lookup is:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/v1/admin/notify/providers/channels` | GET | List available channels on the tenant and which providers are configured for each |
+
+Required permission: `notification.view`.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Campaign sent but only Email arrived | The other channels likely have no active provider — check `/v1/admin/notify/providers` for the tenant |
+| Push arrived but Email didn't | The user's email may be on the bounce list. Ask them to verify a fresh email |
+| SMS was skipped | SMS requires a verified phone, an active SMS provider, and `sms_enabled = true` |
+| Slack / Discord / Telegram skipped | These require a user-level link that is not yet surfaced in the learner UI — they only dispatch for users whose backend link is populated |
+| Channel breakdown shows 0 opens for SMS | Correct — SMS has no open-tracking signal. Click-tracking via shortened URLs is supported if the provider exposes it |
+| Notification arrived twice on one channel | Usually a retry after a provider-side transient failure; check the delivery log for the `attempt` counter |

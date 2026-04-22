@@ -1,0 +1,13 @@
+{
+  "title": "Engagement Module",
+  "icon": "MessagesSquare",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "discussions",
+    "comments",
+    "reactions",
+    "reviews",
+    "discussion-metrics"
+  ]
+}

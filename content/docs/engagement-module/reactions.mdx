@@ -1,0 +1,166 @@
+---
+title: "Reactions"
+description: "Seven emoji reactions on any engagement entity — idempotent replace, per-user uniqueness, aggregate summary, and reactor lookups"
+module: "engagement"
+feature: "reactions"
+order: 3
+---
+
+# Reactions
+
+Reactions are lightweight emoji responses users attach to discussions, comments, reviews, lessons, assignments, quizzes, courses, or any other engagement entity. Each user can have **exactly one** reaction per entity at any given time — setting a new reaction replaces the old one atomically, and re-setting the same reaction is a no-op.
+
+## Quick Facts
+
+| Attribute | Value |
+|-----------|-------|
+| Reaction types | `like`, `dislike`, `haha`, `love`, `angry`, `sad`, `support` |
+| Uniqueness | One reaction per `(tenant_id, entity_type, entity_id, user_id)` — enforced in **application code only** (no DB UNIQUE constraint) |
+| Replace semantics | Setting a new type replaces the existing reaction atomically |
+| Delete mode | Hard delete (no `deleted_at`) |
+| Endpoint prefix | `/api/v1/reactions` |
+| Required permissions | `reaction.set` (write), `reaction.delete` (remove) |
+
+## Data Model
+
+A reaction row (`reactions` table):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | UUID | Primary key |
+| `tenant_id` | UUID | Tenant scope |
+| `entity_type` | string | Any engagement entity type |
+| `entity_id` | UUID | Specific entity being reacted to |
+| `user_id` | UUID | User who reacted |
+| `type` | string | One of the seven reaction types |
+| `created_at` | timestamp | Set on insert |
+| `updated_at` | timestamp \| null | Always `null` today — the column exists but the service never writes it; a "replace" is delete-then-insert, so the new row has `created_at = now()` and `updated_at = null` |
+
+There is **no** database-level `UNIQUE` constraint on reactions. The index on `(tenant_id, entity_type, entity_id, user_id)` is a plain index. Uniqueness is enforced only in the service by a read-then-write check (see `ReactionService.SetReaction`) — under concurrent requests this is theoretically race-prone. Treat reactions as "one-ish" per user per entity rather than strictly unique.
+
+## Reaction Types
+
+| Type | Value | Typical intent |
+|------|-------|----------------|
+| Like | `like` | Generic approval |
+| Love | `love` | Strong approval |
+| Haha | `haha` | Humour |
+| Support | `support` | Encouragement / solidarity |
+| Sad | `sad` | Empathy |
+| Angry | `angry` | Displeasure |
+| Dislike | `dislike` | Disagreement |
+
+Anything outside this set is rejected with `400 Bad Request`.
+
+## User-Facing Workflows
+
+### Reacting to an Entity
+
+1. The user clicks an emoji button in the reaction picker.
+2. The frontend calls `POST /api/v1/reactions/{entity_type}/{entity_id}` with `{ "type": "love" }`.
+3. The service checks for an existing reaction by the same user on the same entity:
+   - No existing reaction → inserts a new row.
+   - Existing reaction with the **same** type → returns the existing row unchanged (idempotent at the database level).
+   - Existing reaction with a **different** type → deletes the old row and inserts a new one with a fresh `id`. The new row has `updated_at = null` (the service never sets `updated_at`).
+4. The response body is the final reaction object.
+
+> **Note:** The replace path is idempotent at the reaction level but creates a **new row** (new `id`) when the type changes. Consumers that cache reaction IDs should invalidate on reaction updates.
+
+### Removing a Reaction
+
+1. The user clicks the active reaction again to clear it.
+2. The frontend calls `DELETE /api/v1/reactions/{entity_type}/{entity_id}`.
+3. The service deletes the row for the current user on the given entity.
+4. A `404` is returned if the user has no reaction on that entity.
+
+### Viewing Reaction Summary
+
+1. When the frontend renders a post, it calls `GET /api/v1/reactions/{entity_type}/{entity_id}`.
+2. The service returns the full summary:
+
+```json
+{
+  "total": 42,
+  "counts": [
+    { "type": "like", "count": 20 },
+    { "type": "love", "count": 15 },
+    { "type": "angry", "count": 7 }
+  ],
+  "user_reaction": "like"
+}
+```
+
+`user_reaction` is the current user's reaction (or `null` if they have not reacted).
+
+### Viewing Who Reacted
+
+1. The user opens the reactor list on a post.
+2. The frontend calls `GET /api/v1/reactions/{entity_type}/{entity_id}/reactors?type=like` (the `type` filter is optional).
+3. The service returns the list of users who reacted, with their profile (id, name, email, avatar) eager-loaded from auth-service.
+
+## Workflow Examples
+
+### Changing a Reaction
+
+```
+1. User A clicks the like button on comment c1
+   POST /v1/reactions/comment/c1 { "type": "like" }
+   → new reaction r1 inserted
+
+2. User A changes their mind, clicks the love button
+   POST /v1/reactions/comment/c1 { "type": "love" }
+   → r1 deleted, new reaction r2 inserted
+   → response body is r2
+
+3. User A re-clicks the love button (idempotent)
+   POST /v1/reactions/comment/c1 { "type": "love" }
+   → r2 returned unchanged
+
+4. User A clicks the love button a third time to clear
+   DELETE /v1/reactions/comment/c1
+   → r2 deleted
+
+5. Frontend refetches summary
+   GET /v1/reactions/comment/c1
+   → total decreases by 1; user_reaction is null
+```
+
+## API Reference
+
+| Method | Path | Purpose | Permission |
+|--------|------|---------|------------|
+| `GET` | `/api/v1/reactions/{entity_type}/{entity_id}` | Aggregate summary with user's reaction | (none — requires auth) |
+| `GET` | `/api/v1/reactions/{entity_type}/{entity_id}/reactors` | List users who reacted (optional `?type=` filter) | (none — requires auth) |
+| `POST` | `/api/v1/reactions/{entity_type}/{entity_id}` | Set or replace a reaction | `reaction.set` |
+| `DELETE` | `/api/v1/reactions/{entity_type}/{entity_id}` | Remove the current user's reaction | `reaction.delete` |
+
+Every endpoint requires a valid user JWT; the tenant is resolved from the JWT context.
+
+## Events Emitted
+
+| Action | Audit action | Activity title |
+|--------|--------------|----------------|
+| `POST /reactions` (any outcome) | `created` | "Reacted to content" |
+| `DELETE /reactions` | `deleted` | "Removed a reaction" |
+
+Audit events use `module=engagement`, `resource_type=reaction`.
+
+> **Note:** The handler does not distinguish between new, replace, and same-type re-set paths — every successful `POST` publishes both `AuditEvent` (action `created`) and `ActivityEvent` (title "Reacted to content"), even when the database row is unchanged. `DELETE` publishes both an audit event (action `deleted`) and an activity event ("Removed a reaction").
+
+## Edge Cases
+
+- **Same-type re-set is a DB no-op but still emits events.** The existing row is returned unchanged, but the handler still publishes `AuditEvent` + `ActivityEvent`. Consumers of the activity feed will see duplicate "Reacted to content" entries when a user clicks the same reaction twice.
+- **Different-type set is delete-then-insert.** The original reaction row is gone; its `id` no longer exists.
+- **No ownership check on DELETE.** The endpoint always targets the current user's reaction — there is no way to delete another user's reaction through the public API. Admin tooling that needs to remove a reaction on another user's behalf must do so directly in the database or via a privileged system endpoint.
+- **Reactor lookup is tenant-scoped.** The `reactors` endpoint joins with auth-service through `UserAssociationService` and only returns users in the same tenant.
+- **No soft delete.** Reactions are hard-deleted. If a user reacts, changes their mind, and reacts again, you will see three distinct rows in the audit log but only one row in the database at any given time.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "invalid reaction type" (400) | Ensure `type` is exactly one of `like`, `dislike`, `haha`, `love`, `angry`, `sad`, `support` (lowercase) |
+| "reaction not found" (404) on DELETE | The current user has no reaction on the given entity — nothing to remove |
+| Reaction ID changed after I clicked the same button twice with different types | Expected — a type change is delete-then-insert. Use `user_reaction` from the summary endpoint if you need a stable client-side representation |
+| Summary shows stale counts | Reaction counts are computed on read, not cached. If you see stale numbers, the issue is in a frontend cache; force a refetch of the summary endpoint |
+| Reactor list is missing avatars | `UserAssociationService` pulls profile data from auth-service; check that the auth-service database is reachable and not rate-limiting |

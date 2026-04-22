@@ -1,0 +1,163 @@
+---
+title: "Scheduling & Status"
+description: "The notice lifecycle — draft, scheduled, published, archived — plus published_at, expires_at, pinned, and the recurring flag"
+module: "comm"
+feature: "scheduling-and-status"
+order: 4
+---
+
+# Scheduling & Status
+
+Every notice has a `status` and up to two timestamps (`published_at`, `expires_at`) that together control when it is visible and how it ages. It also has two lifecycle flags — `pinned` for stickiness and `is_recurring` for annual repetition — plus a read-tracking toggle. This page lays out the full lifecycle and calls out the parts that are implemented today versus the parts that are purely advisory.
+
+## Status Values
+
+| Status | Description | Visible to users? |
+|--------|-------------|-------------------|
+| `draft` | Being authored; not ready for release | No |
+| `scheduled` | Scheduled for a future `published_at` | **Not until `published_at` is reached** |
+| `published` | Active and visible | Yes |
+| `archived` | Retired; kept for historical reference | **No** — the user-surface query filters to `status = 'published'` only, so archived notices are never returned |
+
+### No State Machine
+
+The backend does not enforce any transition rules. Any status can move to any other status at any time. That means you can:
+
+- Flip a `published` notice back to `draft` to hide it.
+- Archive a `scheduled` notice before it fires.
+- Move an `archived` notice back to `published` to resurface it.
+
+The only hard server-side rule is: **if `status = scheduled`, `published_at` must be set**.
+
+## `published_at` Semantics
+
+- If `published_at` is set and in the **future**, the notice is queued for release.
+- If `published_at` is set and in the **past**, the notice is treated as "published at that historical time". The frontend uses this timestamp to order the notice board.
+- If `published_at` is `null` and `status = published`, the notice is visible immediately and ordered by `created_at`.
+
+> **Important:** There is **no auto-publish job** today. A `scheduled` notice with a `published_at` in the past still has `status = scheduled` until an admin flips it to `published`. Teams that need hands-off scheduling should implement their own cron or rely on the next scheduled-status review.
+
+### Retroactive Scheduling
+
+Setting `published_at` to a past timestamp while status = `scheduled` or `published` is allowed. This is useful when backfilling notices or publishing content that was authored offline. The notice board orders by `published_at` when set, so a retroactive timestamp places the notice where it belongs chronologically.
+
+## `expires_at` Semantics
+
+`expires_at` is an **advisory** timestamp — the comm-service does not cull expired notices, and the calendar service does not filter by it either.
+
+- Expired notices are still returned to users as long as `status = 'published'`. There is no "includeExpired" flag on the backend today; any expiry gating must happen on the frontend.
+- Admins can still list, edit, and bulk-delete expired notices from the admin surface.
+- The `end_date` filter on `DELETE /admin/notices/bulk/delete` is the only endpoint that reads `expires_at` — it selects rows where `expires_at <= end_date`. List and export endpoints ignore it.
+
+> **Note:** There is no background job that deletes or archives notices past `expires_at`. If you want automatic cleanup, schedule a bulk delete filtered on `expires_at <= now()` from your own orchestration.
+
+## Pinning
+
+- `pinned = true` places the notice at the top of learner-facing lists and admin-table sorts.
+- Multiple pinned notices are allowed. When more than one is pinned, they are ordered by `published_at DESC` (falling back to `created_at DESC`).
+- Pinning has no effect on read-state or targeting.
+- To unpin, toggle the flag off in the admin form and save.
+
+## Recurring (`is_recurring`)
+
+The `is_recurring` flag is **stored but not acted upon** today. There is no cron that duplicates a recurring notice a year later. Treat this flag as a future feature — the data column exists so that a future recurring engine can light it up without a migration.
+
+> **Warning:** Setting `is_recurring = true` does not schedule anything. Do not rely on it for annual announcements yet; use a calendar reminder or a custom scheduler to re-issue the notice manually.
+
+## Read Tracking
+
+`read_tracking = true` is advisory. Regardless of its value:
+
+- Every call to `POST /user/notices/{id}/read` and `POST /admin/notices/{id}/read` inserts a `notice_reads` row (idempotent per user).
+- The learner's unread badge is computed from the absence of a `notice_reads` row, not from the flag.
+- The flag lets the UI signal "this notice tracks reads" — for instance, to show a "Mark as read" hint — without changing backend behaviour.
+
+If you set `read_tracking = false` but a user still marks the notice as read, a `notice_reads` row is still written.
+
+## Lifecycle Walkthrough
+
+### Author a Draft
+
+1. Admin creates a notice with `status = draft`.
+2. `published_at` is ignored. The notice never surfaces on the user notice board.
+3. The admin keeps polishing the body and audience. Every save hits `PUT /admin/notices/{id}`.
+
+### Schedule for Release
+
+1. Admin sets `status = scheduled` and `published_at = 2026-05-01T09:00:00Z`.
+2. The notice is persisted but hidden. Only admins see it in the admin list (filtered by `status=scheduled`).
+3. On or after May 1st, **the admin manually flips the status to `published`**. There is no auto-publish.
+
+### Publish Immediately
+
+1. Admin sets `status = published`.
+2. `published_at` may be `null` (implicit = `created_at`) or an explicit timestamp (including a past time).
+3. The notice is instantly visible to its target audience.
+
+### Archive
+
+1. Admin flips an active notice to `status = archived`.
+2. The notice remains in the database but **immediately disappears from every user surface** — the user list query hard-filters to `status = 'published'`, and direct `GET /user/notices/{id}` calls return 404 for archived rows.
+3. Archived notices continue to appear in the admin list until deleted.
+
+### Expire
+
+1. `expires_at` passes.
+2. No automatic change happens.
+3. The calendar service does **not** filter by `expires_at` — expired-but-published notices continue to appear on the user notice board. Any expiry gating has to be implemented on the frontend or by flipping the status to `archived` / `draft`.
+4. The admin list also does not filter by `expires_at` directly; there is no `end_date` filter on list/export. Use `DELETE /admin/notices/bulk/delete` with `end_date` to bulk-clean expired rows.
+
+### Delete
+
+1. Admin performs a single delete or bulk delete.
+2. The row is hard-deleted; all `notice_reads` rows are cascaded.
+3. Deletion is irreversible — prefer `archived` for recoverable retirement.
+
+## Status Transition Matrix
+
+Any cell marked ✓ is allowed; every transition is a simple `PUT /admin/notices/{id}` with the new status.
+
+| From \ To | draft | scheduled | published | archived |
+|-----------|:-----:|:---------:|:---------:|:--------:|
+| **draft** | — | ✓ (needs `published_at`) | ✓ | ✓ |
+| **scheduled** | ✓ | — | ✓ (early-publish) | ✓ |
+| **published** | ✓ (un-publish) | ✓ (re-schedule) | — | ✓ |
+| **archived** | ✓ | ✓ | ✓ | — |
+
+## Sorting Within the Admin Table
+
+The backend applies a single hardcoded `ORDER BY created_at DESC`. If the request includes `sort_by` set to anything other than `created_at`, a secondary `ORDER BY sort_by sort_dir` is appended.
+
+- Default: `created_at DESC`.
+- Optional secondary: any column via `sort_by` + `sort_dir` query params.
+- **`pinned`, `priority`, and `published_at` are not applied as sort keys unless the caller explicitly passes them as `sort_by`.** Any "pinned first" grouping in the admin UI is a frontend concern today.
+
+## Sorting Within the Learner Notice Board
+
+The user-surface query (`CalendarService.GetNoticeboardEvents`) has **no `ORDER BY` clause**. The returned slice is whatever order PostgreSQL happens to emit — effectively undefined. The cursor helper filters on `created_at` but does not re-sort the results.
+
+Any "pinned first" / "unread first" / "newest first" rendering on the notice board is done on the frontend, not the backend.
+
+## API Hooks
+
+Scheduling and status are all just fields on the create and update endpoints. See [Notices (Admin)](/docs/knowledgebase/comm-module/notices) for full request shapes.
+
+| Field | Endpoint | Notes |
+|-------|----------|-------|
+| `status` | `POST /admin/notices`, `PUT /admin/notices/{id}` | One of `draft`, `scheduled`, `published`, `archived` |
+| `published_at` | same | Required when `status = scheduled` |
+| `expires_at` | same | Optional; advisory only |
+| `pinned` | same | Boolean; no limit on how many can be pinned |
+| `is_recurring` | same | Boolean; stored only — no execution today |
+| `read_tracking` | same | Boolean; advisory flag |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Scheduled notice still invisible after `published_at` passed | Auto-publish is not implemented. Manually flip `status` to `published` (or implement your own cron) |
+| Pinned notice not appearing at the top | Confirm `pinned = true` on the row. Also confirm the frontend sort order — some admin views let the user override pinning |
+| Notice past `expires_at` still in the learner notice board | Expected — the calendar service does not filter by `expires_at`. Flip the status to `archived` (or implement a frontend filter) to hide expired notices |
+| Archived notice still shown to learners | Should never happen — the user-surface query hard-filters `status = 'published'`. If you're seeing archived notices on the user side, investigate whether a different status value is being written (the status column is a free-form string — an unexpected value like `Archived` with a capital A would sneak past the filter) |
+| `is_recurring = true` but the notice did not re-appear next year | Correct — there is no recurring engine today. Treat the flag as reserved for a future feature |
+| Bulk-selecting by `status=scheduled` and deleting accidentally fired scheduled notices | Verify the status before bulk delete. Once deleted, the row is gone — there is no soft delete to recover from |

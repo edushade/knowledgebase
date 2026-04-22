@@ -1,0 +1,91 @@
+---
+title: "Facets"
+description: "Facet counts for entity type, status, and language returned alongside search results"
+module: "search"
+feature: "facets"
+order: 5
+---
+
+# Facets
+
+Facets give the client a count of how many documents in the current result set share each value of a given field — the classic "filter sidebar with counts" pattern.
+
+The search service exposes facets through a dedicated endpoint that returns the same result payload as `/search`, plus a `metadata.facets` map.
+
+## Endpoint
+
+- **Public:** `GET /api/v1/public/search/facets`
+- **Admin:** `GET /api/v1/admin/search/facets` (authenticated)
+- **Handler:** `search-service/api/handlers/search_handler.go::SearchWithFacets`
+- **Service:** `search-service/services/search_service.go::GetFacets`
+
+### Query Parameters
+
+Same as the base `/search` endpoint — see [Filters & Entity Types](/docs/knowledgebase/search-module/filters-and-entity-types).
+
+### Faceted Fields
+
+The facet request is built with `facet_by = entity_type,status,language`. You will receive counts on those three fields for every query.
+
+| Field | Example values |
+|-------|----------------|
+| `entity_type` | `course`, `post`, `page`, `product`, `learning_path`, `event`, `cohort`, `bundle`, `booking` |
+| `status` | `draft`, `published`, `archived` |
+| `language` | `en`, `ar`, `bn`, ... |
+
+> `tags` is defined as a facetable field in the Typesense schema but is **not** included in the default facet response. To aggregate tag counts you would need to extend `GetFacets` to add `tags` to `facet_by`.
+
+## Response Shape
+
+On top of the standard `SearchResponse`, the facets variant adds:
+
+```
+metadata: {
+  history_id?:       UUID,
+  did_you_mean?:     string,
+  related_searches?: string[],
+  facets: {
+    entity_type: [{ value: "course",    count: 42 }, …],
+    status:      [{ value: "published", count: 108 }, …],
+    language:    [{ value: "en",        count: 97 }, …]
+  }
+}
+```
+
+Each entry in a facet array is `{ value: string, count: number }`. Values with zero documents are omitted.
+
+## How It Works
+
+`SearchWithFacets` runs **two** Typesense calls:
+
+1. The regular query (same filters, same pagination, for the `data[]` payload).
+2. A facet-only query with `per_page = 0` and `facet_by = entity_type,status,language`, scoped to the tenant and optionally narrowed by `entity_type` (if one is set on the request).
+
+Both calls honour the tenant filter. The second call deliberately does **not** apply the `status` / `language` filters of the main request — otherwise the facet for a filtered field would always collapse to one value. The set of facet values returned is the universe the client can switch to.
+
+After both calls, the handler records the search in `search_history` (same logic as the base `/search` endpoint, including the 30-minute dedupe window) and returns a combined payload.
+
+## Usage Pattern
+
+The typical "faceted search" UI flow is:
+
+1. Initial load — call `/search/facets` with `q` (and maybe an `entity_type` pin).
+2. Render the facet sidebar with checkboxes / pills derived from `metadata.facets`.
+3. When the user toggles a facet value, re-query the base `/search` endpoint with the chosen filter added.
+4. Periodically refresh facets by calling `/search/facets` again (or rely on the `data[]` to be good enough and skip re-fetching facets on every tick).
+
+> Facets are derived from the **filtered** result set (minus the facet field itself when filtered). This means `language: [{en, 97}]` under a `language=en` filter does **not** imply there are no Arabic docs — it just reflects the current filter.
+
+## Frontend Integration
+
+The API client exposes `apiClient.searchWithFacets(params, isAdmin)` which returns `SearchFacetsResponse`. It is not currently called from any of the rendered search components (the live search bar uses `/search` plus trending as its secondary signal); the hook is available for consumers who want to build a richer filter UI, e.g. a dedicated catalogue page.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `metadata.facets` is empty | Confirm there are documents matching the query at all — Typesense only reports facet values that have hits |
+| Facet counts don't match filtered results | Expected when a facet is applied to the field itself (see note above). For field-wise faceting with exact counts, pass a fresh request without the facet's own filter |
+| `tags` missing from facets | Not included in the default `facet_by`. Extend `GetFacets` to add it if needed |
+| Two requests fire back-to-back | By design — facets run a second Typesense call. If latency is a concern, use `/search` (one call) when facets aren't needed |
+| Performance suffers on large tenants | Typesense facet aggregation scales with result-set size; consider capping the scope with an `entity_type` filter on the facet request |

@@ -1,0 +1,149 @@
+---
+title: "Admin Search"
+description: "Authenticated admin search surface with draft visibility and full-tenant scope"
+module: "search"
+feature: "admin-search"
+order: 15
+---
+
+# Admin Search
+
+The admin search surface mirrors the public API endpoint-for-endpoint, but runs behind `AuthMiddleware` and unlocks behaviour that is intentionally hidden from the public `/public/search` routes. Admins need to:
+
+- See draft and archived content, not just published.
+- Search across content that isn't yet live on the public site.
+- Access the same history / trending / suggestions endpoints without an anonymous session.
+
+Admin search is **not a different search engine** — it's the same Typesense collection, the same query logic, with relaxed filters and authenticated scoping.
+
+## Endpoint Table
+
+Every public route has an admin twin. Both are handled by the **same Go handlers** — the difference is the middleware group.
+
+| Capability | Public | Admin |
+|------------|--------|-------|
+| Full-text search | `GET /api/v1/public/search` | `GET /api/v1/admin/search` |
+| Search with facets | `GET /api/v1/public/search/facets` | `GET /api/v1/admin/search/facets` |
+| Autocomplete | `GET /api/v1/public/search/autocomplete` | `GET /api/v1/admin/search/autocomplete` |
+| Recent / history | `GET /api/v1/public/search/history` | `GET /api/v1/admin/search/history` |
+| Delete one | `DELETE /api/v1/public/search/history/:id` | `DELETE /api/v1/admin/search/history/:id` |
+| Clear all | `DELETE /api/v1/public/search/history` | `DELETE /api/v1/admin/search/history` |
+| Popular suggestions | `GET /api/v1/public/search/suggestions` | `GET /api/v1/admin/search/suggestions` |
+| Trending queries | `GET /api/v1/public/search/trending` | `GET /api/v1/admin/search/trending` |
+| Trending results | `GET /api/v1/public/search/trending/results` | `GET /api/v1/admin/search/trending/results` |
+| Click tracking | `POST /api/v1/public/search/click` | `POST /api/v1/admin/search/click` |
+
+Route registration lives in `search-service/api/routes/search_routes.go`. The admin group is wrapped with `middlewares.AuthMiddleware(cfg)`.
+
+## Authentication
+
+- Admin routes require a valid bearer token resolved by `AuthMiddleware`.
+- The middleware populates `tenant_id` and `user_id` on the Gin context; unauthenticated callers get `401`.
+- There is **no role check** in the search service itself. The gateway / front-door decides which authenticated users can reach `/admin/search/*`. From the search service's perspective, "admin" means "authenticated for this tenant."
+
+> The public routes do **not** require auth and fall back to a per-session anonymous identity. See [Search History](/docs/knowledgebase/search-module/search-history#anonymous-session-id) for how the session ID is derived.
+
+## Draft & Status Visibility
+
+The key difference between public and admin is how the `status` filter is applied. From `search-service/services/search_service.go::Search`:
+
+```
+if req.Status != "" {
+    filters.add("status:=" + req.Status)
+} else if !req.IncludeDrafts {
+    filters.add("status:=published")   // default for public
+}
+```
+
+Three cases:
+
+| `status` query param | `include_drafts=true` | Effective filter |
+|---|---|---|
+| unset | unset | `status:=published` |
+| unset | `true` | **No status filter** — all statuses included |
+| `draft` | — | `status:=draft` |
+| `archived` | — | `status:=archived` |
+| `published` | — | `status:=published` |
+
+The `include_drafts=true` short-circuit is how admins browse across draft + published + archived in one call. Status filter precedence:
+
+1. Explicit `status=...` wins (always).
+2. Otherwise, `include_drafts=true` disables the filter.
+3. Otherwise, default to `status:=published`.
+
+> Public callers can technically pass `include_drafts=true` — the handler reads the query param regardless of route. There is no gate beyond what the Typesense data contains. Relying on UI-side obscurity is not sufficient; if drafts must stay hidden, enforce it at the gateway layer too.
+
+## Filters & Entity Types
+
+All other filters are identical to public:
+
+- `q` — same query language.
+- `entity_type` — course / post / page / product / etc.
+- `language` — primary language filter.
+- `page` / `per_page` — pagination (max 100).
+
+See [Filters & Entity Types](/docs/knowledgebase/search-module/filters-and-entity-types) for the full contract.
+
+## History Scoping
+
+Admin history calls the same `/history` endpoints but is scoped differently:
+
+- Admin is authenticated → `user_id = current_user_id`, `session_id` unused.
+- Public may or may not be authenticated; anonymous sessions are keyed to `sha256(ip:ua)`.
+
+This means an admin's history is **per admin user**, not tenant-wide. Two admins for the same tenant have separate `/history` streams. To build a tenant-wide search activity dashboard, query `search_history` directly from the analytics DB layer; the HTTP endpoint only returns the caller's own rows.
+
+## Facets Behaviour
+
+The admin `/search/facets` endpoint runs the same two-Typesense-call pattern as public:
+
+1. Main query honours the current filters.
+2. Facet query honours `tenant_id` + optional `entity_type`, but intentionally skips the `status` / `language` filters so the sidebar shows the full set of switchable values.
+
+When an admin passes `include_drafts=true`, the main query returns all statuses. The facet query's `status` bucket then reflects **real totals** — e.g. `[{published, 108}, {draft, 12}, {archived, 7}]` — which is exactly what an admin dashboard wants.
+
+## Click Tracking
+
+Admin click tracking writes to the same `search_history.clicked_result_id` column as public. Admin clicks count toward [Trending Results](/docs/knowledgebase/search-module/trending#trending-results) — this is intentional, as admin-curated content discovery is a signal too. If that's unwanted, filter `user_id IN (admin_ids)` when aggregating (not currently done).
+
+## Suggestions, Trending, Popular
+
+These endpoints read from the shared `search_analytics` and `search_history` tables and return the same data on both routes. The only differences:
+
+- Admin calls don't generate a session ID.
+- Admin calls bypass any gateway-level public rate limits (service-internal limits still apply).
+
+No admin-only fields are added to responses.
+
+## Frontend Integration
+
+The `apiClient` methods take an `isAdmin` boolean that flips the base path:
+
+```ts
+apiClient.search(params, /* isAdmin */ true)        // → /admin/search
+apiClient.searchWithFacets(params, true)            // → /admin/search/facets
+apiClient.getSearchHistory(params, true)            // → /admin/search/history
+// … and so on for every endpoint
+```
+
+Admin-specific UIs (the admin dashboard, the content management console) pass `isAdmin=true` and thread the admin session token. Public site components (search bar, search results page) pass `isAdmin=false`.
+
+## Parameters & Limits
+
+| Parameter | Value |
+|-----------|-------|
+| Auth requirement | `AuthMiddleware` on the `/admin/*` group only |
+| Status default | `status:=published` unless `include_drafts=true` or explicit `status=...` |
+| Role enforcement | Delegated to the gateway; search service treats all authenticated callers equally |
+| Per-page max | `100` (same as public) |
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Admin call returns `401` | Auth token missing or expired. Check that the frontend is passing the admin session token, not the public anonymous one |
+| Draft content not appearing for admin | The admin request must include `include_drafts=true` (or an explicit `status=draft` filter). Default is still `status:=published` even on admin |
+| Admin and public return different `trending` lists | They shouldn't — both read from the same tables. If it happens, confirm the `tenant_id` matches on both calls and that no gateway-level cache is serving stale public data |
+| Admin's history is empty after a teammate did the searches | History is per-user. Admin A's `/history` never surfaces admin B's queries. Use the analytics DB for tenant-wide views |
+| Accidentally exposed a draft via public `/search` | The public caller passed `include_drafts=true`. Gate this at the gateway for public routes, or harden the handler to reject the flag when the session is unauthenticated |
+| Admin `/search/facets` `status` bucket shows only `published` | Admin passed no filter override — default behaviour kicked in. Pass `include_drafts=true` to see `draft` and `archived` in the bucket |

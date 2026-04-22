@@ -1,0 +1,200 @@
+---
+title: "Members"
+description: "Organization members — how users are attached to an organization and to specific tenants, including the sysadmin-only bootstrap admin flow"
+module: "tenant"
+feature: "members"
+order: 4
+---
+
+# Members
+
+An **organization member** is the row that links an auth-service user to an organization **and** to a specific tenant inside that organization. Membership records drive:
+
+- The "my tenants" list for signed-in admins (`GET /admin/tenants`).
+- Org-admin authorization (`OrganizationContextMiddleware` + `CanAnyWithOrganization` checks org membership before permission).
+- [Invitation](/docs/knowledgebase/tenant-module/invitations) acceptance, which creates a member row as the final step.
+- The [tenant admin bootstrap](#bootstrap-a-tenant-admin-sysadmin-only) flow used by sysadmins to provision the very first admin for a brand-new tenant.
+
+Users themselves live in the `auth-service` database — the tenant service **does not** create or edit user records directly; it calls auth-service over REST through [`AuthClient`](#the-authclient). What tenant-service owns is the membership link between a user and a tenant.
+
+## Data Shape
+
+**Table:** `organization_members`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | UUID | Primary key |
+| `organization_id` | UUID | FK → `organizations.id` |
+| `tenant_id` | UUID | FK → `tenants.id`. A single user can have one membership **per tenant** |
+| `user_id` | UUID | User UUID in auth-service (foreign DB — not enforced by FK here) |
+| `status` | string | One of `active`, `inactive`, `suspended`. Defaults to `active` |
+| `joined_at` | timestamp | Set on create |
+| `left_at` | timestamp, nullable | Set when the member is updated to `inactive` or `suspended` status (by convention — not enforced automatically) |
+| `user` | — | Computed at read time by joining auth DB (`bun:"-"`, not stored) |
+| `created_at` / `updated_at` / `deleted_at` | timestamp | Bookkeeping + soft-delete |
+
+Uniqueness: a `(organization_id, tenant_id, user_id)` triple is unique per active member — adding the same user to the same tenant twice returns `409 Conflict` with `member already exists`.
+
+## Route Tiers
+
+Member endpoints are sysadmin-only. There are two flavours, depending on whether you scope by organization or by tenant:
+
+| Group | Base | Purpose |
+|-------|------|---------|
+| **Organization members** | `/api/v1/sysadmin/organizations/:id/members` | Add, list, get, update, remove a member in the context of an entire org |
+| **Tenant members** | `/api/v1/sysadmin/tenants/:id/members` | Add, list, get, update, remove a member scoped to one tenant |
+
+Both flavours write to the same `organization_members` table — the "tenant members" variant simply resolves the organization from the tenant's `organization_id` and then does the same create.
+
+> There is **no admin-tier** (`/admin/...`) member endpoint today. Tenant admins grow their user base through [invitations](/docs/knowledgebase/tenant-module/invitations); they never call a member endpoint directly.
+
+## Add an Organization Member
+
+- **Endpoint:** `POST /api/v1/sysadmin/organizations/:id/members`
+- **Auth:** Sysadmin
+
+### Request
+
+```json
+{
+  "user_id": "…",
+  "status": "active",
+  "tenant_ids": ["…", "…"]
+}
+```
+
+| Field | Rules |
+|-------|-------|
+| `user_id` | Required UUID — must already exist in the auth-service `users` table |
+| `status` | Optional, one of `active`, `inactive`, `suspended`. Defaults to `active` |
+| `tenant_ids` | Optional list. If set, the member is added to each listed tenant under this organization |
+
+### Which tenants does the member land on?
+
+The handler picks the target tenants in this order:
+
+1. If `tenant_ids` is non-empty in the body, those exact tenants are used.
+2. Otherwise, the legacy `?tenant_id=<uuid>` query string is honored — a single tenant ID.
+3. Otherwise, **every tenant under the organization** is selected. If the organization has zero tenants in that case, the request fails with `400 Bad Request` — `Organization has no tenants`.
+
+For each target tenant, a separate `organization_members` row is created. Failures are aggregated:
+
+- If a tenant already has this user as a member (`"already exists"` error), that tenant is silently skipped — this makes the call **idempotent** when re-run.
+- If a different kind of error occurs on a specific tenant, it is collected and the other tenants are still attempted.
+- If **all** tenants fail, the endpoint returns `500` with the concatenated error messages.
+
+The response contains either a single member (when exactly one was created) or an array of members (when multiple were created), each with its own `AuditEvent { action: "created", resource_type: "member" }`.
+
+## Add a Tenant Member (Bootstrap a Tenant Admin)
+
+- **Endpoint:** `POST /api/v1/sysadmin/tenants/:id/members`
+- **Auth:** Sysadmin
+
+Unlike the organization-scoped add, the tenant-scoped add is **end-to-end bootstrap only** — there is no "attach an existing user" variant on this path. The handler is `AddTenantMemberSysAdmin` and it always creates (or reuses) an auth-service user, assigns `super_admin`, flips `is_admin = true`, and creates the membership.
+
+If you already have a user UUID and just want to attach it to a tenant, use the organization-scoped `POST /api/v1/sysadmin/organizations/:id/members` with `tenant_ids: ["<tenant-id>"]` — that path accepts `user_id` and does plain membership.
+
+### Request shape
+
+```json
+{
+  "email": "admin@acme.com",
+  "name": "Acme Admin",
+  "password": "…"
+}
+```
+
+| Field | Rules |
+|-------|-------|
+| `email` | Required, valid email |
+| `name` | Optional display name |
+| `password` | Optional — auth-service hashes what you pass; if omitted, auth-service assigns a generated password the user will need to reset |
+
+### What happens
+
+1. Tenant is resolved → `404` if missing.
+2. `AuthClient.GetOrCreateUser` is called with `verify_email = true`. If a user with that email already exists in the tenant, it is returned; otherwise a new row is created.
+3. `AuthClient.GetRoleByName(tenantID, "super_admin")` fetches the seeded `super_admin` role.
+4. `AuthClient.AssignRoles` links the user to that role inside the tenant.
+5. `AuthClient.UpdateUserFlags` sets `is_admin = true` on the user row.
+6. A membership row is created in `organization_members` linking the user to the tenant's `organization_id`.
+7. `AuditEvent { action: "created", resource_type: "member", actor_type: "system", description: "Sysadmin added tenant member with super_admin role" }` is published.
+
+> This is the canonical way to create the **first** admin for a fresh tenant — no invitation email is needed because the caller already knows the admin's credentials (or can share a temporary password out-of-band).
+
+### The AuthClient
+
+`AuthClient` is a small REST client that talks to auth-service. Key details:
+
+- Base URL is hard-coded to `http://localhost:8081/api/v1` inside the service. Cross-host deployments should update this to use service discovery.
+- Every call sends two headers: `X-Tenant-ID: <tenant-id>` and `Authorization: Bearer <SystemAPI.AuthToken>`.
+- Methods used by member / invitation flows:
+  - `GetOrCreateUser(tenantID, email, name, phone, password, verifyEmail)`
+  - `GetRoleByName(tenantID, name)`
+  - `AssignRoles(userID, tenantID, roleIDs)`
+  - `AssignPermissions(userID, tenantID, permissionIDs)`
+  - `UpdateUserFlags(userID, tenantID, {is_admin, is_instructor, is_learner})`
+
+## List Members
+
+| Scope | Endpoint |
+|-------|----------|
+| All members in an organization | `GET /api/v1/sysadmin/organizations/:id/members` |
+| All members in a tenant | `GET /api/v1/sysadmin/tenants/:id/members` |
+
+### Query params
+
+| Param | Description |
+|-------|-------------|
+| `status` | One of `active`, `inactive`, `suspended` |
+| `search` | Case-insensitive match. **Only UUID-format strings match by user_id** — the service currently rejects non-UUID search terms by appending `WHERE false`, so an empty result is expected when searching by name or email. Searching for the user's UUID directly works as expected |
+| `page`, `per_page`, sort | Standard pagination |
+
+Each returned member is **enriched** with a `user` block fetched from the auth DB — `email`, `name`, `phone`, `avatar`, and the `is_admin` / `is_instructor` / `is_learner` flags. If the auth DB is unreachable, the `user` block is omitted and the membership rows are still returned.
+
+## Get / Update / Remove a Member
+
+| Scope | Endpoint |
+|-------|----------|
+| Get | `GET /.../members/:member_id` |
+| Update | `PUT /.../members/:member_id` |
+| Remove | `DELETE /.../members/:member_id` |
+
+Both the organization-scoped and tenant-scoped variants accept the same `member_id` path parameter and operate on the same `organization_members` table.
+
+### Update
+
+Only `status` can be changed:
+
+```json
+{ "status": "inactive" }
+```
+
+Publishes `AuditEvent { action: "updated", resource_type: "member" }`.
+
+### Remove
+
+Soft-deletes the membership row (`deleted_at` is set). The user's auth-service record is **not** touched — they retain their login, password, and roles; they just lose the link to this tenant. Re-adding them later recreates a fresh membership.
+
+Publishes `AuditEvent { action: "deleted", resource_type: "member" }`.
+
+## Events & Audit
+
+| Action | `resource_type` | Triggered by |
+|--------|-----------------|--------------|
+| `"created"` | `"member"` | `POST /organizations/:id/members` (plain add), `POST /tenants/:id/members` (sysadmin bootstrap) |
+| `"updated"` | `"member"` | `PUT /members/:member_id` |
+| `"deleted"` | `"member"` | `DELETE /members/:member_id` |
+
+All events carry `module = "tenant"`. The tenant-scoped bootstrap also sets `actor_type = "system"` to mark the event as a platform-initiated action rather than a user-driven one.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `member already exists` on bulk add | That tenant already links the user. The org-wide `POST /organizations/:id/members` path silently skips duplicates for extra `tenant_ids`, but the first duplicate still returns `409`. Re-run against the missing tenants only |
+| Organization has no tenants | Create a tenant under the organization first, then retry. Or supply a non-empty `tenant_ids` |
+| `super_admin role not found` on sysadmin bootstrap | Role seeding has not run yet. Calling the bootstrap endpoint will not auto-seed — either create a tenant first (which seeds on insert) or see [Role Seeding](/docs/knowledgebase/tenant-module/role-seeding#on-demand-seeding-from-impersonation) for the impersonation flow that seeds on demand |
+| `AuthClient` returns 401 | `SystemAPI.AuthToken` does not match what auth-service expects — rotate both sides to the same value |
+| Name search returns nothing | The backend only matches UUIDs in the member search field; look the user up in auth-service by email / name first, copy the UUID, then search here |
+| `user` block missing in list response | The auth DB is unreachable. Members still return, but with no user enrichment — fix the cross-service DB connection |

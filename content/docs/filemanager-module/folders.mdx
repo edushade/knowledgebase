@@ -1,0 +1,116 @@
+---
+title: "Folders"
+description: "Create, rename, delete, and nest folders — with auto-computed paths maintained by PostgreSQL triggers"
+module: "filemanager"
+feature: "folders"
+order: 2
+---
+
+# Folders
+
+Folders are rows in the same `media` table as files, distinguished only by `type = 'folder'`. The hierarchy is self-referential (`parent_id`), and the `full_path` column is auto-computed by triggers — the application code **never** writes to `full_path` directly.
+
+## Creating a Folder
+
+### In the Root
+
+Send a create request with `parent_id` omitted (or explicitly `uuid.Nil`):
+
+- **Endpoint:** `POST /v1/admin/files/directories`
+- **Auth:** `file.create` permission
+- **Body:**
+  ```json
+  { "name": "lesson-assets" }
+  ```
+- **Response:** `200 OK`, `"Directory created successfully in root"`, with the new `Dir` object (`id`, `name`, `tenant_id`, `path: "/lesson-assets"`, `parent_id: null`, `created_at`).
+
+### Inside Another Folder
+
+Pass `parent_id` either in the body or as a `?parent_id=...` query param:
+
+- **Body form:**
+  ```json
+  { "name": "images", "parent_id": "0190cf2c-1234-..." }
+  ```
+- **Query form:** `POST /v1/admin/files/directories?parent_id=0190cf2c-1234-...` with `{ "name": "images" }`
+
+Response message: `"Directory created successfully"`. The returned `path` field will be the full auto-computed path (e.g. `"/lesson-assets/images"`).
+
+### Idempotent Nested Creation (System API)
+
+When another backend service needs to ensure a whole folder tree exists, it uses the system API (see [System API](/docs/knowledgebase/filemanager-module/system-api)):
+
+- **Endpoint:** `POST /v1/system/files/directories/ensure`
+- **Auth:** `SystemAPIAuthMiddleware`
+- **Body:** `{ "path": ["lesson-assets", "images", "covers"] }`
+- **Response:** `{ "dir_id": "<leaf-folder-uuid>" }`
+
+The call is **idempotent** — existing folders are reused, missing ones are created in order. The response always points to the leaf folder.
+
+## Path Auto-Computation
+
+The database does all the path work. There are three triggers on the `media` table:
+
+| Trigger | When | Purpose |
+|---------|------|---------|
+| `trg_set_directory_path` | `BEFORE INSERT OR UPDATE OF name, parent_id` | Computes `full_path = parent.full_path + '/' + name` |
+| `trg_update_descendants` | `AFTER UPDATE OF name, parent_id` (folders only) | Recursively updates every descendant's `full_path` |
+| `trg_files_updated_at` | `BEFORE UPDATE` | Stamps `updated_at = now()` |
+
+**Consequence:** renaming a folder from `/images` to `/media` automatically rewrites every descendant path — `/images/cover.jpg` becomes `/media/cover.jpg` in the same transaction. There is no application-level recursion.
+
+## Renaming a Folder
+
+- **Endpoint:** `PATCH /v1/admin/files/{item_id}`
+- **Auth:** `file.update` permission
+- **Body:** `{ "name": "new-folder-name" }`
+- **Response:** `"Item renamed successfully"`
+
+The same endpoint renames files — the service dispatches based on the row's `type` column. No separate rename-folder endpoint exists.
+
+After a folder rename, the descendant-update trigger fires in the same transaction, so the next `GET /v1/admin/files` call reflects the new paths immediately.
+
+> **Name uniqueness:** renaming into a name that already exists in the same folder returns `500 Internal Server Error` (the trigger rejects the `UNIQUE (tenant_id, parent_id, name)` violation). The frontend should pre-check for collisions or catch the error and surface a friendlier message.
+
+## Deleting a Folder
+
+- **Endpoint:** `DELETE /v1/admin/files/{item_id}`
+- **Auth:** `file.delete` permission
+- **Response:** `"Item deleted successfully"`
+
+Deleting a folder soft-deletes it (sets `deleted_at` and `deleted_by`). The foreign key is **`ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED`**, which means descendants are structurally tied to the parent — but soft-delete alone does not cascade automatically in application code. See [File Management](/docs/knowledgebase/filemanager-module/file-management#deleting-a-folder) for the full lifecycle.
+
+## Naming Rules
+
+- **Required:** `name` must be non-empty (enforced at the JSON binding layer: `binding:"required"`)
+- **Unique per parent per tenant:** `UNIQUE (tenant_id, parent_id, name)`
+- **No forward-slash handling:** names with `/` are stored as-is — they become part of the computed path and can break URL-based lookups. Avoid them.
+- **Trimming:** the server does not trim whitespace — `"images"` and `"images "` are different folders
+
+## Root vs Nested Behaviour
+
+| Aspect | Root (`parent_id = NULL`) | Nested (`parent_id = <uuid>`) |
+|--------|---------------------------|-------------------------------|
+| Created path | `/{name}` | `/{parent.full_path}/{name}` |
+| Conflict error message | "A directory with this name already exists in the root directory" | "A directory with this name already exists in the specified parent directory" |
+| Created-in-root activity | `directory.created` with no `parent_id` in metadata | `directory.created` with `parent_id` in metadata |
+
+## Events Emitted
+
+Every folder create emits two events (see [Audit & Events](/docs/knowledgebase/filemanager-module/audit-and-events)):
+
+- **Activity event:** `action = "directory.created"`, `module = "filemanager"`, title `"Created directory: {name}"` (or `"Created directory in root: {name}"`)
+- **Audit event:** `action = "created"`, `resource_type = "directory"`, `resource_id = <new-dir-id>`
+
+Both are published asynchronously in goroutines after the HTTP response is sent.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "A directory with this name already exists" | Pick a different name or delete the existing folder. Uniqueness is per parent per tenant |
+| Folder created but `path` looks wrong | Trust `full_path` from the trigger. If it genuinely looks wrong, verify the parent chain doesn't have a corrupted `full_path` (e.g., from a manual DB edit) |
+| Rename doesn't cascade to descendants | Confirm `trg_update_descendants` trigger exists — it fires `AFTER UPDATE OF name, parent_id` on folders only |
+| 500 on rename | Most often a `UNIQUE (tenant_id, parent_id, name)` violation — pick a different name |
+| Can't delete folder | Check `file.delete` permission and that you're passing the folder's `id` (not its parent's) |
+| `ensure` fails on a name | The call walks path segments in order; a collision with an existing **file** (not folder) of the same name in the same parent will fail. Use a different segment name |

@@ -1,0 +1,195 @@
+---
+title: "Discussions"
+description: "Forum-style topics scoped to courses, quizzes, events, cohorts, or learning paths — with public/private visibility, enrollment gating, and admin moderation"
+module: "engagement"
+feature: "discussions"
+order: 1
+---
+
+# Discussions
+
+Discussions are forum-style topics attached to an educational entity — a course, quiz, event, cohort, or learning path. Each discussion has a title, a rich body, a privacy setting, and a creator, and it accepts comments, reactions, and views. Admins can list, create, edit, and bulk-delete across the whole tenant; learners can only interact with discussions attached to programs they are enrolled in.
+
+## Quick Facts
+
+| Attribute | Value |
+|-----------|-------|
+| Entity types supported | `course`, `quiz`, `event`, `cohort`, `learning_path` |
+| Privacy values | `public`, `private` |
+| Title length | 1–255 characters |
+| Content length | 1–10,000 characters |
+| Delete mode | Soft delete (sets `deleted_at`) |
+| Admin endpoint prefix | `/api/v1/admin/discussions` |
+| User endpoint prefix | `/api/v1/user/discussions` |
+| Required admin permissions | `discussion.list`, `discussion.view`, `discussion.create`, `discussion.update`, `discussion.delete` |
+
+## Data Model
+
+A discussion row (`discussions` table) has the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | UUID | Primary key |
+| `tenant_id` | UUID | Tenant scope — every query filters by this |
+| `entity_type` | string | One of: `course`, `quiz`, `event`, `cohort`, `learning_path` |
+| `entity_id` | UUID | Points to the specific course / quiz / event / cohort / learning path |
+| `title` | string | Discussion title (1–255) |
+| `content` | text | Discussion body (1–10,000) |
+| `privacy` | string | `public` or `private` |
+| `created_at` | timestamp | Set on insert |
+| `updated_at` | timestamp | Updated on every PUT |
+| `created_by` | UUID | User who started the discussion |
+| `updated_by` | UUID | User who last edited it |
+| `deleted_at` | timestamp \| null | Set on delete (soft); filtered by default |
+
+A secondary table, `discussion_views`, captures one row per unique viewer per discussion (see [Discussion Metrics](/docs/knowledgebase/engagement-module/discussion-metrics)).
+
+## User-Facing Workflows
+
+### Listing Discussions for a Program
+
+1. The learner opens a course, quiz, event, cohort, or learning path page.
+2. The frontend calls `GET /api/v1/user/discussions?entity_type={type}&entity_id={id}&page=1&per_page=20`.
+3. The service calls `EnrollmentAssociationService.GetUserEnrolledPrograms()` and narrows the query to entities the learner is enrolled in.
+4. Results are sorted by `created_at DESC` by default and include the creator's name/avatar and the associated entity.
+
+Search, sort, and pagination are all supported:
+
+| Query parameter | Description |
+|-----------------|-------------|
+| `entity_type` | Restrict to one entity type |
+| `entity_id` | Restrict to one entity |
+| `privacy` | Filter `public` or `private` |
+| `search` | Case-insensitive match on title/content |
+| `sort_by` | `created_at`, `updated_at`, `title` |
+| `sort_order` | `asc`, `desc` |
+| `page`, `per_page` | Offset pagination |
+
+### Opening a Discussion
+
+1. The learner clicks a discussion.
+2. The frontend calls `GET /api/v1/user/discussions/{discussion_id}`.
+3. The service rejects with `403` if the learner is not enrolled in the discussion's entity.
+4. The response includes the full body, the creator profile, and the linked entity object.
+
+### Starting a Discussion
+
+1. On the entity page, the learner clicks **Start Discussion**.
+2. The form collects **title**, **content**, **privacy** (`public`/`private`), and implicitly carries the entity reference from the page.
+3. The frontend calls `POST /api/v1/user/discussions` with `{ entity_type, entity_id, title, content, privacy }`.
+4. The service verifies enrollment, inserts the row (setting `created_by` and timestamps), and returns the new discussion.
+5. An `AuditEvent` and an `ActivityEvent` ("Started a discussion") are published asynchronously.
+
+> **Validation:** `title` must be 1–255 characters, `content` must be 1–10,000 characters, `privacy` must be exactly `public` or `private`.
+
+### Editing Your Own Discussion
+
+1. From the discussion view, the learner clicks **Edit**.
+2. The frontend calls `PUT /api/v1/user/discussions/{discussion_id}` with the fields to change.
+3. The service verifies:
+   - the discussion exists and is not soft-deleted,
+   - `created_by` matches the current user (otherwise `403`),
+   - the user is still enrolled in the discussion's entity.
+4. Only the provided fields are updated; `updated_at` and `updated_by` are refreshed automatically.
+
+### Deleting Your Own Discussion
+
+1. The learner clicks **Delete** and confirms.
+2. The frontend calls `DELETE /api/v1/user/discussions/{discussion_id}`.
+3. The service verifies ownership + enrollment, then sets `deleted_at = now()`.
+4. Comments and reactions attached to the discussion are **not** cascade-deleted — they remain in the database but become orphaned.
+
+## Admin-Facing Workflows
+
+The admin surface lives at `/admin/communication/discussion` in the frontend and is gated by the `discussion.*` permissions.
+
+### Discussion List (`GET /api/v1/admin/discussions`)
+
+Requires `discussion.list`. Supports the same filters as the user list, plus:
+
+| Filter | Description |
+|--------|-------------|
+| `created_by` | Restrict to discussions started by a specific user |
+| `entity_type` | Restrict to one entity type |
+| `entity_id` | Restrict to one entity |
+| `privacy` | Filter public or private |
+
+### Creating a Discussion as Admin (`POST /api/v1/admin/discussions`)
+
+Requires `discussion.create`. The admin can create a discussion on any entity, regardless of enrollment. Typical uses include pinning a welcome topic on a course or pre-seeding a FAQ on a cohort.
+
+### Editing & Deleting (`PUT` / `DELETE /api/v1/admin/discussions/{id}`)
+
+Admins with `discussion.update` can edit any discussion; admins with `discussion.delete` can soft-delete it. Ownership checks do **not** apply on the admin surface.
+
+### Bulk Export (`GET /api/v1/admin/discussions/bulk/export`)
+
+Requires `discussion.list`. Streams all filtered discussions as CSV with the following columns: `id`, `entity_type`, `entity_id`, `title`, `content`, `privacy`, `created_by`, `created_at`, `updated_at`.
+
+### Bulk Delete (`DELETE /api/v1/admin/discussions/bulk/delete`)
+
+Requires `discussion.delete`. Unlike the list endpoint, this one accepts **only** a fixed body:
+
+```json
+{ "discussion_ids": ["<uuid>", "<uuid>", ...] }
+```
+
+It is an ID-list operation, not a filter-based mass delete. The response returns the number of rows soft-deleted.
+
+> **Warning:** Bulk delete is a soft delete but cannot be undone through the UI. Restoring a soft-deleted discussion requires a database-level intervention.
+
+## Privacy
+
+The `privacy` field is stored as a string and is returned in every response, but its enforcement is split between the service and the frontend:
+
+- **`public`** — Every enrolled user sees the discussion.
+- **`private`** — Frontend convention: only the creator, instructors, and admins see the discussion. The engagement-service itself does not filter by `privacy` on list endpoints today — the frontend is responsible for hiding private threads from other learners.
+
+> **Note:** Treat `private` as a display hint rather than a hard security boundary. If you need a stricter guarantee, raise this to the platform team before designing around private discussions.
+
+## API Reference
+
+### User Endpoints
+
+| Method | Path | Purpose | Notes |
+|--------|------|---------|-------|
+| `GET` | `/api/v1/user/discussions` | List discussions for enrolled entities | Offset pagination |
+| `GET` | `/api/v1/user/discussions/{id}` | Get a single discussion | Enrollment required |
+| `POST` | `/api/v1/user/discussions` | Create a discussion | Enrollment required |
+| `PUT` | `/api/v1/user/discussions/{id}` | Update own discussion | Ownership + enrollment |
+| `DELETE` | `/api/v1/user/discussions/{id}` | Soft-delete own discussion | Ownership + enrollment |
+
+### Admin Endpoints
+
+| Method | Path | Purpose | Permission |
+|--------|------|---------|------------|
+| `GET` | `/api/v1/admin/discussions` | List all discussions | `discussion.list` |
+| `GET` | `/api/v1/admin/discussions/{id}` | Get any discussion | `discussion.view` |
+| `POST` | `/api/v1/admin/discussions` | Create any discussion | `discussion.create` |
+| `PUT` | `/api/v1/admin/discussions/{id}` | Update any discussion | `discussion.update` |
+| `DELETE` | `/api/v1/admin/discussions/{id}` | Soft-delete any discussion | `discussion.delete` |
+| `GET` | `/api/v1/admin/discussions/bulk/export` | CSV export of filtered results | `discussion.list` |
+| `DELETE` | `/api/v1/admin/discussions/bulk/delete` | Bulk soft-delete by `discussion_ids[]` | `discussion.delete` |
+
+## Events Emitted
+
+Every admin or user mutation publishes an `AuditEvent` with `module=engagement`, `resource_type=discussion`, and the appropriate action (`created`, `updated`, `deleted`). User-facing actions also emit `ActivityEvent`:
+
+| Action | Event Title |
+|--------|-------------|
+| `POST /user/discussions` | "Started a discussion" |
+| `PUT /user/discussions/{id}` | "Updated a discussion" |
+| `DELETE /user/discussions/{id}` | "Deleted a discussion" |
+
+See the [Audit Module](/docs/knowledgebase/audit-module) for how these events are consumed and displayed.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "you are not enrolled in this program" (403) | Confirm the learner is enrolled in the course / quiz / event / cohort / learning path referenced by `entity_type` + `entity_id` |
+| "you can only update your own discussions" / "you can only delete your own discussions" (403) | Only the creator can edit/delete via the user endpoint. Use the admin endpoint with `discussion.update`/`discussion.delete` if moderation is required |
+| "discussion not found" (404) | The ID does not exist or the row has been soft-deleted. Soft-deleted discussions never appear in user or admin queries |
+| Private discussions visible to other learners | `privacy` enforcement lives on the frontend today. Confirm the client is filtering by `privacy` before surfacing threads |
+| Bulk delete returned 0 but filtered list was non-empty | Check that the filter body matches the list filter exactly. Bulk delete uses the same DTO and will not delete already-deleted rows |
+| Discussion view count not increasing | Views are recorded separately via `POST /admin/discussions/{id}/view`. See [Discussion Metrics](/docs/knowledgebase/engagement-module/discussion-metrics) |

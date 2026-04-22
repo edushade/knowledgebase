@@ -1,0 +1,197 @@
+---
+title: "Storage Backends"
+description: "Configuring S3 or MinIO, bucket key layout, URL signing, and multipart tuning"
+module: "filemanager"
+feature: "storage-backends"
+order: 12
+---
+
+# Storage Backends
+
+The file manager is built on an S3-compatible object storage abstraction (`storage.FileStorage`). The active implementation is `S3Client` (`internal/storage/s3.go`), which uses the AWS SDK v2 and works against **AWS S3** or any S3-compatible service — **MinIO** in development, self-hosted object stores, or AWS in production. A local/filesystem driver exists in config but is not active.
+
+## Configuration
+
+All storage settings live under the `storage:` block in `config.yaml`:
+
+```yaml
+storage:
+  provider: "local"            # Not actively dispatched; the service currently instantiates S3Client unconditionally
+  base_url: "http://edushade.test/"
+
+  s3:
+    bucket: "edushade"
+    region: "us-east-1"
+    access_key_id: "filemanager-access"
+    secret_access_key: "filemanager-secret"
+    endpoint: "http://localhost:9000"   # MinIO in dev — leave empty for AWS S3
+    use_ssl: false
+    public_read: false
+
+  minio:
+    endpoint: "http://localhost:9000"
+    access_key: "edushade"
+    secret_key: "edushade"
+    use_ssl: false
+    bucket: "edushade"
+
+  max_file_size: 10485760        # 10 MB — present in config but not enforced by the handlers (tenant settings win)
+  allowed_types:
+    - "image/jpeg"
+    - "image/png"
+    - "image/gif"
+    - "application/pdf"
+    - "text/plain"
+    - "application/msword"
+    - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  virus_scan: false
+```
+
+### Environment Overrides
+
+The config loader (`edushade-common/config`) supports environment variable overrides using the standard dotted-to-underscore mapping:
+
+| Env var | Overrides |
+|---------|-----------|
+| `STORAGE_S3_BUCKET` | `storage.s3.bucket` |
+| `STORAGE_S3_REGION` | `storage.s3.region` |
+| `STORAGE_S3_ACCESS_KEY_ID` | `storage.s3.access_key_id` |
+| `STORAGE_S3_SECRET_ACCESS_KEY` | `storage.s3.secret_access_key` |
+| `STORAGE_S3_ENDPOINT` | `storage.s3.endpoint` |
+| `STORAGE_BASE_URL` | `storage.base_url` |
+
+### AWS S3
+
+For production AWS S3:
+
+- Leave `endpoint` empty or omit it.
+- Either set `access_key_id` + `secret_access_key`, **or** leave them blank to pick up the default AWS credentials chain (env vars, IAM instance roles, EKS service accounts). Blank credentials is the recommended deployment pattern.
+- Set `region` to your bucket's region.
+
+```yaml
+storage:
+  s3:
+    bucket: "edushade-prod-media"
+    region: "ap-south-1"
+    access_key_id: ""                 # Use IAM role
+    secret_access_key: ""
+    endpoint: ""                      # AWS default endpoint
+    use_ssl: true
+```
+
+### MinIO
+
+For local dev against MinIO (the default in `compose-infra.yaml`):
+
+- Set `endpoint` to the MinIO server URL (e.g. `http://localhost:9000`).
+- Supply `access_key_id` / `secret_access_key` matching the MinIO user.
+- The S3 client automatically enables **path-style URLs** whenever `endpoint` is non-empty, which is required by MinIO.
+
+> **Path-style trigger:** the client uses `UsePathStyle=true` whenever a custom endpoint is configured. Virtual-hosted style (the default for AWS) is used only when endpoint is empty.
+
+## Bucket Key Layout
+
+Every file is stored at:
+
+```
+{tenant_id}/{YYYY-MM-DD}/{file_id}{extension}
+```
+
+| Segment | Source | Purpose |
+|---------|--------|---------|
+| `tenant_id` | JWT at upload time | Hard tenant partitioning |
+| `YYYY-MM-DD` | `created_at` (UTC) of the upload | Natural daily partitioning for lifecycle rules and sweeping |
+| `file_id` | Generated UUID v7 (or supplied via the `file_id` form field) | Immutable identifier |
+| `extension` | File extension preserved from the upload (e.g. `.pdf`, `.jpg`) | Useful for debugging / direct S3 browsing |
+
+The key is **immutable** — renaming a file changes `name` in the DB but not `bucket_key`, and therefore previously-issued presigned URLs continue working.
+
+## Multipart Tuning
+
+The internal S3 client uses these defaults:
+
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| **Multipart threshold** | 15 MB | Files below this are single-PUT |
+| **Part size** | 5 MB (S3 minimum), capped at 16 MiB | The cap avoids MinIO's per-chunk 16 MiB error |
+| **Max parts** | 10 000 | S3 absolute maximum |
+| **Force multipart** | Files > 16 MB | Always multipart regardless of threshold — stops MinIO from failing the PUT |
+
+These affect the **server-side** upload path (`UploadMultipart` in the S3 client) — the Uppy path uses the browser's own chunking. Both eventually produce the same S3 object.
+
+## Presigned URL Signing
+
+| Use | Method | Lifetime |
+|-----|--------|----------|
+| Download (preview-id, preview-path redirects) | `GetObject` presigned | **30 minutes** |
+| Upload — presigned PUT (Uppy `/params`) | `PutObject` presigned | **10 minutes** |
+| Upload — multipart part | `UploadPart` presigned | **10 seconds** |
+
+Presigned URLs are generated on-demand. The download URL is cached in-process (5-minute TTL, via `go-cache`) to reduce signing overhead — see [File Preview → Presigned URL Lifetime & Caching](/docs/knowledgebase/filemanager-module/file-preview#presigned-url-lifetime--caching).
+
+## Deleting Objects
+
+Storage deletes are **hard** — the S3 client calls `DeleteObject`. There is no versioning and no recovery at the object layer. The DB soft-delete preserves metadata (`deleted_at`, `deleted_by`), but the bytes are gone. See [File Management → Soft Delete vs Hard Delete](/docs/knowledgebase/filemanager-module/file-management#soft-delete-vs-hard-delete).
+
+### Tenant Bulk Delete
+
+The system API exposes `DELETE /v1/system/files/tenant` which calls `DeleteByPrefix(tenantID + "/")` on the S3 client. This deletes every object under the tenant's prefix in a batch — see [System API → Delete All Tenant Files](/docs/knowledgebase/filemanager-module/system-api#delete-all-tenant-files).
+
+## The Unused Local Driver
+
+`internal/storage/minio.go` contains a commented-out MinIO-specific implementation. It is **not active** — the service builds `S3Client` unconditionally in `cmd/` startup. To enable a genuinely separate MinIO driver you'd need to dispatch on `storage.provider` in the storage factory.
+
+Similarly, the config exposes `storage.local`, `storage.gcs`, and `storage.azure` blocks, but no active driver consumes them.
+
+## Bucket Lifecycle Recommendations
+
+The date-prefixed layout makes S3 lifecycle rules natural. Suggested rules for a production bucket:
+
+| Rule | Effect |
+|------|--------|
+| **Incomplete multipart uploads → expire after 7 days** | Prevents abandoned uploads from accumulating |
+| **Old versions → expire after 30 days** | If you enable bucket versioning (for accidental-delete protection) |
+| **Transition infrequent tenants to S3 IA / Glacier** | By prefix + age, if cost becomes relevant |
+
+Versioning is **not** enabled by the service — enabling it on the bucket is a pure infrastructure decision and does not require code changes, but the soft-delete behaviour will remain the source of truth in the application.
+
+## Security
+
+- **Signed URLs with short lifetime** — the 10-second lifetime for multipart parts is deliberately tight.
+- **Bucket private by default** — `public_read: false`. All access flows through the service-issued presigned URLs.
+- **Credentials secrecy** — if using static credentials, store them in a secrets manager, not in the repo.
+- **Cross-tenant isolation** — object keys are prefixed with `tenant_id`. Even if a bucket policy is misconfigured, the application never hands out a key from another tenant's prefix.
+
+## CORS
+
+S3 / MinIO need a bucket CORS policy that permits the frontend origins to perform PUT on presigned URLs. A typical MinIO policy:
+
+```json
+{
+  "CORSRules": [
+    {
+      "AllowedHeaders": ["*"],
+      "AllowedMethods": ["PUT", "GET", "HEAD"],
+      "AllowedOrigins": ["https://*.edushade.com", "http://localhost:*"],
+      "ExposeHeaders": ["ETag"],
+      "MaxAgeSeconds": 3000
+    }
+  ]
+}
+```
+
+The `ETag` exposure is critical — the Uppy `complete` call needs each part's ETag from the client.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection refused on startup | `storage.s3.endpoint` (or AWS reachability) is wrong. Check the MinIO container is up in `compose-infra.yaml` |
+| `AccessDenied` from MinIO | `access_key_id` / `secret_access_key` mismatch with MinIO config |
+| `NoSuchBucket` | The bucket does not exist — create it: `mc mb myalias/edushade` |
+| 403 on presigned upload PUT | URL expired (10-min for params, 10-sec for parts) or CORS denies the origin |
+| 400 on presigned upload of large file | Client is using single-PUT for a >16 MiB file — switch to the multipart flow |
+| Missing `ETag` in client | CORS doesn't `ExposeHeaders: ["ETag"]`. Add it to the bucket policy |
+| Slow presign | Network latency to S3 is high. The 5-minute URL cache shields repeat calls |
+| Want to switch to AWS S3 from MinIO | Clear `storage.s3.endpoint`, set real credentials (or use IAM role), set the region, restart the service. Data does not migrate automatically — use `aws s3 sync` from MinIO to S3 first |
+| Orphaned multipart uploads | Run `aws s3api list-multipart-uploads` against the bucket and abort them, or add a lifecycle rule |

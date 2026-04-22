@@ -1,0 +1,212 @@
+---
+title: "Webhooks"
+description: "Outbound HMAC-signed webhooks for notification and campaign lifecycle events with retries, event filtering, and test delivery"
+module: "notification"
+feature: "webhooks"
+order: 12
+---
+
+# Webhooks
+
+**Webhooks** let external systems subscribe to notification and campaign lifecycle events — e.g. "a campaign just completed" or "a notification bounced". Every webhook is HMAC-signed with a per-hook secret so downstream systems can verify authenticity.
+
+## Accessing Webhooks
+
+1. Sign in as an **Admin** with `notification.view`.
+2. Navigate to **Admin → Notification → Settings** (`/admin/notification/settings`) → **Webhooks** tab.
+
+| Action | Permission |
+|--------|------------|
+| View webhooks | `notification.view` |
+| Create webhook | `notification.create` |
+| Edit webhook | `notification.update` |
+| Delete webhook | `notification.delete` |
+| Test webhook | `notification.send` |
+
+## Webhook Anatomy
+
+| Field | Description |
+|-------|-------------|
+| `id` | UUID |
+| `name` | Admin-facing label |
+| `url` | Destination URL — must be HTTPS in production |
+| `method` | `GET`, `POST`, `PUT`, or `DELETE` (typically `POST`) |
+| `headers` | Map of custom headers merged with the signing headers |
+| `events` | Array of subscribed event types |
+| `secret` | HMAC secret used to sign the payload — auto-generated on create, rotatable |
+| `active` | Soft-disable switch |
+| `last_triggered_at` | Updated every successful fire |
+
+## Subscribable Events
+
+The complete set of events that can fire a webhook:
+
+| Event | Fires when |
+|-------|------------|
+| `notification.sent` | Provider accepted the notification |
+| `notification.delivered` | Provider confirmed delivery |
+| `notification.failed` | Notification failed all retries on all providers |
+| `notification.opened` | Recipient opened (email open pixel, push delivery ack, inbox click) |
+| `notification.clicked` | Recipient clicked a link |
+| `campaign.started` | Campaign transitioned `QUEUED` → `RUNNING` for this occurrence |
+| `campaign.completed` | Campaign occurrence finished |
+| `campaign.paused` | Admin paused the campaign |
+
+A webhook can subscribe to any subset; leave `events: []` to deactivate without deleting.
+
+## Payload Shape
+
+Every webhook POST body carries a standard envelope:
+
+| Field | Description |
+|-------|-------------|
+| `event` | One of the event types above |
+| `event_id` | Unique UUID — use for idempotency on your side |
+| `occurred_at` | ISO timestamp |
+| `tenant_id` | Tenant of the event |
+| `resource` | Inline snapshot of the resource that triggered the event (a `Notification` or `Campaign`) |
+| `metadata` | Free-form additional context |
+
+Each resource snapshot matches the shape returned by the corresponding admin API, so receivers can work with the same types they already know.
+
+## Signing & Verification
+
+Every request includes a signature header:
+
+| Header | Format |
+|--------|--------|
+| `X-EduShade-Signature` | `sha256=<hex HMAC-SHA256 of the raw body using the hook secret>` |
+| `X-EduShade-Event` | The event type (for routing convenience) |
+| `X-EduShade-Event-Id` | Same as `event_id` in the body |
+| `X-EduShade-Timestamp` | Unix seconds — use to reject very old replays |
+
+Verification (pseudo-code):
+
+```
+expected = "sha256=" + hex(hmac_sha256(secret, raw_body))
+if constant_time_equals(expected, header["X-EduShade-Signature"]) == false:
+    reject("bad signature")
+if abs(now - header["X-EduShade-Timestamp"]) > 5 minutes:
+    reject("stale request")
+```
+
+Comparisons must be constant-time to avoid timing attacks.
+
+## Retries
+
+Delivery uses an exponential backoff:
+
+| Attempt | Delay |
+|---------|-------|
+| 1 | Immediate |
+| 2 | 30 s |
+| 3 | 2 min |
+| 4 | 10 min |
+| 5 | 1 h |
+| 6 | 4 h |
+
+A retry happens whenever the receiver returns a 5xx or the call times out after 10 s. 2xx = delivered; any 4xx (except 429) = terminal failure (the receiver's bug, not the platform's); 429 = treated like 5xx with additional backoff.
+
+After the 6th failed attempt the delivery is marked dead and surfaced in the webhook's recent failures list.
+
+## Test Delivery
+
+Every webhook has a **Test** action:
+
+1. Pick an event type to simulate.
+2. Click **Send Test**.
+3. A synthesised payload (marked `metadata.test: true`) is fired at the URL with a real signature.
+4. Result — status code, latency, response body — is shown inline.
+
+API: `POST /v1/admin/notify/webhooks/{id}/test` (requires `notification.send`).
+
+Test fires are idempotent relative to `event_id` so repeated tests don't confuse a downstream consumer that deduplicates properly.
+
+## Webhook List & Detail
+
+Route: `/admin/notification/settings` → Webhooks.
+
+### Filters
+
+| Filter | Description |
+|--------|-------------|
+| **Search** | Name, URL |
+| **Active** | Show only active / inactive |
+| **Event** | Webhooks subscribed to a specific event type |
+
+### Detail View
+
+| Section | Contents |
+|---------|----------|
+| **Summary** | Name, URL, method, events, active flag |
+| **Recent deliveries** | Last 50 attempts with status, latency, response excerpt |
+| **Failing deliveries** | Attempts still within the retry window |
+| **Signature & secret** | Current secret with a **Rotate** action |
+
+## Secret Rotation
+
+Rotating the secret via **Rotate** generates a new value and returns it **once** — the admin must capture it before closing the dialog. For a graceful rotation, the hook supports a brief dual-signing window (requests signed with the old secret for 5 min after rotation) so the receiver can update without downtime.
+
+API: `POST /v1/admin/notify/webhooks/{id}/rotate-secret` (requires `notification.update`).
+
+## Creating a Webhook
+
+1. Click **Add Webhook**.
+2. Fill in **Name**, **URL**, **Method**.
+3. Add any **Custom Headers** (e.g. `Authorization: Bearer <token>` if the receiver layered its own auth).
+4. Pick one or more **Events**.
+5. Click **Create** — a secret is generated and shown once.
+6. Click **Test** with a sample event to verify connectivity before enabling production traffic.
+
+API: `POST /v1/admin/notify/webhooks` (requires `notification.create`).
+
+## Editing a Webhook
+
+Changes take effect on the next fire. Adding/removing events does not backfill previously missed events — webhooks are a live stream, not a replay log.
+
+API: `PUT /v1/admin/notify/webhooks/{id}` (requires `notification.update`).
+
+## Deleting a Webhook
+
+Hard-deletes unless there are in-flight retries — in that case the hook is marked inactive and swept after the retry window closes.
+
+API: `DELETE /v1/admin/notify/webhooks/{id}` (requires `notification.delete`).
+
+## API Reference
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/v1/admin/notify/webhooks` | GET | List webhooks |
+| `/v1/admin/notify/webhooks` | POST | Create webhook |
+| `/v1/admin/notify/webhooks/{id}` | GET | Fetch webhook |
+| `/v1/admin/notify/webhooks/{id}` | PUT | Update webhook |
+| `/v1/admin/notify/webhooks/{id}` | DELETE | Delete webhook |
+| `/v1/admin/notify/webhooks/{id}/test` | POST | Synthesised test delivery |
+| `/v1/admin/notify/webhooks/{id}/rotate-secret` | POST | Rotate the signing secret |
+| `/v1/admin/notify/webhooks/{id}/deliveries` | GET | Recent delivery attempts (paginated) |
+
+## Related Features
+
+- [Campaigns](/docs/knowledgebase/notification-module/campaigns) — source of `campaign.*` events
+- [Delivery Logs](/docs/knowledgebase/notification-module/delivery-logs) — the canonical per-notification record; webhooks are the push mirror of the same data
+- [Audit Logs](/docs/knowledgebase/notification-module/audit-logs) — every webhook create/update/delete is recorded
+
+## Receiver Best Practices
+
+- **Verify the signature** before parsing — treat unsigned bodies as hostile.
+- **Dedupe by `event_id`** — the retry policy can cause duplicate deliveries on marginal responses.
+- **Respond fast** — the dispatcher has a 10 s timeout; offload slow work to a queue.
+- **Return 2xx for anything you've durably accepted**, even if processing fails downstream — retries are for delivery failures, not for your own bugs.
+- **Handle reordering** — network retries can cause `notification.opened` to arrive before `notification.delivered`; use timestamps, not arrival order.
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Webhook fires but receiver sees nothing | Verify the endpoint is HTTPS; some corporate proxies strip unsigned HTTP |
+| Signature doesn't verify | Use the raw body, not a re-serialised copy; confirm you're using the current secret (after any rotation) |
+| Receiving duplicates | Expected on retries — dedupe by `event_id` |
+| Events seem to stop | Check `active`; inspect recent deliveries — if all are 5xx, your endpoint is down |
+| Fired for the wrong tenant | The `tenant_id` on the payload is authoritative; webhooks are tenant-scoped at create time |
+| Old secret still accepted after rotation | Expected for the 5 min dual-signing window — rotate your receiver's config within that window |
+| 429 on receiver | The dispatcher treats 429 as retryable; add your own rate-limit headroom or slow your downstream |

@@ -1,0 +1,186 @@
+---
+title: "Audit Logs"
+description: "Tamper-evident record of every admin mutation on campaigns, templates, segments, providers, webhooks, and settings — with before/after diffs and actor attribution"
+module: "notification"
+feature: "audit-logs"
+order: 15
+---
+
+# Audit Logs
+
+The notification **Audit Log** records every administrative mutation on the notification module — campaigns, templates, segments, providers, webhooks, and settings. Each row captures who did it, when, from where, and what changed, with full before/after diffs. This is the forensic surface for incident response and compliance.
+
+## Accessing Audit Logs
+
+1. Sign in as an **Admin** with `notification.view`.
+2. Navigate to **Admin → Notification → Audit Logs** (`/admin/notification/audit-logs`).
+
+| Action | Permission |
+|--------|------------|
+| View audit logs | `notification.view` |
+| Export audit logs | `notification.export` |
+
+Audit logs are **append-only** — no UI can edit or delete entries, and the backend reject requests to do so.
+
+## What's Audited
+
+### Resource Types
+
+Every notification entity is auditable:
+
+| Resource | Recorded on |
+|----------|-------------|
+| `CAMPAIGN` | Create, update, delete, send, pause, resume, rerun, cancel, duplicate, schedule change |
+| `TEMPLATE` | Create, update (bumps version), delete, activate, deactivate, test send |
+| `SEGMENT` | Create, update (dynamic filters + static user list), delete, advanced options change |
+| `PROVIDER` | Create, update (credentials rotated), delete, test, activate, deactivate |
+| `WEBHOOK` | Create, update, delete, secret rotation, events changed |
+| `NOTIFICATION` | Manual cancellation (rare) |
+| `USER` | Admin-driven preference override (e.g. suppression list add/remove) |
+| `SETTINGS` | Tenant-level notification settings changes |
+
+### Actions
+
+| Action | Meaning |
+|--------|---------|
+| `CREATE` | Resource created |
+| `UPDATE` | Resource modified |
+| `DELETE` | Resource deleted (or soft-deleted) |
+| `SEND` | Dispatch-side action — campaign sent, template tested |
+| `CANCEL` | Campaign cancelled |
+| `SCHEDULE` | Campaign scheduled or re-scheduled |
+| `PAUSE` / `RESUME` | Campaign lifecycle transitions |
+
+### Actors
+
+| Actor type | Meaning |
+|------------|---------|
+| `USER` | Regular signed-in admin |
+| `ADMIN` | Kept distinct for role-sensitive audits; in practice same as `USER` for the notification module |
+| `SYSTEM` | Automated background workers (schedule worker firing a recurring occurrence, failover triggering a provider switch, etc.) |
+
+## Audit Log Shape
+
+`AuditLog`:
+
+| Field | Description |
+|-------|-------------|
+| `id` | UUID |
+| `actor_type` | `USER` / `ADMIN` / `SYSTEM` |
+| `actor_id` | User or system identity |
+| `action` | One of the action types |
+| `resource_type` | One of the resource types |
+| `resource_id` | UUID of the affected resource |
+| `before_value` | JSON snapshot before the change (null on `CREATE`) |
+| `after_value` | JSON snapshot after the change (null on `DELETE`) |
+| `metadata` | Free-form context — campaign id, provider id, etc., when the affected resource is indirect |
+| `ip_address` | Caller IP |
+| `user_agent` | Caller user agent |
+| `created_at` | ISO timestamp |
+
+### Diff Rendering
+
+The UI computes a tree-diff between `before_value` and `after_value`:
+
+- Added fields — green, prefixed with `+`
+- Removed fields — red, prefixed with `-`
+- Changed fields — yellow, with old → new shown inline
+
+Secrets (API keys, webhook signing secrets, provider passwords) are masked before storage — the diff renders `******` for these fields so the audit log itself never leaks credentials.
+
+## Audit Log UI
+
+Route: `/admin/notification/audit-logs`.
+
+### Filters
+
+| Filter | Description |
+|--------|-------------|
+| **Search** | Free-text across actor name/email, resource name, metadata |
+| **Action** | One or more action values |
+| **Resource type** | One or more resource types |
+| **Actor** | Specific admin user |
+| **Actor type** | `USER` / `SYSTEM` |
+| **Resource** | Specific resource ID (deep link from a campaign's detail page often pre-fills this) |
+| **Date range** | `created_after` / `created_before` |
+| **IP address** | Narrow to events from a specific IP |
+
+### Columns
+
+- Timestamp (relative + absolute on hover)
+- Actor (name + avatar for users; "System" for automated actions)
+- Action pill (colour-coded)
+- Resource (icon + name; clickable through to the resource detail where still-live)
+- Summary of the change (e.g. `status: SCHEDULED → RUNNING`)
+- Expand button to open the diff drawer
+
+### Diff Drawer
+
+Clicking a row opens a drawer with:
+
+- **Metadata** — IP, user agent, session ID if applicable
+- **Before** JSON tree (collapsed by default for large resources)
+- **After** JSON tree
+- **Diff** view — the rendered tree-diff
+
+## Where Audit Entries Come From
+
+Any mutation endpoint writes an audit entry before returning. Dispatch-side events (campaign starts, provider failover, webhook secret rotation) write entries from the worker/service context with `actor_type = SYSTEM`. A single user-facing action may produce multiple audit rows — e.g. a campaign **Send** writes one `SEND` entry on the campaign and one `CREATE` entry per provider-level dispatch batch.
+
+## Interaction With the Global Audit Module
+
+The platform-wide [Audit Module](/docs/knowledgebase/audit-module) stores every audit event across every service. The notification-specific view at `/admin/notification/audit-logs` is a convenience filter onto the same underlying stream — the global Audit Logs page at `/admin/audit-logs` shows the same events alongside events from auth, tenant, learning, etc.
+
+Use the notification-scoped view when triaging a campaign issue; use the global view when reconstructing a cross-module incident.
+
+## Exports
+
+Audit logs are exportable to CSV, JSON, or XLSX:
+
+API: `GET /v1/admin/notify/system/audit-logs/export` with query filters matching the UI (requires `notification.export`).
+
+For long-term retention or external SIEM ingestion, the export format is the canonical choice — the on-platform view is capped at the tenant's retention window.
+
+## API Reference
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/v1/admin/notify/system/audit-logs` | GET | Paginated audit logs (filterable) |
+| `/v1/admin/notify/system/audit-logs/export` | GET | Export filtered logs as CSV/JSON/XLSX |
+| `/v1/admin/notify/system/health` | GET | Related — system health, occasionally used when interpreting `SYSTEM` actors |
+
+Query parameters mirror the UI filters. Pagination via `page` / `per_page`.
+
+## Retention
+
+Notification audit logs follow the tenant's audit retention policy (see [Retention and Cleanup](/docs/knowledgebase/audit-module/retention-and-cleanup) in the global audit module). Typical defaults:
+
+- **Hot tier**: 90 days in PostgreSQL — fully queryable in the UI
+- **Cold tier**: 12 months in the audit cold store — accessible via export on request
+
+Entries are never mutated once written; retention enforces purge only after the full window elapses.
+
+## Security & Compliance Notes
+
+- Secrets are masked **at write time**, not just at display time — the `before_value` / `after_value` stored in the database contain `******`, not the real credential.
+- The caller's IP address is captured from the trust-forwarded header the gateway rewrites; spoofed `X-Forwarded-For` values from untrusted proxies are ignored.
+- Admins with `audit.view` (from the global auth module) can see notification audit entries in the global audit stream. Admins with only `notification.view` are limited to the notification-scoped view.
+
+## Related Features
+
+- [Audit Module](/docs/knowledgebase/audit-module) — platform-wide audit system this view is a slice of
+- [Campaigns](/docs/knowledgebase/notification-module/campaigns) — deep-link into per-campaign audit entries from the campaign detail page
+- [Providers](/docs/knowledgebase/notification-module/providers) — credential rotations surface here
+- [Webhooks](/docs/knowledgebase/notification-module/webhooks) — secret rotations surface here
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Expected an entry but don't see one | Verify the action actually succeeded — failed mutations don't write audit entries; check the API response |
+| Actor shown as "System" when a user acted | The action was performed via a system token (e.g. another microservice); check the metadata for the triggering user, if any |
+| Diff shows `******` for a field | That field is a masked secret; the change happened but the value isn't exposed |
+| Entries missing from a specific day | May be past the retention window; export the cold tier |
+| Filter by specific campaign shows nothing | Filter by `resource_id` with the campaign UUID, not by name |
+| Diff drawer is slow for large segments | Big `filters` trees are expensive to render; collapse to specific keys |
+| Audit entry contradicts what I see on the resource | The resource may have been changed again after the audit entry — check subsequent entries in chronological order |

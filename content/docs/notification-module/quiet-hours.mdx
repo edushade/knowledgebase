@@ -1,0 +1,159 @@
+---
+title: "Quiet Hours"
+description: "Per-user and per-campaign Do-Not-Disturb windows — how they compose, which notifications bypass them, and how deferred messages are delivered"
+module: "notification"
+feature: "quiet-hours"
+order: 16
+---
+
+# Quiet Hours
+
+**Quiet Hours** — sometimes called Do-Not-Disturb — is a policy that holds non-critical notifications out of a user's preferred sleep/focus window. The window can be set at two independent levels: **per-user** (in their preferences) and **per-campaign** (by the admin authoring the send). The two compose so the most restrictive window wins.
+
+## Two Levels of Quiet Hours
+
+### 1. User Quiet Hours
+
+Set by the user at **Dashboard → Profile → Settings → Notifications**. Fields on the `NotificationPreference` record:
+
+| Field | Description |
+|-------|-------------|
+| `quiet_hours_start` | `HH:MM` in the user's profile timezone |
+| `quiet_hours_end` | `HH:MM` in the user's profile timezone |
+
+A null pair = no user quiet hours. See [Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences) for the UI.
+
+### 2. Campaign Quiet Hours
+
+Set by the admin in the campaign settings (step 6 of the wizard). Fields on `CampaignSettings`:
+
+| Field | Description |
+|-------|-------------|
+| `quiet_hours_enabled` | Toggle — if false, campaign ignores campaign-level quiet hours (user-level still applies) |
+| `quiet_hours_start` | `HH:MM` in `settings.timezone` |
+| `quiet_hours_end` | `HH:MM` in `settings.timezone` |
+| `timezone` | IANA timezone the window is interpreted in |
+
+See [Campaigns](/docs/knowledgebase/notification-module/campaigns).
+
+## Composition
+
+The dispatcher evaluates both windows:
+
+```
+user_in_quiet = is_now_in(user.quiet_hours_start, user.quiet_hours_end, user.timezone)
+campaign_in_quiet = campaign.quiet_hours_enabled
+                    and is_now_in(campaign.quiet_hours_start, campaign.quiet_hours_end, campaign.settings.timezone)
+
+if user_in_quiet or campaign_in_quiet:
+    if notification.type is security-critical:  deliver anyway
+    else if frequency_preference != IMMEDIATE:   fold into next digest
+    else:                                        defer to first moment outside both windows
+```
+
+In plain language: **quiet hours from either side stops the notification**, unless it's a critical security notification or the user prefers digests.
+
+## Overnight Windows
+
+A window like `22:00 → 06:00` crosses midnight. The evaluator correctly treats this as "active if now ≥ 22:00 OR now < 06:00" in the relevant timezone — no accidental one-minute gap at midnight, no spurious suppression at midday.
+
+## Timezone Handling
+
+Quiet hours are wall-clock policies, not UTC offsets. The evaluator resolves the window in the **appropriate timezone** for each side:
+
+| Side | Timezone used |
+|------|---------------|
+| User quiet hours | `user.profile.timezone` — falls back to tenant default if unset |
+| Campaign quiet hours | `campaign.settings.timezone` — falls back to tenant default |
+
+So an admin in Dhaka can set "quiet hours 22:00–06:00 Asia/Dhaka" on a campaign, and each recipient's own user-level window is simultaneously evaluated in their own timezone. A user in Sydney inside their own 22:00–06:00 window is suppressed even if 22:00 Dhaka time is noon in Sydney.
+
+## Bypass Rules — Which Notifications Ignore Quiet Hours?
+
+Security and user-initiated action notifications are **always delivered**, regardless of either side's window. These bypass quiet hours:
+
+| Type | Reason |
+|------|--------|
+| `ACCOUNT_VERIFICATION` | User explicitly requested an OTP/link and is waiting |
+| `PASSWORD_RESET` | User explicitly requested the reset |
+| `ACCOUNT_UPDATE` | Security — credential change should reach the user immediately for fraud detection |
+
+`WELCOME_MESSAGE` honours quiet hours — nothing is burning about a welcome message arriving in the morning.
+
+The bypass list is not configurable per-tenant today. See [Notification Types](/docs/knowledgebase/notification-module/notification-types) for the full type catalogue.
+
+## Deferred Delivery
+
+A notification held by quiet hours enters a **deferred** state:
+
+1. The notification is persisted with status `QUEUED` and a `defer_until` timestamp.
+2. At `defer_until`, the dispatcher re-evaluates quiet hours (timezone edge-cases can make the window shift if the user crosses a DST boundary).
+3. If the window still applies, the notification is deferred again with a capped total delay (default: 24 h).
+4. Once clear, the notification dispatches normally and the delivery log captures `sent_at` with the actual dispatch time (not the originally-queued time).
+
+The deferral cap prevents a notification held indefinitely by ever-overlapping windows from stacking for days. If the cap is reached, the notification dispatches regardless of quiet hours with a `metadata.quiet_hours_forced = true` flag on the delivery log.
+
+## Interaction With Frequency Preference
+
+[Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences) also expose `frequency_preference`:
+
+| Frequency | Behaviour with quiet hours |
+|-----------|----------------------------|
+| `IMMEDIATE` | Honour quiet hours, defer as above |
+| `DAILY` | Fold into the daily digest; the digest's send time is chosen to fall outside quiet hours |
+| `WEEKLY` | Same as daily, weekly cadence |
+
+Digest send times are chosen per user so that the digest fires just after the end of their quiet window — maximising freshness while respecting the DND boundary.
+
+## Interaction With Scheduling
+
+A campaign can have both a `scheduled_at` and quiet hours. The resolution order:
+
+1. `scheduled_at` is the earliest moment dispatch can start.
+2. Once dispatch is running, quiet hours gate each recipient independently.
+
+This means a campaign scheduled for `09:00 Dhaka` will start the dispatch at 09:00 local, but a specific recipient whose own quiet hours run until `10:00` receives the notification at 10:00 — not 09:00.
+
+## Campaign Throttling Inside Quiet Hours
+
+If a recurring campaign fires entirely inside the admin's configured quiet window, every recipient is deferred to the end of the window. The [Analytics](/docs/knowledgebase/notification-module/analytics) timeline shows a delivery spike at the end of the window rather than at `scheduled_at`.
+
+## UI Feedback
+
+### User UI
+
+The preferences page shows a small **"You're in a quiet hours window now"** hint beside the quiet hours inputs whenever the current time is inside the configured window, so users aren't surprised by the lack of notifications.
+
+### Admin UI
+
+In the campaign review step, if a campaign's `scheduled_at` falls inside the campaign-level window, the wizard shows a warning: *"Scheduled time is inside your quiet hours; deliveries will be deferred until the window ends."* The admin can proceed or adjust.
+
+The delivery logs detail drawer shows `metadata.deferred_from` when a notification was held, so admins can see exactly how much delay quiet hours introduced.
+
+## API Reference
+
+Quiet hours have no dedicated endpoints — they are fields on other resources:
+
+| Surface | Endpoint |
+|---------|----------|
+| User quiet hours | `PUT /v1/user/notify/preferences` (`quiet_hours_start`, `quiet_hours_end`) |
+| Campaign quiet hours | Part of `CampaignSettings` on `POST/PUT /v1/admin/notify/campaigns` (`settings.quiet_hours_enabled`, `settings.quiet_hours_start`, `settings.quiet_hours_end`, `settings.timezone`) |
+
+## Related Features
+
+- [Notification Preferences](/docs/knowledgebase/notification-module/notification-preferences) — user-side UI
+- [Campaigns](/docs/knowledgebase/notification-module/campaigns) — admin-side UI and campaign settings
+- [Scheduling](/docs/knowledgebase/notification-module/scheduling) — interaction with `scheduled_at`
+- [Notification Types](/docs/knowledgebase/notification-module/notification-types) — bypass list
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Password reset arrived at 3 AM | Expected — security types bypass quiet hours by design |
+| Marketing email arrived inside quiet hours | Check whether the campaign has `quiet_hours_enabled: true` *and* whether the user's preferences set a window — both must be respected but both default to off |
+| Notification delayed by 24 h then delivered | Hit the deferral cap — quiet windows on both sides kept overlapping; audit the user's window and the campaign's window to find the overlap |
+| Timezone boundary caused odd behaviour | DST transitions shift wall-clock windows; the evaluator handles this but very short windows across a DST change may produce asymmetric active durations |
+| Digest arriving inside quiet hours | Digests are scheduled to fire just after the end of the window; if the user changed their window mid-day, the first digest after the change may not yet reflect the new timing |
+| Campaign wizard warns about quiet hours but I want to send anyway | Proceed — warnings are informational; the worker will either defer per-recipient or honour the window based on the settings |
+| `metadata.quiet_hours_forced: true` appeared on a delivery log | The notification hit the 24 h deferral cap and was sent despite being in a window; surfaces the edge case for auditability |

@@ -1,0 +1,24 @@
+{
+  "title": "Notification Module",
+  "icon": "Bell",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "inbox",
+    "notification-preferences",
+    "notification-types",
+    "channels",
+    "push-notifications",
+    "campaigns",
+    "templates",
+    "segments",
+    "scheduling",
+    "ab-testing",
+    "providers",
+    "webhooks",
+    "delivery-logs",
+    "analytics",
+    "audit-logs",
+    "quiet-hours"
+  ]
+}
