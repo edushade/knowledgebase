@@ -24,11 +24,44 @@ The most common registration method. Users provide:
 
 **Steps:**
 1. Navigate to the **Register** page (`/auth/register`)
+<figure className="text-center">
+  <img
+    src="/content/images/register_via_email.png"
+    alt="Registration Page Interface"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Registration page.
+  </figcaption>
+</figure>
 2. Enter your full name
 3. Enter your email address
 4. Create a password that meets the password requirements (shown in real-time)
-5. Click **Register**
+5. Click **Create Account**
+<figure className="text-center">
+  <img
+    src="/content/images/registration_via_email.png"
+    alt="Registration Page with credentials filled in"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Registration page with credentials filled in.
+  </figcaption>
+</figure>
 6. You will be redirected to the **Email Verification** page to verify your email
+<figure className="text-center">
+  <img
+    src="/content/images/verify_email.png"
+    alt="Registration verification page."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Verify your email.
+  </figcaption>
+</figure>
 
 ### 2. Phone Registration
 
@@ -42,16 +75,89 @@ Users can also register using their phone number:
 
 **Steps:**
 1. Navigate to the **Register** page
+<figure className="text-center">
+  <img
+    src="/content/images/registration_via_email.png"
+    alt="Registration page."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Registration page.
+  </figcaption>
+</figure>
 2. Toggle to **Phone** mode (click the phone icon)
+<figure className="text-center">
+  <img
+    src="/content/images/register_via_phone.png"
+    alt="Register with phone number."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Register with phone number.
+  </figcaption>
+</figure>
 3. Enter your full name
 4. Enter your phone number
 5. Create a password
-6. Click **Register**
+6. Click **Create Account**
+<figure className="text-center">
+  <img
+    src="/content/images/number_via_register2.png"
+    alt="Registration verification page."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Fill all the details and click Create Account.
+  </figcaption>
+</figure>
 7. You will be redirected to the **Phone Verification** page to verify your phone
 
 ### 3. Social Login Registration
 
 You can register instantly using a social account. See [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login) for details.
+
+<figure className="text-center">
+  <img
+    src="/content/images/social_login1.png"
+    alt="Social login Options."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social Log In Options.
+  </figcaption>
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_google1.png"
+    alt="Social login via Google."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+  
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_google3.png"
+    alt="Social login via Google."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social Log In Via Google..
+  </figcaption>
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/social_login_facebook.png"
+    alt="Social login via Facebook."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social Log In Via Facebook..
+  </figcaption>
+</figure>
 
 **Providers visible on the register page today:** Google and Facebook. Apple and GitHub are supported by the backend but their UI buttons are not currently rendered (Apple is commented out; no GitHub button exists yet) — see the OAuth doc for the full matrix.
 
@@ -82,20 +188,90 @@ The panel updates in real-time as you type, showing green checkmarks for met req
 ## What Happens After Registration
 
 1. **Account is created** with status `pending_verification`
+<figure className="text-center">
+  <img
+    src="/content/images/status_pending_verification2.png"
+    alt="Pending Verification status."
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social Log In Via Facebook..
+  </figcaption>
+</figure>
 2. **Default role**: Every new user is created as a **Learner** (`is_learner = true`)
 3. **Verification required**: Depending on the registration method:
    - Email registration → Email verification OTP is sent
+  <figure className="text-center">
+    <img
+      src="/content/images/verify_email.png"
+      alt="Email verification."
+      className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+      Email Verification.
+    </figcaption>
+  </figure>
+
+
    - Phone registration → SMS OTP is sent
+   <figure className="text-center">
+    <img
+      src="/content/images/verify_number.png"
+      alt="Phone number verification."
+      className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+      Phone Number Verification.
+    </figcaption>
+  </figure>
+
+
 4. **Redirect**: You are automatically redirected to the appropriate verification page
 5. Once verified, your account status changes to `active`
+<figure className="text-center">
+    <img
+      src="/content/images/After_phone_or_email_verified_status_active1.png"
+      alt="Status changed to active."
+      className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+      Registration Status changed to active.
+    </figcaption>
+  </figure>
 
 ## Reactivating a Deleted Account
 
 If you previously deleted your account and try to register with the same email/phone:
 
 - The system checks the **tenant's data retention policy**
+<figure className="text-center">
+    <img
+      src="/content/images/data_retention_policy.png"
+      alt="data retention policy check during registration"
+      className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+      Data Retention Policy Check.
+    </figcaption>
+  </figure>
 - If your data is still within the retention period, you may be able to **reactivate** your previous account
 - A verification code is sent to your original email/phone to confirm identity
+<figure className="text-center">
+    <img
+      src="/content/images/verify_email.png"
+      alt="Verification code sent for account reactivation"
+      className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+      Verification Code for Reactivation.
+    </figcaption>
+  </figure>
 - If beyond the retention period, a new account is created
 
 ## Rate Limiting

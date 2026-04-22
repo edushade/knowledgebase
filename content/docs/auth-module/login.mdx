@@ -6,6 +6,9 @@ feature: "login"
 order: 2
 ---
 
+
+
+
 # Login
 
 EduShade supports multiple login methods so users can choose what's easiest for them.
@@ -18,24 +21,124 @@ The standard login method.
 
 **Steps:**
 1. Navigate to the **Login** page (`/auth/login`)
+<figure className="text-center">
+  <img
+    src="/content/images/login_page.png"
+    alt="Login Page Interface"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Login page of the system
+  </figcaption>
+</figure>
 2. Enter your **email address** *or* **username**
 3. Enter your **password**
 4. Click **Login**
+<figure className="text-center">
+  <img
+    src="/content/images/login_page2.png"
+    alt="Login Page with credentials filled in"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    After entering credentials click the Login button to proceed
+  </figcaption>
+</figure>
 5. On success, you are redirected to your dashboard
+<figure className="text-center">
+  <img
+    src="/content/images/dashboard1.png"
+    alt="Login successful, redirected to dashboard"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
 
-**Username rules:** usernames are optional but, when present, must be 3+ characters and contain only lowercase letters, numbers, and `.`, `-`, `_`. Usernames are unique per tenant. They are typically set by an admin (admins can also edit usernames directly from `/admin/users/{userID}/edit/edit-user` — see [User Management](/docs/knowledgebase/auth-module/user-management)).
+  <figcaption className="mt-2 text-sm text-gray-500">
+    After successful login you are redirected to the dashboard
+  </figcaption>
+</figure>
 
+**Username rules:** usernames are optional but, when present, must be 3+ characters and contain only lowercase letters, numbers, and `.`, `-`, `_`. Usernames are unique per tenant. They are typically set by an admin (admins can also edit usernames directly from `/admin/users/{userID}/edit/edit-user` — see [User Management](https://edushade.com/admin/users)).
+<figure className="text-center">
+  <img
+    src="/content/images/username.png"
+    alt="Username on edit page in admin's user management"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Username Edit by Admin in User Management Page.
+  </figcaption>
+</figure>
+
+<figure className="text-center">
+  <img
+    src="/content/images/username2.png"
+    alt="Username on User Management Page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Username on User Management Page.
+  </figcaption>
+</figure>
 ### 2. Phone + OTP Login
 
 A passwordless login method using your phone number and a one-time password.
 
 **Steps:**
 1. Navigate to the **Login** page
+<figure className="text-center">
+  <img
+    src="/content/images/login_page.png"
+    alt="Login Page Interface"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Login page of the system
+  </figcaption>
+</figure>
 2. Click the **phone icon** to switch to phone login mode
+<figure className="text-center">
+  <img
+    src="/content/images/login_page1.png"
+    alt="Login via phone - click phone icon to switch"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Click on Phone Login Icon.
+  </figcaption>
+</figure>
+
 3. Enter your **phone number**
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_number.png"
+    alt="enter phone number to receive OTP"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Enter your phone number.
+  </figcaption>
+</figure>
 4. Click **Send OTP** — a 6-digit code is sent via SMS (`POST /v1/auth/otp/send`)
 5. Enter the **OTP** received on your phone
 6. Click **Verify** to log in (`POST /v1/auth/otp/verify`)
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_number_verify1.png"
+    alt="Verify OTP after entering phone number"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Enter the OTP received on your phone and click Verify OTP to Log In.
+  </figcaption>
+</figure>
 
 **OTP Details:**
 - 6-digit numeric code
@@ -45,7 +148,54 @@ A passwordless login method using your phone number and a one-time password.
 
 ### 3. Social Login
 
-Log in instantly with Google or Facebook (the only providers currently visible in the UI). See [OAuth & Social Login](/docs/knowledgebase/auth-module/oauth-social-login) for the full provider matrix.
+Log in instantly with Google or Facebook (the only providers currently visible in the UI). See [OAuth & Social Login](https://edushade.com/auth/login) for the full provider matrix.
+<figure className="text-center">
+  <img
+    src="/content/images/social_login1.png"
+    alt="Social login options on the login page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social login options.
+  </figcaption>
+</figure>
+
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_google.png"
+    alt="Social Login via Google"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social login Via Google.
+  </figcaption>
+</figure>
+
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_facebook4.png"
+    alt="Social Login via Facebook"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/login_via_facebook3.png"
+    alt="Social Login via Facebook"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Social login Via Facebook.
+  </figcaption>
+</figure>
+
+
+
 
 ## After Successful Login
 
