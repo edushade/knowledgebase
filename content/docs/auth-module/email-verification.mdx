@@ -25,11 +25,69 @@ This is the default verification method.
 
 **Steps:**
 1. After registration, you are automatically redirected to the **Verify Email** page (`/auth/verify-email`)
+<figure className="text-center">
+  <img
+    src="/content/images/verify_email.png"
+    alt="Verify Email Page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Verify Email Page
+  </figcaption>
+</figure>
+
 2. A **6-digit OTP** is sent to your registered email address
 3. Check your email inbox (and spam/junk folder)
+<figure className="text-center">
+  <img
+    src="/content/images/OTP_verify.png"
+    alt="OTP Verification Page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    OTP send on Email.
+  </figcaption>
+</figure>
+
 4. Enter the 6-digit OTP in the verification form
-5. Click **Verify**
+5. Click **Verify Email**
+<figure className="text-center">
+  <img
+    src="/content/images/OTP_verify1.png"
+    alt="Enter OTP "
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Entered the OTP to verify the email.
+  </figcaption>
+</figure>
+
 6. On success, your email is marked as verified and you are redirected to the dashboard
+<figure className="text-center">
+  <img
+    src="/content/images/After_phone_or_email_verified_status_active1.png"
+    alt="OTP Verification Page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    After email verification status changed to active.
+  </figcaption>
+</figure>
+<figure className="text-center">
+  <img
+    src="/content/images/dashboard1.png"
+    alt="OTP Verification Page"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    After email is verified, Redirected to the Dashboard page.
+  </figcaption>
+</figure>
 
 ### Method 2: Verification Link
 
@@ -37,8 +95,30 @@ Some verification emails include a clickable link:
 
 1. Open the verification email
 2. Click the **Verify Email** button/link
+<figure className="text-center">
+  <img
+    src="/content/images/link_verify.png"
+    alt="Verify email via Link"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Click the verification link in your email.
+  </figcaption>
+</figure>
 3. The link opens the platform and automatically verifies your email
 4. You are redirected to the dashboard
+<figure className="text-center">
+  <img
+    src="/content/images/dashboard1.png"
+    alt="Dashboard"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Redirected to the Dashboard after email verification.
+  </figcaption>
+</figure>
 
 ## OTP Details
 
@@ -54,9 +134,44 @@ Some verification emails include a clickable link:
 If you didn't receive the OTP or it expired:
 
 1. On the verification page, click **Resend Verification**
+<figure className="text-center">
+  <img
+    src="/content/images/resend_verification_link.png"
+    alt="Resend Verification"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Resend verification link.
+  </figcaption>
+</figure>
+
 2. A new OTP is generated and sent to your email
+<figure className="text-center">
+  <img
+    src="/content/images/resend_code_on_email.png"
+    alt="Resend Verification code sent to email"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    Resend verification code sent to email.
+  </figcaption>
+</figure>
+
 3. The previous OTP is invalidated
 4. There is a **60-second cooldown** between resend requests
+<figure className="text-center">
+  <img
+    src="/content/images/60_second_cooldown_time1.png"
+    alt="60-second cooldown period"
+    className="mx-auto w-full max-w-[700px] h-auto"
+  />
+
+  <figcaption className="mt-2 text-sm text-gray-500">
+    60-second cooldown period between resend requests.
+  </figcaption>
+</figure>
 
 **Rate Limit:** You can resend verification emails up to **3 times per 5 minutes**.
 
@@ -66,16 +181,106 @@ If you didn't receive the OTP or it expired:
 2. Your account status changes from `pending_verification` to `active` (if all other requirements are met)
 3. You are redirected to:
    - **Profile Completion** page (if required fields are missing)
+   <figure className="text-center">
+      <img
+         src="/content/images/profile_complete.png"
+         alt="Profile Completion Page"
+         className="mx-auto w-full max-w-[700px] h-auto"
+      />
+   </figure> 
+   <figure className="text-center">
+      <img
+         src="/content/images/profile_complete1.png"
+         alt="Profile Completion Page"
+         className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+         Redirected to Profile Completion page as profile is incomplete.
+      </figcaption>
+   </figure> 
    - **Dashboard** (if your profile is complete)
+   <figure className="text-center">
+    <img
+     src="/content/images/dashboard1.png"
+     alt="Dashboard"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Redirected to the Dashboard as profile is complete.
+    </figcaption>
+   </figure>
 
 ## Verification for Email Changes
 
 When you change your email address (from Account Settings):
+<figure className="text-center">
+    <img
+     src="/content/images/update_email.png"
+     alt="change email from account settings"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
 
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Change email from account settings.
+    </figcaption>
+</figure>
 1. A verification OTP is sent to the **new email address**
+<figure className="text-center">
+    <img
+     src="/content/images/OTP_for_update_email.png"
+     alt="OTP sent to new email for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+</figure>
+<figure className="text-center">
+    <img
+     src="/content/images/OTP_on _email.png"
+     alt="OTP on new email for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     OTP sent to new email for verification.
+    </figcaption>
+</figure>
 2. You must enter the OTP to confirm the change
-3. Only after verification does the email address update
+<figure className="text-center">
+    <img
+     src="/content/images/enter_code.png"
+     alt="Enter OTP for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Enter the OTP to confirm the email change.
+    </figcaption>
+</figure>
+3. After verification, you have to insert your current password after that your email address will be changed. 
+<figure className="text-center">
+    <img
+     src="/content/images/password_to_change_email.png"
+     alt="Enter current password for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Enter current password to verify and change the email address.
+    </figcaption>
+</figure>
 4. Your previous email becomes unlinked
+<figure className="text-center">
+    <img
+     src="/content/images/email_changed.png"
+     alt="Email address updated"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Email address updated successfully.
+    </figcaption>
+</figure>
 
 See [Account Management](/docs/knowledgebase/auth-module/account-management) for more details.
 

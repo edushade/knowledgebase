@@ -13,7 +13,30 @@ EduShade provides a comprehensive account settings area where you can manage you
 ## Accessing Account Settings
 
 - **Learners**: Navigate to `Dashboard → Profile → Settings`
+<figure className="text-center">
+    <img
+     src="/content/images/account_setting_learner.png"
+     alt="Account Settings for Learners"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Account Settings for Learners.
+    </figcaption>
+</figure>
 - **Admins/Instructors**: Navigate to `Admin → Account Settings`
+<figure className="text-center">
+    <img
+     src="/content/images/account_setting_admin.png"
+     alt="Account Settings for Admins/Instructors"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Account Settings for Admin.
+    </figcaption>
+</figure>
+
 
 Both lead to the same set of account management features.
 
@@ -66,10 +89,63 @@ Update your registered email address with verification.
 
 1. Go to **Account Settings → Email**
 2. Enter your **new email address**
-3. Click **Change Email**
+<figure className="text-center">
+    <img
+     src="/content/images/update_email.png"
+     alt="change email from account settings"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Change email from account settings.
+    </figcaption>
+</figure>
+3. Click **Update**
 4. A verification OTP is sent to the **new email address**
-5. Enter the OTP to confirm the change
+<figure className="text-center">
+    <img
+     src="/content/images/OTP_for_update_email.png"
+     alt="OTP sent to new email for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+</figure>
+<figure className="text-center">
+    <img
+     src="/content/images/OTP_on _email.png"
+     alt="OTP on new email for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     OTP sent to new email for verification.
+    </figcaption>
+</figure>
+
+5. Enter the OTP to confirm the change and also enter your current password to verify the email change.
+<figure className="text-center">
+    <img
+     src="/content/images/password_to_change_email.png"
+     alt="Enter current password for verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Enter current password to verify and change the email address.
+    </figcaption>
+</figure>
+
 6. Your email address is updated
+<figure className="text-center">
+    <img
+     src="/content/images/email_changed.png"
+     alt="Email address updated"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Email address updated successfully.
+    </figcaption>
+</figure>
 
 ### Important Notes
 
@@ -103,9 +179,31 @@ See [Password Management](/docs/knowledgebase/auth-module/password-management) f
 
 **Quick Summary:**
 1. Go to **Account Settings → Password**
+<figure className="text-center">
+    <img
+     src="/content/images/change_password_from_profile.png"
+     alt="Change Password form profile"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Change Password form profile.
+    </figcaption>
+</figure>
 2. Enter your current password (if set)
 3. Enter and confirm your new password
-4. Click **Change Password**
+4. Click **Update Password**
+<figure className="text-center">
+    <img
+     src="/content/images/update_password_form_profile.png"
+     alt="Update Password form profile"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Update Password.
+    </figcaption>
+</figure>
 
 ## Notification Preferences
 
@@ -117,6 +215,17 @@ Configure how and when you receive notifications.
    - **SMS notifications** — Receive updates via SMS
    - **In-app notifications** — Receive in-platform notifications
 3. Configure notification types (enrollment updates, course updates, etc.)
+<figure className="text-center">
+    <img
+     src="/content/images/notification_preference.png"
+     alt="Notification Preferences"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Notification Preference.
+    </figcaption>
+</figure>
 
 ## Activity Logs
 
@@ -131,6 +240,17 @@ View your account activity history.
    - Session activity (logins from new devices, terminations)
    - OAuth links/unlinks
    - Impersonation events targeting your account
+   <figure className="text-center">
+      <img
+      src="/content/images/activity_log.png"
+      alt="Activity Logs"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Activity Logs showing account events.
+      </figcaption>
+   </figure>
 
 These entries are sourced from the **activity event stream** — every meaningful auth action publishes an event (`user.registered`, `password_changed`, `email_changed`, `oauth_login`, `impersonation_started`, etc.) which the activity service stores and surfaces here. See [Security Features](/docs/knowledgebase/auth-module/security-features) for the full event taxonomy.
 

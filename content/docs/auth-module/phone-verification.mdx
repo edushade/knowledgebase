@@ -14,10 +14,32 @@ If you registered with a phone number, you need to verify it before accessing th
 
 **Steps:**
 1. After registration (or when prompted), you are redirected to the **Verify Phone** page (`/auth/verify-phone`)
+<figure className="text-center">
+    <img
+     src="/content/images/verify_number.png"
+     alt="Verify phone number"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Verify phone number.
+    </figcaption>
+</figure>
 2. A **6-digit OTP** is sent to your registered phone number via SMS
 3. Enter the 6-digit code in the OTP input field
 4. The form **auto-submits** when all 6 digits are entered
 5. On success, your phone is marked as verified
+<figure className="text-center">
+    <img
+     src="/content/images/number_verified.png"
+     alt="Verify phone number"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Verify phone number.
+    </figcaption>
+</figure>
 
 ## OTP Details
 
@@ -34,9 +56,44 @@ If you registered with a phone number, you need to verify it before accessing th
 If you didn't receive the SMS or the code expired:
 
 1. Click **Resend OTP** on the verification page
+<figure className="text-center">
+    <img
+     src="/content/images/resend_code_number.png"
+     alt="Resend code on the phone number."
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Resend verification code sent to phone number.
+    </figcaption>
+</figure>
 2. A new OTP is generated and sent via SMS
+<figure className="text-center">
+    <img
+     src="/content/images/code_send_on_phone.jpg"
+     alt="Resend code sent on the phone number."
+     className="mx-auto w-full max-w-[250px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Resend the code to phone number.
+    </figcaption>
+</figure>
+
 3. The previous OTP is invalidated
 4. There is a **60-second cooldown** between resend requests
+<figure className="text-center">
+    <img
+     src="/content/images/cooling_period_on_number.png"
+     alt="cooling period on phone verification"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Cooling period after resend request.
+    </figcaption>
+</figure>
+
 
 **Rate Limit:** You can resend phone verification up to **3 times per 5 minutes**.
 
@@ -64,9 +121,51 @@ When you change your phone number (from Account Settings):
 
 1. Your `phone_verified` flag is set to `true`
 2. Your account status updates to `active` (if all other requirements are met)
+<figure className="text-center">
+    <img
+     src="/content/images/number_verified.png"
+     alt="phone number status is active"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Phone number verified and Account status updated to Active.
+    </figcaption>
+</figure>
+
 3. You are redirected to:
    - **Profile Completion** page (if required fields are missing)
+   <figure className="text-center">
+      <img
+         src="/content/images/profile_complete.png"
+         alt="Profile Completion Page"
+         className="mx-auto w-full max-w-[700px] h-auto"
+      />
+   </figure> 
+   <figure className="text-center">
+      <img
+         src="/content/images/profile_complete1.png"
+         alt="Profile Completion Page"
+         className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+         Redirected to Profile Completion page as profile is incomplete.
+      </figcaption>
+   </figure> 
    - **Dashboard** (if your profile is complete)
+   <figure className="text-center">
+    <img
+     src="/content/images/dashboard1.png"
+     alt="Dashboard"
+     className="mx-auto w-full max-w-[700px] h-auto"
+    />
+
+    <figcaption className="mt-2 text-sm text-gray-500">
+     Redirected to the Dashboard as profile is complete.
+    </figcaption>
+   </figure>
+
 
 ## Troubleshooting
 

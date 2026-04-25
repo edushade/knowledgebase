@@ -84,19 +84,62 @@ A single user can hold any combination of these flags **and** any number of role
 ### Creating a New Role
 
 1. Go to **Admin → Users → Roles** (`/admin/users/roles`)
+<figure className="text-center">
+      <img
+      src="/content/images/user_role.png"
+      alt="User role management page"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      User Role.
+      </figcaption>
+</figure>
 2. Click **Create Role**
 3. Enter a **role name** (and `guard`, default `web`)
 4. Select the **permissions** to include
 5. Click **Save**
+<figure className="text-center">
+      <img
+      src="/content/images/create_role.png"
+      alt="Create Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Create Role.
+      </figcaption>
+   </figure>
 
 API: `POST /v1/rbac/roles` (requires `rbac.create`).
 
 ### Editing a Role
 
 1. From the roles list, click a role to open `/admin/users/roles/{roleID}/edit`
+<figure className="text-center">
+      <img
+      src="/content/images/user_role1.png"
+      alt="Role List"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Role List.
+      </figcaption>
+</figure>
 2. Modify the name, status, or toggle permissions on/off
 3. Click **Save** — changes take effect immediately for all users with this role (after the cache invalidation event propagates)
+<figure className="text-center">
+      <img
+      src="/content/images/update_role.png"
+      alt="Edit Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
 
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Edit Role.
+      </figcaption>
+</figure>
 API: `PUT /v1/rbac/roles/{roleID}` (requires `rbac.update`).
 
 ### Cloning a Role
@@ -104,15 +147,71 @@ API: `PUT /v1/rbac/roles/{roleID}` (requires `rbac.update`).
 Need a role similar to an existing one?
 
 1. Find the role in the roles list and click **Clone**
+<figure className="text-center">
+      <img
+      src="/content/images/clone_a_role.png"
+      alt="Clone Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Clone Role.
+      </figcaption>
+</figure>
 2. A new role is created with the same set of permissions
+<figure className="text-center">
+      <img
+      src="/content/images/role_cloned.png"
+      alt="Role Cloned"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Role Cloned.
+      </figcaption>
+</figure>
+
 3. Edit the cloned role to customize its name and permissions
+<figure className="text-center">
+      <img
+      src="/content/images/edit_cloned_role.png"
+      alt="Edit Cloned Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Edit Cloned Role.
+      </figcaption>
+</figure>
 
 API: `POST /v1/rbac/roles/{roleID}/clone` (requires `rbac.create`).
 
 ### Deleting a Role
 
 1. Click **Delete** on the role
+<figure className="text-center">
+      <img
+      src="/content/images/delete_a_role.png"
+      alt="Delete aRole"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Delete a Role.
+      </figcaption>
+</figure>
 2. Confirm the action — the role is **soft-deleted** (`deleted_at` set)
+<figure className="text-center">
+      <img
+      src="/content/images/delete_a_role1.png"
+      alt="Confirm Delete Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Confirm Delete Role.
+      </figcaption>
+</figure>
 3. Users who held this role lose its permissions on their next permission-cache refresh
 
 API: `DELETE /v1/rbac/roles/{roleID}` (requires `rbac.delete`).
@@ -122,9 +221,42 @@ API: `DELETE /v1/rbac/roles/{roleID}` (requires `rbac.delete`).
 ### Assign a Role to a User
 - API: `POST /v1/rbac/users/{userID}/roles/{roleID}` (requires `rbac.update`)
 - UI: edit the user, pick roles in the **Roles** section.
+<figure className="text-center">
+      <img
+      src="/content/images/remove_role.png" 
+      alt="Set Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Set Role.
+      </figcaption>
+</figure>
 
 ### Remove a Role from a User
 - API: `DELETE /v1/rbac/users/{userID}/roles/{roleID}` (requires `rbac.update`)
+<figure className="text-center">
+      <img
+      src="/content/images/remove_role.png" 
+      alt="Set Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Set Role.
+      </figcaption>
+</figure>
+<figure className="text-center">
+      <img
+      src="/content/images/set_role.png" 
+      alt="Remove Role"
+      className="mx-auto w-full max-w-[700px] h-auto"
+      />
+
+      <figcaption className="mt-2 text-sm text-gray-500">
+      Remove Role.
+      </figcaption>
+</figure>
 
 ### Assign a Direct Permission to a User
 - API: `POST /v1/rbac/users/{userID}/permissions/{permissionID}` (requires `rbac.update`)
