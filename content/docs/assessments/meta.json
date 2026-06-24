@@ -1,0 +1,21 @@
+{
+  "title": "Assessments & Quizzes",
+  "icon": "ListChecks",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "creating-quizzes",
+    "question-types",
+    "quiz-settings",
+    "quiz-availability",
+    "taking-quizzes",
+    "grading-quizzes",
+    "proctoring",
+    "leaderboards",
+    "assignments",
+    "exams",
+    "makeup-assessments",
+    "question-reports",
+    "quiz-analytics"
+  ]
+}

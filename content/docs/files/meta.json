@@ -1,0 +1,13 @@
+{
+  "title": "Files & Media",
+  "icon": "FolderOpen",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "uploading-files",
+    "organizing-files",
+    "previewing-files",
+    "learner-uploads",
+    "sharing-and-limits"
+  ]
+}

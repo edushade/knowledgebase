@@ -1,0 +1,75 @@
+---
+title: "Prerequisites"
+description: "Keep a lesson locked until an earlier required lesson is finished."
+---
+
+A prerequisite keeps one item locked until another item is **completed**. For example, lock
+"Quiz 2" until "Lesson 2" is done. This is how you build a learning sequence and stop
+learners jumping ahead.
+
+A prerequisite is simply the **Completion-based** unlock option from
+[drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling), pointed at the work
+that must come first.
+
+## Two ways to set it up
+
+| Flavor | How it behaves |
+|---|---|
+| **Require a specific item** | You pick the exact item that must be finished first. The locked item opens once that item is complete. |
+| **Sequential (generic)** | You don't pick anything specific. The item simply unlocks once the **previous item in order** is done. |
+
+Use **specific** when one particular lesson or quiz is the gatekeeper. Use **sequential**
+when you just want learners to go through content in order.
+
+## How to set it up
+
+1. Open the offering in **Admin** and go to its **Drip Schedule** settings.
+2. On the item you want to lock, choose **Completion-based**.
+3. Either **pick the required item**, or leave it generic for "finish the previous item
+   first".
+4. Save.
+
+<Callout type="info">
+The item picker won't let you create a loop (for example, "A requires B" while "B requires
+A"). It also keeps the choices sensible so you can't pick something that could never be
+reached.
+</Callout>
+
+## What the learner sees
+
+A locked item appears greyed out with a lock badge explaining what to do:
+
+- **"Complete in order"** — when items unlock one after another.
+- **"Complete [item] first"** — when a specific item must be finished first.
+
+Once the required item is completed, the gate opens **permanently** — the learner won't get
+locked out of it again.
+
+## Works across reused content
+
+Prerequisites work even when content is nested. An item in a **learning path** can require a
+lesson that lives inside a **course reused within that path**. The path item stays locked
+until that inner lesson is done, then opens.
+
+<Callout type="info">
+Completion is counted **once per item, everywhere it appears.** If a lesson shows up in more
+than one place, finishing it once satisfies the prerequisite in all of them — the learner
+never has to do the same lesson twice.
+</Callout>
+
+## Prerequisites vs. eligibility
+
+It's easy to mix these up:
+
+- **Prerequisites** decide the **order** learners move through content (finish X before Y).
+- **Eligibility rules** decide **whether** a learner can see content at all (for example,
+  only learners in a certain group).
+
+If you want to control your **audience** rather than the **sequence**, see
+[Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules).
+
+<Callout type="info">
+What counts as "finished" for an item is set by its
+[completion rule](/docs/knowledgebase/progress-grading/completion-rules) — for example,
+viewing a lesson or passing a quiz. That's what triggers a prerequisite to open.
+</Callout>

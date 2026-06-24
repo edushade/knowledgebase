@@ -1,0 +1,62 @@
+---
+title: "Payment Methods"
+description: "Connect card, mobile-wallet, and offline payment options, and record payments on a buyer's behalf."
+---
+
+Payment methods are how buyers actually pay you. You can connect several at once and let
+buyers choose. You can also record a payment yourself when someone pays in cash or by
+bank transfer.
+
+## The kinds of payment you can accept
+
+| Kind | Examples |
+|---|---|
+| **Card / online payments** | SSLCommerz, Stripe, PayPal, Razorpay |
+| **Mobile-wallet payments** | bKash, Nagad, Rocket |
+| **Offline / manual** | Cash, bank transfer |
+
+## Connecting and managing a payment option
+
+For each online or mobile-wallet option, you can:
+
+1. Go to **Admin → Payment Methods**.
+2. **Add** the option and enter its **credentials** (the keys the provider gives you).
+3. **Run a test** to confirm the credentials work before you go live.
+4. Switch between **test mode** and **live mode**.
+5. Turn the option **on or off**.
+6. Set a **priority** when several options are active, to control their order for buyers.
+
+<Callout type="warn">
+  Always run the built-in **test** and confirm it passes before switching an option to
+  **live**. This catches wrong credentials before a real buyer tries to pay.
+</Callout>
+
+## Recording an offline or cash payment
+
+When a buyer pays you directly — in cash, by bank transfer, or any way outside the
+online options — you can record it yourself:
+
+1. Go to **Admin → Payments → Record Payment**.
+2. Choose the **buyer**, the **item**, and the **price**.
+3. Pick the **method** and the **date** (you can **back-date** it if the payment happened
+   earlier).
+4. (Optional) Add a **discount**, **fees**, or **notes**.
+5. Mark it as **pending** or **verified**.
+
+Recording a verified payment grants the buyer access just as an online payment would.
+
+## What the buyer sees
+
+- A choice of the payment options you've turned on, in the order you set.
+- Their own **transaction history** of past purchases.
+
+## What you see
+
+You get an enriched view of all transactions across your platform, and you can **export**
+them to a spreadsheet.
+
+## Related pages
+
+- [Checkout](/docs/knowledgebase/selling-payments/checkout) — where the buyer chooses a method and pays.
+- [Installments](/docs/knowledgebase/selling-payments/installments) — recording monthly payments offline.
+- [Refunds](/docs/knowledgebase/selling-payments/refunds) — reversing a payment later.

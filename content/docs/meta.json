@@ -1,4 +1,23 @@
 {
   "root": true,
-  "pages": ["---Modules---", "auth-module", "tenant-module", "audit-module", "notification-module", "comm-module", "engagement-module", "filemanager-module", "search-module", "misc-module"]
+  "pages": [
+    "index",
+    "---Teaching---",
+    "courses",
+    "enrollment-access",
+    "progress-grading",
+    "assessments",
+    "certificates",
+    "---Business---",
+    "selling-payments",
+    "website",
+    "---Engage---",
+    "communication",
+    "community",
+    "bookings",
+    "---Platform---",
+    "files",
+    "search",
+    "account-people"
+  ]
 }

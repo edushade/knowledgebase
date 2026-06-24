@@ -1,0 +1,17 @@
+{
+  "title": "Website & Pages",
+  "icon": "Globe",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "pages-and-blocks",
+    "templates-and-themes",
+    "navigation-menus",
+    "forms-and-leads",
+    "blog",
+    "seo",
+    "languages",
+    "versions-and-redirects",
+    "publishing"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Bookings & Appointments",
+  "icon": "CalendarClock",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "meeting-plans",
+    "availability",
+    "booking-page",
+    "payments",
+    "integrations",
+    "group-and-request-bookings",
+    "managing-bookings"
+  ]
+}

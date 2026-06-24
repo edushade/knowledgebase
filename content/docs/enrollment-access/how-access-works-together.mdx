@@ -1,0 +1,72 @@
+---
+title: "How Access Works Together"
+description: "See how eligibility, scheduling, prerequisites, and completion rules combine to decide what a learner sees."
+---
+
+You have several access controls, and they each answer a different question. They work
+**together**, in a clear order. Once you understand that order, setting them up is simple.
+
+## The order, in plain words
+
+For any item, the system asks these questions in turn:
+
+1. **Is the learner eligible to see it?** —
+   [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules) decide what's
+   even **visible**. If a learner isn't eligible, the item doesn't appear at all.
+2. **Does the learner own it?** — If you've set
+   [partial access](/docs/knowledgebase/enrollment-access/partial-access), the learner sees
+   only the parts they hold.
+3. **Is it open right now?** —
+   [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) and
+   [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites) decide what's **open**
+   versus locked at this moment.
+4. **Is it done?** —
+   [Completion rules](/docs/knowledgebase/progress-grading/completion-rules) mark work as
+   finished — which can in turn **open the next item** in a sequence.
+
+So eligibility and partial access decide **what's there**, scheduling and prerequisites
+decide **what's open now**, and completion marks things **done** (which can unlock the next
+step).
+
+## A quick example
+
+Imagine a learning path with a fixed start date and a "finish each module before the next"
+sequence:
+
+1. A learner who isn't in the right group never sees the path (**eligibility**).
+2. A learner who bought only the first term sees only that term (**partial access**).
+3. Module 2 stays locked until the start date and until Module 1 is finished
+   (**scheduling + prerequisites**).
+4. When the learner finishes Module 1 (**completion rule**), Module 2 opens.
+
+## The override rule that runs through all of it
+
+Wherever a setting can be applied at more than one level, **the most specific setting wins**:
+
+- A **per-learner** setting beats a **per-item** setting.
+- A **per-item** setting beats the **whole-offering** default.
+
+This is true for scheduling and for eligibility, so you can set a sensible default for
+everyone and then make targeted exceptions.
+
+## Reused content is independent
+
+A course can stand alone **and** be reused inside a learning path. The access you set in each
+place is separate — settings inside the path never leak into the standalone course, and the
+standalone course's settings never leak into the path. If you set **no** rule for an item
+inside the path, that item is simply **open** there. That's intentional.
+
+## Quick reference
+
+| Question | Controlled by |
+|---|---|
+| Can the learner see it at all? | [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules) |
+| Does the learner own this part? | [Partial access](/docs/knowledgebase/enrollment-access/partial-access) |
+| Is it open right now? | [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) |
+| Must earlier work be finished first? | [Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites) |
+| What counts as finished? | [Completion rules](/docs/knowledgebase/progress-grading/completion-rules) |
+
+<Callout type="info">
+Building an offering from scratch? Set it up in
+[Courses & Content](/docs/knowledgebase/courses) first, then layer on these access controls.
+</Callout>

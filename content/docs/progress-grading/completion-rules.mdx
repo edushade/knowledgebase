@@ -1,0 +1,97 @@
+---
+title: "Completion Rules"
+description: "Decide exactly what marks an activity as 'done' — from watching a video to passing a quiz — and set it for one item, a whole course, or your entire platform."
+---
+
+A completion rule answers one question: **what does a learner have to do for this activity
+to count as finished?** Your platform comes with sensible defaults, and you can change
+them whenever you like.
+
+## The built-in defaults
+
+Out of the box, each kind of content completes like this:
+
+| Content type | Counts as done when… |
+|--------------|----------------------|
+| **Video / audio** | The learner has watched almost to the end (about 90%). |
+| **Text lesson** | The learner has scrolled to the end. |
+| **PDF** | The learner has viewed every page. |
+| **File** (download/attachment) | The learner has opened it. |
+| **Quiz** | The learner has submitted an attempt. |
+| **Assignment** | The learner has made a submission. |
+| **Sections, courses, terms** | All of their contents are complete. |
+
+<Callout type="warn">
+For a quiz, **completed is not the same as passed**. By default, simply submitting an
+attempt — even a failing one — marks the quiz complete. If you want completion to require
+a passing score, choose the **Pass** rule below.
+</Callout>
+
+## Changing the rule
+
+You can override the default for lessons, files, quizzes, and assignments.
+
+### For lessons and files
+
+| Option | What it means |
+|--------|----------------|
+| **Default** | Use the built-in rule above. |
+| **Viewed** | Done as soon as the learner opens it. |
+| **Reach a minimum percent** | Done when they reach a percentage you set (for example, watch 75% of a video). |
+| **Spend a minimum time** | Done after a set number of seconds. *(Video and audio only.)* |
+
+### For quizzes and assignments
+
+| Option | What it means |
+|--------|----------------|
+| **Default** | Use the built-in rule (any submission counts). |
+| **Attempt** | Done on any submission — pass or fail. |
+| **Pass** | Done only when the score meets the passing mark. |
+
+<Callout type="info">
+The **Pass** option only appears if the quiz or assignment actually has a passing mark
+set. If there is no passing mark, there is nothing to pass, so the option is hidden.
+</Callout>
+
+## Where you can set rules — and which one wins
+
+You can set completion rules at several levels:
+
+- **Per learner** — a special rule for one individual.
+- **Per item** — a rule for one specific lesson or quiz.
+- **Per course (offering)** — defaults for that whole course. Lessons here are split into
+  two groups, **Video & audio** and **Text & PDF**, because they support different signals
+  (you cannot "watch" a PDF, for example).
+- **Platform-wide** — your default for everything.
+
+When more than one rule could apply, the **most specific one wins**:
+
+> **Per learner → Per item → Course default → Platform default → Built-in**
+
+So a rule you set for a single learner overrides everything; a rule on a single item
+overrides the course default; and so on down to the built-in behaviour.
+
+## Two things that are intentional
+
+- **There is no "manual tick only" mode and no "don't track" mode.** Completion is always
+  worked out automatically from what the learner does.
+- **There is still a "Mark as complete" button** that learners can use where you allow it —
+  handy for activities like reading a downloadable file.
+
+## When a whole course finishes
+
+A course completes automatically the moment **100% of its available, completable items**
+are done. That can:
+
+- Send the learner a **completion notice**,
+- Mark their **enrollment as completed**, and
+- Automatically issue a [certificate](/docs/knowledgebase/certificates), if you have set
+  one up.
+
+## Good to know
+
+- Completion is **sticky** — once an activity is done, it stays done even if the learner
+  revisits it.
+- Completion (the *what counts as done*) is separate from
+  [drip scheduling and access rules](/docs/knowledgebase/enrollment-access), which control
+  *when* content becomes available in the first place.

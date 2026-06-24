@@ -1,0 +1,17 @@
+{
+  "title": "Account & People",
+  "icon": "Users",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "your-platform-settings",
+    "accounts-and-sign-in",
+    "verification",
+    "profiles-and-devices",
+    "people-and-roles",
+    "support-login",
+    "categories-and-tags",
+    "activity-history",
+    "security"
+  ]
+}

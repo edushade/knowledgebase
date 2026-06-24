@@ -1,0 +1,108 @@
+---
+title: "Drip Scheduling"
+description: "Control when content opens for learners, and optionally when it closes again."
+---
+
+Drip scheduling controls **when** content opens for a learner — and, if you want, when it
+closes again. Instead of giving everyone everything at once, you can pace a course, line it
+up with a class schedule, stop learners skipping ahead, or close an exam after a deadline.
+
+## What you can do with it
+
+- Release one module per week so learners don't rush ahead.
+- Open content on a fixed date that matches your class calendar.
+- Open content a set number of days after a learner enrolls.
+- Open an item only after an earlier item is finished (this is the prerequisite case — see
+  [Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites)).
+- Close a quiz or assignment after its deadline.
+
+## Unlock options (when content opens)
+
+When you set up a schedule, you choose how content unlocks:
+
+| Option | When the content opens |
+|---|---|
+| **Immediate** | Open right away when the learner enrolls. |
+| **Fixed date** | Opens on a specific date and time you set. |
+| **Days after enrollment** | Opens a set number of days after the learner enrolls. |
+| **Completion-based** | Opens after the previous (or a required) item is finished. This is how [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites) work. |
+| **Manual** | Each item follows its own open/close rule that you set individually. |
+
+## Close options (when content locks again)
+
+Each schedule can also have a matching **close** rule, so content locks again after a point.
+You can close content:
+
+- **On a date** — locks at a specific date and time.
+- **A number of days after enrollment** — locks that many days after the learner joined.
+- **A duration after it opened** — for example, "stays open for 7 days, then locks".
+
+This is handy for time-limited tasks, like an exam that's only available during its window.
+
+## Three levels — most specific wins
+
+You can set scheduling at three levels. When more than one applies, the **most specific one
+wins**:
+
+1. **Whole-offering default** — applies to everything in the offering.
+2. **Per-item override** — a rule on one specific lesson, quiz, or section.
+3. **Per-learner override** — a rule for one specific learner on one item.
+
+So a per-learner rule beats a per-item rule, and a per-item rule beats the offering-wide
+default. This lets you, say, release content weekly for everyone but give one learner an
+earlier start.
+
+## How to set it up
+
+1. Open the offering in **Admin** and go to its **Drip Schedule** settings.
+2. Choose a **whole-offering default** (for example, "Days after enrollment: 7").
+3. To fine-tune, add a **per-item override** on any lesson or section.
+4. To help an individual learner, add a **per-learner override** on a specific item.
+5. Save.
+
+## What the learner sees
+
+Locked content isn't hidden — it's shown **greyed out with a lock badge** that explains
+why and when it will open. Depending on the rule, the badge says things like:
+
+- **"Unlocks on March 3"** — for a fixed date.
+- **A countdown of days** — for "days after enrollment".
+- **"Complete in order"** — when items open one after another.
+- **"Complete [item] first"** — when a specific item must be finished first.
+
+When the item opens, the lock disappears and the learner can start.
+
+## After a close date
+
+Once a close date passes, items lock again. There's one helpful exception:
+
+- A learner can **still review a quiz they already completed** — they keep access to their
+  result even after the quiz closes.
+- Everything else (and any quiz they didn't finish) locks once the close date passes.
+
+<Callout type="info">
+A lesson a learner already finished normally **stays open for review**. It only locks again
+if an admin reschedules its opening to a **future** date — a deliberate future gate is
+honoured.
+</Callout>
+
+## Content reused inside a learning path
+
+A single course can be used on its own **and** reused inside a learning path. The scheduling
+you set in each place is **independent** — a schedule inside the learning path never changes
+the standalone course, and the standalone course's schedule never leaks into the path.
+
+A couple of things follow from this:
+
+- **"Days after enrollment"** on an item inside a learning path counts from the **learning
+  path's** enrollment date (the program the learner actually joined).
+- If you set **no** schedule for an item inside the learning path, that item is simply
+  **open** there. That's intentional, not a mistake.
+
+<Callout type="info">
+Want content to open only after earlier work is done? That's the **Completion-based** option,
+explained in detail under
+[Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites). To control **who** can
+see content at all, see
+[Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules).
+</Callout>

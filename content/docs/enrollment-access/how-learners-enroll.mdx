@@ -1,0 +1,77 @@
+---
+title: "How Learners Enroll"
+description: "How a learner joins a course, learning path, or cohort, and what gets checked along the way."
+---
+
+A learner always enrolls in a whole offering — a **course**, a **learning path**, or a
+**cohort** — never in a single lesson. Once enrolled, they get access to that offering's
+content (subject to the access controls described later in this section).
+
+## Ways to enroll
+
+| Method | Who does it | When to use it |
+|---|---|---|
+| **Self-enroll** | The learner | Free or open offerings where anyone can join. |
+| **After a purchase** | Automatic | The learner is enrolled the moment payment succeeds. |
+| **After a scholarship** | Automatic | The learner is enrolled when a scholarship is granted. |
+| **Admin enroll** | You / an admin | Adding a specific learner yourself. |
+| **Bulk enroll** | You / an admin | Adding many learners at once from a list. |
+
+This page covers **self-enroll** and what the system checks. For the admin methods, see
+[Admin & bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
+
+## How self-enroll works
+
+A learner opens a published offering and clicks **Enroll**. Before the enrollment goes
+through, the system checks a few things:
+
+1. **Is it published?** Only published offerings can be joined.
+2. **Is enrollment open?** You can turn enrollment on or off for an offering.
+3. **Are seats available?** If you set a seat limit, the offering stops accepting learners
+   once it is full.
+4. **For cohorts — is the enrollment window open?** A cohort accepts learners only between
+   its start and end enrollment dates.
+
+If every check passes, the learner is enrolled and can begin. If any check fails, they
+can't enroll right then (for example, the seats are full or the window has closed).
+
+## Enrollment statuses
+
+Every enrollment has a status. It controls whether the learner is active and whether they
+can enroll again later.
+
+| Status | What it means | Can they re-enroll? |
+|---|---|---|
+| **Active** | Currently enrolled and learning. | No — they are already in. |
+| **Completed** | They finished the offering. | No |
+| **Suspended** | Temporarily paused by an admin. | No |
+| **Cancelled** | The enrollment was cancelled. | Yes |
+| **Expired** | Their access window ended. | Yes |
+
+In short: an **active, completed, or suspended** learner can't re-enroll in the same
+offering, while a **cancelled or expired** one can.
+
+## Cohort rules
+
+Cohorts are time-bound groups, so they have two extra rules:
+
+- A learner can be in **only one cohort at a time** within the same parent offering. They
+  can't join two parallel cohorts of the same thing.
+- Each cohort has its **own enrollment window and seat limit**, separate from other cohorts.
+
+<Callout type="info">
+Want to learn how cohorts and learning paths are set up? See
+[Cohorts](/docs/knowledgebase/courses/cohorts) and
+[Learning paths](/docs/knowledgebase/courses/learning-paths) in Courses & Content.
+</Callout>
+
+## Good to know
+
+- **Access expiry (access window).** Each enrollment can have an end date, after which the
+  learner's access expires. You can choose to allow extensions.
+- **Notifications.** Each enrollment can have notifications turned on or off for that
+  learner.
+- Enrolling does **not** automatically open every lesson. What a learner sees and when is
+  controlled by [eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules),
+  [drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling), and
+  [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites).

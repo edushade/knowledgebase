@@ -1,25 +1,34 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, JetBrains_Mono, Fraunces } from 'next/font/google';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './globals.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-mono',
   subsets: ['latin'],
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  variable: '--font-display',
+  subsets: ['latin'],
+  display: 'swap',
+  axes: ['opsz', 'SOFT'],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'EduShade Knowledge Base',
-    template: '%s — EduShade Knowledge Base',
+    default: 'Edushade Knowledge Base',
+    template: '%s — Edushade Knowledge Base',
   },
   description:
-    'Technical documentation and product guides for the EduShade platform.',
+    'A field guide to the Edushade platform — modules, services, and operational playbooks.',
 };
 
 export default function RootLayout({
@@ -30,7 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col font-sans antialiased">

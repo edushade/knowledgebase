@@ -1,0 +1,15 @@
+{
+  "title": "Enrollment & Access",
+  "icon": "LockKeyhole",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "how-learners-enroll",
+    "admin-and-bulk-enrollment",
+    "partial-access",
+    "drip-scheduling",
+    "prerequisites",
+    "eligibility-rules",
+    "how-access-works-together"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Courses & Content",
+  "icon": "BookOpen",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "creating-a-course",
+    "course-structure",
+    "lesson-types",
+    "files-and-resources",
+    "reusable-content",
+    "learning-paths",
+    "cohorts",
+    "instructors",
+    "publishing-and-catalog"
+  ]
+}

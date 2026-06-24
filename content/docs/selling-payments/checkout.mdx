@@ -1,0 +1,66 @@
+---
+title: "Checkout"
+description: "What happens when a buyer pays for an item and gets access."
+---
+
+**Checkout** is the moment a buyer completes a purchase. A purchase records one buyer
+getting one item. The system tracks two things for every purchase: whether the **payment**
+went through, and whether the buyer has **access**.
+
+<Callout type="info">
+  **One item per checkout.** Each purchase is for a single item. There's no cart for
+  buying several things at once. To sell items together, group them into a
+  [bundle](/docs/knowledgebase/selling-payments/bundles).
+</Callout>
+
+## The two things a purchase tracks
+
+**Payment status** moves through:
+
+`pending` → `success` → (later, if needed) `refunded` or `cancelled`
+
+**Access status** moves through:
+
+`pending` → `active` → (later) `expired` or `revoked`
+
+In plain terms: the buyer pays, the payment succeeds, access turns on. If access has a
+time limit it eventually expires; if you reverse the purchase, access can be removed.
+
+## A normal purchase
+
+1. The buyer opens an item and chooses a **price**.
+2. (Optional) They enter a **coupon code** — see
+   [Coupons & offers](/docs/knowledgebase/selling-payments/coupons-and-offers).
+3. They pick a **payment method** and pay — see
+   [Payment methods](/docs/knowledgebase/selling-payments/payment-methods).
+4. Once payment **succeeds**, **access turns on** and they can start.
+
+## Free purchases skip payment
+
+If the item is **free**, or a **coupon** or **scholarship** brings the total to zero,
+there's nothing to pay. The buyer skips the payment step and gets **access immediately**.
+
+## Eligibility checks at checkout
+
+Before a purchase goes through, a few things are checked automatically:
+
+| Check | What it means |
+|---|---|
+| **Enrollment window** | The item must be open for enrollment right now. |
+| **Seat availability** | If there's a seat limit, there must be room. |
+| **No duplicate purchase** | For items that are one-per-buyer (like a course), the buyer can't buy it twice. |
+
+If a buyer isn't eligible, they won't be able to complete the purchase.
+
+## What the buyer sees
+
+- The item, the price, and a place to enter a coupon code.
+- A choice of payment methods.
+- After paying (or instantly, for free items), confirmation and access to the item.
+- Their own **transaction history** so they can look back at what they bought.
+
+## Related pages
+
+- [Pricing](/docs/knowledgebase/selling-payments/pricing) — the prices a buyer chooses from.
+- [Payment methods](/docs/knowledgebase/selling-payments/payment-methods) — how the buyer pays.
+- [Enrollment & Access](/docs/knowledgebase/enrollment-access) — what access turns on after payment.

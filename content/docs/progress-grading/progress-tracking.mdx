@@ -1,0 +1,72 @@
+---
+title: "Progress Tracking"
+description: "How your platform measures each learner's progress through a lesson and rolls it up into overall course progress."
+---
+
+Every time a learner opens a lesson, takes a quiz, or works through your content, your
+platform quietly keeps track of how far they have got. Learners see a progress bar; you
+see exactly who is on track and who has stalled.
+
+## What gets tracked for each activity
+
+Every activity has a simple status:
+
+| Status | What it means |
+|--------|----------------|
+| **Not started** | The learner has not opened it yet. |
+| **In progress** | They have started but not finished. |
+| **Completed** | They have met the [completion rule](/docs/knowledgebase/progress-grading/completion-rules) for that activity. |
+
+Alongside the status, your platform also records:
+
+- **Time spent** on the activity.
+- A **resume position** for video and audio, so a learner can pick up exactly where they
+  left off.
+
+## Smart video and audio tracking
+
+Video and audio are tracked carefully so progress is honest:
+
+- It records **which parts of the video the learner actually watched** — not just how
+  long the player was open.
+- If a learner jumps back and re-watches a section, that part is **not counted twice**.
+  Overlapping views are merged.
+- From this, it works out a true **watched percentage**.
+- When the learner returns, the video **resumes** from where they stopped.
+
+<Callout type="info">
+This means a learner cannot finish a video just by dragging the progress slider to the
+end. They have to genuinely watch it (up to whatever threshold you set in the
+[completion rule](/docs/knowledgebase/progress-grading/completion-rules)).
+</Callout>
+
+## How course progress adds up
+
+A course's progress percentage is simple:
+
+> **Course progress = items completed ÷ total available items**
+
+"Available items" means the lessons, quizzes, and assignments that this learner can
+actually access. Content that is hidden from them or restricted does not count for or
+against them.
+
+### Programs that contain other courses
+
+A learning path or cohort can contain whole courses inside it. When a learner finishes
+one of those inner courses, the **parent program's progress updates right away** — there
+is no waiting and no manual refresh needed.
+
+## What the learner sees
+
+- A **progress bar** on each course showing how far along they are.
+- A clear **tick or "Completed"** marker on every lesson they have finished.
+- Their **video resuming** at the exact spot they last reached.
+
+## Good to know
+
+- Progress is **sticky**: once an activity is marked completed, it stays completed. Going
+  back to review it will not undo their progress.
+- When a course reaches 100%, it can trigger a completion notice and, if set up,
+  automatically issue a [certificate](/docs/knowledgebase/certificates).
+- The rule for *what counts as done* is fully in your control — see
+  [Completion rules](/docs/knowledgebase/progress-grading/completion-rules).

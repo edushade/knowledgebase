@@ -1,0 +1,11 @@
+{
+  "title": "Certificates",
+  "icon": "Award",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "certificate-requirements",
+    "issuing-certificates",
+    "verifying-certificates"
+  ]
+}

@@ -1,0 +1,83 @@
+---
+title: "Eligibility Rules"
+description: "Decide who is allowed to see an offering or a specific item, based on conditions you set."
+---
+
+Eligibility rules decide **whether a learner is allowed to see content at all** — your
+audience. For example, only learners enrolled in a certain program, or only those who passed
+a certain quiz, or only members of a particular group.
+
+This is different from [drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling)
+and [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites), which control **when**
+content opens. Eligibility decides **who** gets to see it in the first place.
+
+<Callout type="warn">
+**Naming note.** In the admin screens this tab is currently labelled **"Prerequisite"**, but
+it does **not** control content order. It controls **eligibility** — who is allowed in. (True
+content sequencing lives in
+[Prerequisites / drip](/docs/knowledgebase/enrollment-access/prerequisites).)
+</Callout>
+
+## How rules are built
+
+You build a rule out of **conditions** — facts about a learner — combined into groups:
+
+- **ALL (and)** — the learner must match **every** condition in the group.
+- **ANY (or)** — the learner must match **at least one** condition in the group.
+
+You can combine groups to express things like "must be in Program A **and** (passed Quiz 1
+**or** belongs to the Scholarship group)".
+
+Examples of conditions you can use:
+
+- Enrolled in a certain program.
+- Passed a certain quiz.
+- Belongs to a particular group or audience.
+
+## Where you can apply a rule
+
+| Level | What it controls |
+|---|---|
+| **Whole offering** | Who can access the entire course, learning path, or cohort. |
+| **A specific item** | Who can access one particular lesson, section, or quiz. |
+
+<Callout type="info">
+A rule on a whole **course or cohort** also restricts the content **inside** it. A learner
+who isn't eligible for the course can't reach its inner lessons by any route — there's no
+back door.
+</Callout>
+
+## How to set it up
+
+1. Open the offering (or a specific item) in **Admin** and go to the eligibility tab
+   (currently labelled **Prerequisite**).
+2. Add a condition, and choose **ALL** or **ANY** for how conditions combine.
+3. Add more conditions or groups as needed.
+4. Save.
+
+Edits take effect **immediately** — there's no waiting period for a changed rule to apply.
+
+## What the learner sees
+
+Content a learner isn't eligible for **simply doesn't appear** in their view — it's filtered
+out.
+
+<Callout type="warn">
+The learner is **not** shown a detailed reason for why something is hidden. There's no "you
+need to pass Quiz 1" message — the content just isn't there. Keep this in mind when you
+design rules, and tell learners about requirements through other channels (like an
+announcement) if they need to know.
+</Callout>
+
+## Reused content stays independent
+
+Like scheduling, eligibility is **independent** between a standalone course and the same
+course reused inside a learning path. A rule you set inside the learning path doesn't change
+the standalone course, and vice versa.
+
+<Callout type="info">
+To control the **order** learners move through content (rather than who can see it), use
+[prerequisites](/docs/knowledgebase/enrollment-access/prerequisites). To see how eligibility,
+scheduling, and prerequisites combine, read
+[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+</Callout>

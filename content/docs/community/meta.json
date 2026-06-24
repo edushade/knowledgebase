@@ -1,0 +1,12 @@
+{
+  "title": "Community & Feedback",
+  "icon": "MessagesSquare",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "discussions",
+    "comments",
+    "reviews-and-ratings",
+    "reactions"
+  ]
+}

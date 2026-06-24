@@ -1,0 +1,13 @@
+{
+  "title": "Search & Discovery",
+  "icon": "Search",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "search-basics",
+    "filters",
+    "autocomplete",
+    "trending-and-popular",
+    "search-history"
+  ]
+}

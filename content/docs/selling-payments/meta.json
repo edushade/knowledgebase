@@ -1,0 +1,19 @@
+{
+  "title": "Selling & Payments",
+  "icon": "CreditCard",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "products-catalog",
+    "pricing",
+    "bundles",
+    "subscriptions",
+    "installments",
+    "coupons-and-offers",
+    "scholarships",
+    "checkout",
+    "payment-methods",
+    "refunds",
+    "revenue-reports"
+  ]
+}

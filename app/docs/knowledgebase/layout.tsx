@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 Knowledge Base
               </span>
               <span className="truncate text-[11px] text-fd-muted-foreground">
-                EduShade platform docs
+                Edushade platform docs
               </span>
             </div>
           </Link>

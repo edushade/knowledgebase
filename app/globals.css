@@ -1,3 +1,6 @@
+/* Edushade brand typeface — same source the marketing site uses */
+@import url('https://fonts.cdnfonts.com/css/bdo-grotesk');
+
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
@@ -14,6 +17,26 @@
   --color-brand-700: #003d99;
   --color-brand-800: #002966;
   --color-brand-900: #001433;
+
+  /* Edushade brand palette — mirrors saas-frontend design tokens */
+  --color-es-text: #2b2b2b;
+  --color-es-text-soft: #4b4b4b;
+  --color-es-text-mute: #7b7b7b;
+  --color-es-bg: #ffffff;
+  --color-es-bg-soft: #f8fafc;
+  --color-es-bg-tint: #f1f5f9;
+  --color-es-border: #e9eaeb;
+  --color-es-border-strong: #e2e8f0;
+  --color-es-brand: #0066ff;
+  --color-es-brand-2: #2b80ff;
+  --color-es-brand-deep: #003e9c;
+
+  /* Type families — Edushade ships BDO Grotesk everywhere */
+  --font-sans: 'BDO Grotesk', var(--font-geist-sans), ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: 'BDO Grotesk', var(--font-geist-sans), ui-sans-serif,
+    system-ui, sans-serif;
 }
 
 /* Light theme — map fumadocs primary to brand blue */
@@ -42,4 +65,249 @@
       50% - var(--fd-layout-width, 97rem) / 2 + var(--fd-sidebar-width)
     )
   );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Edushade brand — bespoke styles for the Knowledge Base homepage
+   Mirrors the marketing site: BDO Grotesk, #0066FF, white surfaces,
+   dot-grid hero, soft layered card shadows, rounded geometry.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.eb {
+  --eb-bg: #ffffff;
+  --eb-bg-soft: #f8fafc;
+  --eb-bg-tint: #f1f5f9;
+  --eb-ink: #2b2b2b;
+  --eb-ink-soft: #4b4b4b;
+  --eb-ink-mute: #7b7b7b;
+  --eb-border: #e9eaeb;
+  --eb-border-strong: #e2e8f0;
+  --eb-brand: #0066ff;
+  --eb-brand-2: #2b80ff;
+  --eb-brand-deep: #003e9c;
+  --eb-brand-tint: #e6f0ff;
+  --eb-dot: rgba(0, 62, 156, 0.16);
+
+  background-color: var(--eb-bg);
+  color: var(--eb-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01' on, 'cv01' on;
+}
+
+.dark .eb {
+  --eb-bg: #0a0f1c;
+  --eb-bg-soft: #0e1525;
+  --eb-bg-tint: #121b30;
+  --eb-ink: #eef2f8;
+  --eb-ink-soft: #b9c2d2;
+  --eb-ink-mute: #8793a8;
+  --eb-border: rgba(255, 255, 255, 0.1);
+  --eb-border-strong: rgba(255, 255, 255, 0.16);
+  --eb-brand: #4d94ff;
+  --eb-brand-2: #6aa3ff;
+  --eb-brand-deep: #99c2ff;
+  --eb-brand-tint: rgba(77, 148, 255, 0.12);
+  --eb-dot: rgba(120, 170, 255, 0.16);
+
+  background-color: var(--eb-bg);
+  color: var(--eb-ink);
+}
+
+/* Dot-grid lattice — the marketing hero's signature texture, faded at edges */
+.eb-dotgrid {
+  background-image: radial-gradient(var(--eb-dot) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  background-position: 0 0;
+  -webkit-mask-image: radial-gradient(
+    ellipse 78% 62% at 50% 32%,
+    #000 28%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(
+    ellipse 78% 62% at 50% 32%,
+    #000 28%,
+    transparent 82%
+  );
+}
+
+/* Soft, layered product-card shadow (matches saas-frontend cards) */
+.eb-card-shadow {
+  box-shadow:
+    0px 0px 0px 1px #0a090b0d,
+    0px 2px 7px 0px #0a090b0d,
+    0px 2px 5px -2px #0a090b0f;
+}
+.dark .eb-card-shadow {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 8px 28px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* Primary brand button — the site's btn-brand-1 recipe */
+.eb-btn-primary {
+  background: var(--eb-brand);
+  color: #ffffff;
+  box-shadow:
+    0px 0.5px 0.5px 0px #07011308,
+    0px 2px 2px -1px #07011308,
+    0px 5px 5px -2.5px #07011308,
+    0px 8px 8px -3px #07011308,
+    0px 8px 24px -4px #ffffff29 inset,
+    0px 0.5px 0.5px 0px #ffffff29 inset,
+    0px 1px 2px -0.5px #ffffff1f inset;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.eb-btn-primary:hover {
+  background: var(--eb-brand-2);
+  transform: translateY(-1px);
+}
+
+/* Secondary button — solid white pill with hairline border */
+.eb-btn-ghost {
+  background: var(--eb-bg);
+  color: var(--eb-ink);
+  border: 1px solid var(--eb-border-strong);
+  box-shadow: 0 2px 8px -3px rgba(15, 60, 110, 0.15);
+  transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+.eb-btn-ghost:hover {
+  color: var(--eb-brand);
+  border-color: color-mix(in srgb, var(--eb-brand) 40%, transparent);
+  box-shadow: 0 4px 14px -4px rgba(0, 102, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Rainbow pastel eyebrow pill — mirrors the site's RainbowButton outline */
+.eb-eyebrow {
+  position: relative;
+  isolation: isolate;
+  background: var(--eb-bg);
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+.eb-eyebrow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: 9999px;
+  padding: 1px;
+  background: linear-gradient(
+    100deg,
+    #f08cff,
+    #c6bfff,
+    #a8e4ff,
+    #a8fff5,
+    #a0ffc0
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* Eyebrow label (kicker) — clean sans, not editorial mono */
+.eb-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ─── Hero entrance — staggered editorial rise ──────────────────────── */
+@keyframes eb-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.eb-rise {
+  opacity: 0;
+  animation: eb-rise 0.8s cubic-bezier(0.2, 0.65, 0.2, 1) forwards;
+}
+
+@keyframes eb-word {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.eb-wordrise {
+  display: inline-block;
+  opacity: 0;
+  animation: eb-word 0.85s cubic-bezier(0.2, 0.7, 0.15, 1) forwards;
+}
+
+/* Soft expanding ring for the live-status dot */
+@keyframes eb-ping-soft {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  80% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.eb-ping-soft {
+  animation: eb-ping-soft 2.2s ease-out infinite;
+}
+
+/* Gentle float for the decorative brand sparkle */
+@keyframes eb-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(3deg);
+  }
+}
+.eb-float {
+  animation: eb-float 5s ease-in-out infinite;
+}
+
+/* Scroll-reveal hook (driven by the Reveal client component) */
+.eb-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.85s cubic-bezier(0.2, 0.7, 0.15, 1),
+    transform 0.85s cubic-bezier(0.2, 0.7, 0.15, 1);
+}
+.eb-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .eb-rise,
+  .eb-wordrise,
+  .eb-ping-soft,
+  .eb-float,
+  .eb-reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
 }

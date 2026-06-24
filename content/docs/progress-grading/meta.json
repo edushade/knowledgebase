@@ -1,0 +1,15 @@
+{
+  "title": "Progress & Grading",
+  "icon": "LineChart",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "progress-tracking",
+    "completion-rules",
+    "terms-and-periods",
+    "grading-schemes",
+    "weighted-grading",
+    "marksheets",
+    "learning-streaks"
+  ]
+}

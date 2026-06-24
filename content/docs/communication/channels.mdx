@@ -1,0 +1,82 @@
+---
+title: "Channels & Sending Services"
+description: "Turn on email, SMS, push, and chat apps, set their basics, and connect your own sending accounts."
+---
+
+A channel is a way your platform reaches people. You decide which channels to offer, set a
+few basics for each, and connect your own sending account so messages go out under your
+name. Once a channel is on, you can use it in
+[campaigns](/docs/knowledgebase/communication/campaigns) and
+[message templates](/docs/knowledgebase/communication/message-templates).
+
+## The channels you can offer
+
+| Channel | What it is |
+|---|---|
+| **Email** | Standard email to a learner's inbox. |
+| **SMS** | Text messages to a phone. |
+| **Push** | Pop-up alerts on a phone, tablet, or browser. |
+| **WhatsApp** | Messages through WhatsApp. |
+| **Telegram** | Messages through Telegram. |
+| **Slack** | Messages into a Slack workspace. |
+| **Discord** | Messages into a Discord server. |
+
+## Turning channels on and off
+
+1. Go to **Admin → Communication → Channels**.
+2. Switch a channel **on** or **off**.
+3. Set its basics (see below).
+4. Connect a sending account for it (see "Connect your own sending service").
+
+Only channels you turn on appear as options when you build a campaign or template.
+
+## Basic settings per channel
+
+Each channel has a few simple settings:
+
+| Channel | Settings you set |
+|---|---|
+| **Email** | The **from name**, the **from address**, and a **reply-to address**. |
+| **SMS** | The **sender ID** that shows as the sender. |
+| **Push** | A **default icon** and **badge** for your alerts. |
+
+These make messages look like they come from your academy, not from anywhere generic.
+
+## Connect your own sending service
+
+To actually deliver messages, you connect your **own sending account** for each channel —
+for example your own email-sending account, your own text-message account, your own push
+account, or your own chat-app connection. Messages then go out through your account, under
+your name and your limits.
+
+For each connected service you can set:
+
+| Option | What it does |
+|---|---|
+| **On / off** | Whether this service is active. |
+| **Priority** | The order to try services in. If your first choice fails, the next one takes over automatically. |
+| **Rate limit** | How many messages it may send in a period, so you stay within your account's allowance. |
+| **Test / validate** | Check that the connection works before you rely on it. |
+
+<Callout type="info">
+**Fallback in plain terms:** if you connect two services for the same channel, set one as
+the higher priority. If it ever has trouble, the platform quietly tries the next one so
+your messages still go out.
+</Callout>
+
+## How to connect a service
+
+1. In **Admin → Communication → Channels**, open the channel you want.
+2. Click **Add sending service**.
+3. Enter the account details for your service.
+4. Set its **priority** and **rate limit**.
+5. Click **Test** to confirm it works.
+6. Turn it **on**.
+
+## Good to know
+
+- Start with email — it is the most universal channel and the easiest to set up.
+- Always run the **Test** step after connecting a service, so you find problems before real
+  messages go out.
+- Push needs a little setup on each device — see
+  [Push notifications & devices](/docs/knowledgebase/communication/push-notifications).

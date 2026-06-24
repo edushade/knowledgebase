@@ -1,0 +1,18 @@
+{
+  "title": "Communication",
+  "icon": "Megaphone",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "announcements",
+    "notification-inbox",
+    "notification-preferences",
+    "channels",
+    "campaigns",
+    "message-templates",
+    "audiences",
+    "push-notifications",
+    "quiet-hours",
+    "delivery-and-analytics"
+  ]
+}
