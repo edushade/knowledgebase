@@ -11,9 +11,11 @@ const config: NextConfig = {
   },
   redirects: async () => [
     {
+      // Permanent, so the ranking signal moves. It answered 307 before, which
+      // tells Google to keep indexing /docs and expect it back.
       source: '/docs',
       destination: '/docs/knowledgebase',
-      permanent: false,
+      permanent: true,
     },
   ],
 };

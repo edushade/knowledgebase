@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, JetBrains_Mono, Fraunces } from 'next/font/google';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './globals.css';
+import { KB_ORIGIN } from '@/lib/site';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -23,12 +24,16 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  // Without this, Next.js cannot turn a relative canonical or og:image into an
+  // absolute URL, and these pages shipped with no canonical at all.
+  metadataBase: new URL(KB_ORIGIN),
   title: {
     default: 'Edushade Knowledge Base',
     template: '%s — Edushade Knowledge Base',
   },
   description:
     'A field guide to the Edushade platform — modules, services, and operational playbooks.',
+  alternates: { canonical: '/' },
 };
 
 export default function RootLayout({

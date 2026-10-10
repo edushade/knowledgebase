@@ -48,5 +48,8 @@ export async function generateMetadata(props: {
   return {
     title: page.data.title,
     description: page.data.description,
+    // A page that names its own address cannot be folded into a sibling by
+    // mistake, and these pages had no canonical before.
+    alternates: { canonical: page.url },
   };
 }
