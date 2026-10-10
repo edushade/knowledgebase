@@ -9,6 +9,7 @@ import {
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { source } from '@/lib/source';
 import { getMDXComponents } from '@/components/mdx';
+import { FeaturePageLink } from '@/components/feature-page-link';
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
@@ -23,6 +24,7 @@ export default async function Page(props: {
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <FeaturePageLink url={page.url} />
       <DocsBody>
         <MDX
           components={getMDXComponents({
