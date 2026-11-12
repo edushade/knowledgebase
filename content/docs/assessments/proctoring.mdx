@@ -1,61 +1,121 @@
 ---
-title: "Proctoring & Monitoring"
-description: "Keep high-stakes quizzes honest — full-screen lock, disabled copy/paste, webcam, screen recording, tab-switch alerts, and live monitoring."
+title: "Keeping an Exam Honest"
+description: "What Edushade actually gives you for exam integrity — and the one thing it does not."
 ---
 
-For graded exams where it matters that learners do their own work, you can turn on proctoring.
-These tools make it harder to cheat and let you watch attempts as they happen. Use them for
-high-stakes tests; leave them off for relaxed practice quizzes.
-
-## What you can turn on
-
-| Tool | What it does |
-|---|---|
-| **Full-screen lock** | The quiz takes over the whole screen, and leaving it is flagged. |
-| **Disable copy/paste** | Stops learners copying questions out or pasting answers in. |
-| **Webcam** | Captures the learner's camera during the attempt. |
-| **Screen recording** | Records the learner's screen during the attempt. |
-| **Tab-switch detection** | Flags when a learner switches to another tab or window. |
-
-## Live monitoring
-
-While a quiz is running, you can **watch attempts in real time** and get **violation alerts**
-the moment something is flagged — for example, a learner leaving full-screen or switching
-tabs. This lets you respond during the exam, not just afterward.
-
-## Setting it up
-
-1. Open your quiz and go to its **proctoring** settings.
-2. Turn on the tools you want for this quiz.
-3. Save and publish. The settings apply to every attempt on this quiz.
-
-<Callout type="info">
-Turn on only what you need. Full-screen lock and tab-switch detection are light-touch and
-suit most graded quizzes. Webcam and screen recording are best kept for important exams.
-</Callout>
-
-## What the learner sees
-
-- The learner is told the quiz is proctored before they begin.
-- Depending on your settings, they may be asked to allow **camera** or **screen** access.
-- If they leave full-screen, switch tabs, or try a blocked action, it is flagged — and you may
-  be alerted live.
+Let us be clear about the limits first, because it saves you planning around something
+that is not there.
 
 <Callout type="warn">
-Webcam and screen recording need the learner to grant permission in their browser, and work
-best on a laptop or desktop. Tell learners in advance what to expect and what device to use,
-so exam day goes smoothly.
+**There is no webcam proctoring.** Edushade does not watch a learner through their
+camera, lock their browser, record their screen, or detect another person in the room.
+Nothing in the platform supervises a learner taking an exam at home.
 </Callout>
 
-## Good to know
+What it does give you is a set of settings that, used together, make an unsupervised
+assessment considerably harder to game — and make an invigilated one practical to run.
 
-- Combine proctoring with **shuffled questions and options** and a **time limit** for a much
-  stronger exam. See [Quiz settings](/docs/knowledgebase/assessments/quiz-settings).
-- Use a **password** and **open/close window** so everyone sits the exam together. See
-  [Quiz availability](/docs/knowledgebase/assessments/quiz-availability).
+<WhoCan roles="Admin, Instructor" />
+
+## What you can actually do
+
+### Make two learners' papers different
+
+| Setting | Effect |
+|---|---|
+| **Shuffle questions** | Every learner gets a different order. |
+| **Shuffle answer options** | Options move within each question. |
+
+Side-by-side copying stops being useful, because "C" is not the same answer twice.
+
+### Limit the window
+
+| Setting | Effect |
+|---|---|
+| **Time limit** | A learner has that many minutes, not an afternoon. |
+| **Allow Pause** off | The clock does not stop. |
+| **Availability window** | The quiz exists only between the dates you set. |
+
+A tight window is the single most effective setting. An exam open for 90 minutes on one
+evening is a very different thing from one open all week.
+
+### Limit the attempts
+
+**Maximum Attempts** of 1, with the programme's replacement policy set to **Replace**,
+means one sitting and one mark. See
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+
+### Hold the results
+
+Switch **Show each learner's score as soon as they submit** off and set **Release scores
+on** to a time after the window closes. Nobody leaving early can tell the queue what
+came up.
+
+### Control who starts
+
+**Password protected** gives you a password to hand out in the room — which is what
+makes it useful for an invigilated sitting, and nearly useless for a remote one.
+
+### Draw on a bigger pool
+
+Keeping many questions in the
+[Content Bank](/docs/knowledgebase/courses/content-bank) and building several versions
+of a paper is slower to set up and much harder to defeat than any single setting.
+
+## What you can see afterwards
+
+Honesty is also something you check after the fact:
+
+- **Participants** — who sat it and when.
+- **Non-participants** — who did not.
+- **Quiz analytics** — scores, time taken, and how each question performed. An answer
+  pattern that is identical across three learners, or a 40-minute paper finished in
+  four, shows up here.
+
+See [Quiz analytics](/docs/knowledgebase/assessments/quiz-analytics).
+
+## A workable recipe for a real exam
+
+1. Shuffle questions and options.
+2. Time limit on, **Allow Pause** off.
+3. Maximum Attempts 1.
+4. A narrow availability window.
+5. Scores held, released after the window.
+6. **Show answer after activity** off.
+7. Check the analytics before you publish results.
+
+That is as far as the platform goes. Beyond it, you are into invigilation — in a room,
+or with a service outside Edushade.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can I stop learners opening another tab?">
+No. Nothing in the platform watches or restricts what else is on their screen.
+</Accordion>
+
+<Accordion title="Can I require a camera during the exam?">
+No. There is no camera requirement and no identity check during an assessment.
+</Accordion>
+
+<Accordion title="How do I know who actually sat it?">
+You know which account did. Identity beyond the account is not something the platform
+can establish, which is why high-stakes exams are usually invigilated in person.
+</Accordion>
+
+<Accordion title="Is there anything that flags suspicious attempts?">
+Not automatically. The analytics give you the evidence — time taken, scores, question
+performance — and you read it.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Quiz settings](/docs/knowledgebase/assessments/quiz-settings)
-- [Quiz availability](/docs/knowledgebase/assessments/quiz-availability)
-- [Exams](/docs/knowledgebase/assessments/exams)
+<Cards>
+  <Card title="Quiz settings" description="Every setting named on this page." href="/docs/knowledgebase/assessments/quiz-settings" />
+  <Card title="Quiz availability" description="Opening and closing the window." href="/docs/knowledgebase/assessments/quiz-availability" />
+  <Card title="Quiz analytics" description="What the attempts tell you afterwards." href="/docs/knowledgebase/assessments/quiz-analytics" />
+  <Card title="Exams" description="Running a quiz as a formal exam." href="/docs/knowledgebase/assessments/exams" />
+</Cards>

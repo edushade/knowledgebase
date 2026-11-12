@@ -1,108 +1,120 @@
 ---
 title: "Drip Scheduling"
-description: "Control when content opens for learners, and optionally when it closes again."
+description: "Releasing content over time instead of all at once — the six strategies, item overrides, and extending a deadline for one learner."
 ---
 
-Drip scheduling controls **when** content opens for a learner — and, if you want, when it
-closes again. Instead of giving everyone everything at once, you can pace a course, line it
-up with a class schedule, stop learners skipping ahead, or close an exam after a deadline.
+Drip scheduling decides **when** content opens. A course can hand everything over on day
+one, release a module a week, or hold a final exam until a fixed date.
 
-## What you can do with it
+It lives on the **Drip Schedule** tab of a programme's builder, and on each item's **⋯**
+menu for the exceptions.
 
-- Release one module per week so learners don't rush ahead.
-- Open content on a fixed date that matches your class calendar.
-- Open content a set number of days after a learner enrolls.
-- Open an item only after an earlier item is finished (this is the prerequisite case — see
-  [Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites)).
-- Close a quiz or assignment after its deadline.
+<WhoCan roles="Admin, Instructor" />
 
-## Unlock options (when content opens)
+## The six strategies
 
-When you set up a schedule, you choose how content unlocks:
+**Content Unlock Strategy** decides how content opens:
 
-| Option | When the content opens |
+| Strategy | When content opens |
 |---|---|
-| **Immediate** | Open right away when the learner enrolls. |
-| **Fixed date** | Opens on a specific date and time you set. |
-| **Days after enrollment** | Opens a set number of days after the learner enrolls. |
-| **Completion-based** | Opens after the previous (or a required) item is finished. This is how [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites) work. |
-| **Manual** | Each item follows its own open/close rule that you set individually. |
+| **Immediate** | Straight away. Content is available as soon as a learner enrols. |
+| **Fixed Date** | On a date and time you set. Everyone gets it at the same moment. |
+| **After Enrollment** | A set period after *that learner* enrolled — "two weeks in", counted from their own start. |
+| **After Unlock** | A set period after the previous item opened, so the course walks forward item by item. |
+| **Completion Based** | After the learner finishes something else. See [Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites). |
+| **Custom** | A schedule you build item by item. |
 
-## Close options (when content locks again)
+Alongside the unlock you can set a **lock** — when content closes again — or **No Lock**
+to leave it open once it has opened.
 
-Each schedule can also have a matching **close** rule, so content locks again after a point.
-You can close content:
+## Fixed Date or After Enrollment
 
-- **On a date** — locks at a specific date and time.
-- **A number of days after enrollment** — locks that many days after the learner joined.
-- **A duration after it opened** — for example, "stays open for 7 days, then locks".
+This is the choice people get wrong, and the difference matters:
 
-This is handy for time-limited tasks, like an exam that's only available during its window.
+- **Fixed Date** suits a cohort. Everyone reaches week three in the same week, so a live
+  session and a deadline make sense.
+- **After Enrollment** suits self-paced learners. Someone who joins in March gets their
+  week three in March, not alongside the January intake.
 
-## Three levels — most specific wins
+Using Fixed Date on a self-paced course means a learner who buys in December finds half
+the course already "released" and the rest at dates that mean nothing to them.
 
-You can set scheduling at three levels. When more than one applies, the **most specific one
-wins**:
+## Item-level overrides
 
-1. **Whole-offering default** — applies to everything in the offering.
-2. **Per-item override** — a rule on one specific lesson, quiz, or section.
-3. **Per-learner override** — a rule for one specific learner on one item.
+The strategy covers the programme. **Item-Level Overrides** handle the exceptions —
+"everything opens weekly, but the final exam is on 14 June".
 
-So a per-learner rule beats a per-item rule, and a per-item rule beats the offering-wide
-default. This lets you, say, release content weekly for everyone but give one learner an
-earlier start.
+Click an item in the curriculum to configure it, or select several and set them
+together. Overrides are listed so you can see at a glance which items are not following
+the programme rule.
 
-## How to set it up
+## Per-learner re-schedules
 
-1. Open the offering in **Admin** and go to its **Drip Schedule** settings.
-2. Choose a **whole-offering default** (for example, "Days after enrollment: 7").
-3. To fine-tune, add a **per-item override** on any lesson or section.
-4. To help an individual learner, add a **per-learner override** on a specific item.
-5. Save.
+**User-level Overrides** re-schedule content for named learners — an extended deadline,
+a late joiner catching up, an illness.
+
+Add an override, pick the learners, and set their unlock and lock dates. Remove it and
+they go back to the default schedule.
+
+<Callout type="info">
+This is the right tool for "can I have another week?". It keeps the deadline real for
+everyone else, and it leaves a record of who was given extra time.
+</Callout>
 
 ## What the learner sees
 
-Locked content isn't hidden — it's shown **greyed out with a lock badge** that explains
-why and when it will open. Depending on the rule, the badge says things like:
+Content held by a drip schedule shows as **locked**, with the date it will open. That is
+different from content held by an
+[eligibility rule](/docs/knowledgebase/enrollment-access/eligibility-rules), which does
+not appear at all.
 
-- **"Unlocks on March 3"** — for a fixed date.
-- **A countdown of days** — for "days after enrollment".
-- **"Complete in order"** — when items open one after another.
-- **"Complete [item] first"** — when a specific item must be finished first.
+So: drip says "not yet". Eligibility says nothing.
 
-When the item opens, the lock disappears and the learner can start.
+## Clearing a schedule
 
-## After a close date
+**Clear all drip schedules** removes every schedule on the programme and returns
+everything to immediately available. There are narrower versions — remove the schedules
+for selected items, all item overrides, or all user overrides — and each asks before it
+acts. None can be undone.
 
-Once a close date passes, items lock again. There's one helpful exception:
+## Common questions
 
-- A learner can **still review a quiz they already completed** — they keep access to their
-  result even after the quiz closes.
-- Everything else (and any quiz they didn't finish) locks once the close date passes.
+<Accordions type="single">
 
-<Callout type="info">
-A lesson a learner already finished normally **stays open for review**. It only locks again
-if an admin reschedules its opening to a **future** date — a deliberate future gate is
-honoured.
-</Callout>
+<Accordion title="A learner cannot see content that should have opened.">
+Work down [How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+If the item shows as locked with a date, it is the drip schedule; if it is not there at
+all, it is not drip.
+</Accordion>
 
-## Content reused inside a learning path
+<Accordion title="Everyone sees different content on the same day.">
+The strategy is **After Enrollment**, so each learner's clock starts when they enrolled.
+Switch to **Fixed Date** if the batch should move together.
+</Accordion>
 
-A single course can be used on its own **and** reused inside a learning path. The scheduling
-you set in each place is **independent** — a schedule inside the learning path never changes
-the standalone course, and the standalone course's schedule never leaks into the path.
+<Accordion title="I set a lock date and learners lost work.">
+Locking closes content. Anything already finished stays finished, but they cannot go
+back in. Use **No Lock** unless the closing is the point — an exam window, for example.
+</Accordion>
 
-A couple of things follow from this:
+<Accordion title="Can I drip a whole section at once?">
+Yes. Set the schedule on the section and its contents follow it, then override the
+individual items that need different dates.
+</Accordion>
 
-- **"Days after enrollment"** on an item inside a learning path counts from the **learning
-  path's** enrollment date (the program the learner actually joined).
-- If you set **no** schedule for an item inside the learning path, that item is simply
-  **open** there. That's intentional, not a mistake.
+<Accordion title="Does drip affect progress or grades?">
+No. Unopened content still counts in the denominator — a learner three weeks into a
+twelve-week course is three twelfths through, not 100%. See
+[Progress tracking](/docs/knowledgebase/progress-grading/progress-tracking).
+</Accordion>
 
-<Callout type="info">
-Want content to open only after earlier work is done? That's the **Completion-based** option,
-explained in detail under
-[Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites). To control **who** can
-see content at all, see
-[Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules).
-</Callout>
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="How access works together" description="Drip, prerequisites, eligibility and partial access, in order." href="/docs/knowledgebase/enrollment-access/how-access-works-together" />
+  <Card title="Prerequisites" description="Opening content when something else is finished." href="/docs/knowledgebase/enrollment-access/prerequisites" />
+  <Card title="Eligibility rules" description="Deciding who may see content at all." href="/docs/knowledgebase/enrollment-access/eligibility-rules" />
+  <Card title="The course builder" description="Where the Drip Schedule tab lives." href="/docs/knowledgebase/courses/curriculum-builder" />
+</Cards>

@@ -1,0 +1,144 @@
+---
+title: "Manual Payments"
+description: "Recording money taken outside the platform — cash, a bank transfer, a counter payment — so the learner gets access and the figures stay honest."
+---
+
+A learner pays in cash at your office, or by bank transfer, or to an agent. The money is
+real; the platform knows nothing about it. A manual payment records it, enrols them, and
+keeps your revenue figures true.
+
+<Path>Billing > Transactions > Manual Entry</Path>.
+
+<WhoCan roles="Admin" />
+
+## Why not just enrol them
+
+[Enrolling someone yourself](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment)
+gives them access and creates **no transaction**. Do that for everyone who pays in cash
+and your revenue reports are wrong by however much cash you take — which, for many
+academies in Bangladesh, is most of it.
+
+Record the payment instead. They get the same access, and the money appears where money
+belongs.
+
+## Recording one
+
+<Steps>
+
+<Step>
+
+### Choose the customer
+
+Search and pick the learner. They need an account first — see
+[Adding people](/docs/knowledgebase/account-people/adding-people).
+
+</Step>
+
+<Step>
+
+### Choose what they bought
+
+Pick the **entity type** and the thing itself. The selector shows its title, its price
+and the seats left, so you can see what you are about to sell.
+
+For a cohort-based course, pick the **batch**.
+
+</Step>
+
+<Step>
+
+### Set the amount
+
+**Base price** fills in from the price you picked, and can be changed. Then:
+
+- **Apply discount** — a **percentage**, a **fixed** amount, or an **offer code**.
+- **Processing fee** — anything you charge on top.
+- **Other charges**, with a label of your own — an admission fee, a materials charge.
+
+A percentage discount cannot exceed 100%, and a fixed one cannot exceed the base price.
+
+</Step>
+
+<Step>
+
+### Record how they paid
+
+| Field | Notes |
+|---|---|
+| **Gateway** | Which service, or offline. Required. |
+| **Payment method** | Cash, bank transfer, bKash, Nagad, Rocket. Required. |
+| **Payment date & time** | When they actually paid, not when you are typing. Required. |
+| **Payment reference number** | Their bank reference or transaction number. |
+| **Transaction/Gateway ID** | If the gateway gave one. |
+
+</Step>
+
+<Step>
+
+### Set the status
+
+| Status | What it does |
+|---|---|
+| **Verified** | Confirmed. The learner is enrolled. |
+| **Pending** | Recorded but not confirmed — it joins **Pending Verification**. |
+| **Rejected** | Not accepted. |
+
+Record a payment you have not actually seen as **Pending**, and verify it when the money
+lands.
+
+</Step>
+
+<Step>
+
+### Leave a note
+
+**Internal notes** and **Admin reference** are private — the customer never sees them.
+Write down who took the money and where. It is the difference between a clean month-end
+and an argument.
+
+</Step>
+
+</Steps>
+
+## Verifying what somebody else recorded
+
+**Pending Verification**, on the transactions screen, is the queue of payments recorded
+but not confirmed. Work it daily: every row is a learner who has paid and cannot get in.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The learner is not in the customer list.">
+They have no account. Create one first — a manual payment attaches to a person, not to
+a name.
+</Accordion>
+
+<Accordion title="I recorded the payment but they have no access.">
+Check the status. **Pending** records the money without enrolling them; **Verified**
+enrols them.
+</Accordion>
+
+<Accordion title="Can I record a payment for an instalment plan?">
+Yes — **Pay Installment** on the learner's plan. The amount is worked out for you. See
+[Installments](/docs/knowledgebase/selling-payments/installments).
+</Accordion>
+
+<Accordion title="Can I record a partial payment?">
+Set the amount to what was actually paid. For a genuine arrangement to pay over time,
+use an instalment plan rather than a series of manual entries.
+</Accordion>
+
+<Accordion title="Do manual payments count towards revenue?">
+Yes, once verified. That is the point of recording them.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Transactions" description="Where recorded payments live, and the queues to work." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Payment methods" description="What learners can pay with online." href="/docs/knowledgebase/selling-payments/payment-methods" />
+  <Card title="Admin and bulk enrollment" description="Access without a payment, for when that is right." href="/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment" />
+</Cards>

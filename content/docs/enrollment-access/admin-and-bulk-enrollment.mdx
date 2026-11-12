@@ -1,69 +1,249 @@
 ---
-title: "Admin & Bulk Enrollment"
-description: "Enroll a single learner yourself, or add a whole roster at once."
+title: "Admin and Bulk Enrollment"
+description: "Putting learners into a programme yourself — one at a time or a hundred at once — and what that skips."
 ---
 
-Sometimes you need to put learners into an offering yourself — a single student you're
-adding by hand, or an entire class list. You can do both.
+Most learners enrol by buying. Sometimes you put them in yourself: a corporate group, a
+learner who paid offline, a scholarship, a batch migrated from your old system.
 
-## Enroll a single learner
+<WhoCan roles="Admin" />
 
-Use this when you want to add one specific person.
+<Screenshot
+  src="/kb/enrollment-access/enrollment-list.png"
+  alt="The enrolment list, with its filters and one row per enrolment."
+  caption="Learner names are blurred here. The filters along the top are also what Select all matching uses — see below."
+/>
 
-1. Go to **Admin → Enrollments** (or open the offering and use its **Learners** tab).
-2. Choose **Enroll learner**.
-3. Pick the **offering** (course, learning path, or cohort) and the **learner**.
-4. Set any per-enrollment options (see below).
-5. Save.
+## Enrolling people
+
+Go to <Path>Enrollments</Path> and choose **Add Enrollment**, or reach the same screen
+from a course, a learning path or a batch, where it is called **Assign Learners**.
+
+The screen has two tabs — **Add learners**, and **Enrolled** for who is already in.
+
+<Steps>
+
+<Step>
+
+### Choose a programme
+
+Pick the **Program Type** — Course, Learning Path or Cohort — and then the programme
+itself. Coming from a programme, this is already chosen, and **Change programme** swaps
+it.
+
+Each one in the picker shows what you need to decide with:
+
+| On the card | What it tells you |
+|---|---|
+| **Seats** | **No seat limit**, a number left, or **Full**. |
+| **Starts** | Its first day, where it has one. |
+| **Published** or **Scheduled** | Whether learners can see it yet. |
+| **Runs in batches** | A cohort-based course — enrol into its batches, not into it. |
+
+A cohort-based course with no batches yet says so: *"This programme has no batches yet.
+Create one under Cohorts, then come back to enrol learners."*
+
+</Step>
+
+<Step>
+
+### Choose the learners
+
+Search by name, email or phone, and narrow the list with:
+
+| Filter | Values |
+|---|---|
+| **Account** | **Active** or **Inactive**. |
+| **Signed in** | **Has signed in** or **Never signed in**. |
+| **Signed up** | A period — see below. |
+
+Then either tick people by hand, or **select everyone who matches** — which is the
+important one. It works on the server, so it covers **every page**, not just the one in
+front of you. You can still untick individuals afterwards, and the dialog counts them
+out for you.
+
+#### The sign-up period
+
+**Signed up** filters on when the account was created, with presets — **Today**,
+**Yesterday**, **Last 7 days**, **Last 30 days**, **This month**, **Last month**, **This
+year**, **Last year** — or a range you pick on a calendar.
 
 <Callout type="info">
-Enrolling a learner yourself can **bypass the public enrollment window**. This lets you
-add someone even when self-enroll is closed — useful for late joiners or special cases.
+**These are your academy's days, not the browser's.** "1 November" runs midnight to
+midnight on your academy's own clock, so an administrator working from another country
+gets the same list you would.
 </Callout>
 
-## Bulk enroll a roster
+Nothing matching gives you the reason rather than an empty box: *"No learners match. Try
+a wider sign-up period, another search, or clear the filters."*
 
-Use this when you want to add many learners at once.
+</Step>
 
-1. Go to **Admin → Enrollments** and choose the **bulk enroll** option.
-2. Pick the offering.
-3. Upload your list of learners (a roster).
-4. Confirm.
+<Step>
 
-When the bulk enrollment finishes, you get a **per-learner summary** showing who was
-enrolled successfully and who could not be added (for example, someone already enrolled, or
-a name that didn't match an account). You can fix the failures and try those again.
+### Review enrolment
 
-## Per-enrollment options
+Nothing is enrolled until you confirm, and the confirmation is a summary rather than a
+count:
 
-Whether you add one learner or many, each enrollment can carry these settings:
-
-| Option | What it does |
+| It tells you | Example |
 |---|---|
-| **Access window (expiry date)** | The date access ends for this learner. |
-| **Allow extensions** | Whether their access window can be extended later. |
-| **Notifications** | Turn this learner's notifications on or off. |
+| **Who** | "214 learners you picked", or "Everyone who matches, except 3 learners you unticked" — with your filters listed as chips beside it. |
+| **Already enrolled** | How many are in it already and are left exactly as they are. |
+| **Seats** | "40 of 200 left now, 26 after this" — or **No seat limit**. |
+| **Notifications** | Each learner gets your academy's usual enrolment notification. |
 
-## Re-enrollment
+**No filters: every learner in the academy** appears where you have set none. Read that
+line before you confirm — it is the difference between enrolling a batch and enrolling
+everybody.
 
-You can only re-add a learner whose previous enrollment was **cancelled** or **expired**. A
-learner who is currently **active**, **completed**, or **suspended** is treated as already
-enrolled. See the status table in
-[How learners enroll](/docs/knowledgebase/enrollment-access/how-learners-enroll#enrollment-statuses).
+</Step>
 
-## Giving partial access
+<Step>
 
-When you enroll learners, you can also limit them to **part** of an offering — for example,
-only one semester or one purchased section. You can set this during enrollment, or adjust it
-for many learners later. See
+### Decide what they get
+
+**What they get** is on the same screen. Leave everything unticked and they get the
+whole programme. Tick parts and they get only those — *"the way a learner who buys one
+semester gets only that one"*.
+
+The footer keeps score: **The whole course**, or **2 parts only**.
+
+This is [partial access](/docs/knowledgebase/enrollment-access/partial-access), set at
+the moment of enrolling rather than fixed up afterwards.
+
+</Step>
+
+</Steps>
+
+### When it will not let you
+
+| It says | What to do |
+|---|---|
+| *"…is full: all 200 seats are taken."* | Raise its seat limit, or choose another batch. |
+| *"Only 12 seats are left and 40 learners need one. Narrow the list by 28…"* | Enrol fewer, or raise the limit. |
+| *"Nobody new to enrol"* | Everyone you picked is already in it. Not a failure. |
+
+<Callout type="warn">
+**Seat limits are enforced here.** You cannot quietly overfill a batch by enrolling
+people yourself — the screen tells you how many seats are left and by how many you are
+over.
+</Callout>
+
+**Enrolment being closed is different.** You are warned — *"Learners can't join it
+themselves, but you can still enrol them here"* — and the button becomes **Enrol 40
+learners anyway**. Closed stops learners, not you.
+
+### Afterwards
+
+One summary for the whole run, however many people it covered: **Enrolment finished**,
+or **Enrolment finished, with some not enrolled** when part of it did not go through.
+
+If the list could not be worked out at all, nothing is enrolled and it says so rather
+than enrolling half of them.
+
+## What enrolling someone yourself skips
+
+| Skipped | What this means |
+|---|---|
+| **Payment** | No transaction is created. The enrolment shows no payment. |
+| **The enrolment window** | You can add a learner to a batch whose enrolment has closed — with a warning. |
+
+It does **not** skip seat limits, and it does **not** skip the one-batch-per-programme
+rule: a learner already in another batch of the same course cannot be put into a second.
+
+## Giving them part of a programme
+
+The quickest way is at the moment of enrolling, under **What they get** above.
+
+For people already enrolled, change it afterwards with **Assign Content Scope**, or
+**Bulk edit enrollment scopes** for several at once. See
 [Partial access](/docs/knowledgebase/enrollment-access/partial-access).
+
+## The enrolment list
+
+<Path>Enrollments</Path> is every enrolment in your academy, and it carries more than
+most people expect:
+
+| Column | What it tells you |
+|---|---|
+| **Status** | Active, Completed, Cancelled, Expired or Suspended. |
+| **Progress** | How far through they are. |
+| **Scopes** | Which parts of the programme they hold. |
+| **Enrolled At** / **Enrolled By** / **Enrolled through** | When, by whom, and by which route. |
+| **Expires** / **Access** / **Access ended** | Whether access is live, and when it stops. |
+| **Payment**, **Payment Method**, **Payment Gateway**, **Payment Status** | How it was paid for. |
+| **Certificate** / **Certificate Issued At** | Whether one has been awarded. |
+| **Last Activity**, **Signed in** | Whether the learner has ever turned up. |
+
+**Has signed in** and **Never signed in** is the most useful filter you are not using.
+A batch where a quarter never signed in has an onboarding problem, not a teaching one.
+
+The list exports, so the awkward question — "send me everyone who has not started" — is
+a filter and a download.
+
+## Removing someone
+
+**Remove user** takes a learner off a programme. It asks first, because it takes their
+enrolment with it.
+
+If they are in the wrong batch, **transfer** them instead — it keeps their record and
+leaves a trail. See [Transfers](/docs/knowledgebase/enrollment-access/transfers).
 
 ## Common questions
 
-**Can I enroll someone before an offering is published?**
-The offering must be published for learners to actually use it. Publish it first, then add
-learners.
+<Accordions type="single">
 
-**A few rows failed in my bulk upload — did the rest still go through?**
-Yes. Bulk enrollment processes each learner on its own and reports each result, so the
-successes are saved even if some rows fail.
+<Accordion title="Nothing happened when I assigned learners.">
+Everyone you picked was already enrolled — the screen says **Nobody new to enrol**. It
+is not a failure.
+</Accordion>
+
+<Accordion title="Select all only took the people on screen.">
+It does not. **Select everyone who matches** is worked out on the server and covers
+every page of the filtered list. The confirmation says "Everyone who matches" and lists
+your filters, so you can check before committing.
+</Accordion>
+
+<Accordion title="Can I enrol more people than the batch has seats?">
+No. The screen tells you how many seats are left and by how many you are over. Raise the
+seat limit on the batch first, or enrol fewer people.
+</Accordion>
+
+<Accordion title="The batch's enrolment is closed. Can I still add someone?">
+Yes. Closed stops learners enrolling themselves; it does not stop you. You are warned,
+and the button reads **Enrol … anyway**.
+</Accordion>
+
+<Accordion title="I cannot find the course in the list.">
+Check the **Program Type**. A cohort-based course does not appear under Course; its
+batches appear under Cohort.
+</Accordion>
+
+<Accordion title="Can I enrol learners from a spreadsheet?">
+Not directly into a programme. Import the people first so they have accounts, then
+select them here. See [Adding people](/docs/knowledgebase/account-people/adding-people).
+</Accordion>
+
+<Accordion title="The learner is enrolled but sees no content.">
+Work down [How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+After a manual enrolment the usual answer is partial access, or content that is not
+published.
+</Accordion>
+
+<Accordion title="Does an enrolment I create count towards revenue?">
+No. There is no transaction behind it. If money changed hands outside the platform,
+record it as a manual payment so the figures are honest. See
+[Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="How learners enroll" description="The route most learners actually take." href="/docs/knowledgebase/enrollment-access/how-learners-enroll" />
+  <Card title="Partial access" description="Giving one semester rather than the whole programme." href="/docs/knowledgebase/enrollment-access/partial-access" />
+  <Card title="Transfers" description="Moving someone who is in the wrong batch." href="/docs/knowledgebase/enrollment-access/transfers" />
+  <Card title="Manual payments" description="Recording money taken outside the platform." href="/docs/knowledgebase/selling-payments/manual-payments" />
+</Cards>

@@ -1,57 +1,92 @@
 ---
 title: "Bundles"
-description: "Group several items into one package at a single, usually lower, price."
+description: "Selling several things as one purchase — and when a learning path is the better answer."
 ---
 
-A **bundle** packages several items together and sells them for one price — usually
-cheaper than buying everything separately. When a buyer purchases a bundle, they unlock
-everything inside it at once. This is the way to sell several things "together," since
-each checkout is for a single item.
+A bundle is several things sold together at one price. The buyer makes one purchase and
+ends up enrolled in everything in it.
 
-## What you can put in a bundle
+Bundles live in <Path>Commerce > Bundles</Path>.
 
-A bundle can mix and match:
+<WhoCan roles="Admin" />
 
-- Courses
-- Learning paths
-- Books
-- Generic products
-- Events
+## Making one
 
-## What a bundle has
-
-| Field | What it's for |
+| Field | What it is |
 |---|---|
-| **Title** | The bundle's name. |
-| **Web address (slug)** | The short, readable end of the bundle's link. |
-| **Thumbnail** | The bundle's headline image. |
-| **Description** | What's inside and why it's a good deal. |
-| **Status** | **Draft** (hidden) or **Published** (live and buyable). |
+| **Title** | What buyers see. Required. |
+| **Slug** | The short name in its web address. Required. |
+| **Description** | What is in it and why it belongs together. |
+| **Thumbnail** | Its cover image. |
+| **Bundle Items** | The things inside — courses, paths, whatever you are selling together. |
+| **Publish At** | When it goes live. Required. |
+| **Status** | Draft or published. |
 
-## Creating a bundle
+Then give it a price, in
+[Pricing](/docs/knowledgebase/selling-payments/pricing) with the entity type **Bundle**.
+Without one it cannot be bought.
 
-1. Go to **Admin → Bundles → New Bundle**.
-2. Enter a **title**, **description**, and upload a **thumbnail**.
-3. Add the **items** you want to include.
-4. Set the bundle's **price** — see [Pricing](/docs/knowledgebase/selling-payments/pricing).
-   Bundles are usually priced below the total of the items inside.
-5. Leave it as **Draft** until ready, then switch to **Published**.
+## Bundle or learning path?
 
-## What the buyer sees
+The distinction matters, and it is easy to get wrong:
 
-- One product page for the whole bundle, with one price.
-- After purchase, **everything in the bundle is unlocked** — they don't buy each piece
-  separately.
+| | **Bundle** | **Learning path** |
+|---|---|---|
+| What it is | A price on several things | A programme in its own right |
+| The learner ends up with | Separate enrolments | One enrolment |
+| Progress | Per item | One figure for the path |
+| Result and certificate | Per item | One for the path |
+| Order | None | Stages, and prerequisites if you want them |
 
-## Good to know
+**Use a bundle when** the items are independent and the offer is commercial — "these
+three courses, 20% cheaper together".
 
-- A bundle counts as **one purchase**. The buyer pays once and receives access to all
-  included items.
-- Because a bundle is the way to combine items, use it whenever you want a buyer to get
-  several things in a single transaction.
+**Use a [learning path](/docs/knowledgebase/courses/learning-paths) when** the items
+only make sense together — a diploma, a career track, a syllabus.
+
+If a learner should feel they joined *one* thing, it is a path.
+
+## The one-item rule
+
+Checkout takes one item per purchase. A bundle **is** one item, which is exactly why it
+exists: without it, "buy these three" would be three separate purchases.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner already owns one course in the bundle.">
+They are enrolled in the rest; the one they have is unaffected. There is no partial
+price for the overlap.
+</Accordion>
+
+<Accordion title="Can a bundle contain another bundle?">
+Put the items in directly. A bundle of bundles makes the price impossible to reason
+about.
+</Accordion>
+
+<Accordion title="Does a bundle award its own certificate?">
+No. Each item inside awards its own, under its own rules. For one certificate across
+several courses, use a learning path.
+</Accordion>
+
+<Accordion title="Can I bundle a cohort-based course?">
+Add the batch rather than the course, since the batch is what learners enrol into. Be
+careful with dates: a bundle selling in March containing a batch that started in
+January will refuse at checkout.
+</Accordion>
+
+<Accordion title="Can I change a bundle's items after people have bought it?">
+Existing buyers keep what they were enrolled in. New buyers get the new list. Adding an
+item does not give it to people who bought before.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pricing](/docs/knowledgebase/selling-payments/pricing) — set the bundle's price.
-- [Products & catalog](/docs/knowledgebase/selling-payments/products-catalog) — the items you can include.
-- [Checkout](/docs/knowledgebase/selling-payments/checkout) — how a buyer buys a bundle.
+<Cards>
+  <Card title="Learning paths" description="One programme rather than a price on several." href="/docs/knowledgebase/courses/learning-paths" />
+  <Card title="Pricing" description="Giving the bundle a price." href="/docs/knowledgebase/selling-payments/pricing" />
+  <Card title="Products catalog" description="Selling something that is not a course." href="/docs/knowledgebase/selling-payments/products-catalog" />
+</Cards>

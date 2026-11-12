@@ -5,13 +5,20 @@
   "pages": [
     "index",
     "creating-a-course",
+    "course-types",
+    "course-settings",
+    "publishing-and-catalog",
     "course-structure",
+    "curriculum-builder",
     "lesson-types",
     "files-and-resources",
+    "content-bank",
     "reusable-content",
-    "learning-paths",
+    "importing-and-exporting",
     "cohorts",
+    "terms-and-breakpoints",
+    "learning-paths",
     "instructors",
-    "publishing-and-catalog"
+    "reported-problems"
   ]
 }

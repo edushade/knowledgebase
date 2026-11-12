@@ -1,79 +1,160 @@
 ---
 title: "Creating a Course"
-description: "Set up a new course with its title, description, thumbnail, level, and the way learners will take it."
+description: "Build a course from an empty form to a published page — the three steps, what each field is for, and what to do when something will not save."
 ---
 
-A course is your main teaching unit. This page covers the basics — naming it, describing
-it, and choosing how learners will take it. Once the course exists, you fill it with
-content (see [Course structure](/docs/knowledgebase/courses/course-structure)).
+A course is your main teaching unit. Making one takes three steps: describe it, fill it
+with content, then set the rules it runs by. You can stop after any step and come back —
+nothing is live until you publish it.
 
-## What you set up on a course
+<WhoCan roles="Admin, Instructor" />
 
-| Field | What it does |
+**Before you start** — you need at least one [category](/docs/knowledgebase/account-people/categories-and-tags)
+and one person marked as an instructor. The form will not save without both.
+
+<Steps>
+
+<Step>
+
+### Decide whether it is self-paced or cohort-based
+
+Open <Path>Courses</Path> and click **Add Course**, at the top right. The first thing
+you are asked is the course type.
+
+<Screenshot
+  src="/kb/courses/choose-course-type.png"
+  alt="A dialog headed Choose Course Type with two cards, Self Paced and Cohort-Based, and a Continue button"
+  caption="This choice adds a step to the form later — cohort-based courses get a fourth step for their batches."
+/>
+
+**Self Paced** opens to a learner the moment they enrol and lets them move at their own
+speed. **Cohort-Based** puts learners into a batch with a start date, moving through the
+course together.
+
+Choose one and click **Continue**. If you are not sure, read
+[Self-paced or cohort-based](/docs/knowledgebase/courses/course-types) first — this is
+the one choice that is awkward to change later.
+
+</Step>
+
+<Step>
+
+### Describe the course
+
+Step 1 of the form is everything a learner reads before they decide to enrol.
+
+<Screenshot
+  src="/kb/courses/create-course-step-1.png"
+  alt="Step 1 of the Create Course form showing Course Title, Slug, Description, Category on the left and Thumbnail, Preview Media and Instructors on the right"
+  caption="The small flag buttons beside Course Title and Description switch the language you are typing in."
+/>
+
+| Field | What it is for |
 |---|---|
-| **Title** | The course name learners see. |
-| **Description** | A short summary of what the course teaches. |
-| **Thumbnail** | The cover image shown in your catalog and on the course page. |
-| **Preview media** | An optional intro video or image learners can watch before enrolling. |
-| **Difficulty level** | Beginner, Intermediate, or Advanced. |
-| **Language** | The main language of the course. |
-| **Tags** | Keywords that help learners find the course. |
-| **Learning outcomes** | A list of what learners will be able to do after finishing. |
-| **Requirements** | What a learner should already know or have before starting. |
+| **Course Title** | The name learners see. Required. |
+| **Slug** | The short name used in the course's web address. It fills itself in from the title; change it only if you want a tidier address. |
+| **Description** | A few sentences on what the course teaches. Formatting, links and images are allowed. |
+| **Category** | Which part of your catalogue it belongs to. Required, and you can pick more than one. |
+| **Thumbnail** | The cover image in your catalogue and at the top of the course page. |
+| **Preview Media** | An image or short video shown on the course page *instead of* the thumbnail — a taster someone can watch before enrolling. |
+| **Instructors** | Who teaches it. Required — at least one. |
 
-## Choose how learners take it
+The flag buttons beside **Course Title** and **Description** let you write the same
+field in each language your academy has switched on. A small amber dot on a flag means
+that language is still empty; a dashed outline means the language has text saved but is
+not switched on for your site. See [Languages](/docs/knowledgebase/website/languages).
 
-Every course has one of two delivery modes:
+</Step>
 
-- **Self-paced** — the course opens to a learner the moment they enroll, and they move
-  through it at their own speed. There is no fixed start or end date.
-- **Cohort-based** — learners join a scheduled group with a start and end date, and move
-  through the course together. See [Cohorts](/docs/knowledgebase/courses/cohorts).
+<Step>
 
-<Callout type="info">
-Pick the mode that fits your teaching. Use self-paced for an always-open class, and
-cohort-based when you want everyone to start on the same day.
-</Callout>
+### Add the content
 
-## How to create a course
+Click the **2** at the top, or **Save Draft** and then **2**. This is the course builder,
+where the course actually gets made.
 
-1. Go to **Admin → Courses**.
-2. Click **New Course**.
-3. Enter the **Title** and **Description**.
-4. Upload a **Thumbnail** and, if you have one, **Preview media**.
-5. Choose the **Difficulty level** and **Language**.
-6. Add **Tags**, **Learning outcomes**, and **Requirements**.
-7. Choose the delivery mode: **Self-paced** or **Cohort-based**.
-8. Click **Save**.
+<Screenshot
+  src="/kb/courses/course-builder.png"
+  alt="The course builder showing four tabs — Curriculum, Grading, Drip Schedule, Prerequisites — with buttons to add a Section, Lesson, Quiz, Assignment or File, and a list of course items each with a Published toggle"
+  caption="Four tabs, one job each. Curriculum is where you build; the other three decide how it is marked, when it opens, and who may take it."
+/>
 
-Your new course starts as a **draft** — only you and your team can see it. When it is
-ready, you publish it (see [Publishing and the catalog](/docs/knowledgebase/courses/publishing-and-catalog)).
+On the **Curriculum** tab, add a **Section** first and then put **Lesson**, **Quiz**,
+**Assignment** and **File** items inside it. Drag anything by the handle on its left to
+reorder it. Each item has its own **Published** switch, so you can leave half-finished
+material out of sight while the rest goes live.
 
-## Course statuses
+The other three tabs can wait until the content exists:
 
-A course is always in one of these states:
+- **Grading** — how marks are combined into a result. See [Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+- **Drip Schedule** — release content over time instead of all at once. See [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling).
+- **Prerequisites** — who is allowed to take the course. See [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules).
 
-| Status | Who can see it |
-|---|---|
-| **Draft** | Only you and your team. Work in progress. |
-| **Published** | Everyone. The course is live in your catalog. |
-| **Private** | Hidden from your catalog. You enroll learners into it directly. |
-| **Archived** | Retired. No longer offered to new learners. |
+Full detail: [The course builder](/docs/knowledgebase/courses/curriculum-builder) and
+[Lesson types](/docs/knowledgebase/courses/lesson-types).
 
-## What the learner sees
+</Step>
 
-Before enrolling, a learner sees the title, description, thumbnail, level, language,
-learning outcomes, and requirements on the course page. If you added preview media, they
-can watch or view it without enrolling.
+<Step>
 
-## Tips
+### Set the rules, then publish
 
-- Write learning outcomes as clear promises: "Build a budget in a spreadsheet."
-- A good thumbnail and a short preview video help learners decide to enroll.
-- Keep the course in **draft** until the content is ready, then publish.
+Click **Settings** at the top right, or the **3**. This step holds everything that is not
+content: how long the course is, whether enrolment is open, whether it awards a
+certificate, and more.
 
-## Next steps
+<Screenshot
+  src="/kb/courses/course-settings.png"
+  alt="The course settings step with a Basic Settings card on the left and a Settings Behavior card on the right holding Enrollment Open, Enable Certificate and Enable Transcript switches"
+  caption="Two cards: Basic Settings describes the course, Settings Behavior decides what it does."
+/>
 
-- [Course structure](/docs/knowledgebase/courses/course-structure) — add and organize content.
-- [Publishing and the catalog](/docs/knowledgebase/courses/publishing-and-catalog) — settings for going live.
-- [How learners enroll](/docs/knowledgebase/enrollment-access/how-learners-enroll) — the enrollment experience.
+The settings worth getting right on day one are **Maximum Enrollments** (0 means
+unlimited), **Enrollment Open**, and **Enable Certificate**. Everything else has a
+sensible default. Each field is explained in
+[Course settings](/docs/knowledgebase/courses/course-settings).
+
+When you are ready, use the status button at the top right — it reads **Draft** until you
+change it — and choose **Published**. A published course appears in your catalogue and
+can be enrolled in.
+
+</Step>
+
+</Steps>
+
+## What happens next
+
+A published course is visible but not necessarily buyable. Two things are separate from
+each other:
+
+- **Publishing** puts the course in your catalogue.
+- **Pricing** decides what it costs, and is set in
+  [Pricing](/docs/knowledgebase/selling-payments/pricing). A course with no price cannot
+  be bought; you can still enrol people into it yourself.
+
+## If something goes wrong
+
+**"At least one instructor is required."** Step 1 will not save without someone in the
+**Instructors** box. If the list looks empty, nobody on your team is marked as an
+instructor yet — see [People and roles](/docs/knowledgebase/account-people/people-and-roles).
+
+**The Category box has nothing in it.** Categories are made once, in
+<Path>Taxonomy > Categories</Path>, and then reused. See
+[Categories and tags](/docs/knowledgebase/account-people/categories-and-tags).
+
+**You cannot find the Publish button.** It is the status button at the top right of the
+settings step, not a separate button. If it still says **Draft** after you choose
+**Published**, the course is missing something required — step 1 will show which field.
+
+**You picked the wrong course type.** The type is set when the course is created and the
+form does not offer to change it afterwards. Build the course again under the right type
+while it is still small.
+
+## Related questions
+
+<Cards>
+  <Card title="Self-paced or cohort-based?" description="What each type does, and which one fits the way you teach." href="/docs/knowledgebase/courses/course-types" />
+  <Card title="Every course setting explained" description="What each field on the settings step changes, in plain words." href="/docs/knowledgebase/courses/course-settings" />
+  <Card title="How do I add lessons and sections?" description="Working in the course builder — adding, nesting, reordering, publishing." href="/docs/knowledgebase/courses/curriculum-builder" />
+  <Card title="How do I put learners in it?" description="Enrolling people yourself, in ones or in bulk." href="/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment" />
+</Cards>

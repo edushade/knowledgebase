@@ -1,63 +1,89 @@
 ---
 title: "Learner Uploads"
-description: "Where and how learners can upload files — like assignment submissions and profile photos."
+description: "What learners can send you, the separate limits that govern it, and where their files end up."
 ---
 
-Learners can upload files in the places where you allow it. They don't browse your whole
-library — they simply add files to the task in front of them, such as an assignment
-submission or their profile photo.
+Learners upload two things: their assignment submissions, and their own profile picture.
+Both are governed by limits set separately from your team's.
 
-## Where learners can upload
+<WhoCan roles="Admin" />
 
-| Place | What they upload |
+## The learner limits
+
+In <Path>Settings > Control Panel</Path> under **Media**:
+
+| Setting | What it governs |
 |---|---|
-| **Assignment submissions** | Their work — documents, PDFs, images, audio, or video |
-| **Profile photo** | A picture for their account |
+| **Max upload file size for learners (MB)** | How big a submission can be. |
+| **Allowed file types** | What they may send. |
 
-Uploads happen right inside the relevant screen. A learner doesn't need to know anything
-about your file library; they just attach a file to the task.
-
-## What a learner sees
-
-When a learner works on an assignment that accepts files:
-
-1. They open the assignment.
-2. They click **Add File** (or a similar button).
-3. They choose a file from their device — large files are supported.
-4. They can add more than one file if the assignment allows.
-5. When they click **Submit**, their files are sent along with their submission.
-
-For a profile photo, the learner opens their profile, chooses a new picture, and saves.
-
-## Learners can remove their own uploads
-
-A learner can remove a file they added — for example, if they attached the wrong one
-before submitting. They can only manage files they uploaded themselves; they can't see or
-touch anyone else's files.
-
-<Callout type="info">
-If a learner attaches the wrong file by mistake, they can simply remove it and add the
-correct one before submitting.
+<Callout type="warn">
+**Check the allowed types before an assignment is due.** A list without `pdf` and
+`docx` stops every submission, and you will find out at 11pm the night of the deadline.
 </Callout>
 
-## What you see as an admin or instructor
+Set the size limit to what a real submission needs. Too generous and you collect phone
+video; too tight and a scanned handwritten paper is refused.
 
-Files a learner submits show up where you review their work — for example, when you open
-an assignment submission to grade it. You can preview the file (see
-[Previewing files](/docs/knowledgebase/files/previewing-files)) and download it if you
-need to.
+## Assignment submissions
 
-## Good to know
+A learner submits against an [assignment](/docs/knowledgebase/assessments/assignments),
+and the file arrives with their submission. You open it from the marking screen — see
+[Assignment submissions](/docs/knowledgebase/assessments/assignment-submissions).
 
-- Learner uploads follow the same file-type and size limits that keep your platform safe.
-  You can set a separate size limit for learners if you want — see
-  [Sharing and limits](/docs/knowledgebase/files/sharing-and-limits).
-- Submitted files stay with the submission so you always have a record of what was handed
-  in.
+Submissions are attached to the learner and the assignment, not to your shared file
+library, so they do not clutter it.
 
-## What's next
+## Avatars
 
-- [Assignments](/docs/knowledgebase/assessments/assignments) — set up tasks that learners
-  submit files to.
-- [Sharing and limits](/docs/knowledgebase/files/sharing-and-limits) — control which file
-  types and sizes are allowed.
+Learners can upload a profile picture, unless the field is locked. See **Locked Profile
+Fields** in [the Control Panel](/docs/knowledgebase/settings/control-panel).
+
+## Telling learners what to send
+
+Most submission problems are avoidable, in the assignment's instructions:
+
+- **The format.** "A single PDF."
+- **The size.** "Under 10 MB."
+- **The naming.** "Your name and the assignment number."
+- **What to do if it fails.** Who to contact, and by when.
+
+Those four lines save more time than any setting on this page.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner cannot upload their assignment.">
+The size limit or the file type. Both are separate from your team's limits — check the
+learner ones.
+</Accordion>
+
+<Accordion title="A learner submitted the wrong file.">
+Reset their submission so they can send another, or raise the assignment's attempts.
+See [Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+</Accordion>
+
+<Accordion title="Where do submitted files live?">
+With the submission, reachable from the marking screen. They are not in your shared
+library.
+</Accordion>
+
+<Accordion title="Can learners upload to a lesson?">
+No. Learner uploads are assignment submissions and avatars.
+</Accordion>
+
+<Accordion title="Can I stop learners uploading at all?">
+Do not set assignments that need a file, or restrict the allowed types. There is no
+separate switch.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Assignments" description="Setting the work they submit." href="/docs/knowledgebase/assessments/assignments" />
+  <Card title="Assignment submissions" description="Marking what comes in." href="/docs/knowledgebase/assessments/assignment-submissions" />
+  <Card title="Sharing and limits" description="Every file setting in one place." href="/docs/knowledgebase/files/sharing-and-limits" />
+</Cards>

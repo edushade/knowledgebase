@@ -1,0 +1,132 @@
+---
+title: "Terms and Semesters"
+description: "Cut a batch into terms so results, access and enrolment can all work one semester at a time."
+---
+
+A term — the screens call it a **breakpoint** — is a dated slice of a batch. Everything
+between its start and end dates belongs to that term: the lessons taught in it, the
+marks earned in it, and the result reported for it.
+
+You need terms when your programme has semesters. You do not need them for a short
+course that is simply taught from start to finish.
+
+<WhoCan roles="Admin, Instructor" />
+
+## What a term gives you
+
+| Without terms | With terms |
+|---|---|
+| One result, at the end | A result per term, and an overall result |
+| Learners buy the whole programme | Learners can buy one semester at a time |
+| Everyone finishes together | You decide each term who moves up and who repeats |
+| One enrolment window | Each term can open and close on its own dates |
+
+Those four are why terms exist. If none of them is something you need, leave the batch
+undivided.
+
+## Two ways to create them
+
+### Generated with the batch
+
+When you make a batch, **Breakpoint Interval** cuts its dates up for you — weekly,
+bi-weekly, monthly, or **Custom Intervals** where you give the number and the dates are
+split evenly. The **Breakpoints Preview** panel shows what you are about to get before
+you save. Most semester programmes use **Custom Intervals** with the number of
+semesters. See [Cohorts and batches](/docs/knowledgebase/courses/cohorts).
+
+### Added by hand in the builder
+
+In the course builder's **Curriculum** tab, add a **Breakpoint** item and set its dates
+yourself. Use this when the terms are not evenly spaced — a short foundation term
+followed by three long ones.
+
+Either way, you then drag content into the term it belongs to.
+
+## What you set on a term
+
+| Field | What it does |
+|---|---|
+| **Title** | What learners see — "Semester 1", "Term 2". Required. |
+| **Description** | Optional. |
+| **Start Date & Time** | When the term begins teaching. Required. |
+| **End Date & Time** | When it ends. Required. |
+| **Enrollment opens** / **Enrollment closes** | When this term may be *sold*, which is not the same as when it is taught. Leave both empty and the term follows its batch. |
+| **Transcript available from** | A date before which the term's result stays hidden from the learner. Leave it empty and the term's end date is used. |
+| **Status** | **Draft** keeps the term out of sight; **Published** makes it live. |
+
+<Callout type="info">
+**The enrolment window is optional on purpose.** Left empty, a term is on sale until its
+batch's end date — or, if the batch does not allow late entry, only until that term
+starts teaching. Fill it in when one semester needs to sell on different dates from the
+rest.
+</Callout>
+
+## How terms change the rest of the system
+
+**Results.** Each term produces its own result, alongside the overall one. See
+[GPA and results](/docs/knowledgebase/progress-grading/gpa-and-results) and
+[Terms and periods](/docs/knowledgebase/progress-grading/terms-and-periods).
+
+**Access.** A learner can be given one term rather than the whole batch. That is what
+[partial access](/docs/knowledgebase/enrollment-access/partial-access) means, and it is
+how a semester-by-semester programme is sold.
+
+**Progression.** At the end of a term you decide, per learner, whether they go up to the
+next one or repeat. See [Progression](/docs/knowledgebase/enrollment-access/progression).
+
+**Certificates.** A term-level transcript can be released on its own date, before the
+programme has finished.
+
+## Good to know
+
+- **Content outside a term still belongs to the batch.** A lesson that sits above the
+  first breakpoint, or between two of them, is part of the course but is not counted in
+  any term's result. Keep everything that should be marked inside a term.
+- **Terms are a cohort-based idea.** A self-paced course has no dates to cut up.
+- **Changing a batch's dates does not redraw its terms.** The terms keep the dates they
+  were given. If the batch moves, go through the terms and move them too.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I changed the batch dates and the terms are now wrong.">
+Terms hold their own dates and do not follow the batch. Open each one and correct it. If
+there are many and the shift is uniform, it is usually faster to delete them and
+generate the set again from the batch's **Breakpoint Interval** — but only before
+learners have marks in them, because deleting a term takes its structure with it.
+</Accordion>
+
+<Accordion title="Can a learner buy just Semester 2?">
+Yes, if Semester 2 is a term with its own price. That is the main reason to use terms.
+See [Partial access](/docs/knowledgebase/enrollment-access/partial-access) and
+[Pricing](/docs/knowledgebase/selling-payments/pricing).
+</Accordion>
+
+<Accordion title="A learner's marks are missing from their semester result.">
+The usual cause is content sitting outside any term. A quiz that is not inside a
+breakpoint is not part of a semester, so it never reaches that semester's result — even
+though it shows on the overall one. Move it inside the term it belongs to.
+</Accordion>
+
+<Accordion title="What is the difference between a term and a section?">
+A **section** groups content for tidiness — "Module 3". A **term** is a dated period
+that results, access and enrolment are all calculated against. A section has no dates
+and changes nothing about marking.
+</Accordion>
+
+<Accordion title="Can I add a term to a batch that is already running?">
+Yes. Add the breakpoint, set its dates, and move the content that belongs to it inside.
+Marks already recorded against that content are then counted in the new term.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Cohorts and batches" description="Where terms are generated, and the Breakpoints Preview." href="/docs/knowledgebase/courses/cohorts" />
+  <Card title="Partial access" description="Giving or selling one semester instead of the whole programme." href="/docs/knowledgebase/enrollment-access/partial-access" />
+  <Card title="Progression" description="Who moves up at the end of a term, and who repeats." href="/docs/knowledgebase/enrollment-access/progression" />
+  <Card title="Terms and periods in grading" description="How a term's result is worked out." href="/docs/knowledgebase/progress-grading/terms-and-periods" />
+</Cards>

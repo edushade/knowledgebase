@@ -1,41 +1,102 @@
 ---
 title: "Verification"
-description: "Confirm an email address or phone number with a short one-time code."
+description: "Confirming an email address or phone number — what it stops, and what to do when nothing arrives."
 ---
 
-Verification is how a person proves an email or phone number is really theirs. It happens
-right after sign-up and any time someone changes their email or phone.
+Verification is the step where somebody proves the address or number they gave you is
+theirs. It is a small thing that prevents a large one: an academy full of accounts
+nobody can reach.
 
-## How it works
+<WhoCan roles="Admin" />
 
-1. The person receives a short **one-time code** by email or text.
-2. They enter the code on the verification page.
-3. Once it matches, that email or phone is confirmed.
+## Turning it on
 
-Either an **email or a phone number** can satisfy verification — a person doesn't have to
-confirm both to get started.
+<Path>Settings > Control Panel</Path> under **Security & Compliance → Registration**:
 
-## Good to know
-
-| Detail | What to expect |
+| Setting | What it does |
 |---|---|
-| **Code expiry** | A code is valid for about **15 minutes**. After that, request a new one. |
-| **Attempts** | There are a **few tries** per code. Too many wrong entries and the person needs a fresh code. |
-| **Resend** | If a code doesn't arrive or expires, click **Resend** to get a new one. |
+| **Require email verification** | An email must be confirmed. |
+| **Require phone verification** | A phone must be confirmed. |
 
-<Callout type="info">
-If a code isn't arriving by email, ask the person to check their spam or promotions
-folder. For text messages, make sure the phone number was entered correctly, including
-the country code.
+An account waiting on either reads **Pending Verification**.
+
+## Why it is worth the friction
+
+| Without verification | With it |
+|---|---|
+| A typo becomes a working account you can never reach | The typo never gets in |
+| Certificates go to addresses that bounce | They reach somebody |
+| Duplicate accounts from mistyped addresses | Far fewer |
+| No way to reset a password | There is one |
+
+The cost is real — some people stop at the verification step — but an unreachable
+learner is worse than a lost one.
+
+## When nothing arrives
+
+The most common support request in any academy. Work down this list:
+
+1. **Check your sending service is actually working.** Look at
+   [Delivery and analytics](/docs/knowledgebase/communication/delivery-and-analytics)
+   and the delivery logs before blaming the learner. A whole academy's worth of
+   "no email" is almost always your side.
+2. **Spam folder.** Say so when you ask them to check.
+3. **The address itself.** One wrong character is invisible to the person who typed it;
+   read it back to them.
+4. **Resend.**
+5. **Verify them yourself.** From their record, where it is genuinely stuck.
+
+<Callout type="warn">
+Before an intake, send yourself a verification email from a fresh account. Discovering
+on registration day that your sending service is misconfigured costs you the intake.
 </Callout>
 
-## After verification
+## Verifying somebody yourself
 
-Once an email or phone is confirmed, a **pending** account becomes **active** and the
-person can sign in normally. See
-[Accounts & sign-in](/docs/knowledgebase/account-people/accounts-and-sign-in).
+A person's record shows **Email verified** and **Phone verified**, and both can be set
+by hand. Use it when you have confirmed their identity another way — not as a routine
+way around a sending problem you have not fixed.
+
+## Changing a verified address
+
+A learner changing their email has to verify the new one. Whether they can change it at
+all depends on **Locked Profile Fields** — see
+[the Control Panel](/docs/knowledgebase/settings/control-panel).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Nobody is receiving verification emails.">
+Your sending service, not your learners. Check the delivery logs — see
+[Channels](/docs/knowledgebase/communication/channels).
+</Accordion>
+
+<Accordion title="Can I switch verification off?">
+Yes, and you will collect unreachable accounts and duplicates. If you do, make sure you
+have another way to confirm who somebody is.
+</Accordion>
+
+<Accordion title="A learner changed their phone number and cannot sign in.">
+They need to verify the new one. If they cannot receive the code, update and verify it
+from their record once you are satisfied it is them.
+</Accordion>
+
+<Accordion title="Does social sign-in need verification?">
+The provider has already confirmed the address, so it arrives verified.
+</Accordion>
+
+<Accordion title="What happens to an account stuck at Pending Verification?">
+It depends on your settings — unused accounts can be removed on a schedule. See
+[Privacy and consent](/docs/knowledgebase/account-people/privacy-and-consent).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Accounts & sign-in](/docs/knowledgebase/account-people/accounts-and-sign-in) — creating an account and signing in.
-- [Profiles & devices](/docs/knowledgebase/account-people/profiles-and-devices) — changing an email or phone later (each change is re-confirmed by a code).
+<Cards>
+  <Card title="Accounts and sign-in" description="Registration and sign-in settings." href="/docs/knowledgebase/account-people/accounts-and-sign-in" />
+  <Card title="Channels" description="The sending services verification depends on." href="/docs/knowledgebase/communication/channels" />
+  <Card title="Duplicate accounts" description="What unverified typos turn into." href="/docs/knowledgebase/account-people/merging-accounts" />
+</Cards>

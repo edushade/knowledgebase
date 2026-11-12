@@ -1,58 +1,90 @@
 ---
 title: "Subscriptions"
-description: "Sell recurring memberships that renew each cycle and grant ongoing access."
+description: "What recurring billing actually looks like here — and the honest answer about what is and is not finished."
 ---
 
-A **subscription** is a recurring plan. The buyer pays on a regular cycle — monthly or
-yearly, for example — and keeps access for as long as they stay subscribed. It's a good
-fit for a membership site, an "all-access pass," or any offering you want to bill again
-and again.
+If you are looking for "set a monthly price and it renews itself", read this page before
+planning around it.
 
-## What a subscription plan can offer
+<Callout type="warn">
+**Subscription is not one of the payment modes.** A price can be **One-time Purchase**,
+**Installment** or **Free**. There is no "subscription" option on the pricing form, and
+the Subscriptions screens are not in the Billing menu.
+</Callout>
 
-| Setting | What it does |
-|---|---|
-| **Billing tiers** | Different options on the same plan, each with its own price and access length — for example, a monthly tier and an annual tier. |
-| **Free trial** | An optional period before billing starts, so buyers can try before they pay. |
-| **What it unlocks** | Either **all content** on your platform, or a **specific set of items** you choose. |
-| **Access length per tier** | How long each cycle's access lasts before it renews. |
+<WhoCan roles="Admin" />
 
-## Creating a subscription plan
+## How to sell recurring access today
 
-1. Go to **Admin → Subscriptions → New Plan**.
-2. Give the plan a **name** and **description**.
-3. Add one or more **billing tiers** (for example, monthly and annual), each with its
-   price and cycle length.
-4. (Optional) Turn on a **free trial** and set its length.
-5. Choose what the plan unlocks: **all content** or a **specific set of items**.
-6. **Publish** the plan.
+Use **limited access** on a one-time price:
 
-## How renewal and cancelling work
+1. Set the mode to **One-time Purchase**.
+2. Set **Access duration** to **Limited** — 1 month, 6 months, 1 year.
+3. The learner buys. When the duration runs out, their access lapses.
+4. They buy again to continue.
 
-- Access **renews automatically** each cycle as long as the subscription is active.
-- If a buyer **cancels**, access continues until the **end of the current period**, then
-  stops. They aren't cut off mid-cycle.
+It is a renewal the learner initiates rather than one you take automatically. For an
+academy where most people pay by mobile wallet rather than a stored card, that is closer
+to how money actually moves anyway.
 
-## What the buyer sees
+See [Pricing](/docs/knowledgebase/selling-payments/pricing).
 
-- The plan's tiers and prices, plus the free trial if you offer one.
-- Ongoing access to whatever the plan unlocks.
-- The option to cancel; after cancelling, they keep access until the period ends.
+## Managing lapsing access
 
-## What you see
+Lapsed access is visible, so it can be worked:
 
-In **Admin → Subscriptions** you can see **subscriber counts** and **revenue** for your
-plans.
+- The enrolment list shows **Expires**, **Access** and **Access ended**.
+- The billing overview surfaces **Lapsed subscriptions** and **Subscription renewals
+  overdue**.
+- An [audience](/docs/knowledgebase/communication/audiences) can be built from the
+  learners whose access is about to run out, and a
+  [campaign](/docs/knowledgebase/communication/campaigns) sent to them.
 
-## Good to know
+A reminder a week before access ends recovers far more than one sent after.
 
-- A subscription is **one item per buyer** — a buyer holds one active plan, billed on its
-  cycle, not a cart of many items.
-- For a course someone pays for once, use a **one-time** price instead. See
-  [Pricing](/docs/knowledgebase/selling-payments/pricing).
+## Paying over time is a different thing
+
+If what you want is "the fee split across six months", that is an
+[instalment plan](/docs/knowledgebase/selling-payments/installments), which is fully
+supported — down payment, schedule, grace period, late fees and all.
+
+Instalments pay off a fixed total. A subscription would pay for continuing access. Most
+academies asking for a subscription actually want instalments.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can I charge a card automatically every month?">
+Not from the pricing form. Limited access, bought again, is the supported shape.
+</Accordion>
+
+<Accordion title="What are the Subscribers and Failed Renewals screens?">
+Groundwork for recurring billing that is not finished and is not in the menu. Do not
+build a commercial plan on them.
+</Accordion>
+
+<Accordion title="How do I stop someone's access?">
+Let the duration lapse, or end their enrolment. See
+[Admin and bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
+</Accordion>
+
+<Accordion title="Can I offer a free trial?">
+Not as a trial that converts by itself. The closest thing is a free price with limited
+access — a month free, then they buy.
+</Accordion>
+
+<Accordion title="Does a learner lose their progress when access lapses?">
+No. Their record is intact. They lose access to the content, and get it back when they
+buy again.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pricing](/docs/knowledgebase/selling-payments/pricing) — the recurring price model.
-- [Payment methods](/docs/knowledgebase/selling-payments/payment-methods) — how recurring charges are collected.
-- [Revenue & reports](/docs/knowledgebase/selling-payments/revenue-reports) — track subscription earnings.
+<Cards>
+  <Card title="Pricing" description="Limited access, which is how recurring is built." href="/docs/knowledgebase/selling-payments/pricing" />
+  <Card title="Installments" description="Paying a fixed fee over time — fully supported." href="/docs/knowledgebase/selling-payments/installments" />
+  <Card title="Campaigns" description="Reminding learners before their access lapses." href="/docs/knowledgebase/communication/campaigns" />
+</Cards>

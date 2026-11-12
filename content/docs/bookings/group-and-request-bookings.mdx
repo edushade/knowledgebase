@@ -1,63 +1,98 @@
 ---
-title: "Group & Request Bookings"
-description: "Let several students share one time slot, or let students propose their own times for you to approve."
+title: "Group and Request Bookings"
+description: "Two variations on a booking — several people in one slot, and bookings you approve before they count."
 ---
 
-Most meetings are one student, one time slot. But two extra styles cover other needs: a
-**group meeting** where several students share one slot, and a **request booking** where a
-student suggests a time and you approve it.
+Most bookings are one person picking a free slot. Two variations change that, and they
+are set on the [meeting plan](/docs/knowledgebase/bookings/meeting-plans).
 
-## Group meetings
+<WhoCan roles="Admin, Instructor" />
 
-A group meeting lets more than one student book the **same** time slot, up to a limit you
-set. This is ideal for group office hours, a study session, or a small workshop.
+## Group bookings
 
-### How to set it up
+**Meeting Plan Type** of **One to Many** makes a slot something several people join.
 
-1. Open the meeting plan in **Admin → Bookings → Meeting Plans**.
-2. Turn on group booking and set the **capacity** — the maximum number of students per slot.
-3. Click **Save**.
+| Setting | What it does |
+|---|---|
+| **Group Meeting Spots** | How many places in a slot. |
+| **Max Participants Limit** | The ceiling. |
+| **Guests Allowed** | Whether a booker may bring others. |
 
-### How it works
-
-- The slot stays open until it reaches its capacity. Each student books their own spot.
-- When the slot is full, it no longer appears for new students.
-- Everyone in the group gets the same meeting link or location and the same calendar invite.
-
-### What the student sees
-
-The student books a spot in the slot just like a normal meeting. They may see how many spots
-remain. Once the group is full, that time disappears from the booking page.
-
-## Request bookings
-
-A request booking flips the usual flow: instead of picking from fixed open times, the student
-**proposes** a time (and can add a note about what they need), and you **approve** it before
-it becomes final. This suits meetings where the timing is flexible or needs your judgment.
-
-### How it works
-
-1. The student opens the booking page and suggests a time, with an optional note.
-2. The booking arrives as **Requested** — it is not yet on the calendar.
-3. You review it in your dashboard and either **confirm** it or let it go.
-4. When you confirm, it becomes **Confirmed**: the meeting link and calendar invites are
-   created and everyone is notified.
-
-### What the student sees
-
-After proposing a time, the student is told their request is awaiting approval. When you
-confirm, they receive a confirmation and a calendar invite. If a request is not approved, it
-simply does not become a meeting.
+Good for a group tutorial, a shared office hour, a revision session. The booking page
+shows how many places are left.
 
 <Callout type="info">
-A **Requested** booking is waiting for your approval. A **Pending** booking is waiting for
-payment. Keep the two in mind when reviewing your dashboard — see
-[Managing bookings](/docs/knowledgebase/bookings/managing-bookings).
+**Group bookings are not a webinar.** For one session many people register for at a time
+you set, use an [event](/docs/knowledgebase/bookings/events). A group booking is still a
+slot somebody picks.
 </Callout>
 
-## Good to know
+## Request-based bookings
 
-- Group meetings and request bookings are set per meeting plan, so you can mix styles across
-  the meetings you offer.
-- You can also let students bring **extra guests** along to a booking — covered in
-  [Managing bookings](/docs/knowledgebase/bookings/managing-bookings).
+**Booking Mode** of **Request-Based Booking**: "customers request a time, and you must
+approve it before it's confirmed."
+
+| Step | What happens |
+|---|---|
+| 1 | The invitee asks for a time. |
+| 2 | The request arrives for you, and the menu shows a badge. |
+| 3 | You accept their time, or offer another. |
+| 4 | Confirmed, and they are told. |
+
+Opening a request lets you "review the invitee's preferred times or select a new time".
+
+### When it is worth the extra step
+
+- Meetings you may need to decline.
+- Meetings needing the right person, not just any slot.
+- Admissions interviews, assessments, anything with a gate.
+
+### When it is not
+
+Anything routine. Every step loses people, and an unanswered request loses them
+completely — they do not know whether to wait.
+
+<Callout type="warn">
+Request-based bookings create a queue somebody has to work daily. If nobody owns that
+queue, use instant booking.
+</Callout>
+
+## Paid and request-based
+
+A plan can be both: they request, you approve, they pay, it is confirmed. **Pending
+booking expiry** decides how long the slot is held between approval and payment. See
+[Booking payments](/docs/knowledgebase/bookings/payments).
+
+Three steps is a lot. Use it only where approval genuinely matters.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A group slot shows as full with places left.">
+Check **Group Meeting Spots** against **Max Participants Limit** — the lower of the two
+is what applies.
+</Accordion>
+
+<Accordion title="Requests are piling up.">
+Nobody is working the queue. Either assign it to somebody, or switch the plan to instant
+booking.
+</Accordion>
+
+<Accordion title="Can I decline a request?">
+Yes, and the invitee is told. Declining is better than leaving it.
+</Accordion>
+
+<Accordion title="Can guests join without booking?">
+**Guests Allowed** lets a booker bring others. They do not book themselves.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Meeting plans" description="Where booking mode and group spots are set." href="/docs/knowledgebase/bookings/meeting-plans" />
+  <Card title="Managing bookings" description="Working the request queue." href="/docs/knowledgebase/bookings/managing-bookings" />
+  <Card title="Events" description="One session, many registrants." href="/docs/knowledgebase/bookings/events" />
+</Cards>

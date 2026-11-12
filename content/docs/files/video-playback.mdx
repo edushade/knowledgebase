@@ -1,0 +1,119 @@
+---
+title: "Video Playback"
+description: "Which player your videos use, whether learners can skip ahead, and the one limitation to know about YouTube."
+---
+
+How a video behaves — whether a learner can drag the scrubber to the end, change the
+speed, or see the source site's branding — is a setting, not a property of the video.
+
+It is set academy-wide, and can be overridden per programme.
+
+<WhoCan roles="Admin" />
+
+## The two players
+
+For YouTube and Vimeo videos you choose, per provider:
+
+| Choice | What happens |
+|---|---|
+| **Managed player (custom player)** | The video plays inside your own player. Seeking, speed and keyboard are under your control, and the provider's branding and related videos are always hidden. |
+| **YouTube / Vimeo default player** | Their player runs and controls everything. |
+
+<Callout type="warn">
+**The controls below apply to the managed player only.** With both providers on their
+default player, the settings affect uploaded videos alone — the screen warns you when
+that is the case.
+</Callout>
+
+## The controls
+
+| Setting | What it does |
+|---|---|
+| **Allow seeking** | Off locks the scrubber, so learners must watch through. |
+| **Playback speed control** | Lets learners change the speed. |
+| **Keyboard shortcuts** | Space and arrow keys in the player. |
+| **Privacy-enhanced mode (YouTube)** | Uses YouTube's no-cookie address, so no tracking cookies are set until play. |
+
+### About locking seeking
+
+Turning **Allow seeking** off is how an academy stops learners dragging to the end of a
+video to tick it off.
+
+It is worth being honest about what it costs: a learner who wants to re-watch one
+section has to sit through everything before it. For assessed material it is
+defensible; for a reference video it makes the course worse.
+
+A better answer for most courses is a sensible
+[completion rule](/docs/knowledgebase/progress-grading/completion-rules) — 90% watched —
+with seeking left on.
+
+### Privacy-enhanced mode
+
+Switch it on. It costs nothing, and it means YouTube sets no tracking cookies on your
+learners until they actually press play — which matters if you ask for cookie consent.
+
+## Per-programme override
+
+**Customize video playback for this program**, on a course's settings step. Off, the
+course follows your academy-wide settings; on, it has its own.
+
+Use it for the one course where the rules genuinely differ — an assessed series where
+seeking is locked, inside an academy where it is not.
+
+## The YouTube limitation
+
+The managed player cannot get around YouTube's "confirm you're not a bot" check. When
+YouTube decides to show it, your learner sees it.
+
+If reliable playback matters — a paid course, an exam-prep series — host the videos
+yourself rather than embedding them. It costs more and it works.
+
+## Where videos come from
+
+| Source | Notes |
+|---|---|
+| **Self hosted** | Uploaded to your own library. Most control, no outside branding. |
+| **YouTube** | Free to serve, plays well on weak connections, subject to the above. |
+| **Vimeo** | Similar, fewer distractions. |
+
+See [Lesson types](/docs/knowledgebase/courses/lesson-types).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I turned off seeking and learners can still skip.">
+Those videos are on the provider's default player, where your settings do not apply. Set
+the provider to **Managed**.
+</Accordion>
+
+<Accordion title="Learners say a video will not play.">
+If it is a YouTube video, the bot check is the usual cause, and it is outside your
+control. Self-hosting is the fix.
+</Accordion>
+
+<Accordion title="Videos count as watched before they are.">
+Check the lesson's **Duration**. Progress is measured against the figure you typed. See
+[Lesson types](/docs/knowledgebase/courses/lesson-types).
+</Accordion>
+
+<Accordion title="Should I use the managed player?">
+Yes, for anything assessed — it gives you the controls and hides the related videos that
+take learners away. For a casual reference video it matters less.
+</Accordion>
+
+<Accordion title="Can learners download videos?">
+Media settings in <Path>Settings > Control Panel</Path> govern downloads, including
+whether paid content may be downloaded. See
+[Sharing and limits](/docs/knowledgebase/files/sharing-and-limits).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Lesson types" description="Adding a video, and why duration matters." href="/docs/knowledgebase/courses/lesson-types" />
+  <Card title="Completion rules" description="What counts as having watched it." href="/docs/knowledgebase/progress-grading/completion-rules" />
+  <Card title="Sharing and limits" description="Uploads, storage and downloads." href="/docs/knowledgebase/files/sharing-and-limits" />
+</Cards>

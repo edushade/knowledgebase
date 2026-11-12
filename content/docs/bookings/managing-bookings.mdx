@@ -1,85 +1,123 @@
 ---
 title: "Managing Bookings"
-description: "View, confirm, reschedule, and cancel bookings from your dashboard — and understand booking statuses, time zones, and extra guests."
+description: "The schedule of what has been booked — confirming requests, rescheduling, cancelling, and the queue you have to work."
 ---
 
-Your bookings dashboard is the single place to see and act on every meeting. From here you
-can find a booking, confirm a request, reschedule, or cancel — and your students can manage
-their own bookings too, within the deadlines you set.
+<Path>Teach > Live Sessions > Meeting Schedules</Path> is everything booked with you.
 
-## The bookings dashboard
+<WhoCan roles="Admin, Instructor" />
 
-Go to **Admin → Bookings → Meeting Schedules** to see all your bookings. You can:
+## The list
 
-- **Search** for a booking by student name or meeting.
-- **Filter** by status, by meeting plan, or by date.
-- **Open** any booking to see its full details — who booked, when, the location, any guests,
-  and notes.
+Each row carries:
 
-## Booking statuses
-
-Every booking has a status that tells you exactly where it stands.
-
-| Status | What it means |
+| Column | What it is |
 |---|---|
-| **Confirmed** | Booked and on the calendar. Attendees have the invite and the link. |
-| **Pending** | Held while it waits for payment. Becomes Confirmed once paid. |
-| **Requested** | A student proposed a time and it is waiting for your approval. |
-| **Rescheduled** | The meeting was moved to a new date or time. |
-| **Cancelled** | The meeting was called off by you or the student. |
-| **Expired** | A pending booking that was not paid in time, so the slot was freed. |
+| **Meeting Plan** | Which plan was booked, and how long it runs. |
+| **Medium** | How it happens — **Zoom**, **Meet**, **Phone Call** or **In Person**. |
+| **Invitee** | Their name, email, phone, and whatever they wrote when booking. |
+| **Date & Time** | When. Blank until a request has been given a time. |
+| **Status** | See below. |
+| **Timezone** | Theirs, so you are not doing the arithmetic in your head. |
 
-## Confirm a request
-
-For request bookings, open the **Requested** booking and click **Confirm** to lock it in. The
-meeting link and calendar invites are then created and everyone is notified. See
-[Group & request bookings](/docs/knowledgebase/bookings/group-and-request-bookings).
-
-## Reschedule a meeting
-
-Both you and the student can move a meeting to a new time, as long as it is before the
-reschedule deadline you set.
-
-1. Open the booking and click **Reschedule**.
-2. Pick a new open time.
-3. Confirm. The calendar event updates and everyone is notified of the new time.
-
-## Cancel a meeting
-
-Both you and the student can cancel, up to the cancellation deadline.
-
-1. Open the booking and click **Cancel**.
-2. Confirm. The calendar event is removed and everyone is notified.
+Filter by **Status**, **Meeting Plan**, **Team Member** or **Date**, and search by name.
 
 <Callout type="info">
-The reschedule and cancellation deadlines come from the meeting plan's rules. Set them in
-[Availability & booking rules](/docs/knowledgebase/bookings/availability).
+**What the invitee wrote is the most useful column on the screen** and the easiest to
+scroll past. Somebody who books a slot and writes down what they want to ask has told
+you how to prepare. Read it before the call, not during it.
 </Callout>
 
-## Extra guests
+## Statuses
 
-A student can invite **additional guests** to a meeting beyond themselves, when the plan
-allows it. Each guest is added with their own details and receives the calendar invite and
-meeting link along with the main attendee.
+| Status | Meaning |
+|---|---|
+| **Requested** | They asked for a slot. Nothing is confirmed until you act. |
+| **Awaiting payment** | Booked but not paid for. It holds the slot until it expires. |
+| **Scheduled** | Confirmed, with a time. |
+| **Rescheduled** | Moved since it was first booked. |
+| **Expired** | It was never paid for or never confirmed in time. |
+| **Canceled** | Called off, by either side. |
 
-## Time zones
+**Requested** and **Awaiting payment** are the two that need you. Everything else is
+either settled or over.
 
-Time zones are handled for everyone automatically:
+## What you can do with one
 
-- The student sees and books times in **their** time zone.
-- You see them in **your** time zone.
-- The calendar invite shows each person the correct local time.
+The **⋯** menu on each row:
 
-This means no one has to do time-zone math, and meetings start when everyone expects.
+| Action | When |
+|---|---|
+| **View Details** | Always. |
+| **Set Schedule** | Only on a request, or a booking awaiting payment that has no time yet. This is how you confirm one. |
+| **Reschedule** | Any booking that is not canceled or expired. |
+| **Cancel Booking** | Same. It asks first, and cannot be undone. |
 
-## Unpaid bookings expire on their own
+### Confirming a request
 
-When a booking is waiting for payment and the student does not pay in time, it expires
-automatically and the slot opens back up. You do not need to clean these up by hand. See
-[Charging for meetings](/docs/knowledgebase/bookings/payments).
+A request-based plan produces bookings that are not confirmed until you act, and the
+menu carries a badge for them — because a request sitting unanswered is somebody
+waiting.
 
-## What the student sees
+**Set Schedule** lets you review the times they asked for, or pick a different one.
 
-Students can view their own bookings and, within the deadlines, reschedule or cancel them.
-Every confirmation, change, and cancellation sends them an updated notice and calendar invite,
-so they always have the latest details.
+<Callout type="warn">
+Work the request queue daily. An unanswered request is worse than a declined one: the
+person does not know whether to wait or go elsewhere.
+</Callout>
+
+### Rescheduling and cancelling
+
+Both tell the invitee. Whether *they* can do either themselves is set on the plan — not
+at all, or up to 1, 2, 4, 6, 12 or 24 hours before. See
+[Meeting plans](/docs/knowledgebase/bookings/meeting-plans).
+
+Allowing invitees to cancel is usually better than not: a cancelled slot is one you can
+offer again, and a no-show is not.
+
+## Who is told what
+
+**Team members to notify** on the plan covers "new requests, confirmed and paid
+bookings, and invitee cancellations or reschedules". Invitees get their own
+notifications — **Booking Confirmed**, **Meeting Reminder**, **Meeting Rescheduled**,
+**Booking Cancelled** — which you control in
+[Notification settings](/docs/knowledgebase/communication/notification-preferences).
+
+**The reminder is the setting that reduces no-shows.** Make sure it is on.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A booking has no meeting link.">
+No conferencing provider connected, or a plan with a medium you supply yourself. See
+[Integrations](/docs/knowledgebase/bookings/integrations).
+</Accordion>
+
+<Accordion title="An invitee says they never got confirmation.">
+Check the [delivery logs](/docs/knowledgebase/communication/delivery-and-analytics). The
+usual answer is a sending service rather than the booking.
+</Accordion>
+
+<Accordion title="Can I book on somebody's behalf?">
+Use the booking page yourself with their details.
+</Accordion>
+
+<Accordion title="Too many people are not turning up.">
+Turn on the meeting reminder, raise the minimum notice, and allow cancellation — a
+cancelled slot is recoverable, a no-show is not.
+</Accordion>
+
+<Accordion title="An unpaid booking is holding a slot.">
+It holds it for as long as **Pending booking expiry** allows, then releases it.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Meeting plans" description="Cancellation and rescheduling windows." href="/docs/knowledgebase/bookings/meeting-plans" />
+  <Card title="Booking payments" description="Charging, and what an unpaid booking does." href="/docs/knowledgebase/bookings/payments" />
+  <Card title="Notification settings" description="Confirmations and reminders." href="/docs/knowledgebase/communication/notification-preferences" />
+</Cards>

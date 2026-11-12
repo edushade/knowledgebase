@@ -1,0 +1,132 @@
+---
+title: "Attempts and Retakes"
+description: "What an attempt is, the five states it can be in, how many a learner gets, and how to clear one."
+---
+
+Every time a learner starts a quiz, that is an attempt. How many they may have is set
+on the quiz; which one counts is set on the programme. The two are separate and both
+have to line up.
+
+<WhoCan roles="Admin, Instructor" />
+
+## The five states
+
+| State | What it means |
+|---|---|
+| **In progress** | The learner is sitting it now. |
+| **Submitted** | They have handed it in. Every quiz question marks itself, so this normally becomes **Graded** in the same moment. |
+| **Graded** | Marked, with a score. |
+| **Expired** | The time ran out and it was submitted for them. |
+| **Abandoned** | Started and never finished or submitted. |
+
+**Abandoned** is the one worth watching. A learner who opened a quiz, lost their
+connection and never came back has used an attempt and has nothing to show for it — and
+they will tell you it was not their fault. It usually was not.
+
+## How many attempts
+
+**Maximum Attempts** on the quiz, at least 1. A learner who has used them all cannot
+start another.
+
+The learner sees exactly where they stand the moment they finish:
+
+<Screenshot
+  src="/kb/assessments/quiz-result.png"
+  alt="A learner's quiz result, showing a failed banner, the score, a correct-incorrect breakdown and attempts remaining."
+  caption="Attempt 1 of 2 — 1 attempt remaining. Try Again appears only while they have one left."
+/>
+
+The result breaks down into **Correct**, **Incorrect**, **Partial** and **Skipped**, and
+then by question type — so a learner who failed can see it was the dropdown questions,
+not the whole subject. **Download result** gives them a copy, and **Review Quiz** walks
+them back through the paper where the quiz allows it.
+
+## Which attempt counts
+
+Set on the **programme**, not the quiz — **Allow Grade Replacement** and its policy:
+
+| Policy | The mark is |
+|---|---|
+| **Replace** | The most recent attempt. Also what you get with replacement off. |
+| **Average** | The average of the attempts that have been marked. |
+| **Best** | The highest. |
+
+See [Retakes and replacement](/docs/knowledgebase/progress-grading/retakes-and-replacement).
+
+<Callout type="info">
+Three attempts under **Best** is practice: a learner can only improve. Three attempts
+under **Replace** is three chances to do worse than the first. Pick the pair, not just
+the number.
+</Callout>
+
+## Giving a learner another go
+
+Two ways, and they are not the same:
+
+- **Raise Maximum Attempts** — for everyone. Right when the quiz was too short, or
+  something went wrong for the whole batch.
+- **Reset the attempt** — for one learner. Clears that attempt and its mark, so they can
+  sit it again.
+
+**Reset this attempt** is on the attempt itself. It asks first, and it cannot be undone.
+
+## Deleting an attempt
+
+Deleting an attempt removes it and its mark. The learner's progress and grade are
+reworked to match — so under a **Best** policy, deleting their best attempt promotes
+their next best automatically.
+
+That is worth knowing before you delete anything: the number will move, and it should.
+
+## Shared quizzes
+
+A quiz used in several courses keeps attempts per enrolment, so marks do not leak
+between courses. But resetting a learner's attempt on a shared quiz affects it
+everywhere they have taken it — the confirmation names the programmes involved. Read it.
+
+## After clearing anything
+
+Resetting or deleting an attempt changes the marks below the programme's result. Run
+**Calculate All Grades** so the subject, semester and final figures agree. See
+[Learner grades](/docs/knowledgebase/progress-grading/learner-grades).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner's attempt shows 0% right after submitting.">
+It has not been marked. Under a **Replace** policy the most recent attempt is the mark,
+and an unmarked attempt has nothing in it. Once it is marked, the real score appears.
+</Accordion>
+
+<Accordion title="A learner says they were kicked out mid-quiz.">
+Look at the attempt's state. **Expired** means the time limit ran out and it was
+submitted for them. **Abandoned** means it was never submitted at all — a closed tab, a
+lost connection.
+</Accordion>
+
+<Accordion title="Can a learner resume an attempt they left?">
+Only where the quiz allows pausing. Otherwise the clock kept running while they were
+away.
+</Accordion>
+
+<Accordion title="I deleted an attempt and the learner's grade changed on its own.">
+That is correct. Progress and grade are reworked after a deletion, so under **Best**
+the next-highest attempt takes over.
+</Accordion>
+
+<Accordion title="How do I give extra time rather than another attempt?">
+You cannot extend a running attempt. Reschedule the learner so they can sit it again in
+their own window — see [Reschedules](/docs/knowledgebase/assessments/reschedules).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Retakes and replacement" description="Which attempt counts, and why." href="/docs/knowledgebase/progress-grading/retakes-and-replacement" />
+  <Card title="Quiz settings" description="Maximum Attempts, time limits and pausing." href="/docs/knowledgebase/assessments/quiz-settings" />
+  <Card title="Grading quizzes" description="Marking a submitted attempt." href="/docs/knowledgebase/assessments/grading-quizzes" />
+  <Card title="Reschedules" description="A fresh window for one learner." href="/docs/knowledgebase/assessments/reschedules" />
+</Cards>

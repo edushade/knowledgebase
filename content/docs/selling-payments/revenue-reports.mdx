@@ -1,47 +1,123 @@
 ---
-title: "Revenue & Reports"
-description: "See your earnings, spot trends, and export everything to a spreadsheet."
+title: "Revenue Reports"
+description: "What your academy earns, where it comes from, and the figures that need you rather than just informing you."
 ---
 
-The billing dashboard is your money overview. It shows how much you're earning, where it's
-coming from, and what needs your attention — all in one place.
+The billing overview is the money view of your academy. It has two halves: what you
+have earned, and what is stuck.
 
-## What the dashboard shows
+<WhoCan roles="Admin" />
 
-| View | What it tells you |
+<Screenshot
+  src="/kb/selling-payments/billing-overview.png"
+  alt="The billing dashboard, with revenue and two attention cards above the Outstanding and at-risk panel."
+  caption="Everything in orange or red is money that has not landed. Each tile is a link straight to the list behind it."
+/>
+
+## What you have earned
+
+Three cards sit across the top of <Path>Billing > Overview</Path>: **Total Revenue**,
+**Offline Payments to Verify**, and **Refund Requests**. Total Revenue carries this
+month against last month, and a separate figure for each currency you take.
+
+The other two are there because they need you, not because they inform you.
+
+Deeper in the billing screens:
+
+| Figure | What it is |
 |---|---|
-| **Overall stats** | Headline numbers — total revenue and key totals at a glance. |
-| **Revenue trend** | How your earnings change over time, so you can see growth or dips. |
-| **Revenue by item type** | How much comes from courses, books, bundles, and so on. |
-| **Revenue by program** | How much each course or program earns. |
-| **Pending tasks** | Things waiting on you, such as refund requests to review. |
+| **Revenue Trend** | The direction. |
+| **Revenue by Entity Type** | Courses against bundles against products, over time. |
+| **Average Price** | What a sale is typically worth. |
+| **Most Popular** / **Most Popular Model** | What sells, and how people pay for it. |
+| **Recent Transactions** | The latest activity. |
 
-To open it, go to **Admin → Billing → Dashboard**.
+**Most Popular Model** is quietly useful. If nearly everyone chooses instalments, your
+headline price is above what your market pays comfortably — which is a pricing decision,
+not a billing one.
 
-## Exporting to a spreadsheet
+## What is stuck
 
-Nearly everything in this section can be exported to a spreadsheet (CSV) for your own
-records or accounting:
+**Outstanding & at-risk** is the part to work weekly — *"what learners owe today, and
+payments in the last 30 days that did not go through"*. Every tile is a number you can
+click straight through to the list behind it, and each one is money that has not landed
+or a learner who cannot get in.
 
-- Prices
-- Transactions
-- Refunds
-- Offers (coupons)
-- Bundles
-- Installment plans
-- Scholarships
+| Tile | What it means |
+|---|---|
+| **Instalments overdue** | What is late, how many learners, and how much of it is late fees. It also says how many are past the grace period — those learners have lost access. |
+| **Instalments due in 7 days** | What is about to fall due. The one tile that lets you act before anything goes wrong. |
+| **Offline payments to verify** | Someone paid; nobody confirmed it. They have no access, and the tile says how long they have been waiting. |
+| **Subscription renewals overdue** | A renewal that has not been paid. |
+| **Lapsed subscriptions** | Renewal unpaid for more than 90 days. |
+| **Failed payments** | Attempts that did not go through. |
+| **Checkouts not completed** | They got to payment and stopped. |
 
-Look for an **Export** button on each of these screens.
+A period selector in the corner sets how far back the panel looks — **Last 30 days** by
+default.
 
-## Good to know
+<Callout type="warn">
+**Clear offline payments to verify first, every week.** It is the only one of these
+where a paying customer is sitting locked out of something they have already bought, and
+it is the one that produces angry messages.
+</Callout>
 
-- The dashboard reflects real activity across your platform, so the numbers update as
-  buyers purchase, subscribe, and request refunds.
-- Pair the **revenue trend** with the **revenue by program** view to see which offerings
-  are pulling their weight.
+**Instalments overdue** is the second. The tile tells you how many learners are past the
+grace period, and past the grace period means access paused — so that number is both
+money and a support queue.
+
+## Reading revenue honestly
+
+**Manual enrolments are not revenue.** Enrolling somebody yourself creates no
+transaction. If cash changed hands, record it — see
+[Manual payments](/docs/knowledgebase/selling-payments/manual-payments) — or your
+figures are wrong by whatever you take offline.
+
+**Refunds come off.** Check the refund rate beside revenue, not separately. See
+[Refunds](/docs/knowledgebase/selling-payments/refunds).
+
+**Revenue is not delivery.** Money arriving is not learners finishing. Read this beside
+[Programme analytics](/docs/knowledgebase/analytics/programmes): a programme earning
+well with poor completion is borrowing against its reputation.
+
+## Where to go for more
+
+| Question | Where |
+|---|---|
+| How much did we earn? | Here |
+| Which programmes earn it? | [Programme analytics](/docs/knowledgebase/analytics/programmes) |
+| Where do enrolments come from? | [Enrollment analytics](/docs/knowledgebase/analytics/enrollments) |
+| What is coming back? | [Refunds](/docs/knowledgebase/selling-payments/refunds) |
+| One payment | [Transactions](/docs/knowledgebase/selling-payments/transactions) |
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Revenue looks far lower than what we actually took.">
+Cash and bank transfers taken outside the platform and never recorded. Every one of
+them is missing here.
+</Accordion>
+
+<Accordion title="Revenue is flat but enrolments grew.">
+More free enrolments, more discounts, or more manual enrolments. Compare the enrolment
+figure with the transaction count.
+</Accordion>
+
+<Accordion title="Can I export the figures?">
+Yes — the transaction lists export, which is what most accounting handovers need.
+</Accordion>
+
+<Accordion title="Does this include instalments not yet paid?">
+Revenue is money received. What is still owed is on the outstanding and overdue lists.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pricing](/docs/knowledgebase/selling-payments/pricing) — where the revenue starts.
-- [Refunds](/docs/knowledgebase/selling-payments/refunds) — how refunds affect your numbers.
-- [Subscriptions](/docs/knowledgebase/selling-payments/subscriptions) — recurring revenue and subscriber counts.
+<Cards>
+  <Card title="Transactions" description="The individual payments behind the totals." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Refunds" description="What is coming back, and why." href="/docs/knowledgebase/selling-payments/refunds" />
+  <Card title="Programme analytics" description="Revenue beside completion." href="/docs/knowledgebase/analytics/programmes" />
+</Cards>

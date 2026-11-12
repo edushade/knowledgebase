@@ -1,89 +1,118 @@
 ---
-title: "Publishing & the Catalog"
-description: "The settings that control how a course or path goes live: seats, certificates, passing grade, enrollment, and more."
+title: "Publishing and the Catalog"
+description: "What publishing actually does, why a published course can still be invisible, and the four switches that decide whether anyone can buy it."
 ---
 
-When your content is ready, a set of settings controls how it appears in your catalog and
-how learners experience it. The same settings apply to both courses and learning paths.
-This page is your checklist for going live.
+"Published" sounds like one thing and is really four. A course appears in your catalogue,
+accepts new learners, is buyable, and shows its content — and each of those is a separate
+switch. Most "my course is live but nothing is happening" questions are one of the four
+being off.
 
-## The settings
+<WhoCan roles="Admin" />
 
-| Setting | What it does |
+## The four switches
+
+| Switch | Where it lives | What it controls |
+|---|---|---|
+| **Status: Published** | The status button on the course settings step | Whether the course exists publicly at all |
+| **Enrollment Open** | Course settings | Whether new learners may join |
+| **A price** | [Pricing](/docs/knowledgebase/selling-payments/pricing) | Whether anyone can buy it |
+| **Item Published switches** | Each row in the course builder | Whether the content inside is visible |
+
+All four have to line up. A published course with no price cannot be bought — you can
+still enrol people into it yourself. A published course whose every item is unpublished
+opens to an empty outline.
+
+## Publishing a course
+
+Open the course, go to the settings step, and use the status button at the top right:
+
+| Status | What it means |
 |---|---|
-| **Difficulty** | Beginner, Intermediate, or Advanced. |
-| **Language** | The main language of the course or path. |
-| **Seat limit** | The maximum number of learners. Leave blank for unlimited. When set, your platform shows "seats remaining". |
-| **Instructions** | Guidance shown to learners about how to take the course. |
-| **Completion message** | The message learners see when they finish. |
-| **Passing grade** | The score a learner needs to pass. |
-| **Certificate** | Turn the completion certificate on or off. |
-| **Password protection** | Require a password to open the course. |
-| **Email notifications** | Turn course-related emails to learners on or off. |
-| **Discussion** | Turn learner discussion on or off. |
-| **Ratings** | Let learners rate the course on or off. |
-| **Enrollment open or closed** | Control whether new learners can join right now. |
-| **SEO slug and meta** | The web address and search preview text for the course page. |
-| **Tags** | Keywords that help learners find it. |
-| **Learning outcomes** | What learners will be able to do after finishing. |
-| **Requirements** | What a learner should know or have before starting. |
+| **Draft** | Only your team can see it. Nothing is public. |
+| **Published** | In the catalogue, open to enrolment. |
+| **Archived** | Out of the catalogue. Existing learners keep their access. |
 
-## Statuses and the catalog
+## Retiring a course
 
-A course or path is always in one of these states:
+Three ways, in increasing severity:
 
-- **Draft** — only you and your team can see it.
-- **Published** — live in your catalog for everyone.
-- **Private** — hidden from your catalog. New learners cannot find it, and you enroll
-  learners into it directly.
-- **Archived** — retired and no longer offered.
+1. **Enrollment Open off** — stays in the catalogue, refuses new learners. For "this
+   intake is full".
+2. **Archived** — out of the catalogue. For "we do not teach this any more".
+3. **Deleted** — gone, along with its content, its marks and its progress. Rarely the
+   right answer.
 
-<Callout type="info">
-Use **private** for an exclusive or invite-only course. It stays off your public catalog,
-and you add learners yourself. See
-[Admin and bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
-</Callout>
+In the first two, people already enrolled keep everything.
 
-## How to publish
+## The catalogue
 
-1. Open your course or learning path.
-2. Open its **Settings** and fill in the fields above.
-3. Set the **seat limit**, **passing grade**, and turn on a **certificate** if you award
-   one.
-4. Choose whether **enrollment** is open.
-5. Fill in the **SEO slug and meta** so the page reads well in your catalog and in search.
-6. Change the status to **Published**.
+Your catalogue is the public list on your website. A published course appears there with
+its thumbnail, title, category, difficulty, language and price.
 
-## Managing many at once
+What learners can do with that list — the filters, the sorting, the search — is part of
+your website. See [Search and discovery](/docs/knowledgebase/search) and
+[Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
 
-From the courses and learning paths list, you can manage in bulk:
+## Keeping part of a course out of public view
 
-- **Duplicate** a course or path to start a similar one quickly.
-- **Bulk delete** several at once.
-- **Export to a spreadsheet (CSV)** to review your catalog outside the platform.
-- **Import** courses or paths from a prepared file.
+**Hide from Website**, on an item's **⋯** menu in the builder, keeps that item out of the
+outline shown on the public course page while leaving it fully available to enrolled
+learners. Use it when the course page's outline would give away the answers, or is
+simply too long to be useful as a sales pitch.
 
-## What the learner sees
+The opposite is **Free Preview**, on the same menu, which lets anyone open an item
+without enrolling. One strong lesson on free preview does more than a paragraph of
+description.
 
-In your catalog, learners see published courses with their thumbnail, title, difficulty,
-language, and tags. If you set a seat limit, they see "seats remaining". When enrollment
-is closed, they cannot join. If a course is password protected, they must enter the
-password to open it. Private courses do not appear at all — learners reach them only when
-you enroll them.
+## Before you publish
 
-## Tips
+- Every item that should be live has its **Published** switch on.
+- The thumbnail and description read well at catalogue size.
+- **Learning Outcomes** and **Requirements** are filled in — they are the two things
+  buyers actually read.
+- A price exists, or you have a reason there is none.
+- You have opened the course as a learner would, not from the builder.
 
-- Fill in the **SEO slug and meta** before publishing so your course page looks polished
-  in search and previews.
-- Set a **passing grade** and turn on a **certificate** together when you want learners to
-  earn recognition.
-- Use **duplicate** to spin up the next term's version, then edit the dates and details.
-- Close **enrollment** when a cohort is full or a course is being updated.
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The course is published but not in my catalogue.">
+Check the status really saved — the button reverts to **Draft** if a required field is
+missing, and step 1 will show which. Then check whether your website's course list is
+filtered to particular categories. See
+[Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+</Accordion>
+
+<Accordion title="Learners can see the course but cannot buy it.">
+It has no price. Published and for sale are different things. See
+[Pricing](/docs/knowledgebase/selling-payments/pricing).
+</Accordion>
+
+<Accordion title="Can I publish a course before the content is finished?">
+Yes, and it is the usual way to run a cohort. Publish the course, publish week one, and
+publish the rest as you go — or use
+[drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) to release
+material on dates you set now.
+</Accordion>
+
+<Accordion title="What happens to learners if I archive a course?">
+Nothing changes for them. They keep their access, their progress and their certificate.
+Archiving only removes the course from the catalogue and stops new enrolments.
+</Accordion>
+
+<Accordion title="A cohort-based course is published but has no batches.">
+Then nobody can enrol, because learners enrol into a batch and there is none. Make one
+first. See [Cohorts and batches](/docs/knowledgebase/courses/cohorts).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Creating a course](/docs/knowledgebase/courses/creating-a-course) — the basics before publishing.
-- [Learning paths](/docs/knowledgebase/courses/learning-paths) — the same settings for paths.
-- [How learners enroll](/docs/knowledgebase/enrollment-access/how-learners-enroll) — the enrollment experience.
-- [Admin and bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment) — adding learners yourself.
-- [Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements) — what learners must do to earn a certificate.
+<Cards>
+  <Card title="Course settings" description="Enrollment Open, and everything else on the settings step." href="/docs/knowledgebase/courses/course-settings" />
+  <Card title="Pricing" description="Giving a course a price so it can be bought." href="/docs/knowledgebase/selling-payments/pricing" />
+  <Card title="How learners enroll" description="What a buyer actually goes through." href="/docs/knowledgebase/enrollment-access/how-learners-enroll" />
+</Cards>

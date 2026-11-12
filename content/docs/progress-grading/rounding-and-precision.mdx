@@ -1,0 +1,148 @@
+---
+title: "Rounding and Precision"
+description: "Two small settings that quietly decide who passes — and why a result of 49.6 can be either a pass or a fail."
+---
+
+A result almost never lands on a round number. **Decimal Places** says how precisely it
+is recorded, and **Rounding** says which way it goes when it will not fit. Both sit on a
+programme's **Grading** tab.
+
+They look like formatting. They are not: a grade is matched to its band **after**
+rounding, so these two settings move the pass line.
+
+<WhoCan roles="Admin" />
+
+## The four directions
+
+| Choice | What it does to 49.6 (at 0 decimal places) |
+|---|---|
+| **Round to nearest (ROUND)** | 50 |
+| **Always down (FLOOR)** | 49 |
+| **Cut off (TRUNCATE — same as down)** | 49 |
+| **Always up (CEIL)** | 50 |
+
+There is also an **unset** option — see
+[leaving them unset](#leaving-them-unset) below, because what it does depends on where
+you are.
+
+With a pass line at 50, that learner passes under two of these and fails under the other
+two. Same work, same marks.
+
+<Callout type="warn">
+**Always up (CEIL) lifts everybody.** Every result that is not already exact goes up a
+notch, including the ones just under the pass line. It is rarely what an academy means
+when it says "round up".
+</Callout>
+
+## Decimal places
+
+**Decimal Places** takes 0 to 4. It is how precisely a final result is recorded.
+
+| Setting | A raw 72.4567 is recorded as |
+|---|---|
+| 0 | 72 |
+| 1 | 72.5 |
+| 2 | 72.46 |
+| 4 | 72.4567 |
+
+At **0**, a result can move by up to half a percentage point before it is matched to a
+band. That is enough to carry a learner over a pass line, or to stop them.
+
+Two decimal places is the default and suits most academies.
+
+## Leaving them unset
+
+The two settings inherit **separately**. A programme can name its precision and leave
+its direction unset, or the other way round, and each half falls back on its own.
+
+What unset means depends on whether anything sits above this programme:
+
+| Where | Unset reads | What it does |
+|---|---|---|
+| A course inside a programme | **Follow the programme (unset)** | It rounds the way the programme it is scored for rounds. |
+| A batch inside a learning path | **Follow the programme (unset)** | It rounds the way its learning path rounds. |
+| A learning path | **Not set — rounds to nearest (ROUND)** | Nothing is above it, so it rounds to nearest. |
+
+<Callout type="warn">
+**At the top, unset is not neutral.** A learning path with nothing above it rounds to
+nearest — so 49.996 becomes 50.00 and passes a hard 50% pass line. If your rules say a
+mark is never rounded up, set **Always down** explicitly at the top rather than leaving
+it blank.
+</Callout>
+
+The screen tells you what a config actually resolves to, in words — *"2 places, rounded
+down"*, or *"the programme's precision, rounded as the programme does"* where both
+halves are inherited. Read that line rather than the two empty boxes.
+
+## Where rounding happens
+
+Rounding is not applied once at the end. It is applied at each stage, and each stage
+works from the rounded figure below it:
+
+1. Each assessment's score is rounded.
+2. A course's score is worked out from those rounded scores, then rounded.
+3. A semester result is worked out from those, then rounded.
+4. The programme's final result is worked out from those, then rounded.
+
+That is deliberate. The number a marksheet **prints** is the number the level above
+**calculates with** — otherwise the columns on a marksheet would not add up to the
+percentage printed beside them.
+
+## Choosing
+
+- **Round to nearest, 2 decimal places** — the sensible default. Use it unless you have
+  a rule that says otherwise.
+- **Always down** — when your regulations say a mark is never inflated. Tell learners,
+  because 49.9 will fail.
+- **0 decimal places** — only when results must be whole numbers on a printed document.
+  Expect borderline cases to move.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner scored exactly the pass mark and still failed.">
+Look at the raw figure before rounding, and at the direction. A learner on 49.995 with
+rounding set to always down is recorded as 49 and fails. It is also worth checking the
+band itself — if one band ends at 49 and the next starts at 50, a 49.5 belongs to
+neither. See [Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes).
+</Accordion>
+
+<Accordion title="The marksheet columns do not add up to the percentage beside them.">
+They should, because each level calculates from the rounded figure below it. If they do
+not, the result was probably recorded under a different setting and has not been
+recalculated since. Run **Calculate All Grades** on the programme.
+</Accordion>
+
+<Accordion title="I changed the rounding. Why have old results not moved?">
+Results are stored as they are calculated. Run **Calculate All Grades** to apply the
+change to everyone. See [Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+</Accordion>
+
+<Accordion title="What does the unset option mean?">
+It depends on where you are. On a course or a batch it means "follow the programme" —
+usually what an institution wants, so a subject inside a diploma rounds the way the
+diploma rounds. On a learning path there is nothing above it, so unset rounds to
+nearest. The screen says which of the two you are looking at.
+</Accordion>
+
+<Accordion title="I set the decimal places but left the direction blank. Is that allowed?">
+Yes. The two inherit separately. The programme records at the precision you set and
+rounds the way whatever sits above it rounds — and the line under the fields says so in
+words.
+</Accordion>
+
+<Accordion title="Is TRUNCATE different from FLOOR?">
+Not for results, which are never negative — both drop the part that will not fit. The
+screen says so beside the option.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Grading schemes" description="The bands rounding delivers a result into." href="/docs/knowledgebase/progress-grading/grading-schemes" />
+  <Card title="Course grading setup" description="Where these two settings live." href="/docs/knowledgebase/progress-grading/course-grading-setup" />
+  <Card title="GPA and results" description="How the levels stack into one final result." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+</Cards>

@@ -1,0 +1,144 @@
+---
+title: "The Course Builder"
+description: "Where a course is actually built — adding sections and lessons, reordering them, publishing them one at a time, and the per-item menu that hides most of the power."
+---
+
+The builder is step **2** of a course. It has four tabs across the top, and almost
+everything you will do lives on the first one.
+
+<WhoCan roles="Admin, Instructor" />
+
+<Screenshot
+  src="/kb/courses/course-builder.png"
+  alt="The course builder with tabs Curriculum, Grading, Drip Schedule and Prerequisites, buttons to add Section, Lesson, Quiz, Assignment and File, and content items each with a Published toggle"
+  caption="One tab per question: what is in the course, how it is marked, when it opens, and who may take it."
+/>
+
+| Tab | What it decides |
+|---|---|
+| **Curriculum** | What is in the course and in what order. |
+| **Grading** | How the marks in it add up to a result. See [Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup). |
+| **Drip Schedule** | When each part opens. See [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling). |
+| **Prerequisites** | Who is allowed in. See [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules). |
+
+## Adding content
+
+The buttons above the list add to the course:
+
+| Button | What it adds |
+|---|---|
+| **Section** | A container — "Module 1". Sections hold everything else. |
+| **Lesson** | The teaching itself: a video, a reading, a live class. See [Lesson types](/docs/knowledgebase/courses/lesson-types). |
+| **Quiz** | A test. You can build a new one or pick an existing one. See [Creating quizzes](/docs/knowledgebase/assessments/creating-quizzes). |
+| **Assignment** | Work a learner submits for you to mark. See [Assignments](/docs/knowledgebase/assessments/assignments). |
+| **File** | A download — a handout, a dataset, a slide deck. |
+
+A cohort-based course and a learning path have one more: **Breakpoint** on a cohort
+(a [term](/docs/knowledgebase/courses/terms-and-breakpoints)), and **Stage** on a
+learning path.
+
+Build sections first, then put items inside them. A course with everything at the top
+level works, but learners read a flat list of thirty items as one long wall.
+
+## Reordering
+
+Every row has a **drag handle** on its far left. Drag a row to move it; drag it
+*rightwards* as you drop to nest it inside the section above. The list shows where it
+will land before you let go.
+
+If a drag goes wrong, the builder offers to undo it — take the undo rather than dragging
+it back, which is how items end up in the wrong section twice.
+
+## Publishing one piece at a time
+
+Each row has its own **Published** switch. That is what lets you work on week four while
+weeks one to three are live: an unpublished item is invisible to learners and counts for
+nothing — not for progress, not for grading.
+
+<Callout type="warn">
+Unpublishing an item that learners have already finished removes it from the course
+*and* from their progress calculation, so everyone's percentage moves. If you only want
+to stop new learners reaching it, use **Drip Schedule** instead.
+</Callout>
+
+## The item menu
+
+The **⋯** button at the end of a row is where most of the builder's power sits.
+
+<Screenshot
+  src="/kb/courses/curriculum-item-menu.png"
+  alt="The three-dot menu on a lesson, open, showing Free Preview, Hide from Website, Edit, Access Rules, Drip Schedule, Completion Rule, Add Quiz, Add Assignment, Add File and Delete"
+  caption="Free Preview and Hide from Website are switches inside the menu, not separate screens."
+/>
+
+| Menu item | What it does |
+|---|---|
+| **Free Preview** | Lets anyone open this item without enrolling. Use it on one strong lesson as a sample. |
+| **Hide from Website** | Keeps the item out of the public outline on your course page. Enrolled learners still see it. |
+| **Edit** | Opens the item to change its content. |
+| **Access Rules** | Who may open this one item. See [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules). |
+| **Drip Schedule** | When this one item opens. See [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling). |
+| **Completion Rule** | What a learner must do for this item to count as finished. See [Completion rules](/docs/knowledgebase/progress-grading/completion-rules). |
+| **Add Quiz** / **Add Assignment** / **Add File** | Adds a child item inside this one, without scrolling back to the top. |
+| **Delete** | Removes the item. |
+
+<Callout type="error">
+**Delete is not reversible, and it takes children with it.** Deleting a section deletes
+everything inside it, along with the marks and progress recorded against those items.
+If you only want it out of sight, unpublish it.
+</Callout>
+
+## Alternative Groups
+
+**Alternative Groups**, at the top right, makes two or more assessments interchangeable —
+a main exam and its makeup, say — so that finishing any one of them satisfies the slot.
+See [Alternative assessments](/docs/knowledgebase/assessments/alternative-assessments).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can I reuse a lesson or a quiz in another course?">
+Yes. Quizzes already live in their own list and can be added to any course. Lessons,
+assignments and questions can be saved to the Content Bank and pulled into another
+course from there. See [Reusable content](/docs/knowledgebase/courses/reusable-content).
+</Accordion>
+
+<Accordion title="How deep can content nest?">
+A section holds lessons, quizzes, assignments and files, and those items can hold
+children of their own through the **Add** entries in the ⋯ menu. In practice, two levels
+is as deep as a learner can follow — section, then item.
+</Accordion>
+
+<Accordion title="What is the difference between Hide from Website and unpublishing?">
+**Hide from Website** only affects the public outline on your course page — enrolled
+learners still see and take the item, and it still counts. **Unpublishing** removes it
+for everyone, including people already enrolled, and takes it out of progress and
+grading.
+</Accordion>
+
+<Accordion title="I added a quiz but learners cannot see it.">
+Check three things in order: the quiz's **Published** switch in this list; whether a
+**Drip Schedule** is holding it until a date; and whether an **Access Rule** limits it to
+a group this learner is not in. See
+[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together),
+which walks through them in the order the system applies them.
+</Accordion>
+
+<Accordion title="Why does a cohort have its own curriculum?">
+Because intakes drift. The June batch may be taught from a syllabus you have since
+revised. Each batch's **Build Curriculum** opens content belonging to that batch alone,
+so a change for the next intake does not reach the one already running. See
+[Cohorts and batches](/docs/knowledgebase/courses/cohorts).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Lesson types" description="Video, audio, text, PDF, live, embed — and what each needs." href="/docs/knowledgebase/courses/lesson-types" />
+  <Card title="Course structure" description="Sections, items and the shape learners actually read." href="/docs/knowledgebase/courses/course-structure" />
+  <Card title="Reusable content" description="The Content Bank, and using one quiz in several courses." href="/docs/knowledgebase/courses/reusable-content" />
+  <Card title="Drip scheduling" description="Releasing content week by week instead of all at once." href="/docs/knowledgebase/enrollment-access/drip-scheduling" />
+</Cards>

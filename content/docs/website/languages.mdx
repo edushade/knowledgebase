@@ -1,53 +1,112 @@
 ---
 title: "Languages"
-description: "Run your site in more than one language — translate pages, menus, and forms, with right-to-left support and smart fallbacks."
+description: "Running your academy in more than one language — enabling them, where translations are written, and how addresses work."
 ---
 
-You can run your website in more than one language. Pick a **primary language** and add
-any others you want, then translate your content. Visitors can see your site in the
-language they prefer, and the platform can detect their browser language to choose a
-sensible default automatically.
+Your site, your courses and your emails can each be written in several languages, and
+visitors read the one they chose.
 
-## How it works
+<WhoCan roles="Admin" />
 
-- **Primary language** — your main language; everything starts here.
-- **Additional languages** — turn on any others you want to offer.
-- **Translate your content** — your page content, [menus](/docs/knowledgebase/website/navigation-menus),
-  and [forms](/docs/knowledgebase/website/forms-and-leads) can each carry translated text.
-- **Fallback language** — if something is not translated yet, the site falls back to a
-  language you choose, so visitors never see a blank.
-- **Automatic detection** — the site can read the visitor's browser language and show a
-  matching version when one is available.
+## Enabling a language
 
-## Right-to-left and formatting
+**Enabled Languages** in your website settings, with **Add Language** to add one. A
+language that is not enabled does not appear to visitors, even where text has been
+written in it.
 
-- **Right-to-left support** — languages that read right to left (such as Arabic) display
-  correctly.
-- **Locale-aware formats** — dates, numbers, and currency are shown in the format that
-  suits each language and region, so they look natural to local visitors.
+## How languages appear in addresses
 
-## How to add a language
+**URL Structure** decides how a language shows in the address:
 
-1. Go to **Admin → Website → Languages**.
-2. Confirm your **primary language**.
-3. Turn on each **additional language** you want to offer.
-4. Choose a **fallback language** for anything not yet translated.
-5. Go through your pages, menus, and forms and add translations.
-6. Click **Save**.
+| Choice | Looks like |
+|---|---|
+| **Subdirectory** | `example.com/en/page` |
+| **Subdomain** | `en.example.com/page` |
+| **Query Parameter** | `example.com/page?lang=en` |
 
-<Callout type="info">
-You can set different fonts and letter spacing per language, so each script looks right.
-See [Templates & themes](/docs/knowledgebase/website/templates-and-themes).
+**Subdirectory** is the usual choice. It keeps one domain, reads sensibly, and search
+engines handle it well.
+
+<Callout type="warn">
+Decide this before you publish. Changing it later changes every address on your site,
+and each one then needs a
+[redirect](/docs/knowledgebase/website/versions-and-redirects).
 </Callout>
 
-## Good to know
+## Where translations are written
 
-- Start by translating your most-visited pages and your menus; you can fill in the rest
-  over time, and the fallback covers the gaps.
-- Translated form labels mean visitors fill in forms comfortably in their own language.
+Not in one place — beside the thing being translated:
+
+| What | Where |
+|---|---|
+| **Website blocks** | Each text field has a version per language. |
+| **Course titles and descriptions** | The flag buttons on the course form. |
+| **Lessons, quizzes, assignments** | The same flag buttons. |
+| **Notices and messages** | Written per language. |
+
+The flag buttons carry two signals worth knowing: **a small amber dot** means that
+language is still empty, and **a dashed outline** means text exists in a language your
+site has not enabled.
+
+That second one is the useful warning — translated text that nobody can read because
+the language is switched off.
+
+## Fonts per language
+
+Set a font for a specific language in your
+[theme](/docs/knowledgebase/website/templates-and-themes). A Bangla-first academy should
+do this: the default sans is chosen for Latin script, and Bangla reads better in a font
+made for it.
+
+## Number and date formats
+
+Regional settings cover number format — including **১,২৩৪.৫৬ (Bangla)** — date format
+(**12-hour** or **24-hour**) and timezone. Set them to what your learners expect, not to
+what the default is.
+
+## Doing it properly
+
+- **Translate the pages that sell**, first: the homepage, your main course pages,
+  checkout. Not everything at once.
+- **Do not half-translate a page.** A page in two languages at once reads as broken.
+- **Check the layout in each language.** Bangla and Arabic text run to different lengths
+  and buttons that fit in English can break.
+- **Test right-to-left properly** if you enable Arabic. Everything mirrors.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I translated a course and learners still see English.">
+That language is not enabled, or they are reading the site in another one. The dashed
+outline on the flag button tells you the first.
+</Accordion>
+
+<Accordion title="Do learners choose their language?">
+They do, and their own **locale** is on their profile — which decides what they are
+shown by default.
+</Accordion>
+
+<Accordion title="Do emails follow the learner's language?">
+Write the version your audience reads and send to the matching audience. See
+[Message templates](/docs/knowledgebase/communication/message-templates).
+</Accordion>
+
+<Accordion title="What happens where no translation exists?">
+The text falls back to what is there — usually your main language. A partly translated
+site is readable, just inconsistent.
+</Accordion>
+
+<Accordion title="Can a course be in one language and the site in two?">
+Yes. Languages are per field, so you translate what is worth translating.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Navigation & menus](/docs/knowledgebase/website/navigation-menus) — translate menu labels.
-- [Forms & lead capture](/docs/knowledgebase/website/forms-and-leads) — translate field labels.
-- [Blog](/docs/knowledgebase/website/blog) — write posts in more than one language.
+<Cards>
+  <Card title="Themes and design" description="Fonts per language." href="/docs/knowledgebase/website/templates-and-themes" />
+  <Card title="Creating a course" description="The flag buttons on course fields." href="/docs/knowledgebase/courses/creating-a-course" />
+  <Card title="SEO" description="How language affects addresses." href="/docs/knowledgebase/website/seo" />
+</Cards>

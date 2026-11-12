@@ -1,75 +1,97 @@
 ---
-title: "Your Platform Settings"
-description: "Set your platform's identity — branding, contact details, the look of your sign-in page, and password rules."
+title: "Your Platform's Identity"
+description: "Your academy's name, logo, domain and organisation details — the things that make the platform look like yours."
 ---
 
-This is where you describe your platform's own identity and basics. These settings shape
-what people see across your site, how they reach you, and the rules new accounts must
-follow.
+This is the part of your academy that learners see before they see anything else: its
+name, its logo, its web address.
 
-## What you can set
+All of it is in <Path>Settings > Control Panel</Path> under **Platform Settings**.
 
-| Setting | What it controls |
+<WhoCan roles="Admin" />
+
+## Your academy
+
+| Setting | Where it shows |
 |---|---|
-| **Branding** | Your name, logo, and the basic look that ties your platform together. |
-| **Contact details** | The email, phone, and address people use to reach you. |
-| **Sign-in page customization** | An image shown on your sign-in, registration, and verification pages. |
-| **Password rules** | How strong a password must be (see below). |
+| **Name** | The browser tab, emails, certificates, everywhere. |
+| **Description** | Search results and previews. |
+| **Logos** | The top of every screen. Light and dark versions, so it works in both themes. |
+| **Social Share Image** | The picture shown when somebody shares a link to your site. |
 
-## Branding and contact details
+The social share image is the one everybody forgets, and it is the one a stranger sees
+first when a learner shares your course in a group chat.
 
-Use branding to make the platform feel like yours — your name and logo appear where
-people expect them. Contact details give learners a clear way to reach you for help.
+## Your address on the web
 
-1. Go to **Admin → Settings**.
-2. Update your name, logo, and contact information.
-3. Click **Save**.
-
-<Callout type="info">
-Your logo and branding also flow into other places, such as emails and certificates, so
-keep them current.
-</Callout>
-
-## Sign-in page customization
-
-You can add an image that appears on the pages where people sign in, register, and
-confirm their email or phone. This is a simple way to make a strong first impression and
-keep those pages on-brand.
-
-1. Go to **Admin → Settings**.
-2. Find the **Sign-in page** (or **Login page**) section.
-3. Upload the image you want to show.
-4. Click **Save**.
-
-### What the learner sees
-
-When someone opens your sign-in, registration, or verification page, they see your
-chosen image alongside the form. It is the same friendly, branded experience whether they
-are creating a new account or coming back.
-
-## Password rules
-
-You decide how strong passwords must be on your platform. Two settings are available:
-
-| Rule | What it does |
+| Setting | What it is |
 |---|---|
-| **Minimum length** | The shortest a password is allowed to be. |
-| **Complexity requirement** (optional) | When turned on, passwords must mix different character types (such as letters, numbers, and symbols). |
+| **Subdomain** | Your address under the platform's own domain. |
+| **Custom domain** | Your own domain, once it is pointed here. |
 
-1. Go to **Admin → Settings**.
-2. Open the **Password rules** section.
-3. Set a minimum length, and turn the complexity requirement on or off.
-4. Click **Save**.
+A custom domain is worth setting up before you start selling: links shared under the
+old address keep working less well afterwards, and your learners' trust is attached to
+the address they first saw.
 
-These rules apply when anyone sets or changes a password — at sign-up, when resetting a
-forgotten password, or when changing it from their profile.
+## Your organisation
 
-<Callout type="info">
-A longer minimum length is the single biggest improvement you can make to account
-safety. Most teams use at least 8 characters.
-</Callout>
+**Name**, **Email**, **Phone**, **Address**, **City**, **State**, **ZIP Code**,
+**Country**.
+
+These are the legal and contact details. They appear on documents and in emails, and the
+email is what learners are told to write to when something goes wrong — so it has to be
+an address somebody actually reads.
+
+## Version number
+
+**Show the version number** puts the build version in the corner. Useful while you are
+testing, unnecessary once you are live.
+
+## What makes a platform feel like yours
+
+In rough order of what learners notice:
+
+1. **The logo**, in both light and dark.
+2. **Your own domain.**
+3. **The academy name**, used consistently — on certificates as well as on screen.
+4. **A social share image** that is not a default.
+5. **Website colours and type** that match the rest of your brand — see
+   [Templates and themes](/docs/knowledgebase/website/templates-and-themes).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The logo looks wrong in dark mode.">
+There are two logo slots. Upload a version for each — a dark logo on a dark background
+disappears.
+</Accordion>
+
+<Accordion title="I changed the name but certificates still show the old one.">
+Certificates already issued keep the design and details they were issued with. New ones
+pick up the change.
+</Accordion>
+
+<Accordion title="Can I use a custom domain?">
+Yes, pointed at your platform. Set it up before you start selling.
+</Accordion>
+
+<Accordion title="Where do website colours and fonts live?">
+In your website's theme, not here. See
+[Templates and themes](/docs/knowledgebase/website/templates-and-themes).
+</Accordion>
+
+<Accordion title="Does the organisation address appear to learners?">
+It appears where contact details belong — emails, documents, your site's footer. Keep it
+accurate.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Accounts & sign-in](/docs/knowledgebase/account-people/accounts-and-sign-in) — how people create accounts and sign in.
-- [Website & Pages](/docs/knowledgebase/website) — your wider public site.
+<Cards>
+  <Card title="The Control Panel" description="Every academy-wide setting." href="/docs/knowledgebase/settings/control-panel" />
+  <Card title="Templates and themes" description="Your website's colours and type." href="/docs/knowledgebase/website/templates-and-themes" />
+  <Card title="Languages" description="Running your academy in more than one language." href="/docs/knowledgebase/website/languages" />
+</Cards>

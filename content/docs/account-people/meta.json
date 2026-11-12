@@ -1,17 +1,21 @@
 {
-  "title": "Account & People",
+  "title": "People & Access",
   "icon": "Users",
   "defaultOpen": true,
   "pages": [
     "index",
-    "your-platform-settings",
+    "adding-people",
+    "people-and-roles",
+    "merging-accounts",
+    "student-ids",
     "accounts-and-sign-in",
     "verification",
+    "security",
     "profiles-and-devices",
-    "people-and-roles",
-    "support-login",
-    "categories-and-tags",
     "activity-history",
-    "security"
+    "privacy-and-consent",
+    "support-login",
+    "your-platform-settings",
+    "categories-and-tags"
   ]
 }

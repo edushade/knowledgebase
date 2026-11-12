@@ -1,41 +1,101 @@
 ---
 title: "Support Login"
-description: "Step into a person's account to help them — in look-only or full-access mode, and always on the record."
+description: "Seeing the platform exactly as one of your learners does — the two modes, and which one to use."
 ---
 
-Sometimes the fastest way to help someone is to see exactly what they see. **Support
-login** lets an admin act as another person to troubleshoot a problem, check what's going
-wrong, or walk them through a fix.
+A learner says a lesson will not open. You look at the course and it is fine. The only
+way to settle it is to see what they see.
 
-## Two modes
+Support login does that: you view the platform as them, from their own account.
+
+<WhoCan roles="Admin" />
+
+## Starting
+
+From the person's record, open **Impersonation** and start. Everything from then on is
+their view — their courses, their progress, their locked content.
+
+## The two modes
 
 | Mode | What you can do |
 |---|---|
-| **Look-only** | See the person's account exactly as they do, without changing anything. Best for diagnosing a problem. |
-| **Full access** | Act on the person's behalf, including making changes — for when you need to fix something for them. |
-
-Choose look-only whenever it's enough. Use full access only when you actually need to make
-a change.
-
-## How to use it
-
-1. Go to **Admin → Users** and open the person you want to help.
-2. Choose the support login option (look-only or full access).
-3. Do what you need to do, then **exit** to return to your own account.
-
-## Rules and safeguards
-
-- You **can't** use support login on **yourself**.
-- **Every support login session is recorded** in the activity history — including who
-  started it and what happened during it. See
-  [Activity history](/docs/knowledgebase/account-people/activity-history).
+| **Read-only** | Look at everything. Change nothing. |
+| **Full** | Act as them, including saving. |
 
 <Callout type="warn">
-Support login is a powerful way to help, so treat it with care. Only use it when there's
-a genuine support reason, prefer look-only, and exit as soon as you're done.
+**Use read-only.** It answers almost every support question, and it cannot damage
+anything. Full mode does things to a learner's record in their name, with no way for
+them to tell afterwards that it was not them.
 </Callout>
+
+In read-only mode, anything that would save is refused, and you are told: *"This action
+is not allowed in impersonation mode — you are viewing this account as read-only. Stop
+impersonation to make changes."*
+
+## Stopping
+
+Stop it as soon as you have the answer, and you are returned to your own session.
+
+## What it is good for
+
+| Question | Why support login settles it |
+|---|---|
+| "I cannot see the lesson" | You see exactly what they see, with every rule applied. |
+| "The video will not play" | Their view, not your admin preview. |
+| "My quiz score is wrong" | Their result page, not your grading screen. |
+| "The certificate is not there" | What they actually have. |
+
+It is particularly good for the four access rules that explain nothing — partial access,
+eligibility rules, unpublished content and an inactive enrolment all look identical from
+the learner's side. See
+[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+
+## Using it responsibly
+
+This is somebody's account. Three habits:
+
+1. **Read-only unless you genuinely need to act.**
+2. **Have a reason** — a support request, a fault you are chasing.
+3. **Keep it short.** Get the answer and stop.
+
+Support login is recorded, as admin actions are — see
+[Activity and audit logs](/docs/knowledgebase/account-people/activity-history). That is
+a protection for your team as much as for the learner.
+
+Who may do it at all is a permission. Keep that list short.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I cannot save anything while impersonating.">
+You are in read-only mode, which is the right default. Stop, and make the change from
+your own account.
+</Accordion>
+
+<Accordion title="Can I impersonate another admin?">
+What you can do is governed by your role. In general, keep this for supporting learners.
+</Accordion>
+
+<Accordion title="Does the learner know?">
+They are not notified. The action is recorded in your audit log.
+</Accordion>
+
+<Accordion title="I was signed out when I stopped.">
+That happens when there is no admin session to return to. Sign in again.
+</Accordion>
+
+<Accordion title="Is there a safer way to check what a learner sees?">
+Their record already shows their enrolments, scopes, progress and grades, which answers
+many questions without entering their account at all. Try that first.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [People & roles](/docs/knowledgebase/account-people/people-and-roles) — manage people and what your team can do.
-- [Activity history](/docs/knowledgebase/account-people/activity-history) — where support login sessions are recorded.
+<Cards>
+  <Card title="How access works together" description="The six reasons a learner sees nothing." href="/docs/knowledgebase/enrollment-access/how-access-works-together" />
+  <Card title="People and roles" description="Who is allowed to use support login." href="/docs/knowledgebase/account-people/people-and-roles" />
+  <Card title="Activity and audit logs" description="Where the action is recorded." href="/docs/knowledgebase/account-people/activity-history" />
+</Cards>

@@ -1,75 +1,153 @@
 ---
 title: "Grading Schemes"
-description: "Define your letter-grade and GPA scale — for example, 90–100% = A = 4.0 — and choose how each course calculates its grades."
+description: "The scale that turns a percentage into a grade — the bands, the grade points, and which grades count as a pass."
 ---
 
-A **grading scheme** is the scale that turns a percentage into a letter grade and a grade
-point. For example: 90–100% is an **A**, worth **4.0**. You set this up once and reuse it
-across your courses.
+A grading scheme is your scale: 90–100% is an **A** worth **4.0**, and an A is a pass.
+You build it once in <Path>Grading > Grading Schemes</Path> and every programme that uses it
+reports grades the same way.
 
-## Building a grading scheme
+A scheme decides *what a number is called*. It does not decide *how the number is
+worked out* — that is the programme's
+[grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
 
-A scheme is a list of bands. For each band you set:
+<WhoCan roles="Admin" />
 
-- The **percentage range** (for example, 90–100%).
-- The **letter or label** (for example, A, B+, Pass).
-- The **grade point** (for example, 4.0) — the scheme is GPA-style.
-- A **passing threshold**, so the system knows which grades count as a pass.
+<Screenshot
+  src="/kb/progress-grading/grading-schemes-list.png"
+  alt="The grading schemes list, with each scheme's scale type and whether it is the default."
+  caption="One scheme can be the default. Every new programme starts with it unless you choose otherwise."
+/>
 
-A simple example:
+## What a scheme holds
 
-| Percentage | Grade | Grade point |
-|------------|-------|-------------|
-| 90–100% | A | 4.0 |
-| 80–89% | B | 3.5 |
-| 70–79% | C | 3.0 |
-| 60–69% | D | 2.0 |
-| Below 60% | F | 0.0 |
+| Field | What it is |
+|---|---|
+| **Name** | What you call it — "US Standard 4.0 GPA", "Diploma marksheet". |
+| **Code** | A short unique identifier, such as `US_4.0`. |
+| **Scale Type** | **GPA** or **Percentage**. See below — this is the important one. |
+| **Max Scale Value** | The top of the scale, e.g. 4.0. Asked for only when the scale type is GPA. |
+| **Description** | A note for your team. |
+| **Set as Default** | New programmes use this scheme unless you choose another. |
+| **Active** | Switch a scheme off without deleting it. |
+
+## GPA or Percentage
+
+This is the choice that changes what learners read on their results.
+
+| | **GPA** | **Percentage** |
+|---|---|---|
+| What a result shows | The percentage, its band, **and a grade point** | The percentage and its band |
+| What a transcript carries | A GPA and a CGPA | Percentages only |
+| Max Scale Value | Asked for | Not asked for |
+
+<Callout type="info">
+**Switching to Percentage does not delete your grade points.** They stay on the bands;
+Percentage simply decides not to show them *to learners*. Switch back to GPA and they
+are there again.
+</Callout>
+
+Your own staff screens are different: the **Grade Point** column appears on a learner's
+semester results wherever points are actually recorded, whichever scale type you chose.
+A percentage scale decides how a learner's result is presented — it does not hide a
+figure from the people whose job is to read what was stored.
+
+## The bands
+
+A scheme is a list of bands, from the top down. Each one takes:
+
+| Field | What it is |
+|---|---|
+| **Grade Letter** | The label — A+, B, Pass. Required. |
+| **Grade Point** | What the band is worth, e.g. 4.0. Required. |
+| **Min Percentage** / **Max Percentage** | The range this band covers. Required. |
+| **Is Passing Grade** | Whether a learner in this band has passed. |
+| **Qualitative Label** | A longer description — "Outstanding", "First Class". |
+| **Description** | A note for your team. |
+| **Display Order** | Where the band sits in the list. |
+
+A workable scheme:
+
+| Percentage | Grade | Point | Passing |
+|---|---|---|---|
+| 90–100% | A | 4.0 | Yes |
+| 80–89% | B | 3.5 | Yes |
+| 70–79% | C | 3.0 | Yes |
+| 60–69% | D | 2.0 | Yes |
+| 0–59% | F | 0.0 | **No** |
+
+<Callout type="warn">
+**Leave no gap between bands.** If one band ends at 89 and the next begins at 90, a
+result of 89.5 belongs to neither and the learner gets no grade at all. Make them meet:
+89 and 90 with nothing between, or 89.99 and 90.
+</Callout>
+
+## Is Passing Grade is doing more than it looks
+
+This single switch decides a great deal elsewhere:
+
+- Whether a learner has **passed the programme**.
+- Whether they are eligible for a **certificate** — see
+  [Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
+- Whether they **move up a semester** or repeat — see
+  [Progression](/docs/knowledgebase/enrollment-access/progression).
+
+Get the pass line wrong and three other things quietly go wrong with it.
+
+## Rounding moves the pass line
+
+A result is matched to its band **after** it has been rounded. With the pass line at 50
+and rounding set to nearest, a learner on 49.6 is rounded to 50 and passes. With
+rounding set to always down, they do not.
+
+That is not a detail — it is the pass line. See
+[Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision).
 
 ## Managing your schemes
 
-You can:
+From <Path>Grading > Grading Schemes</Path> you can create a scheme, edit one, mark one as the
+default, and deactivate one you have stopped using.
 
-- **Create** a new scheme.
-- **Edit** an existing one.
-- **Set a default** scheme that new courses use automatically.
-- **Delete** a scheme you no longer need.
+Most academies need one scheme. Make a second when a programme genuinely marks
+differently — a diploma on a 4.0 GPA and a short course reported as a plain percentage.
 
-## How each course calculates grades
+## Common questions
 
-Separately from the scale itself, each course has its own **grading setup**. Here you
-choose how marks are combined into a final grade:
+<Accordions type="single">
 
-| Setting | Choices | What it controls |
-|---------|---------|------------------|
-| **Calculation method** | Weighted · Simple average · Credit-based | How the individual marks are combined. |
-| **Rounding & decimals** | Your choice | How precisely grades are shown (for example, one decimal place). |
-| **Retake policy** | Best score · Average · Replace | Which mark counts when a learner retakes an assessment. |
-| **Ungraded items** | Treat as zero (optional) | Whether work the learner never submitted counts as a zero. |
+<Accordion title="A learner's result shows no grade letter.">
+Almost always a gap between two bands. Check that every percentage from 0 to 100 falls
+inside exactly one band, with no space left between them.
+</Accordion>
 
-A quick guide to the calculation methods:
+<Accordion title="Can I change a scheme that programmes are already using?">
+Yes, and the change applies to results calculated from then on. Results already
+recorded keep the grade they were given until they are recalculated. If you move the
+pass line mid-course, recalculate so everyone is judged by the same scale — see
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+</Accordion>
 
-- **Weighted** — each assessment carries a weight you choose. See
-  [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
-- **Simple average** — every assessment counts equally.
-- **Credit-based** — grades are combined by credit value.
+<Accordion title="Where did Letter and Points go?">
+Only **GPA** and **Percentage** are offered. Letter and Points are not available.
+</Accordion>
 
-A quick guide to the retake policies:
+<Accordion title="Do I need a scheme at all?">
+To report a grade, yes. Without one a programme can still record marks, but there is no
+scale to turn them into a grade, a pass, or a certificate.
+</Accordion>
 
-- **Best score** — keep the learner's highest attempt.
-- **Average** — average their attempts together.
-- **Replace** — the latest attempt replaces the previous one.
+<Accordion title="Can two programmes use different schemes?">
+Yes. The scheme is chosen per programme in its grading setup. One scheme can be the
+default for new programmes while a particular diploma uses another.
+</Accordion>
 
-<Callout type="info">
-If you turn on **treat ungraded items as zero**, a learner who skips an assessment gets a
-zero for it instead of having it ignored. Leave it off if you only want to grade what was
-actually submitted.
-</Callout>
+</Accordions>
 
-## Good to know
+## Related pages
 
-- The scheme decides the *scale*; the course's grading setup decides the *maths*. You can
-  reuse one scheme across many courses with different setups.
-- When a learner submits a quiz, their grade updates automatically and the final grade
-  recalculates — no manual recalculation needed.
-- Grades are reported on a [marksheet](/docs/knowledgebase/progress-grading/marksheets).
+<Cards>
+  <Card title="Course grading setup" description="How a programme turns its marks into a result." href="/docs/knowledgebase/progress-grading/course-grading-setup" />
+  <Card title="Rounding and precision" description="Why rounding decides who passes." href="/docs/knowledgebase/progress-grading/rounding-and-precision" />
+  <Card title="Weighted grading" description="Making one assessment count more than another." href="/docs/knowledgebase/progress-grading/weighted-grading" />
+  <Card title="GPA and results" description="How a GPA, a semester result and a CGPA are formed." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+</Cards>

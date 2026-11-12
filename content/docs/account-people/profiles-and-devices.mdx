@@ -1,67 +1,112 @@
 ---
-title: "Profiles & Devices"
-description: "Edit a profile, change an email or phone, and see and manage every device that's signed in."
+title: "Profiles and Devices"
+description: "What a person's profile holds, what they may change themselves, and the devices their account is signed in on."
 ---
 
-Each person has a profile they can fill in, plus a list of the devices currently signed
-in to their account. This page covers both.
+A profile is what your platform knows about a person. Some of it they fill in, some of
+it you do, and some of it you should stop them changing.
 
-## Editing a profile
+<WhoCan roles="Admin, Learner" />
 
-Anyone can update their own profile from **Profile → Edit** (or **Settings**). A profile
-can include:
+## What a profile holds
 
-- **Name** and **avatar** (profile picture)
-- **Short bio** and a longer **summary**
-- **Timezone** and **language/region** (locale)
-- **Gender** and **date of birth**
-- **Address**
-- **Designation**, **profession**, and **expertise tags**
-- **Social links**
+| Group | Fields |
+|---|---|
+| **Identity** | Name, display name, username, email, phone, date of birth, gender, avatar. |
+| **Location** | Country, state, city, address, continent, locale, timezone. |
+| **Professional** | Designation, profession, expertise, bio, professional summary, social links. |
+| **State** | Status, email verified, phone verified, unique ID. |
 
-The more complete a profile, the better — especially for instructors, whose profile
-details can appear publicly next to their courses.
+**Display name** is "the name as learners should read it" — which is not always the
+legal name on the record.
 
-<Callout type="info">
-Timezone matters more than it looks. It affects how dates, deadlines, and live session
-times appear to that person, so encourage everyone to set it correctly.
+**Locale** and **timezone** decide what language somebody reads and what time a deadline
+looks like to them. Both are worth getting right for a learner in a different country.
+
+## Locking fields
+
+**Locked Profile Fields**, in <Path>Settings > Control Panel</Path> under **User
+Settings**, lists the fields a learner may not change themselves.
+
+<Callout type="warn">
+**Lock the name if you issue certificates.** A certificate prints the name on the
+account. A learner who can edit their own name can edit the name on their certificate,
+the evening before they download it.
 </Callout>
 
-## Changing an email or phone
+Date of birth is worth locking too, where age rules apply.
 
-A person can update the email address or phone number on their account. For safety, each
-change is confirmed with a **one-time code** sent to the new email or phone — the change
-only takes effect once that code is entered. See
-[Verification](/docs/knowledgebase/account-people/verification).
+## Profile completion
 
-1. Go to **Profile → Security** (or **Settings**).
-2. Enter the new email or phone.
-3. Enter the code that arrives to confirm it.
+**Profile Completion**, in the same place, decides what a learner must fill in and when
+they are asked. Used well it collects what you genuinely need; used badly it is a wall
+between somebody who has paid and the course they paid for.
 
-## Signed-in devices
+Ask for what you will actually use. Every extra required field loses learners at the
+door.
 
-Everyone can see every device that's currently signed in to their account. For each one,
-they'll see the **device or browser** and a **rough location**.
+## Devices and sessions
 
-This is useful for spotting anything unexpected — for example, a sign-in from a place or
-device they don't recognize.
+A person's record lists where their account is signed in: the **current session** and
+the others, which can be ended together.
 
-### Ending a session
+For a learner, the same list is in their own profile settings, so they can sign out a
+phone they no longer have without contacting you.
 
-| Action | What it does |
+**Maximum concurrent sessions** caps how many at once — see
+[Security](/docs/knowledgebase/account-people/security).
+
+## What a learner manages themselves
+
+From their profile settings:
+
+| They can change | Notes |
 |---|---|
-| **End this session** | Signs out the selected device. |
-| **End all other sessions** | Signs out every device except the one being used right now. |
+| Their details | Except locked fields. |
+| Email and phone | With verification. |
+| Password | Their own. |
+| Two-factor | Where offered. |
+| Devices and sessions | Signing other devices out. |
+| Notification preferences | What they hear about, and how. |
+| Privacy | Their data. |
+| Their account | Deletion, where you allow it. |
 
-Ending all other sessions is the quickest fix if a phone or laptop is lost or stolen — it
-locks everyone else out instantly while keeping the person signed in where they are.
+See [Profile and settings](/docs/knowledgebase/learner/profile-and-settings) for the
+learner's own view of all this.
 
-1. Go to **Profile → Security** (or **Settings**) → **Devices** / **Sessions**.
-2. Find the device in the list.
-3. Click **End session**, or **End all other sessions** to clear them in one go.
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner's certificate has the wrong name.">
+Correct the name on their account and reissue. Then lock the name field so it does not
+happen again.
+</Accordion>
+
+<Accordion title="A learner cannot change their own email.">
+It is a locked profile field, or the change is waiting for verification.
+</Accordion>
+
+<Accordion title="Somebody is sharing their account.">
+Look at their sessions, and lower the concurrent-session limit. The list shows how many
+places the account is signed in from.
+</Accordion>
+
+<Accordion title="Profile completion is blocking people.">
+Reduce what is required. Ask for the rest later, or not at all.
+</Accordion>
+
+<Accordion title="What is expertise for?">
+It describes an instructor — "Mathematics, Physics" — and appears where they are
+introduced. It does nothing for learners.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Accounts & sign-in](/docs/knowledgebase/account-people/accounts-and-sign-in) — sign-in methods and passwords.
-- [Security](/docs/knowledgebase/account-people/security) — sign-in protection and account deletion.
-- [Activity history](/docs/knowledgebase/account-people/activity-history) — a full record of account activity.
+<Cards>
+  <Card title="Adding people" description="Every field on an account." href="/docs/knowledgebase/account-people/adding-people" />
+  <Card title="Security" description="Sessions, two-factor and limits." href="/docs/knowledgebase/account-people/security" />
+  <Card title="Profile and settings" description="The learner's own view." href="/docs/knowledgebase/learner/profile-and-settings" />
+</Cards>

@@ -1,0 +1,112 @@
+---
+title: "Transactions"
+description: "Every payment your academy has taken — and the four lists that actually need you to do something."
+---
+
+<Path>Billing > Transactions</Path> is the record of money. Most of it you will never
+read. Four slices of it need working every week.
+
+<WhoCan roles="Admin" />
+
+## The lists
+
+| List | What it is for |
+|---|---|
+| **All Transactions** | Everything. For looking one payment up. |
+| **Pending Verification** | Offline payments waiting for you to confirm. |
+| **Manual Entry** | Recording a payment taken outside the platform. |
+| **Refunds** | Refund requests and what happened to them. |
+
+## What a transaction carries
+
+| Field | What it is |
+|---|---|
+| **Transaction ID** | Your reference. |
+| **Customer** | Who paid. |
+| **Entity** and **Entity Type** | What they bought. |
+| **Amount**, **Original Amount**, **Currency** | What it cost, and what it cost before any discount. |
+| **Payment Method** | bKash, Nagad, card, cash, bank transfer. |
+| **Payment Gateway** | Which service processed it — not the same as the method. |
+| **Payment Status** | Pending, Success, Failed, Refunded, Cancelled, Processing. |
+| **Offer Applied** / **Scholarship Applied** | Why the amount is lower than the price. |
+| **Internal Notes** | Private — the customer never sees these. |
+
+<Callout type="info">
+**Method and gateway are different things.** A learner pays with **bKash** (the method)
+through **SSLCommerz** (the gateway). When you are reconciling against a gateway
+statement, the gateway's own transaction reference is the one to match on — it is on
+the transaction, and can be copied straight from the screen.
+</Callout>
+
+## The four things to work weekly
+
+The billing overview surfaces these as **Quick Actions**, and each is a list of real
+problems:
+
+### Offline payments to verify
+
+Someone said they paid by bank transfer. Until you confirm it, they have no access.
+This is the one to clear daily — a learner who paid and is waiting is the unhappiest
+customer you have.
+
+### Failed payments
+
+Payments that did not go through. Some are a card problem the learner has already
+solved; some are a learner who tried, failed and gave up. The second group is money
+sitting on the floor.
+
+### Checkouts not completed
+
+They got as far as paying and stopped. A single message recovers a surprising share.
+
+### Paid, no access yet
+
+Money in, no enrolment. Rare, and always worth looking at: it means the payment
+succeeded and the thing it paid for did not happen.
+
+## Finding one payment
+
+Search by customer, by transaction ID, or by the gateway's reference. All three work,
+and the gateway reference is the one an outside enquiry will quote.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner says they paid and has no access.">
+Find the transaction. **Pending** means it has not completed — if it was an offline
+payment, verify it. **Success** with no enrolment is the "paid, no access yet" case and
+needs looking at directly.
+</Accordion>
+
+<Accordion title="The amount does not match the price.">
+Check **Offer Applied** and **Scholarship Applied**, and compare **Amount** against
+**Original Amount**. A discount, a coupon or a scholarship explains almost all of them.
+</Accordion>
+
+<Accordion title="Can I delete a transaction?">
+No, and you should not want to. Money records are a trail. Refund it or cancel it —
+both leave the history intact.
+</Accordion>
+
+<Accordion title="How do I reconcile with the gateway's statement?">
+Match on the gateway's own transaction reference, not on the platform's transaction ID.
+The gateway reference is what the statement shows.
+</Accordion>
+
+<Accordion title="Does a manual enrolment appear here?">
+No. Enrolling someone yourself creates no transaction. If money changed hands outside
+the platform, record it as a manual payment. See
+[Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Manual payments" description="Recording cash, bank transfers and offline payments." href="/docs/knowledgebase/selling-payments/manual-payments" />
+  <Card title="Refunds" description="Requests, approvals, and whether access is revoked." href="/docs/knowledgebase/selling-payments/refunds" />
+  <Card title="Revenue reports" description="The totals behind these rows." href="/docs/knowledgebase/selling-payments/revenue-reports" />
+  <Card title="Payment methods" description="What learners can pay with." href="/docs/knowledgebase/selling-payments/payment-methods" />
+</Cards>

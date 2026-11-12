@@ -1,72 +1,113 @@
 ---
-title: "Templates & Themes"
-description: "Start from a prebuilt page template, then set your colours, fonts, corners, and branding with a theme."
+title: "Themes and Design"
+description: "Your site's colours, type and shape — set once, applied everywhere, in light and dark."
 ---
 
-You do not have to design every page from scratch. Start from a **template** — a
-prebuilt page you can fill in — and apply a **theme** to control the overall look:
-colours, fonts, corner roundness, and your branding. Set the theme once and it carries
-across your whole site.
+A theme is your site's look: its colours, its fonts, how round the corners are. It is
+set once and every page follows.
 
-## Page templates
+<Path>Configure > Website</Path>, under design settings.
 
-Templates give you a ready-made starting point so you can launch faster. They include:
+<WhoCan roles="Admin" />
 
-- **Course Details** — a page layout for showing a single course.
-- **Learning Path Details** — a layout for a guided multi-course program.
-- **System pages** — built-in pages your site needs, such as standard layouts that
-  appear in set places.
+## Presets
 
-Pick a template, then edit its blocks to match your content. See
-[Pages & blocks](/docs/knowledgebase/website/pages-and-blocks) for how to edit blocks.
+A preset is a complete ready-made look. Start from one — it is faster than choosing a
+dozen colours, and the result is coherent. **Randomize preset** throws one up if you do
+not know where to begin.
 
-## Themes
+Then adjust what matters: your brand colour, and the fonts.
 
-A theme is a named look-and-feel preset. You can choose a ready-made theme or build your
-own. Built-in presets include:
+## Colours
 
-- **Marshmallow**
-- **Summer**
-- **Marvel**
-- **Caffeine**
-- plus any **custom** themes you create.
+Colours are set for **Light** and **Dark** separately, with a preview beside them so you
+can see the result as you change it.
 
-Each theme comes with a **light** and a **dark** variant, so your site can look good in
-both.
-
-## What you can customize
-
-| Area | What you can set |
+| Mode | What it is |
 |---|---|
-| **Colours** | Your main colours for the light look, and optional separate colours for the dark look. |
-| **Typography** | Your fonts — a sans-serif, a serif, and a monospace choice — plus letter spacing. You can override fonts per language. |
-| **Shape** | How rounded corners are, and how much spacing sits between things. |
-| **Branding** | Your site title, tagline, and contact details — email, phone, and address. |
+| **Light** | The light theme. |
+| **Dark** | The dark theme. |
+| **System** | Follows the visitor's own device setting. |
 
-<Callout type="info">
-Because letter spacing and fonts can be set per language, scripts that need different
-spacing can each look right. See [Languages](/docs/knowledgebase/website/languages).
+<Callout type="warn">
+**Check both modes.** A brand colour that reads well on white can be invisible on dark,
+and more than half your visitors will be on a phone set to dark.
 </Callout>
 
-## How to set your theme
+## Fonts
 
-1. Go to **Admin → Website → Appearance**.
-2. Choose a theme preset (for example **Summer**), or start a **custom** theme.
-3. Set your **colours** for the light look, and optionally for the dark look.
-4. Pick your **fonts** and adjust **letter spacing** if needed.
-5. Set **corner roundness** and **spacing** to taste.
-6. Fill in your **branding** — site title, tagline, and contact details.
-7. Click **Save**. The look applies across your site.
+| Setting | What it is |
+|---|---|
+| **Font Sans** | Your main typeface. |
+| **Font Serif** | For anything set in a serif. |
+| **Font Mono** | Monospace, for code. |
+| **Letter Spacing** | Global spacing — `0em`, `0.05em`. |
 
-## Good to know
+### Fonts per language
 
-- Your branding details (title, tagline, contact) can appear in places like your footer
-  and on share previews — see [Search visibility (SEO)](/docs/knowledgebase/website/seo).
-- A theme sets the overall style; individual pages and blocks still hold their own
-  content.
+You can **override fonts for specific languages** — "only set fonts that differ from the
+defaults above".
+
+This matters for a Bangla-first academy: the font that looks right in Latin script often
+looks wrong in Bangla, and a dedicated Bangla font makes the whole site read better.
+Leave the rest on the defaults.
+
+## Shape
+
+**Border radius** controls how round everything is, across every component at once. It
+is a small setting that changes the whole feel — square for formal, round for friendly.
+
+## Previewing
+
+A live **Website Preview** sits beside the controls. **Refresh preview** reloads it, and
+**Open in new tab** gives you the real thing at full size.
+
+Look at the real site, not just the preview, before you settle — on a phone as well as a
+laptop.
+
+## Where the look comes from
+
+Three layers, in order:
+
+1. **The theme** — colours, type, shape. Everywhere.
+2. **The blocks** — each section's own layout. See
+   [Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+3. **Your logo and identity** — see
+   [Your platform's identity](/docs/knowledgebase/account-people/your-platform-settings).
+
+A site that feels like yours needs all three to agree.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Our brand colour looks wrong in dark mode.">
+Set a different value for dark. The two modes are configured separately for this reason.
+</Accordion>
+
+<Accordion title="Bangla text looks wrong.">
+Set a Bangla font in the per-language overrides. The default sans is chosen for Latin
+script.
+</Accordion>
+
+<Accordion title="Can one page look different from the rest?">
+The theme is site-wide. A page differs by the blocks it uses, not by its own colours.
+</Accordion>
+
+<Accordion title="Can I switch dark mode off?">
+Set the mode rather than leaving it to **System** if you only want to support one.
+</Accordion>
+
+<Accordion title="The preview does not match the live site.">
+**Refresh preview**, or open it in a new tab. The preview can lag a change by a moment.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pages & blocks](/docs/knowledgebase/website/pages-and-blocks) — build the pages a template starts.
-- [Languages](/docs/knowledgebase/website/languages) — per-language font and spacing overrides.
-- [Search visibility (SEO)](/docs/knowledgebase/website/seo) — where your branding shows up online.
+<Cards>
+  <Card title="Pages and blocks" description="The sections the theme is applied to." href="/docs/knowledgebase/website/pages-and-blocks" />
+  <Card title="Languages" description="Running the site in more than one language." href="/docs/knowledgebase/website/languages" />
+  <Card title="Your platform's identity" description="Logo, name and share image." href="/docs/knowledgebase/account-people/your-platform-settings" />
+</Cards>

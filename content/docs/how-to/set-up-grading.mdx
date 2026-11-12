@@ -1,0 +1,139 @@
+---
+title: "How to Set Up Grading for a Programme"
+description: "Scheme, weights, rounding and the two settings that decide most results — in the order that avoids recalculating everyone."
+---
+
+Grading is five decisions. Make them before learners have marks, and nothing needs
+redoing.
+
+<WhoCan roles="Admin" />
+
+**Before you start** — the programme should have its assessments in place, because step
+three weights them.
+
+<Steps>
+
+<Step>
+
+### Build the scale, once
+
+<Path>Grading > Grading Schemes</Path>, then create one. Bands from the top down, each with its
+percentage range, letter, grade point and whether it is a **passing grade**.
+
+Two rules:
+
+- **No gaps.** A result between two bands gets no grade at all.
+- **Get the pass line right.** It decides passing, certificates and progression, all
+  three.
+
+Choose **GPA** if you report grade points, **Percentage** if you do not.
+
+[Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes)
+
+</Step>
+
+<Step>
+
+### Point the programme at it
+
+On the programme's **Grading** tab, choose the scheme. **Calculation Method** is
+**Weighted** and cannot be changed.
+
+A batch can have its own setup; without one it follows its course.
+
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup)
+
+</Step>
+
+<Step>
+
+### Set the weights
+
+In the weights editor, give each assessment a weight. **They must total exactly 100%** —
+save is refused until they do.
+
+Switch **Auto-distribute** on, type only the weights you care about — those get pinned —
+and the rest share what is left. **Distribute equally** starts again from scratch.
+
+Set no weights at all and the programme falls back to a plain average.
+
+[Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading)
+
+</Step>
+
+<Step>
+
+### Settle rounding and precision
+
+**Decimal Places** (0–4, usually 2) and **Rounding**.
+
+A grade is matched to its band **after** rounding, so this moves the pass line. At a
+pass mark of 50, a learner on 49.6 passes under "round to nearest" and fails under
+"always down".
+
+Leave Rounding unset and the programme follows what sits above it.
+
+[Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision)
+
+</Step>
+
+<Step>
+
+### Decide the two settings that matter most
+
+**Treat Ungraded Items as Zero.** Off (the default), unmarked work is left out and its
+weight is shared among what has been marked — so a learner who has sat one assessment is
+marked on that one alone. On, unmarked work counts as zero.
+
+Off while the course runs. On at the end, if skipping an assessment should cost
+something — and tell learners before you switch it.
+
+**Allow Grade Replacement**, and its policy: **Replace**, **Average** or **Best**. This
+decides which attempt counts when somebody sits an assessment twice.
+
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup) ·
+[Retakes and replacement](/docs/knowledgebase/progress-grading/retakes-and-replacement)
+
+</Step>
+
+<Step>
+
+### Check it on one learner
+
+Open the programme's **Learner Grades**, pick somebody with marks, and read their
+breakdown. Do the subject figures add up to the result beside them? Does the grade
+letter match the band you meant?
+
+Five minutes here saves a term of wrong results.
+
+</Step>
+
+</Steps>
+
+## After any change
+
+Run **Calculate All Grades** on the programme. Results are stored as they are
+calculated — without it, some learners carry results from the old rules and some from
+the new.
+
+## If something goes wrong
+
+**Save is refused on the weights.** They do not total 100%. With bonus items in play,
+only the items marked **Full** count towards it.
+
+**A result has no grade letter.** No scheme, or a gap between two bands.
+
+**Everyone's result looks too high.** **Treat Ungraded Items as Zero** is off and most
+work is unmarked. That is correct behaviour mid-course.
+
+**A batch grades differently from its course.** It has its own setup, or it has none and
+is following the course's.
+
+## Related questions
+
+<Cards>
+  <Card title="Publish results" description="What to do once the marks are in." href="/docs/knowledgebase/how-to/publish-results" />
+  <Card title="Sell by semester" description="When terms have their own results." href="/docs/knowledgebase/how-to/sell-by-semester" />
+  <Card title="GPA and results" description="How the four levels stack up." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+  <Card title="Certificate requirements" description="What the pass line decides next." href="/docs/knowledgebase/certificates/certificate-requirements" />
+</Cards>

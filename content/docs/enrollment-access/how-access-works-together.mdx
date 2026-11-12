@@ -1,72 +1,126 @@
 ---
 title: "How Access Works Together"
-description: "See how eligibility, scheduling, prerequisites, and completion rules combine to decide what a learner sees."
+description: "Six separate things decide whether a learner can open a piece of content. This is the order to check them in."
 ---
 
-You have several access controls, and they each answer a different question. They work
-**together**, in a clear order. Once you understand that order, setting them up is simple.
+"Why can this learner not see the final exam?" has six possible answers. They are
+independent of each other, and any one of them is enough on its own.
 
-## The order, in plain words
+Work down this list in order. It is sorted by how often each one turns out to be the
+answer.
 
-For any item, the system asks these questions in turn:
+<WhoCan roles="Admin, Instructor" />
 
-1. **Is the learner eligible to see it?** —
-   [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules) decide what's
-   even **visible**. If a learner isn't eligible, the item doesn't appear at all.
-2. **Does the learner own it?** — If you've set
-   [partial access](/docs/knowledgebase/enrollment-access/partial-access), the learner sees
-   only the parts they hold.
-3. **Is it open right now?** —
-   [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) and
-   [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites) decide what's **open**
-   versus locked at this moment.
-4. **Is it done?** —
-   [Completion rules](/docs/knowledgebase/progress-grading/completion-rules) mark work as
-   finished — which can in turn **open the next item** in a sequence.
+## The checklist
 
-So eligibility and partial access decide **what's there**, scheduling and prerequisites
-decide **what's open now**, and completion marks things **done** (which can unlock the next
-step).
+### 1. Is the item published?
 
-## A quick example
+The **Published** switch on the item, in the course builder. An unpublished item does
+not exist for learners and counts for nothing.
 
-Imagine a learning path with a fixed start date and a "finish each module before the next"
-sequence:
+*What the learner sees:* nothing at all.
 
-1. A learner who isn't in the right group never sees the path (**eligibility**).
-2. A learner who bought only the first term sees only that term (**partial access**).
-3. Module 2 stays locked until the start date and until Module 1 is finished
-   (**scheduling + prerequisites**).
-4. When the learner finishes Module 1 (**completion rule**), Module 2 opens.
+### 2. Are they enrolled, and is the enrolment live?
 
-## The override rule that runs through all of it
+An enrolment carries a status: **Active**, **Completed**, **Cancelled**, **Expired** or
+**Suspended**. Only a live one gives access. Check the expiry date too — an enrolment
+can lapse on a date.
 
-Wherever a setting can be applied at more than one level, **the most specific setting wins**:
+*What the learner sees:* the programme, but not its content.
 
-- A **per-learner** setting beats a **per-item** setting.
-- A **per-item** setting beats the **whole-offering** default.
+### 3. Do they hold this part of the programme?
 
-This is true for scheduling and for eligibility, so you can set a sensible default for
-everyone and then make targeted exceptions.
+[Partial access](/docs/knowledgebase/enrollment-access/partial-access). A learner who
+bought one semester holds one semester. Look at the **Scopes** column on their
+enrolment.
 
-## Reused content is independent
+*What the learner sees:* nothing. The content is simply absent.
 
-A course can stand alone **and** be reused inside a learning path. The access you set in each
-place is separate — settings inside the path never leak into the standalone course, and the
-standalone course's settings never leak into the path. If you set **no** rule for an item
-inside the path, that item is simply **open** there. That's intentional.
+### 4. Is a drip schedule holding it?
 
-## Quick reference
+[Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling). Content can be
+held until a date, until a period after enrolment, or until something else is finished.
 
-| Question | Controlled by |
+*What the learner sees:* the item, **locked, with the date it opens**. This is the one
+case where they are told.
+
+### 5. Is a prerequisite unmet?
+
+[Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites). Content that waits
+for something else to be completed.
+
+*What the learner sees:* the item locked, with what they must finish first.
+
+### 6. Does an eligibility rule exclude them?
+
+[Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules). Rules about
+*who* — country, enrolment elsewhere, profile details.
+
+*What the learner sees:* nothing, and no explanation.
+
+## A seventh, for paid programmes
+
+A learner paying by instalments can have their access **paused** when a payment is
+overdue past its grace period. Their enrolment looks live, but the content is closed.
+Their instalment state says which: **on track**, **due date passed (in grace)**, **past
+grace — access paused**, **defaulted**, or **paid off**. See
+[Installments](/docs/knowledgebase/selling-payments/installments).
+
+## Telling them apart quickly
+
+| What the learner reports | Most likely |
 |---|---|
-| Can the learner see it at all? | [Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules) |
-| Does the learner own this part? | [Partial access](/docs/knowledgebase/enrollment-access/partial-access) |
-| Is it open right now? | [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) |
-| Must earlier work be finished first? | [Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites) |
-| What counts as finished? | [Completion rules](/docs/knowledgebase/progress-grading/completion-rules) |
+| "The course is empty" | Not published, partial access, or an eligibility rule |
+| "It says it unlocks on the 14th" | Drip schedule |
+| "It says I must finish module 2" | Prerequisite |
+| "I can see the course but nothing opens" | Enrolment not active, or access paused for payment |
+| "It worked yesterday" | An expiry date, a lock date, or a payment that fell past grace |
 
 <Callout type="info">
-Building an offering from scratch? Set it up in
-[Courses & Content](/docs/knowledgebase/courses) first, then layer on these access controls.
+**Check it as a learner.** The builder's view is not the learner's view. If their
+account can be impersonated for support, that answers the question in seconds — see
+[Support login](/docs/knowledgebase/account-people/support-login).
 </Callout>
+
+## Why "nothing at all" is so common
+
+Four of the six produce no message. That is deliberate — a learner should not be able to
+work out what other people are allowed to see. It is good for privacy and awkward for
+support, so where a rule will exclude people who are likely to ask, say so somewhere
+they can read it.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Two learners in the same batch see different content.">
+Partial access or an eligibility rule. Compare the **Scopes** column on both enrolments
+first; it is the faster of the two to check.
+</Accordion>
+
+<Accordion title="A learner lost access overnight.">
+Three things happen on a clock: an enrolment expiry date, a drip lock date, and an
+instalment falling past its grace period. Check their enrolment's **Expires** and
+**Access** columns.
+</Accordion>
+
+<Accordion title="I can see the content but the learner cannot.">
+You are looking at it as an admin. Open it as a learner would before concluding
+anything.
+</Accordion>
+
+<Accordion title="Does unpublishing hide content from learners who already finished it?">
+Yes — and it also removes it from their progress calculation, so everyone's percentage
+moves. Use a drip lock if you only want to stop new learners reaching it.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Partial access" description="Holding one semester rather than the whole programme." href="/docs/knowledgebase/enrollment-access/partial-access" />
+  <Card title="Drip scheduling" description="When content opens." href="/docs/knowledgebase/enrollment-access/drip-scheduling" />
+  <Card title="Eligibility rules" description="Who may see it at all." href="/docs/knowledgebase/enrollment-access/eligibility-rules" />
+  <Card title="Prerequisites" description="What must be finished first." href="/docs/knowledgebase/enrollment-access/prerequisites" />
+</Cards>

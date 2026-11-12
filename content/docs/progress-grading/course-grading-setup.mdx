@@ -1,0 +1,173 @@
+---
+title: "Course Grading Setup"
+description: "Every setting on a programme's Grading tab, what it changes, and the one switch behind most wrong-mark complaints."
+---
+
+Each course, batch and learning path has its own grading setup. It lives on the
+**Grading** tab of the programme's builder, and it answers one question: how do this
+programme's marks become one result?
+
+<WhoCan roles="Admin" />
+
+## Where it lives, and which one wins
+
+A grading setup belongs to a programme. A batch can have its own, separate from its
+course's.
+
+When the system needs a setup for a batch, it looks for the batch's own first, and falls
+back to the course's if the batch has none. A course inside a learning path uses **its
+own** setup if it has one — it never borrows the path's weights, because those weights
+describe the path's items, not the course's content.
+
+<Callout type="info">
+If a batch's results look like they are following the wrong rules, check whether the
+batch has a setup of its own. With none, it is quietly following the course's.
+</Callout>
+
+## The settings
+
+### Grading Scheme
+
+Which scale turns percentages into grades. See
+[Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes). Without one,
+the programme records marks but produces no grade.
+
+### Calculation Method
+
+**Weighted.** It is the only method, and the box is fixed — every assessment carries a
+weight, and the weights share one whole. Set those weights on the
+[Weights](/docs/knowledgebase/progress-grading/weighted-grading) editor.
+
+If you leave every weight empty, the programme falls back to a plain average of its
+items, each counting the same.
+
+### Rounding and Decimal Places
+
+**Decimal Places** (0–4) is how precisely a result is recorded. **Rounding** is which way
+it goes when it will not fit. Because a grade is matched to its band *after* rounding,
+these two together move the pass line. Leave Rounding unset and the programme follows
+what sits above it. Full detail:
+[Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision).
+
+### Allow Grade Replacement, and the policy
+
+**Allow Grade Replacement** off means the latest attempt simply stands. On, you must
+choose a **Grade Replacement Policy**:
+
+| Policy | What counts |
+|---|---|
+| **Replace (Use new grade only)** | The most recent attempt. |
+| **Average (Average both attempts)** | The average of the attempts that have been marked. |
+| **Best (Use higher grade)** | The highest attempt. |
+
+See [Retakes and replacement](/docs/knowledgebase/progress-grading/retakes-and-replacement).
+
+### Result Policy
+
+How the programme's own result is formed:
+
+| Policy | What it does |
+|---|---|
+| **Weighted average** | The default. Every weight is a share of 100%, and the result is their weighted mean. |
+| **Average with bonus** | Divides only by the items marked **Full**. Each item marked **Bonus** adds whatever it scored *above* a threshold, so a bonus item can raise a result but never lower it. |
+
+Choosing **Average with bonus** reveals two more boxes:
+
+- **Bonus Threshold** — a bonus item adds only what it scores above this. Empty means 50.
+- **Result Cap** — the highest result this programme can reach. Empty means 100.
+
+Use it for a programme with optional subjects that should reward a learner who takes
+them without punishing one who does not.
+
+### Treat Ungraded Items as Zero
+
+**This is the setting behind most "the mark is wrong" questions.**
+
+| Setting | What happens to an assessment nobody has marked yet |
+|---|---|
+| **Off** (the default) | It is left out, and its weight is shared among the items that *have* been marked. |
+| **On** | It counts as 0%, and drags the result down. |
+
+An example. A course has four assessments at 25% each. A learner has sat one and scored
+80%; the other three have not been marked.
+
+- **Off** — the result is **80%**. Only the marked quarter is counted, and it becomes the
+  whole.
+- **On** — the result is **20%**. The three unmarked assessments count as zero.
+
+Neither is wrong. **Off** is right while a course is running, so a learner's result
+reflects the work done so far. **On** is right at the end, so skipping an assessment
+costs something.
+
+<Callout type="warn">
+Leaving it **off** all term and switching it **on** at the end will move every result
+downwards at once. If that is your plan, say so to learners before you do it.
+</Callout>
+
+## The summary card
+
+Once a programme is configured, its **Grading** tab leads with a summary rather than the
+form — the scheme in use, the calculation method, and whether grade replacement is on.
+**Edit Configuration** opens the form again.
+
+Two things on it are worth reading carefully:
+
+- **The result policy, in words** — **Weighted average** or **Average with bonus**. This
+  is the one setting that changes what a weight *means*, so it is worth confirming at a
+  glance rather than opening the form.
+- **The precision, resolved** — "2 places, rounded down", or "the programme's precision,
+  rounded as the programme does" where this config inherits. That sentence is the
+  answer to "what will actually happen to 49.996 here", which two empty boxes never
+  gave you. See
+  [Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision).
+
+## Recalculating
+
+Changing a setting does not rewrite results already recorded. From the programme's
+learner grades screen, **Calculate All Grades** runs the new rules over everyone. It
+runs in the background and can be cancelled while it is going.
+
+Run it after you change weights, the scheme, the rounding, or **Treat Ungraded Items as
+Zero** — otherwise some learners carry results from the old rules and some from the new.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="One learner's result is much higher than it should be.">
+Check **Treat Ungraded Items as Zero**. With it off, a learner who has sat one
+assessment out of five is marked on that one alone — a single good quiz reads as a
+near-perfect course.
+</Accordion>
+
+<Accordion title="I changed the weights and nothing moved.">
+Results are stored as they are calculated. Run **Calculate All Grades** on the
+programme's learner grades screen to apply the new weights to everyone.
+</Accordion>
+
+<Accordion title="A batch is grading differently from its course.">
+Either it has a setup of its own, or it has none and is following the course's. Open the
+batch's Grading tab and see which. Saving from the batch creates a setup for the batch
+alone — it never overwrites the course's.
+</Accordion>
+
+<Accordion title="Why can I not choose Simple or Credit Based?">
+Weighted is the only method. A programme with no weights set already behaves like a
+simple average, which covers the case Simple would have.
+</Accordion>
+
+<Accordion title="A learner has a result but no grade letter.">
+The programme has no grading scheme, or the result falls in a gap between two bands.
+See [Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Weighted grading" description="The weights editor, and making them total 100%." href="/docs/knowledgebase/progress-grading/weighted-grading" />
+  <Card title="Rounding and precision" description="How rounding moves the pass line." href="/docs/knowledgebase/progress-grading/rounding-and-precision" />
+  <Card title="Retakes and replacement" description="Which attempt counts when a learner sits something twice." href="/docs/knowledgebase/progress-grading/retakes-and-replacement" />
+  <Card title="Learner grades" description="Seeing and correcting one learner's marks." href="/docs/knowledgebase/progress-grading/learner-grades" />
+</Cards>

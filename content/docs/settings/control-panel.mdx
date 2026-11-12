@@ -1,0 +1,190 @@
+---
+title: "The Control Panel"
+description: "One screen holds nearly every academy-wide setting. Here is what is in each of its twelve sections."
+---
+
+<Path>Settings > Control Panel</Path> is where your academy's own rules live — its name,
+how people sign in, what is kept and for how long, what learners can do to their own
+accounts.
+
+Twelve sections down the left. Most of them you will set once.
+
+<WhoCan roles="Admin" />
+
+<Screenshot
+  src="/kb/settings/control-panel.png"
+  alt="The Control Panel, with its sections listed down the left and Platform Settings open."
+  caption="Pick a section on the left, edit it, and save that section. Each one saves on its own."
+/>
+
+## Platform Settings
+
+Who you are.
+
+| Group | What is in it |
+|---|---|
+| **Platform** | Your academy's **Name**, **Description**, logos, **Social Share Image**, **Subdomain** and **Custom domain**. |
+| **Organization** | The legal details — name, email, phone, address, city, state, ZIP, country. These appear on documents and in emails. |
+| **Version number** | Whether the build version shows in the corner. |
+
+The **Organization** email is what learners are told to contact when something goes
+wrong, so it needs to be an address somebody reads.
+
+## Security & Compliance
+
+The biggest section, and the one worth a careful read.
+
+| Group | What it decides |
+|---|---|
+| **Registration** | Whether people may **self-register**; what they may register with; whether **email verification** and **phone verification** are required. |
+| **Learner sign-in** / **Staff sign-in** | How each signs in — password, one-time code, social sign-in — plus password length and complexity, two-factor, idle timeout and maximum concurrent sessions. Learners and staff are set separately. |
+| **Data Privacy** | Retention, deletion, legal pages, consent and age rules. See [Privacy and consent](/docs/knowledgebase/account-people/privacy-and-consent). |
+| **Audit Logs** | What is recorded, and for how long. |
+
+<Callout type="warn">
+**Staff sign-in should be stricter than learner sign-in.** They are separate settings for
+exactly that reason — two-factor and a short idle timeout for the people who can change
+grades, and something gentler for learners.
+</Callout>
+
+## Analytics & Tracking
+
+Eleven services you can connect, each a switch and an ID: **Google Analytics**, **Google
+Tag Manager**, **Facebook Pixel**, **Microsoft Clarity**, **Hotjar**, **TikTok Pixel**,
+**Twitter/X Pixel**, **Plausible**, **Fathom**, **Mixpanel**, and **Custom Tracking
+Scripts**.
+
+These measure your *website*. They are nothing to do with the
+[analytics](/docs/knowledgebase/analytics) inside your academy, which measure learning.
+
+If you ask for cookie consent, these are the scripts that consent governs.
+
+## Media
+
+Upload limits and media behaviour — including whether paid content may be downloaded.
+See [Sharing and limits](/docs/knowledgebase/files/sharing-and-limits).
+
+## Gamification
+
+| Group | What it does |
+|---|---|
+| **Leaderboard Settings** | How rankings behave. |
+| **Daily Streak** | On or off. See [Learning streaks](/docs/knowledgebase/progress-grading/learning-streaks). |
+
+## Certificate
+
+**Certificate Number Generation** — the pattern every certificate number is built from.
+Set it before you issue anything. See
+[Issuing certificates](/docs/knowledgebase/certificates/issuing-certificates).
+
+## Payments
+
+Payment behaviour, including how long an unpaid renewal is tolerated before it counts as
+lapsed.
+
+## User Settings
+
+What learners can do, and what is done to them.
+
+| Group | What it decides |
+|---|---|
+| **Unique ID Generation Rules** | The pattern for student IDs. See [Student IDs](/docs/knowledgebase/account-people/student-ids). |
+| **Deleted Account** | What happens when an account is deleted. |
+| **Learner Progress Reset** | Whether learners may reset their own progress. **Off by default** — think before switching it on. |
+| **Locked Profile Fields** | Which profile fields a learner may not change themselves. |
+| **Learner Home** | What they land on. |
+| **Reminders and Progress Reports** | The automatic nudges, and when they go out. |
+| **Profile Completion** | What a learner must fill in, and when they are asked. |
+
+### When the reminders go out
+
+**Reminders and Progress Reports** no longer just switches the nudges on — it decides
+when learners receive them.
+
+| Setting | What it decides |
+|---|---|
+| **Send time** | The hour of day reminders and progress reports go out. |
+| **Time zone** | The clock that send time is on. |
+| **Weekly reports go out on** | The day of the week. Each report covers the 7 days before it. |
+| **Language of reminders and reports** | Which language they are written in. |
+| **Also send the reminder by SMS** | Sends the inactivity reminder by text as well as email. |
+
+<Callout type="info">
+**Pick a send time your learners are awake for.** A reminder that arrives at 3am is read
+at 9am with forty other things, if at all. Early evening works for most academies, and
+the day you choose for weekly reports sets what "the last 7 days" covers.
+</Callout>
+
+**Locked Profile Fields** matters for any academy that issues certificates: a learner who
+can edit their own name can edit the name on their certificate.
+
+## Email Editor
+
+**Unlayer** — the editor used to design emails. See
+[Message templates](/docs/knowledgebase/communication/message-templates).
+
+## Mobile Apps
+
+Settings for a mobile app: **Maintenance** mode, **Minimum supported version**, and
+**Store review** prompts.
+
+## Activity Completion
+
+The academy-wide answer to "what counts as finished?" for each kind of lesson — a video
+watched to some percentage, a page opened, a quiz passed. A programme can override it,
+and so can a single item.
+
+This is the default everything inherits, so it is worth getting right before you build
+much content. See
+[Completion rules](/docs/knowledgebase/progress-grading/completion-rules).
+
+## Video Playback
+
+A default playback policy for every course and learning path — switched on with **Enable
+a default playback policy**.
+
+Left off, videos use the built-in behaviour: YouTube and Vimeo links play inside your own
+player rather than sending the learner away. Switch it on when you want to decide things
+like seeking and speed yourself. A programme can override this too. See
+[Video playback](/docs/knowledgebase/files/video-playback).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I changed a setting and nothing happened.">
+Saves are per section — save the one you edited. Some settings also only affect new
+activity: changing a retention period does not retroactively delete what is already
+kept.
+</Accordion>
+
+<Accordion title="Learners cannot register.">
+**Self-registration** is off, or the identifier they are trying to use is not among the
+ones you allow.
+</Accordion>
+
+<Accordion title="Where are payment gateways and calendar connections?">
+Not here — they are in <Path>Settings > Integrations</Path>. See
+[Integrations](/docs/knowledgebase/settings/integrations).
+</Accordion>
+
+<Accordion title="Who can change these?">
+Anyone whose role allows settings. It is worth keeping that list short: most of this
+screen affects everybody.
+</Accordion>
+
+<Accordion title="Can settings differ per course?">
+A few can be overridden on a programme — video playback and certificate release, for
+instance. The rest are academy-wide.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Integrations" description="Payment gateways, calendars, conferencing and sign-in providers." href="/docs/knowledgebase/settings/integrations" />
+  <Card title="Privacy and consent" description="The Data Privacy group, in detail." href="/docs/knowledgebase/account-people/privacy-and-consent" />
+  <Card title="Accounts and sign-in" description="What the sign-in settings mean for learners." href="/docs/knowledgebase/account-people/accounts-and-sign-in" />
+  <Card title="Student IDs" description="The ID pattern, and back-filling existing learners." href="/docs/knowledgebase/account-people/student-ids" />
+</Cards>

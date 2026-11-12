@@ -1,97 +1,121 @@
 ---
 title: "Completion Rules"
-description: "Decide exactly what marks an activity as 'done' — from watching a video to passing a quiz — and set it for one item, a whole course, or your entire platform."
+description: "What a learner has to do for a lesson, file, quiz or assignment to count as finished — and how to change it for one item or one person."
 ---
 
-A completion rule answers one question: **what does a learner have to do for this activity
-to count as finished?** Your platform comes with sensible defaults, and you can change
-them whenever you like.
+Progress is the share of a course a learner has finished. A completion rule decides what
+"finished" means for each piece: opened it, watched most of it, sat the quiz, or passed
+it.
 
-## The built-in defaults
+Every piece of content already has a sensible rule. You only set one when the default
+is wrong for you.
 
-Out of the box, each kind of content completes like this:
+<WhoCan roles="Admin, Instructor" />
 
-| Content type | Counts as done when… |
-|--------------|----------------------|
-| **Video / audio** | The learner has watched almost to the end (about 90%). |
-| **Text lesson** | The learner has scrolled to the end. |
-| **PDF** | The learner has viewed every page. |
-| **File** (download/attachment) | The learner has opened it. |
-| **Quiz** | The learner has submitted an attempt. |
-| **Assignment** | The learner has made a submission. |
-| **Sections, courses, terms** | All of their contents are complete. |
-
-<Callout type="warn">
-For a quiz, **completed is not the same as passed**. By default, simply submitting an
-attempt — even a failing one — marks the quiz complete. If you want completion to require
-a passing score, choose the **Pass** rule below.
-</Callout>
-
-## Changing the rule
-
-You can override the default for lessons, files, quizzes, and assignments.
+## The rules
 
 ### For lessons and files
 
-| Option | What it means |
-|--------|----------------|
-| **Default** | Use the built-in rule above. |
-| **Viewed** | Done as soon as the learner opens it. |
-| **Reach a minimum percent** | Done when they reach a percentage you set (for example, watch 75% of a video). |
-| **Spend a minimum time** | Done after a set number of seconds. *(Video and audio only.)* |
+| Rule | What the learner must do |
+|---|---|
+| **Default (built-in)** | Whatever the platform normally does for this kind of content. |
+| **Viewed / Opened** | Just open it. Done immediately. |
+| **Reach a percentage** | Get to a set point — watched, read, or pages turned. You give the percentage. |
+| **Spend minimum time** | Stay with it for a number of minutes. You give the minutes. |
+
+**Spend minimum time** is available for video and audio. A reading — text or PDF — does
+not offer it; use **Reach a percentage** for those.
 
 ### For quizzes and assignments
 
-| Option | What it means |
-|--------|----------------|
-| **Default** | Use the built-in rule (any submission counts). |
-| **Attempt** | Done on any submission — pass or fail. |
-| **Pass** | Done only when the score meets the passing mark. |
+| Rule | What the learner must do |
+|---|---|
+| **Default (built-in)** | The normal behaviour for an assessment. |
+| **Attempt only** | Sit it or submit it. Passing is not required. |
+| **Attempted with a Pass** | Score at or above the pass mark. A fail does not count. |
 
-<Callout type="info">
-The **Pass** option only appears if the quiz or assignment actually has a passing mark
-set. If there is no passing mark, there is nothing to pass, so the option is hidden.
+<Callout type="warn">
+**Attempted with a Pass can lock a learner out.** If a quiz has to be passed to count as
+done, and something later is waiting for it, a learner who keeps failing goes nowhere.
+Check how many attempts the quiz allows before choosing it. See
+[Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites).
 </Callout>
 
-## Where you can set rules — and which one wins
+## Where a rule can be set
 
-You can set completion rules at several levels:
+Rules are set at four levels. The most specific one that applies wins:
 
-- **Per learner** — a special rule for one individual.
-- **Per item** — a rule for one specific lesson or quiz.
-- **Per course (offering)** — defaults for that whole course. Lessons here are split into
-  two groups, **Video & audio** and **Text & PDF**, because they support different signals
-  (you cannot "watch" a PDF, for example).
-- **Platform-wide** — your default for everything.
+1. **Across your whole academy** — "every video counts when 90% watched".
+2. **For one programme** — the same idea, for this course only.
+3. **For one item** — from the item's **⋯** menu in the course builder, **Completion
+   Rule**.
+4. **For particular learners** — an override on that item, for named people only.
 
-When more than one rule could apply, the **most specific one wins**:
+A per-learner override is for the genuine exception: a learner with a disability who
+cannot meet a time rule, a makeup arrangement. Pick the item, choose **Edit override**,
+and name the learners. The screen stops you giving one person two overrides on the same
+item, and tells you which of your selection already has one.
 
-> **Per learner → Per item → Course default → Platform default → Built-in**
+## What progress counts
 
-So a rule you set for a single learner overrides everything; a rule on a single item
-overrides the course default; and so on down to the built-in behaviour.
+Only **published** content counts. Unpublished items are not in the course as far as
+progress is concerned — which is why unpublishing something everybody has finished moves
+everyone's percentage.
 
-## Two things that are intentional
+<Callout type="info">
+A **file** attached to a lesson is not an item and never counts. A **file item** in the
+course outline does. See
+[Files and resources](/docs/knowledgebase/courses/files-and-resources).
+</Callout>
 
-- **There is no "manual tick only" mode and no "don't track" mode.** Completion is always
-  worked out automatically from what the learner does.
-- **There is still a "Mark as complete" button** that learners can use where you allow it —
-  handy for activities like reading a downloadable file.
+## Choosing well
 
-## When a whole course finishes
+- **A video you want actually watched** → Reach a percentage, around 90%. Not 100%:
+  learners stop at the credits and never get the tick.
+- **A reference PDF** → Viewed / Opened. It is there to be consulted, not read end to
+  end.
+- **A practice quiz** → Attempt only. The point is trying.
+- **A gate before the next module** → Attempted with a Pass, with enough attempts
+  allowed that a learner can actually get through.
 
-A course completes automatically the moment **100% of its available, completable items**
-are done. That can:
+## Common questions
 
-- Send the learner a **completion notice**,
-- Mark their **enrollment as completed**, and
-- Automatically issue a [certificate](/docs/knowledgebase/certificates), if you have set
-  one up.
+<Accordions type="single">
 
-## Good to know
+<Accordion title="A learner watched the whole video but it is not ticked.">
+Check the lesson's **Duration**. Progress is measured against the duration you typed, so
+if it is longer than the real video the learner can never reach the percentage. See
+[Lesson types](/docs/knowledgebase/courses/lesson-types).
+</Accordion>
 
-- Completion is **sticky** — once an activity is done, it stays done even if the learner
-  revisits it.
-- Completion (the *what counts as done*) is separate from
-  [drip scheduling and access rules](/docs/knowledgebase/enrollment-access), which control
-  *when* content becomes available in the first place.
+<Accordion title="Everyone's progress dropped after I edited the course.">
+You probably unpublished or deleted an item people had finished. Progress is a share of
+the published content, so removing a finished item changes the share for everyone.
+</Accordion>
+
+<Accordion title="An embedded video is not counting as watched.">
+Check what the embed says it contains. An embed set to **Other** gets no assumption made
+about it; set it to **Video** and it inherits the video rule. See
+[Lesson types](/docs/knowledgebase/courses/lesson-types).
+</Accordion>
+
+<Accordion title="Can a completion rule be different in two courses for the same quiz?">
+Yes. The rule is attached to the item where it sits, so a shared quiz can count on
+attempt in one course and only on a pass in another.
+</Accordion>
+
+<Accordion title="How do I remove an override?">
+Open the item's completion rule and choose **Remove override** for that learner. They go
+back to following whatever rule applies to everyone else.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Progress tracking" description="How these ticks become a percentage." href="/docs/knowledgebase/progress-grading/progress-tracking" />
+  <Card title="Prerequisites" description="Making one item wait for another to be finished." href="/docs/knowledgebase/enrollment-access/prerequisites" />
+  <Card title="Lesson types" description="Durations, and what each type needs." href="/docs/knowledgebase/courses/lesson-types" />
+  <Card title="Resetting progress" description="Clearing a learner's ticks and starting again." href="/docs/knowledgebase/enrollment-access/resetting-progress" />
+</Cards>

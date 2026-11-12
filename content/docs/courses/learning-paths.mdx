@@ -1,77 +1,134 @@
 ---
 title: "Learning Paths"
-description: "Group several courses into one guided track — like a multi-course diploma."
+description: "A programme made of several courses, taken in an order you set — with its own price, result and certificate."
 ---
 
-A learning path is a higher-level track that bundles multiple courses (and other items)
-into one guided sequence. Use it when a single course is not enough — for example, a
-diploma made up of several courses that learners take in order.
+A learning path strings several courses together into one thing a learner buys, works
+through and finishes. The path has its own price, its own progress, its own result and
+its own certificate — the courses inside it keep theirs.
 
-## What a learning path can hold
+<WhoCan roles="Admin, Instructor" />
 
-A learning path uses the same content builder as a course, so it can contain:
+## When a path is the right answer
 
-- Whole **courses** placed in a sequence.
-- **Cohorts** — scheduled runs nested inside the path.
-- The usual building blocks — sections, lessons, quizzes, assignments, files, and terms.
+Use a learning path when the courses only make sense together — a diploma, a career
+track, a syllabus of four subjects.
 
-Because a path can contain courses and cohorts, you can build true programs: a diploma
-where each step is its own full course.
+Do not use one when you just want to sell three courses at a discount. That is a
+[bundle](/docs/knowledgebase/selling-payments/bundles): a bundle is a price on several
+things, a path is a programme in its own right.
 
-## Settings
+## Building one
 
-A learning path has the same settings as a course, including:
+A learning path is four steps, reached from <Path>Learning Paths > Add Learning Path</Path>.
 
-- **Seat limit** — how many learners can enroll (blank means unlimited).
-- **Certificate** — award a certificate when learners finish.
-- **Discussion** — turn learner discussion on or off.
-- **Ratings** — let learners rate the path.
-- **Enrollment open or closed** — control whether new learners can join.
+### Step 1 — details
 
-See [Publishing and the catalog](/docs/knowledgebase/courses/publishing-and-catalog) for
-the full list of settings.
+Title, **Slug**, **Description**, **Summary**, **Thumbnail**, **Preview Media**,
+**Categories** (required), **Instructors**, **Duration**, **Difficulty Level** and
+**Language**. The **Summary** is the short version shown in listings; the description is
+the long one on the path's own page.
 
-## How to create a learning path
+### Step 2 — the content
 
-1. Go to **Admin → Learning Paths**.
-2. Click **New Learning Path**.
-3. Enter the **Title**, **Description**, and a **Thumbnail**.
-4. Set the **difficulty level**, **language**, **learning outcomes**, and **requirements**.
-5. Go to the **Curriculum** (content) area and **Add** the courses and items you want, in
-   order.
-6. Adjust the settings — seat limit, certificate, discussion, ratings, and enrollment.
-7. **Save**, then publish when ready.
+<Screenshot
+  src="/kb/courses/learning-path-builder.png"
+  alt="The learning path builder with Curriculum, Grading, Drip Schedule and Prerequisites tabs, buttons to add a Stage, Course or Quiz, and Stage 1 containing a course and a quiz"
+  caption="A path is built from stages, and a stage holds whole courses — not lessons."
+/>
 
-## Courses inside a path
+Three buttons add to a path:
 
-When a course sits inside a learning path, the path manages that course's scheduling and
-access independently of the standalone version of the course. In other words, the same
-course can behave one way on its own and another way inside the path. The deeper details
-of how this access works live in
-[Enrollment & Access](/docs/knowledgebase/enrollment-access).
+| Button | What it adds |
+|---|---|
+| **Stage** | A grouping — "Year 1", "Foundation". Stages hold everything else. |
+| **Course** | A whole existing course, picked from your catalogue. |
+| **Quiz** | A test that belongs to the path itself, not to any one course — a final exam across the whole programme. |
 
-<Callout type="info">
-Think of a learning path as the program, and the courses inside it as the chapters. The
-path decides the order and how each chapter opens.
+Everything else works as it does in a course: drag to reorder, a **Published** switch
+per row, and a **⋯** menu per item. See
+[The course builder](/docs/knowledgebase/courses/curriculum-builder).
+
+The same four tabs sit across the top — **Curriculum**, **Grading**, **Drip Schedule**
+and **Prerequisites** — and they apply to the path as a whole.
+
+### Step 3 — assign learners
+
+A list of your people with **Select All** and **Assign**, and the learners already on the
+path beside it. This enrols people directly, without a purchase. For anything beyond a
+handful, see
+[Admin and bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
+
+### Step 4 — settings
+
+The same settings a course has: **Enrollment Open**, **Maximum Enrollments**,
+**Enable Certificate**, **Enable Transcript**, **Certificate Code**, **Enable
+Discussion**, **Enable Rating**, **Learning Outcomes**, **Requirements** and the
+**Completion Message**. See
+[Course settings](/docs/knowledgebase/courses/course-settings), which explains each one.
+
+## How a path and its courses fit together
+
+- **Progress** on the path is worked out from the courses inside it.
+- **Grading** on the path is set on its own **Grading** tab, and can weight the courses
+  differently — see [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+- **A certificate** can be awarded for the path, for a course inside it, or both.
+- **A course can be in more than one path**, and in your catalogue on its own at the
+  same time.
+
+<Callout type="warn">
+A course inside a path is the same course, not a copy. Edit it and every path containing
+it changes. That is usually what you want — but it is why renaming a course can surprise
+people.
 </Callout>
 
-## What the learner sees
+## Mixing self-paced and scheduled courses
 
-Learners enroll in the path as a whole and see it as one guided journey: a sequence of
-courses and items they work through. Progress and any certificate apply to the whole
-path.
+A path can hold both. A self-paced primer can sit in front of a cohort-based batch, so a
+learner reads the primer while waiting for the batch to start. Each course keeps its own
+behaviour inside the path.
 
-## Tips
+## Common questions
 
-- Use a learning path for any offering that spans several courses, like a diploma or a
-  bootcamp.
-- Add a term or period if the program runs across semesters.
-- Set a certificate on the path so learners earn one for completing the whole program.
+<Accordions type="single">
+
+<Accordion title="What is the difference between a learning path and a bundle?">
+A **bundle** is a price on several items bought together; the learner ends up with
+separate enrolments and separate certificates. A **learning path** is one programme with
+one enrolment, one progress figure, one result and one certificate. If the learner should
+feel they joined *one* thing, use a path.
+</Accordion>
+
+<Accordion title="Does a learner have to finish the courses in order?">
+Only if you make them. Order in the builder is presentation; to actually lock course two
+until course one is done, set a prerequisite. See
+[Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites).
+</Accordion>
+
+<Accordion title="A learner is in the path and also bought one of its courses separately.">
+They have two enrolments, and they are kept apart on purpose: work done in the path
+counts towards the path, and work done in the standalone course counts towards that.
+Progress is tracked per enrolment. See
+[Progress tracking](/docs/knowledgebase/progress-grading/progress-tracking).
+</Accordion>
+
+<Accordion title="Can a path have batches?">
+No. Batches belong to cohort-based courses. A path can *contain* a cohort-based course,
+and the learner joins a batch of that course inside the path.
+</Accordion>
+
+<Accordion title="Can I add a quiz straight to the path?">
+Yes — **+ Quiz** on the builder adds a quiz that belongs to the path rather than to any
+of its courses. Use it for a final exam that covers the whole programme.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Creating a course](/docs/knowledgebase/courses/creating-a-course) — the courses you place inside a path.
-- [Cohorts](/docs/knowledgebase/courses/cohorts) — scheduled runs you can nest in a path.
-- [Publishing and the catalog](/docs/knowledgebase/courses/publishing-and-catalog) — all the settings.
-- [Enrollment & Access](/docs/knowledgebase/enrollment-access) — how access works inside a path.
-- [Certificates](/docs/knowledgebase/certificates) — awarding a certificate for the program.
+<Cards>
+  <Card title="The course builder" description="Stages, dragging, publishing and the item menu." href="/docs/knowledgebase/courses/curriculum-builder" />
+  <Card title="Bundles" description="Selling several things together without making a programme." href="/docs/knowledgebase/selling-payments/bundles" />
+  <Card title="Weighted grading" description="Making one course count more than another." href="/docs/knowledgebase/progress-grading/weighted-grading" />
+  <Card title="Prerequisites" description="Requiring one course before another opens." href="/docs/knowledgebase/enrollment-access/prerequisites" />
+</Cards>

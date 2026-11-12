@@ -91,167 +91,238 @@ const ICON: Record<string, React.ReactNode> = {
       <path d="M13.5 12.2c1.7.4 3 1.6 3 3.8" />
     </svg>
   ),
+  start: (
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M10 2.5c3 2 4.5 5 4.5 8L10 15 5.5 10.5c0-3 1.5-6 4.5-8z" />
+      <circle cx="10" cy="8" r="1.5" />
+      <path d="M7 15.5c-.8 1-.9 2-.9 2s1.2-.1 2-.9" />
+    </svg>
+  ),
+  analytics: (
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3 17h14" />
+      <rect x="4" y="10" width="3" height="5" rx="0.6" />
+      <rect x="8.5" y="6" width="3" height="9" rx="0.6" />
+      <rect x="13" y="12" width="3" height="3" rx="0.6" />
+    </svg>
+  ),
+  settings: (
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1 4.7 4.7" />
+    </svg>
+  ),
+  learner: (
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M10 3.5 17 7l-7 3.5L3 7z" />
+      <path d="M6 8.8V13c0 1.1 1.8 2 4 2s4-.9 4-2V8.8" />
+    </svg>
+  ),
+  'how-to': (
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12.8 3.6a3.6 3.6 0 0 0-4.6 4.6l-5 5a1.5 1.5 0 0 0 2.1 2.1l5-5a3.6 3.6 0 0 0 4.6-4.6l-2 2-1.6-.5-.5-1.6z" />
+    </svg>
+  ),
 };
 
 const MODULES: ModuleCardData[] = [
   {
     num: '01',
-    slug: 'courses',
-    name: 'Courses & Content',
-    blurb: 'Courses, learning paths, and cohorts — with lessons, videos, live sessions, and files.',
-    pages: 10,
-    topics: ['Courses & lessons', 'Learning paths', 'Cohorts'],
+    slug: 'start',
+    name: 'Start Here',
+    blurb: 'What you can build, a tour of the admin, and a checklist for before you take money.',
+    pages: 7,
+    topics: ['What you can build', 'Admin tour', 'Launch checklist'],
     tone: 'blue',
-    icon: ICON.courses,
+    icon: ICON['start'],
   },
   {
     num: '02',
+    slug: 'courses',
+    name: 'Courses & Content',
+    blurb: 'Courses, batches and learning paths — lessons, videos, live sessions and the library behind them.',
+    pages: 17,
+    topics: ['Creating a course', 'The course builder', 'Cohorts & terms'],
+    tone: 'blue',
+    icon: ICON['courses'],
+  },
+  {
+    num: '03',
     slug: 'enrollment-access',
     name: 'Enrollment & Access',
-    blurb: 'Enroll learners, release content on a schedule, and set who can access what.',
-    pages: 8,
-    topics: ['Enrollment', 'Drip scheduling', 'Prerequisites'],
+    blurb: 'Getting learners in, and the six separate rules that decide what each of them can open.',
+    pages: 12,
+    topics: ['Enrolment windows', 'Drip scheduling', 'Partial access'],
     tone: 'moss',
     icon: ICON['enrollment-access'],
   },
   {
-    num: '03',
+    num: '04',
     slug: 'progress-grading',
     name: 'Progress & Grading',
-    blurb: 'Track progress, set completion rules, grade with weights, and build marksheets.',
-    pages: 8,
-    topics: ['Completion rules', 'Weighted grading', 'Marksheets'],
+    blurb: 'Completion rules, grading schemes, weights, rounding — and the two settings behind most wrong marks.',
+    pages: 15,
+    topics: ['Grading schemes', 'Weighted grading', 'Transcripts'],
     tone: 'ochre',
     icon: ICON['progress-grading'],
   },
   {
-    num: '04',
+    num: '05',
     slug: 'assessments',
     name: 'Assessments & Quizzes',
-    blurb: 'Quizzes and exams with many question types, auto and manual grading, and proctoring.',
-    pages: 14,
-    topics: ['Question types', 'Exams', 'Proctoring'],
+    blurb: 'Quizzes, exams and assignments — the ten question types that work, marking, and exam integrity.',
+    pages: 20,
+    topics: ['Question types', 'Exams', 'Grading quizzes'],
     tone: 'blue',
-    icon: ICON.assessments,
-  },
-  {
-    num: '05',
-    slug: 'certificates',
-    name: 'Certificates',
-    blurb: 'Award verifiable certificates when learners finish or pass an approved review.',
-    pages: 4,
-    topics: ['Requirements', 'Issuing', 'Verification'],
-    tone: 'ink',
-    icon: ICON.certificates,
+    icon: ICON['assessments'],
   },
   {
     num: '06',
+    slug: 'certificates',
+    name: 'Certificates & Documents',
+    blurb: 'Who earns a certificate, what the document looks like, and the six gates that hold one back.',
+    pages: 8,
+    topics: ['Requirements', 'Templates', 'Document builder'],
+    tone: 'ink',
+    icon: ICON['certificates'],
+  },
+  {
+    num: '07',
     slug: 'selling-payments',
     name: 'Selling & Payments',
-    blurb: 'Price courses and run bundles, subscriptions, installments, coupons, and payments.',
-    pages: 12,
-    topics: ['Pricing & bundles', 'Coupons', 'Payments'],
+    blurb: 'Pricing, instalments, coupons, scholarships, refunds — and the four lists worth working weekly.',
+    pages: 15,
+    topics: ['Pricing', 'Instalments', 'Transactions'],
     tone: 'rust',
     icon: ICON['selling-payments'],
   },
   {
-    num: '07',
+    num: '08',
     slug: 'website',
     name: 'Website & Pages',
-    blurb: 'Build your public site — pages, blocks, themes, menus, forms, a blog, and SEO.',
+    blurb: 'Your public site, built from blocks that show your real catalogue and stay current by themselves.',
     pages: 10,
-    topics: ['Pages & blocks', 'Themes & menus', 'Forms & SEO'],
+    topics: ['Pages & blocks', 'Themes', 'SEO'],
     tone: 'moss',
-    icon: ICON.website,
-  },
-  {
-    num: '08',
-    slug: 'communication',
-    name: 'Communication',
-    blurb: 'Post announcements and send campaigns by email, SMS, push, and chat apps.',
-    pages: 11,
-    topics: ['Announcements', 'Campaigns', 'Channels'],
-    tone: 'blue',
-    icon: ICON.communication,
+    icon: ICON['website'],
   },
   {
     num: '09',
-    slug: 'community',
-    name: 'Community & Feedback',
-    blurb: 'Let learners take part with discussions, comments, star reviews, and reactions.',
-    pages: 5,
-    topics: ['Discussions', 'Reviews', 'Reactions'],
-    tone: 'ochre',
-    icon: ICON.community,
+    slug: 'communication',
+    name: 'Communication',
+    blurb: 'Notifications the platform sends, campaigns you write, and the noticeboard that never leaves the site.',
+    pages: 11,
+    topics: ['Channels', 'Campaigns', 'Audiences'],
+    tone: 'rust',
+    icon: ICON['communication'],
   },
   {
     num: '10',
-    slug: 'bookings',
-    name: 'Bookings & Appointments',
-    blurb: 'Offer bookable meetings and office hours with availability, payments, and video.',
-    pages: 8,
-    topics: ['Meeting plans', 'Availability', 'Calendar & video'],
-    tone: 'ink',
-    icon: ICON.bookings,
+    slug: 'community',
+    name: 'Community & Feedback',
+    blurb: 'Discussions, comments, reactions and the reviews the next buyer reads.',
+    pages: 5,
+    topics: ['Discussions', 'Reactions', 'Reviews'],
+    tone: 'ochre',
+    icon: ICON['community'],
   },
   {
     num: '11',
-    slug: 'files',
-    name: 'Files & Media',
-    blurb: 'Upload, organize, and preview the files and media you use across your academy.',
-    pages: 6,
-    topics: ['Uploading', 'Organizing', 'Learner uploads'],
-    tone: 'moss',
-    icon: ICON.files,
+    slug: 'bookings',
+    name: 'Live Sessions & Events',
+    blurb: 'Bookable meetings and scheduled events — office hours, tutorials, webinars and open days.',
+    pages: 10,
+    topics: ['Meeting plans', 'Availability', 'Events'],
+    tone: 'ink',
+    icon: ICON['bookings'],
   },
   {
     num: '12',
-    slug: 'search',
-    name: 'Search & Discovery',
-    blurb: 'Help learners find courses fast with search, filters, autocomplete, and trends.',
-    pages: 6,
-    topics: ['Search & filters', 'Autocomplete', 'Trending'],
-    tone: 'rust',
-    icon: ICON.search,
+    slug: 'analytics',
+    name: 'Analytics & Reports',
+    blurb: 'Nine screens, nine questions — and the lists that produce an action rather than a number.',
+    pages: 10,
+    topics: ['Programmes', 'Progress', 'Grades'],
+    tone: 'blue',
+    icon: ICON['analytics'],
   },
   {
     num: '13',
     slug: 'account-people',
-    name: 'Account & People',
-    blurb: 'Manage platform settings, sign-in, roles, categories, and activity history.',
-    pages: 10,
-    topics: ['Accounts & sign-in', 'People & roles', 'Activity'],
-    tone: 'blue',
+    name: 'People & Access',
+    blurb: 'Your team and your learners, roles that decide what each can do, and the records behind it.',
+    pages: 14,
+    topics: ['Roles & permissions', 'Sign-in', 'Privacy'],
+    tone: 'moss',
     icon: ICON['account-people'],
+  },
+  {
+    num: '14',
+    slug: 'settings',
+    name: 'Settings',
+    blurb: 'Identity, security, retention and the services your academy connects to.',
+    pages: 4,
+    topics: ['Control Panel', 'Integrations', 'Holidays'],
+    tone: 'ink',
+    icon: ICON['settings'],
+  },
+  {
+    num: '15',
+    slug: 'files',
+    name: 'Files & Media',
+    blurb: 'The library behind your courses — uploads, limits, and how your videos actually play.',
+    pages: 7,
+    topics: ['Uploading', 'Limits', 'Video playback'],
+    tone: 'ochre',
+    icon: ICON['files'],
+  },
+  {
+    num: '16',
+    slug: 'search',
+    name: 'Search & Discovery',
+    blurb: 'How visitors find your courses, and the one field most academies never fill in.',
+    pages: 6,
+    topics: ['Search basics', 'Filters', 'Trending'],
+    tone: 'rust',
+    icon: ICON['search'],
+  },
+  {
+    num: '17',
+    slug: 'learner',
+    name: 'The Learner Experience',
+    blurb: 'Every screen a learner sees, so you can answer their questions without taking the course.',
+    pages: 13,
+    topics: ['Their dashboard', 'Exams', 'Certificates'],
+    tone: 'blue',
+    icon: ICON['learner'],
+  },
+  {
+    num: '18',
+    slug: 'how-to',
+    name: 'How-To Library',
+    blurb: 'Step-by-step recipes for the jobs that cross several screens, start to finish.',
+    pages: 11,
+    topics: ['Launch a batch', 'Run an exam', 'Publish results'],
+    tone: 'rust',
+    icon: ICON['how-to'],
   },
 ];
 
-/* ── Brand decorative sparkle (the marketing hero's blue asterisk) ──── */
-function Sparkle({ className }: { className?: string }) {
+
+/* ── Hairline rule, optionally drawn in on load ─────────────────────── */
+function Rule({
+  className = '',
+  delay,
+}: {
+  className?: string;
+  delay?: number;
+}) {
   return (
-    <svg
+    <div
       aria-hidden
-      viewBox="0 0 80 80"
-      fill="none"
-      className={className}
-      style={{ filter: 'drop-shadow(0 8px 20px rgba(0,102,255,0.32))' }}
-    >
-      <defs>
-        <linearGradient id="eb-sparkle" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0066FF" />
-          <stop offset="100%" stopColor="#2B80FF" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M30 2 C31.2 20, 38 26.8, 56 28 C38 29.2, 31.2 36, 30 54 C28.8 36, 22 29.2, 4 28 C22 26.8, 28.8 20, 30 2 Z"
-        fill="url(#eb-sparkle)"
-      />
-      <path
-        d="M62 50 C62.6 58, 65.4 60.6, 73 61.5 C65.4 62.4, 62.6 65, 62 73 C61.4 65, 58.6 62.4, 51 61.5 C58.6 60.6, 61.4 58, 62 50 Z"
-        fill="#0066FF"
-        fillOpacity="0.7"
-      />
-    </svg>
+      className={`h-px w-full bg-[color:var(--eb-border)] ${delay !== undefined ? 'eb-rule-draw' : ''} ${className}`}
+      style={delay !== undefined ? { animationDelay: `${delay}s` } : undefined}
+    />
   );
 }
 
@@ -265,181 +336,154 @@ export default function HomePage() {
   const totalPages = source.getPages().length;
   const preview = MODULES.slice(0, 5);
 
+  const stats = [
+    { k: 'Sections', v: MODULES.length.toString().padStart(2, '0') },
+    { k: 'Pages', v: totalPages.toString() },
+    { k: 'Updated', v: 'Live' },
+  ];
+
   return (
     <main className="eb relative isolate flex flex-1 flex-col">
-      {/* ─── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        {/* signature dot-grid texture */}
-        <div aria-hidden className="eb-dotgrid pointer-events-none absolute inset-0 -z-10" />
-        {/* soft blue wash from the top */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]"
-          style={{
-            background:
-              'radial-gradient(60% 100% at 50% 0%, rgba(0,102,255,0.08) 0%, transparent 70%)',
-          }}
-        />
-
-        <div className="mx-auto grid max-w-[80rem] grid-cols-1 items-center gap-x-12 gap-y-14 px-4 pb-20 pt-14 sm:px-8 lg:grid-cols-2 lg:pb-28 lg:pt-20">
-          {/* headline column */}
-          <div className="flex flex-col">
-            <span className="eb-eyebrow eb-rise inline-flex w-fit items-center gap-2 px-3.5 py-1.5" style={{ animationDelay: '0.02s' }}>
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="eb-ping-soft absolute inline-flex h-full w-full rounded-full bg-[color:var(--eb-brand)]" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--eb-brand)]" />
-              </span>
-              <span className="eb-kicker text-[color:var(--eb-ink-soft)]">
-                Edushade Knowledge Base
-              </span>
+      {/* ═══ MASTHEAD ═════════════════════════════════════════════ */}
+      <section className="relative">
+        <div className="mx-auto max-w-[78rem] px-5 sm:px-10">
+          {/* running head */}
+          <div className="eb-rise flex items-baseline justify-between pb-3 pt-6" style={{ animationDelay: '0.02s' }}>
+            <span className="eb-folio">Edushade Knowledge Base</span>
+            <span className="eb-folio hidden sm:inline">
+              {MODULES.length} sections · {totalPages} pages
             </span>
-
-            <h1 className="mt-6 text-[clamp(2.5rem,5.4vw,3.85rem)] font-medium leading-[1.05] tracking-[-0.02em] text-[color:var(--eb-ink)]">
-              <span className="eb-wordrise" style={{ animationDelay: '0.06s' }}>
-                Everything you need
-              </span>{' '}
-              <span className="eb-wordrise" style={{ animationDelay: '0.14s' }}>
-                to run your
-              </span>{' '}
-              <span
-                className="eb-wordrise text-[color:var(--eb-brand)]"
-                style={{ animationDelay: '0.22s' }}
-              >
-                academy
-              </span>
-              <span className="eb-wordrise" style={{ animationDelay: '0.3s' }}>
-                {' '}— in plain words.
-              </span>
-            </h1>
-
-            <p className="eb-rise mt-6 max-w-lg text-[1.075rem] leading-relaxed text-[color:var(--eb-ink-soft)]" style={{ animationDelay: '0.36s' }}>
-              A complete, step-by-step guide to building courses, enrolling
-              learners, selling, awarding certificates, and publishing your
-              website. No technical know-how needed.
-            </p>
-
-            <div className="eb-rise mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: '0.42s' }}>
-              <Link
-                href="/docs/knowledgebase"
-                className="eb-btn-primary group inline-flex h-12 items-center gap-2.5 rounded-full px-6 text-[15px] font-medium"
-              >
-                Browse the guide
-                {ArrowRight}
-              </Link>
-              <Link
-                href="/docs/knowledgebase/courses"
-                className="eb-btn-ghost group inline-flex h-12 items-center gap-2 rounded-full px-6 text-[15px] font-medium"
-              >
-                Start with Courses
-                <span aria-hidden className="text-[color:var(--eb-ink-mute)] transition-transform duration-300 group-hover:translate-x-0.5">›</span>
-              </Link>
-            </div>
-
-            {/* vital stats */}
-            <dl className="eb-rise mt-11 grid max-w-md grid-cols-3 gap-x-6 border-t border-[color:var(--eb-border)] pt-6" style={{ animationDelay: '0.48s' }}>
-              {[
-                { k: 'Sections', v: MODULES.length.toString().padStart(2, '0') },
-                { k: 'Pages', v: totalPages.toString() },
-                { k: 'Updated', v: 'Live' },
-              ].map((s) => (
-                <div key={s.k}>
-                  <dt className="text-[12px] font-medium uppercase tracking-[0.1em] text-[color:var(--eb-ink-mute)]">
-                    {s.k}
-                  </dt>
-                  <dd className="mt-1.5 text-[1.75rem] font-medium leading-none tracking-tight text-[color:var(--eb-ink)]">
-                    {s.v}
-                  </dd>
-                </div>
-              ))}
-            </dl>
           </div>
+          <Rule delay={0.1} className="bg-[color:var(--eb-ink)]/25" />
 
-          {/* preview column — branded "table of contents" card */}
-          <div className="relative">
-            <Sparkle className="eb-float pointer-events-none absolute -left-4 -top-5 z-20 h-14 w-12 lg:-left-7 lg:-top-7 lg:h-20 lg:w-[4.5rem]" />
-
-            <div className="eb-rise eb-card-shadow relative overflow-hidden rounded-3xl border border-[color:var(--eb-border)] bg-[color:var(--eb-bg)]" style={{ animationDelay: '0.2s' }}>
-              {/* header strip */}
-              <div className="flex items-center justify-between border-b border-[color:var(--eb-border)] bg-[color:var(--eb-bg-soft)] px-5 py-3.5">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[color:var(--eb-brand)] text-white">
-                    <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M3 4h5a2 2 0 0 1 2 2v10a2 2 0 0 0-2-2H3z" />
-                      <path d="M17 4h-5a2 2 0 0 0-2 2v10a2 2 0 0 1 2-2h5z" />
-                    </svg>
-                  </span>
-                  <span className="text-[14px] font-medium text-[color:var(--eb-ink)]">
-                    Table of contents
-                  </span>
-                </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--eb-border-strong)] bg-[color:var(--eb-bg)] px-2.5 py-1 text-[11px] font-medium text-[color:var(--eb-ink-mute)]">
-                  ⌘K to search
+          <div className="grid grid-cols-1 gap-x-16 gap-y-16 pb-16 pt-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pb-24 lg:pt-16">
+            {/* ── headline column ── */}
+            <div className="flex flex-col">
+              <h1 className="eb-display max-w-[16ch] text-[clamp(2.6rem,6vw,4.4rem)] leading-[1.02] text-[color:var(--eb-ink)]">
+                <span className="eb-wordrise" style={{ animationDelay: '0.14s' }}>
+                  Everything you need
+                </span>{' '}
+                <span className="eb-wordrise" style={{ animationDelay: '0.22s' }}>
+                  to run your
+                </span>{' '}
+                <span
+                  className="eb-wordrise eb-display-ital text-[color:var(--eb-brand)]"
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  academy
                 </span>
+                <span className="eb-wordrise" style={{ animationDelay: '0.38s' }}>
+                  {' '}— in plain words.
+                </span>
+              </h1>
+
+              <p className="eb-rise mt-8 max-w-[46ch] text-[1.0625rem] leading-[1.65] text-[color:var(--eb-ink-soft)]" style={{ animationDelay: '0.44s' }}>
+                A complete, step-by-step guide to building courses, enrolling
+                learners, selling, awarding certificates, and publishing your
+                website. No technical know-how needed.
+              </p>
+
+              <div className="eb-rise mt-10 flex flex-wrap items-center gap-x-8 gap-y-4" style={{ animationDelay: '0.5s' }}>
+                <Link
+                  href="/docs/knowledgebase"
+                  className="eb-action group inline-flex h-12 items-center gap-2.5 px-6 text-[0.9375rem] font-medium"
+                >
+                  Browse the guide
+                  {ArrowRight}
+                </Link>
+                <Link
+                  href="/docs/knowledgebase/courses"
+                  className="eb-action-quiet group inline-flex items-center gap-2 text-[0.9375rem] font-medium"
+                >
+                  Start with Courses
+                  <span aria-hidden className="text-[color:var(--eb-ink-mute)] transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+                </Link>
               </div>
 
-              {/* rows */}
-              <ul className="divide-y divide-[color:var(--eb-border)]">
-                {preview.map((m) => (
-                  <li key={m.slug}>
-                    <Link
-                      href={`/docs/knowledgebase/${m.slug}`}
-                      className="group flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[color:var(--eb-brand-tint)]"
-                    >
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[color:var(--eb-border-strong)] bg-[color:var(--eb-bg-soft)] text-[color:var(--eb-brand)] transition-colors group-hover:border-[color:var(--eb-brand)]/40">
-                        {m.icon}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[14.5px] font-medium text-[color:var(--eb-ink)]">
+              {/* colophon — the vital statistics, set as figures */}
+              <dl className="eb-rise mt-14 flex max-w-lg items-end" style={{ animationDelay: '0.56s' }}>
+                {stats.map((s, i) => (
+                  <div
+                    key={s.k}
+                    className={`flex-1 ${i > 0 ? 'border-l border-[color:var(--eb-border)] pl-6 sm:pl-8' : ''} ${i < stats.length - 1 ? 'pr-6 sm:pr-8' : ''}`}
+                  >
+                    <dt className="eb-folio">{s.k}</dt>
+                    <dd className="eb-numeral mt-2 text-[2.35rem] leading-none text-[color:var(--eb-ink)]">
+                      {s.v}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            {/* ── contents page ── */}
+            <div className="eb-rise lg:pt-3" style={{ animationDelay: '0.3s' }}>
+              <div className="eb-panel overflow-hidden">
+                <div className="flex items-baseline justify-between border-b border-[color:var(--eb-border-strong)] px-5 py-4">
+                  <span className="eb-folio text-[color:var(--eb-ink)]">
+                    Table of contents
+                  </span>
+                  <kbd className="font-sans text-[0.6875rem] font-medium tracking-wide text-[color:var(--eb-ink-mute)]">
+                    ⌘K to search
+                  </kbd>
+                </div>
+
+                <ol>
+                  {preview.map((m) => (
+                    <li key={m.slug} className="border-b border-[color:var(--eb-border)]">
+                      <Link
+                        href={`/docs/knowledgebase/${m.slug}`}
+                        className="eb-row group flex items-baseline gap-4 px-5 py-3.5"
+                      >
+                        <span aria-hidden className="eb-numeral w-7 shrink-0 text-[0.9375rem] text-[color:var(--eb-ink-mute)] transition-colors duration-300 group-hover:text-[color:var(--eb-brand)]">
+                          {m.num}
+                        </span>
+                        <span className="shrink-0 text-[0.9375rem] text-[color:var(--eb-ink)]">
                           {m.name}
                         </span>
-                        <span className="block text-[12.5px] text-[color:var(--eb-ink-mute)]">
-                          {m.pages} pages
+                        <span aria-hidden className="eb-leader h-px min-w-6 flex-1 translate-y-[-0.2rem]" />
+                        <span className="shrink-0 text-[0.9375rem] text-[color:var(--eb-ink-mute)]">
+                          <span className="eb-numeral">{m.pages}</span> pages
                         </span>
-                      </span>
-                      <span className="text-[color:var(--eb-ink-mute)] transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[color:var(--eb-brand)]">
-                        ›
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
 
-              {/* footer link */}
-              <Link
-                href="/docs/knowledgebase"
-                className="group flex items-center justify-between border-t border-[color:var(--eb-border)] bg-[color:var(--eb-bg-soft)] px-5 py-3.5 text-[13.5px] font-medium text-[color:var(--eb-brand)]"
-              >
-                See all {MODULES.length} sections
-                {ArrowRight}
-              </Link>
+                <Link
+                  href="/docs/knowledgebase"
+                  className="group flex items-center justify-between px-5 py-4 text-[0.8125rem] font-medium text-[color:var(--eb-brand)] transition-colors hover:bg-[color:var(--eb-bg-soft)]"
+                >
+                  See all {MODULES.length} sections
+                  {ArrowRight}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── SECTION GRID ────────────────────────────────────────── */}
-      <section className="relative border-t border-[color:var(--eb-border)] bg-[color:var(--eb-bg-soft)]">
-        <div className="mx-auto max-w-[80rem] px-4 py-20 sm:px-8 lg:py-24">
+      {/* ═══ THE INDEX ════════════════════════════════════════════ */}
+      <section className="relative border-t border-[color:var(--eb-ink)]/20 bg-[color:var(--eb-bg-soft)]">
+        <div className="mx-auto max-w-[78rem] px-5 sm:px-10">
           <Reveal>
-            <div className="grid grid-cols-1 items-end gap-6 pb-12 lg:grid-cols-2 lg:gap-24">
+            <div className="grid grid-cols-1 items-baseline gap-x-16 gap-y-5 pb-10 pt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pt-20">
               <div>
-                <span className="eb-kicker text-[color:var(--eb-brand)]">
-                  Sections
-                </span>
-                <h2 className="mt-3 text-[clamp(1.85rem,4vw,2.75rem)] font-medium leading-tight tracking-tight text-[color:var(--eb-ink)]">
+                <span className="eb-folio">Sections</span>
+                <h2 className="eb-display mt-3 text-[clamp(1.9rem,4vw,2.9rem)] leading-tight text-[color:var(--eb-ink)]">
                   Find your way around
                 </h2>
               </div>
-              <p className="text-[1.05rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
+              <p className="max-w-[46ch] text-[1.0125rem] leading-[1.65] text-[color:var(--eb-ink-soft)]">
                 Each section covers one part of running your academy. Start
                 anywhere — every page is written in plain language, no jargon.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="border-t border-[color:var(--eb-ink)]/20 pb-20 lg:pb-24">
             {MODULES.map((m, i) => (
-              <Reveal key={m.slug} delay={(i % 3) * 70}>
+              <Reveal key={m.slug} delay={Math.min(i, 6) * 45}>
                 <ModuleCard module={m} />
               </Reveal>
             ))}
@@ -447,27 +491,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── HOW IT FITS TOGETHER ────────────────────────────────── */}
-      <section className="relative border-t border-[color:var(--eb-border)]">
-        <div className="mx-auto max-w-[80rem] px-4 py-20 sm:px-8 lg:py-24">
+      {/* ═══ THREE PILLARS ════════════════════════════════════════ */}
+      <section className="relative border-t border-[color:var(--eb-ink)]/20">
+        <div className="mx-auto max-w-[78rem] px-5 sm:px-10">
           <Reveal>
-            <div className="grid grid-cols-1 items-end gap-6 pb-12 lg:grid-cols-2 lg:gap-24">
+            <div className="grid grid-cols-1 items-baseline gap-x-16 gap-y-5 pb-12 pt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pt-20">
               <div>
-                <span className="eb-kicker text-[color:var(--eb-brand)]">
-                  At a glance
-                </span>
-                <h2 className="mt-3 text-[clamp(1.85rem,4vw,2.75rem)] font-medium leading-tight tracking-tight text-[color:var(--eb-ink)]">
+                <span className="eb-folio">At a glance</span>
+                <h2 className="eb-display mt-3 text-[clamp(1.9rem,4vw,2.9rem)] leading-tight text-[color:var(--eb-ink)]">
                   How Edushade fits together
                 </h2>
               </div>
-              <p className="text-[1.05rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
+              <p className="max-w-[46ch] text-[1.0125rem] leading-[1.65] text-[color:var(--eb-ink-soft)]">
                 Every academy does three things: teach, sell, and grow. Edushade
                 gives you all three in one place.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="grid grid-cols-1 border-t border-[color:var(--eb-ink)]/20 pb-20 sm:grid-cols-3 lg:pb-24">
             {[
               {
                 num: '01',
@@ -489,31 +531,33 @@ export default function HomePage() {
               },
             ].map((col, i) => (
               <Reveal key={col.title} delay={i * 80}>
-                <div className="eb-card-shadow flex h-full flex-col rounded-3xl border border-[color:var(--eb-border)] bg-[color:var(--eb-bg)] p-7 sm:p-8">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--eb-brand-tint)] text-[15px] font-semibold text-[color:var(--eb-brand)]">
+                <div
+                  className={`flex h-full flex-col border-b border-[color:var(--eb-border)] py-9 sm:border-b-0 sm:py-10 ${i > 0 ? 'sm:border-l sm:border-[color:var(--eb-border)] sm:pl-8 lg:pl-10' : ''} ${i < 2 ? 'sm:pr-8 lg:pr-10' : ''}`}
+                >
+                  <div className="flex items-baseline gap-3">
+                    <span className="eb-numeral text-[1.5rem] leading-none text-[color:var(--eb-brand)]">
                       {col.num}
                     </span>
-                    <span className="eb-kicker text-[color:var(--eb-ink-mute)]">
-                      Pillar
-                    </span>
+                    <span className="eb-folio">Pillar</span>
                   </div>
-                  <h3 className="mt-5 text-[1.5rem] font-medium leading-tight tracking-tight text-[color:var(--eb-ink)]">
+                  <h3 className="eb-display mt-5 text-[1.75rem] leading-tight text-[color:var(--eb-ink)]">
                     {col.title}
                   </h3>
-                  <p className="mt-3 text-[0.95rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
+                  <p className="mt-3 max-w-[40ch] text-[0.95rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
                     {col.body}
                   </p>
-                  <div className="mt-6 flex flex-wrap gap-1.5 border-t border-[color:var(--eb-border)] pt-5">
-                    {col.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-[color:var(--eb-border)] bg-[color:var(--eb-bg-soft)] px-2.5 py-1 text-[11.5px] font-medium text-[color:var(--eb-ink-soft)]"
-                      >
+                  <ul className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-[color:var(--eb-border)] pt-5 text-[0.8125rem] text-[color:var(--eb-ink-mute)]">
+                    {col.tags.map((t, j) => (
+                      <li key={t} className="flex items-center gap-3">
+                        {j > 0 && (
+                          <span aria-hidden className="text-[color:var(--eb-border-strong)]">
+                            /
+                          </span>
+                        )}
                         {t}
-                      </span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               </Reveal>
             ))}
@@ -521,64 +565,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── CTA ─────────────────────────────────────────────────── */}
-      <section className="relative border-t border-[color:var(--eb-border)] bg-[color:var(--eb-bg-soft)]">
-        <div className="mx-auto max-w-[80rem] px-4 py-20 sm:px-8">
+      {/* ═══ CLOSING NOTE ═════════════════════════════════════════ */}
+      <section className="relative border-t border-[color:var(--eb-ink)]/20 bg-[color:var(--eb-bg-soft)]">
+        <div className="mx-auto max-w-[78rem] px-5 sm:px-10">
           <Reveal>
-            <div className="relative isolate overflow-hidden rounded-[2rem] border border-[color:var(--eb-border)] bg-[color:var(--eb-bg)]">
-              {/* brand dot-grid + blue wash */}
-              <div aria-hidden className="eb-dotgrid pointer-events-none absolute inset-0" />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'radial-gradient(80% 120% at 100% 0%, rgba(0,102,255,0.1) 0%, transparent 60%)',
-                }}
-              />
-              <div className="relative flex flex-col items-start justify-between gap-8 px-7 py-12 sm:px-12 sm:py-14 lg:flex-row lg:items-center">
-                <div>
-                  <h2 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-medium leading-tight tracking-tight text-[color:var(--eb-ink)]">
-                    Ready to dive in?
-                  </h2>
-                  <p className="mt-3 max-w-md text-[1.05rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
-                    Start with Courses — the heart of your academy.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Link
-                    href="/docs/knowledgebase/courses"
-                    className="eb-btn-primary group inline-flex h-12 items-center gap-2.5 rounded-full px-6 text-[15px] font-medium"
-                  >
-                    Open Courses
-                    {ArrowRight}
-                  </Link>
-                  <Link
-                    href="/docs/knowledgebase"
-                    className="eb-btn-ghost group inline-flex h-12 items-center gap-2 rounded-full px-6 text-[15px] font-medium"
-                  >
-                    See everything
-                    <span aria-hidden className="text-[color:var(--eb-ink-mute)] transition-transform duration-300 group-hover:translate-x-0.5">›</span>
-                  </Link>
-                </div>
+            <div className="flex flex-col items-start justify-between gap-10 py-16 lg:flex-row lg:items-end lg:py-20">
+              <div>
+                <h2 className="eb-display max-w-[14ch] text-[clamp(1.9rem,3.8vw,2.9rem)] leading-tight text-[color:var(--eb-ink)]">
+                  Ready to dive in?
+                </h2>
+                <p className="mt-4 max-w-md text-[1.0125rem] leading-[1.65] text-[color:var(--eb-ink-soft)]">
+                  Start with Courses — the heart of your academy.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+                <Link
+                  href="/docs/knowledgebase/courses"
+                  className="eb-action group inline-flex h-12 items-center gap-2.5 px-6 text-[0.9375rem] font-medium"
+                >
+                  Open Courses
+                  {ArrowRight}
+                </Link>
+                <Link
+                  href="/docs/knowledgebase"
+                  className="eb-action-quiet group inline-flex items-center gap-2 text-[0.9375rem] font-medium"
+                >
+                  See everything
+                  <span aria-hidden className="text-[color:var(--eb-ink-mute)] transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+                </Link>
               </div>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* ─── COLOPHON ────────────────────────────────────────────── */}
-      <section className="relative border-t border-[color:var(--eb-border)]">
-        <div className="mx-auto max-w-[80rem] px-4 py-10 sm:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-y-4">
-            <span className="text-[12.5px] font-medium text-[color:var(--eb-ink-mute)]">
-              Edushade · Knowledge Base
-            </span>
-            <div className="flex items-center gap-4 text-[12.5px] font-medium text-[color:var(--eb-ink-mute)]">
+      {/* ═══ COLOPHON ═════════════════════════════════════════════ */}
+      <section className="relative border-t border-[color:var(--eb-ink)]/20">
+        <div className="mx-auto max-w-[78rem] px-5 py-8 sm:px-10">
+          <div className="flex flex-wrap items-center justify-between gap-y-3">
+            <span className="eb-folio">Edushade · Knowledge Base</span>
+            <div className="eb-folio flex items-center gap-3">
               <span>{MODULES.length} sections</span>
-              <span aria-hidden className="text-[color:var(--eb-brand)]">•</span>
+              <span aria-hidden className="text-[color:var(--eb-border-strong)]">/</span>
               <span>{totalPages} pages</span>
-              <span aria-hidden className="text-[color:var(--eb-brand)]">•</span>
+              <span aria-hidden className="text-[color:var(--eb-border-strong)]">/</span>
               <span>Always up to date</span>
             </div>
           </div>

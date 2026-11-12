@@ -1,67 +1,143 @@
 ---
 title: "Certificate Requirements"
-description: "Turn certificates on for a course or learning path and choose what a learner must do to earn one."
+description: "Why a learner has not been given a certificate — six gates, in the order the system checks them."
 ---
 
-Before a learner can earn a certificate, you turn certificates on for that course or
-learning path and decide what they have to do. This page shows you how to set it up.
+"My learner finished the course and there is no certificate" is the most common question
+in this section. There are six gates, and the answer is always one of them.
 
-## What you can do
+Work down the list in order. Each one stops the process on its own.
 
-- Turn certificates **on or off** for each course or learning path.
-- Choose **what a learner must do** to earn one.
-- Decide whether they must meet **every** requirement or just **one** of them.
+<WhoCan roles="Admin, Instructor" />
 
-## The requirement options
+## The six gates
 
-You can ask for any combination of these:
+### 1. Is the certificate switched on?
 
-| Requirement | What the learner must do |
+**Enable Certificate** on the course's settings step, and a
+[certificate type](/docs/knowledgebase/certificates/certificate-types) assigned with at
+least one requirement on it.
+
+If either is missing, nothing is issued automatically — but you can still
+[issue one by hand](/docs/knowledgebase/certificates/issuing-certificates).
+
+### 2. Do they already have one?
+
+A learner who already holds a completion certificate for the programme is not given a
+second.
+
+### 3. Has the release date arrived?
+
+**Certificate available from** on the course, or on the batch. With neither set, the
+batch's end date is used; with no date at all, it is available immediately.
+
+So a learner can have passed everything in March and still be waiting, because the batch
+ends in June.
+
+### 4. Do they hold the whole programme?
+
+**A learner with [partial access](/docs/knowledgebase/enrollment-access/partial-access)
+never gets a completion certificate.** Somebody who bought two semesters of a four
+semester diploma has not finished the diploma, whatever their marks say.
+
+They must hold every part of the programme. This gate is deliberately strict: if the
+system cannot establish full access, it refuses.
+
+### 5. Are the requirements met?
+
+The type's requirements, combined by its **Requirement mode**:
+
+| Requirement | Met when |
 |---|---|
-| **Require completion** | Finish the course or learning path. |
-| **Require a form** | Submit a specific form you choose (for example, a feedback or details form). |
-| **Require a review** | Leave a review that you have approved. |
+| **On passing grade** | They pass, per the passing basis below. |
+| **On enrollment completion** | Their enrolment is complete. |
+| **On feedback form submission** | They have submitted the programme's feedback form. |
+| **On approved review** | They have left a review that was approved. |
 
-## All vs. Any
-
-When you turn on more than one requirement, you choose how they combine:
-
-- **All** — the learner must meet **every** requirement you turned on.
-- **Any** — the learner must meet **at least one** of them.
-
-## How to set it up
-
-1. Go to your course or learning path and open its **settings**.
-2. Turn on the **Certificate** option.
-3. Turn on the requirements you want: **Require completion**, **Require a form**,
-   and/or **Require a review**.
-4. If you require a form, choose **which form** the learner must submit.
-5. Set the mode to **All** or **Any**.
-6. Optionally choose a **certificate design** and an **expiry date**.
-7. **Save**.
-
-## Examples
-
-- **Simple completion certificate** — turn on **Require completion** only. The learner
-  earns the certificate the moment they finish.
-- **Completion plus feedback** — turn on **Require completion** and **Require a form**,
-  set the mode to **All**. The learner must finish *and* submit your feedback form.
-- **Finish or review** — turn on **Require completion** and **Require a review**, set
-  the mode to **Any**. Either one is enough to earn the certificate.
-
-## Good to know
+**ANY** means one is enough. **ALL** means every one you ticked.
 
 <Callout type="info">
-If you turn certificates on but leave **all requirements off**, certificates will not
-be awarded automatically. You can still award them yourself by hand — see
-[Issuing certificates](/docs/knowledgebase/certificates/issuing-certificates).
+If a programme has reviews switched off, the **approved review** requirement is dropped
+rather than counted as permanently unmet — otherwise an ALL-mode certificate would be
+impossible to earn.
 </Callout>
 
-<Callout type="info">
-The **Require a review** option only applies if reviews are switched on for that
-offering. If reviews are off, this requirement is simply skipped, so the certificate
-stays earnable.
+### 6. Does the grade actually pass?
+
+Where a passing grade is required, the basis decides what passes:
+
+| Basis | What is checked |
+|---|---|
+| **Overall program grade** | **Every gradable assessment must have a final result first**, and then the overall result must be in a passing band. |
+| **All assessments pass** | Every assessment slot passes. |
+| **Specific assessments** | Each assessment you named passes. |
+| **Every counted subject passes** | Every subject the programme counts towards its result passes. |
+
+<Callout type="warn">
+**Why "overall" waits for everything to be marked.** With the default grading setup, a
+learner who has sat one assessment and done well shows an overall "pass" — because the
+unmarked work is left out. Issuing on that would hand out a certificate the first week.
+So the overall basis waits until every gradable item has a final result.
 </Callout>
 
-A certificate is awarded only once per learner per offering — a learner will never get
-two certificates for the same course or path.
+**A held result also blocks it.** If any quiz result is being withheld, no certificate
+is issued — awarding one would announce a result the learner cannot see yet. When the
+result is released, the check runs again by itself.
+
+## The quick diagnosis
+
+| Symptom | Gate |
+|---|---|
+| Nobody on the course is getting one | 1 — switched off, or the type has no requirements |
+| One learner is waiting, everyone else has theirs | 4, 5 or 6 |
+| Everyone is waiting and the marks are fine | 3 — the release date |
+| A learner who bought one semester is waiting | 4 — partial access |
+| A learner who passed is waiting, with marking outstanding | 6 — the finality rule |
+| A learner who passed is waiting, results not yet published | 6 — a held result |
+
+## What a learner sees
+
+A learner can see what they still need. Where a certificate is close, the requirements
+are shown with what is outstanding — so "submit the feedback form" reaches them without
+a support message.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner passed everything and still has nothing.">
+Gates 3, 4 and 6 in that order: the release date, partial access, and whether every
+gradable item has a final result. The third catches most of them.
+</Accordion>
+
+<Accordion title="Can I issue one anyway?">
+Yes. Issuing by hand bypasses the requirements entirely — see
+[Issuing certificates](/docs/knowledgebase/certificates/issuing-certificates). Use it
+for the genuine exception, not as a routine.
+</Accordion>
+
+<Accordion title="A learner failed a subject but passed overall. Should they get one?">
+That is your decision, and it is the **passing basis** that expresses it. **Overall
+program grade** says yes; **Every counted subject passes** says no.
+</Accordion>
+
+<Accordion title="We require a feedback form and nobody is submitting it.">
+Check the form is actually assigned to the programme, and that learners can find it.
+The form binding is set on the programme, not on the type.
+</Accordion>
+
+<Accordion title="If a learner's grade later drops, is the certificate taken back?">
+No. An issued certificate stands. That is why the overall basis waits for everything to
+be marked before issuing.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Certificate types" description="Where the requirements and passing basis are set." href="/docs/knowledgebase/certificates/certificate-types" />
+  <Card title="Issuing certificates" description="Automatic issue, issuing by hand, and numbers." href="/docs/knowledgebase/certificates/issuing-certificates" />
+  <Card title="Partial access" description="Why a part-programme learner never qualifies." href="/docs/knowledgebase/enrollment-access/partial-access" />
+  <Card title="Grading schemes" description="The pass line everything here is measured against." href="/docs/knowledgebase/progress-grading/grading-schemes" />
+</Cards>

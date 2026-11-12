@@ -1,48 +1,100 @@
 ---
 title: "Reusable Content"
-description: "Build a section, lesson, or assignment once and attach it to as many courses as you like."
+description: "Four ways to use the same material twice, and which one to pick."
 ---
 
-Some content belongs in more than one course — an onboarding lesson, a standard
-assignment, or a whole section you reuse each term. Instead of rebuilding it every time,
-you can create it once on its own and attach it wherever you need it.
+There is no single "reuse" button. There are four different mechanisms, each with its
+own behaviour, and picking the wrong one is how a course ends up quietly out of step
+with its copy.
 
-## What you can reuse
+<WhoCan roles="Admin, Instructor" />
 
-You can create these on their own and attach them to a course later:
+## The four ways
 
-- **Sections** — a ready-made group of content.
-- **Lessons** — a single lesson of any type.
-- **Assignments** — a task learners submit.
+| Way | What you reuse | Does the copy stay linked? |
+|---|---|---|
+| **A quiz in several courses** | One quiz | **Yes** — it is the same quiz |
+| **A course in several learning paths** | One whole course | **Yes** — it is the same course |
+| **The Content Bank** | Questions, lessons, assignments | **No** — you take a copy |
+| **Export and import** | A whole course | **No** — you get a separate course |
 
-Once created, the same item can be attached to many courses, so your content stays
-consistent and you save time.
+## Shared, not copied
 
-## How to create reusable content
+**A quiz added to two courses is one quiz.** Edit a question and both courses change.
+Learners' attempts are kept per enrolment, so marks do not leak between courses — but
+resetting a shared quiz for a learner affects it everywhere they have taken it, and the
+reset asks you to confirm that.
 
-1. Go to **Admin → Courses** and open the area for the item you want — **Lessons**,
-   **Sections**, or **Assignments**.
-2. Click **New** and build the item just like you would inside a course.
-3. Click **Save**. The item now exists on its own, ready to attach.
+**A course inside a learning path is the same course.** Rename it and every path
+containing it shows the new name. If you need a different version for one path, make a
+second course.
 
-## How to attach it to a course
+<Callout type="warn">
+Shared means shared. Before you edit a quiz, check whether it is used elsewhere — a
+tidy-up in one course can change an exam another course is about to sit.
+</Callout>
 
-1. Open the course you want and go to the **Curriculum** (content) area.
-2. Click **Add** and choose to add an existing lesson, section, or assignment.
-3. Pick the item you created earlier.
-4. Click **Save**. It now appears in the course outline.
+## Copied, not shared
 
-## Tips
+**The [Content Bank](/docs/knowledgebase/courses/content-bank)** holds questions,
+lessons and assignments. When you pull one into a course, the course gets its own copy.
+Editing the bank afterwards changes nothing in courses that already took it, and editing
+the course's copy changes nothing in the bank.
 
-- Build a small library of standard lessons (welcome, how-to-study, course rules) and
-  reuse them across every course.
-- Reusable assignments keep your grading consistent when you run the same task in
-  different courses.
-- To copy an entire course outline as a fresh starting point, use **clone the
-  curriculum** from [Course structure](/docs/knowledgebase/courses/course-structure)
-  instead.
+That is deliberate: a question a cohort has already answered must not change under them.
+
+**[Export and import](/docs/knowledgebase/courses/importing-and-exporting)** produces a
+whole separate course. It arrives as a draft and has nothing to do with the original
+from then on.
+
+## Duplicating a batch
+
+A batch has its own route: **Re-use from Existing** when creating one, which copies the
+batch's settings and — if you say **Yes, include all content** — its content too. See
+[Cohorts and batches](/docs/knowledgebase/courses/cohorts).
+
+## Which to choose
+
+- **The same exam in two courses** → add the same quiz to both. One place to fix a
+  mistake.
+- **A question you will adapt** → the Content Bank. You want the copy to drift.
+- **Next year's intake of a running batch** → **Re-use from Existing**.
+- **A course on another academy you run** → export and import.
+- **Three courses sold together** → neither. That is a
+  [bundle](/docs/knowledgebase/selling-payments/bundles).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="How do I know whether a quiz is used anywhere else?">
+Open the quiz and look at where it appears — the quiz's own screens list the programmes
+it belongs to. Treat any quiz you did not create this week as shared until you have
+checked.
+</Accordion>
+
+<Accordion title="I reset a learner's quiz and it reset in another course too.">
+Because it is the same quiz. The confirmation before a reset on shared content says
+which programmes are affected — it is worth reading. See
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+</Accordion>
+
+<Accordion title="Can I copy one section from one course to another?">
+Not as a section. Save the pieces to the Content Bank and rebuild the section in the
+other course, or export the whole course and strip what you do not need.
+</Accordion>
+
+<Accordion title="If I delete a course that is inside a learning path, what happens?">
+The path loses that content. Take the course out of the path first, so you can see what
+the path looks like without it before the deletion is permanent.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Course structure](/docs/knowledgebase/courses/course-structure) — adding and arranging items.
-- [Lesson types](/docs/knowledgebase/courses/lesson-types) — the kinds of lessons you can build.
+<Cards>
+  <Card title="The Content Bank" description="The shared library of questions, lessons and assignments." href="/docs/knowledgebase/courses/content-bank" />
+  <Card title="Importing and exporting" description="Moving a whole course as a file." href="/docs/knowledgebase/courses/importing-and-exporting" />
+  <Card title="Learning paths" description="One course inside several programmes." href="/docs/knowledgebase/courses/learning-paths" />
+</Cards>

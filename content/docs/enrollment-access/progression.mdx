@@ -1,0 +1,211 @@
+---
+title: "Progression"
+description: "Deciding who moves up to the next semester and who repeats — the rule that counts subjects, the roster that shows where everyone stands, and the decisions that override it."
+---
+
+At the end of a semester, somebody has to decide who goes on. Progression is that
+decision, made once as a rule for the semester and then overridden for the individuals
+who need it.
+
+It applies to batches and learning paths divided into
+[terms](/docs/knowledgebase/courses/terms-and-breakpoints), and it has its own
+**Progression** tab, beside **Learner Grades**.
+
+<Callout type="info">
+**No Progression tab?** It only appears where the programme is divided into semesters —
+without them there is nothing to progress between, so the tab is not offered rather than
+offered and then apologised for. Add
+[terms](/docs/knowledgebase/courses/terms-and-breakpoints) first.
+</Callout>
+
+<WhoCan roles="Admin" />
+
+## The rule counts subjects, not a percentage
+
+A semester's progression rule says **how many of that semester's subjects a learner must
+pass** to go on to the next one.
+
+That is deliberate, and it is not the same as a pass mark. A learner can clear the
+overall pass mark while failing most of their subjects — strong in two, absent in four.
+Counting subjects is what catches that.
+
+Set it on the [weights page](/docs/knowledgebase/progress-grading/weighted-grading),
+beside the semester whose subjects you are weighting, because that is where you are
+already deciding what the semester is made of. The control reads **Progression** until
+you set a number, and **Pass 4 to continue** once you have.
+
+| Field | What it does |
+|---|---|
+| **Subjects that must be passed** | The number, shown against how many the semester holds — "4 of 6 in this semester". |
+| **Rule in effect** | Switch it off to suspend the rule for this intake without losing the number. |
+
+Two rules the screen enforces for you:
+
+- **Bonus subjects are not counted.** Only subjects marked Full are in the total, so the
+  "of 6" beside the number is what the rule will actually measure.
+- **A subject not yet sat is not a pass.** Failed and never-attempted count the same way.
+
+<Callout type="warn">
+**You cannot require more passes than the semester has counted subjects.** Asking for
+five out of four would hold back every learner in it, so the screen refuses the number
+rather than producing a semester nobody leaves.
+
+Leave it empty, or set 0, and everyone continues.
+</Callout>
+
+## The roster
+
+The **Progression** tab lists everyone in a semester with the working behind each
+verdict. Pick the semester at the top; filter to a **Programme** first, because the
+roster is worked out per programme.
+
+| Column | What it tells you |
+|---|---|
+| **Learner** | Who. |
+| **Standing** | Which of the six buckets below they are in. |
+| **Subjects passed** | How many counted subjects they have passed. |
+| **Still to pass** | How many are left — failed and never-sat alike. |
+| **Programme** | Whether the whole programme is still within reach. |
+| **Next semester** | Whether they already hold it. |
+
+### The six standings
+
+| Standing | What it means | What it needs |
+|---|---|---|
+| **May continue** | They met the rule. | Give them the next semester. |
+| **Held by the rule** | They did not meet it. | A decision, or another term. |
+| **Admitted by decision** | Somebody moved them on despite the rule. | Nothing — but the reason is on the record. |
+| **Held by decision** | Somebody held them back despite the rule. | Same. |
+| **Not gated** | This semester has no rule, so nobody is held. | Nothing. |
+| **No access to this semester** | They do not hold this semester at all, so the counts beside them are not about them. | Access to *this* semester, not the next one. |
+
+<Callout type="info">
+**"Held by the rule" and "No access to this semester" look similar and need opposite
+things.** One is a learner who sat the semester and fell short — that needs a decision.
+The other is a learner who was never given the semester in the first place — that needs
+access. Reading them as the same thing is how people end up admitting someone to a
+semester they have not started.
+</Callout>
+
+### The Programme column
+
+This one answers a different question: can this learner still finish the whole
+programme?
+
+| It says | Meaning |
+|---|---|
+| **Can finish the programme** | Every subject the programme counts has been passed. |
+| **Subjects still outstanding** | Something counted is still unpassed. |
+| **Not graded yet** | Not enough has been marked to tell. |
+
+<Callout type="warn">
+**This is not "overall 50% or more".** It is the certificate's own rule — every counted
+subject passed. A learner can clear the overall mark on bonus subjects while failing
+core ones, and these two answers must never disagree. See
+[Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
+</Callout>
+
+### Narrowing it down
+
+Filter by **Standing**, by **Programme**, by **Next semester** (**Already has access**
+or **No access yet**), and by the counts:
+
+- **Subjects passed, at least** / **at most**
+- **Still to pass, at least** / **at most**
+
+"Still to pass, at most 1" is the list worth building first: the learners one subject
+away, who are usually worth a conversation rather than a repeated year.
+
+## Decisions for individuals
+
+The rule covers the ordinary case. For anyone else, record a decision:
+
+| Action | What it does |
+|---|---|
+| **Admit** | Admit to the next semester, whatever the rule says. |
+| **Hold back** | Hold back at this semester, whatever the rule says. |
+| **Remove decision** | Put them back on the semester's rule. |
+
+Every decision asks **why this person is being treated differently from the rule**, and
+the answer is kept with it. Six months later, when somebody asks why a learner skipped a
+semester, the answer is on the record rather than in somebody's memory.
+
+A decision stands whatever the rule later becomes. If you change the rule mid-year and
+want a learner judged by the new one, remove their decision.
+
+### Doing it for many at once
+
+Select learners — or select everything matching your filters — and record one decision
+with one reason for all of them. The bulk action resolves **the same filters the list is
+showing**, so what you act on is exactly what you were looking at.
+
+It reports back in people, not rows: *"14 people updated, 14 people given the next
+semester."* Decisions and access are counted separately on purpose — a run can record
+every decision and still fail to grant a single semester, and those are two very
+different mornings.
+
+## What progression actually does
+
+Admitting a learner gives them access to the next semester's content. It is a change to
+what they can open — see
+[Partial access](/docs/knowledgebase/enrollment-access/partial-access), which is the
+mechanism underneath.
+
+It does not change their marks, re-mark anything, or issue a certificate.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner passed everything but has no access to the next semester.">
+Progression is not automatic. The rule describes who *qualifies*; somebody still grants
+the semester. Filter the roster to **May continue** and **No access yet** — that is
+exactly the list of people waiting on you.
+</Accordion>
+
+<Accordion title="The roster says a learner still has subjects to pass, but they say they passed.">
+Open their grades and check at the subject level. A subject counts as passed when its
+result falls in a band marked as passing — so the pass line in your
+[grading scheme](/docs/knowledgebase/progress-grading/grading-schemes) is what decides
+it, and [rounding](/docs/knowledgebase/progress-grading/rounding-and-precision) can move
+a borderline result either way.
+</Accordion>
+
+<Accordion title="Why does it say a bonus subject does not count?">
+Because a bonus subject adds to a result rather than forming part of it. If bonus
+subjects counted towards progression, a learner could continue on the strength of an
+optional subject while failing the core ones. See
+[Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+</Accordion>
+
+<Accordion title="There is nothing to grant on the last semester.">
+Correct — the final semester of a batch has no successor, so there is nothing after it
+to give. What matters there is the **Programme** column and the
+[certificate](/docs/knowledgebase/certificates/certificate-requirements).
+</Accordion>
+
+<Accordion title="Can a learner repeat one subject rather than the whole semester?">
+Progression works at the semester level. To let someone re-sit one subject, give them
+another attempt at its assessments instead — see
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+</Accordion>
+
+<Accordion title="We suspended the rule for this intake. What happens to the roster?">
+Everyone shows as **Not gated**, and nobody is held. The number you typed is still
+there, so switching **Rule in effect** back on restores it exactly.
+</Accordion>
+
+<Accordion title="Where do I see why a learner was held back?">
+On their row in the roster. The reason typed when the decision was made is kept with it.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Terms and semesters" description="Creating the terms progression works across." href="/docs/knowledgebase/courses/terms-and-breakpoints" />
+  <Card title="Weighted grading" description="Where the rule is set, and what Full and Bonus mean." href="/docs/knowledgebase/progress-grading/weighted-grading" />
+  <Card title="Partial access" description="What granting a semester actually changes." href="/docs/knowledgebase/enrollment-access/partial-access" />
+  <Card title="Certificate requirements" description="The same counted-subject rule, at the end." href="/docs/knowledgebase/certificates/certificate-requirements" />
+</Cards>

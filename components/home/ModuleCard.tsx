@@ -8,98 +8,92 @@ export type ModuleCardData = {
   blurb: string;
   pages: number;
   topics: string[];
-  /* kept for source compatibility — drives the soft pastel card foot */
+  /* kept for source compatibility */
   tone: 'rust' | 'ochre' | 'blue' | 'moss' | 'ink';
   icon: ReactNode;
 };
 
-/* Brand pastel feet — same family the marketing site uses on feature cards
-   (#C5D1FF / #C5FFE6 / #F2FFC5 / #FFC5F0), all anchored to brand blue. */
-const TONE: Record<ModuleCardData['tone'], string> = {
-  rust: '#FFC5F0',
-  ochre: '#F2FFC5',
-  blue: '#C5D1FF',
-  moss: '#C5FFE6',
-  ink: '#D9E2FF',
-};
-
+/**
+ * One line of the index.
+ *
+ * A contents page, not a tile: the number lives in the margin, the title
+ * and its note sit in the measure, and the page count is flush right where
+ * the eye already looks for it. Everything the card used to say is still
+ * here — it is set, rather than boxed.
+ */
 export function ModuleCard({ module: m }: { module: ModuleCardData }) {
-  const foot = TONE[m.tone];
   return (
     <Link
       href={`/docs/knowledgebase/${m.slug}`}
-      className="eb-card-shadow group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[color:var(--eb-border)] bg-[color:var(--eb-bg)] p-6 transition-all duration-300 hover:-translate-y-1"
+      className="eb-row group grid grid-cols-[2.5rem_1fr] items-start gap-x-4 border-b border-[color:var(--eb-border)] py-6 pl-4 pr-3 sm:grid-cols-[3.5rem_1fr_auto] sm:gap-x-6 sm:py-7 sm:pl-6 sm:pr-5"
     >
-      {/* soft pastel foot — fades in on hover, brand signature */}
+      {/* marginal numeral */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background: `linear-gradient(180deg, transparent 0%, ${foot} 220%)`,
-        }}
-      />
+        className="eb-numeral pt-0.5 text-[1.35rem] leading-none text-[color:var(--eb-ink-mute)] transition-colors duration-300 group-hover:text-[color:var(--eb-brand)] sm:text-[1.6rem]"
+      >
+        {m.num}
+      </span>
 
-      {/* header row */}
-      <div className="relative flex items-start justify-between">
-        <span
-          aria-hidden
-          className="flex h-11 w-11 items-center justify-center rounded-xl border border-[color:var(--eb-border-strong)] bg-[color:var(--eb-bg-soft)] text-[color:var(--eb-brand)] transition-all duration-300 group-hover:border-[color:var(--eb-brand)]/40 group-hover:bg-[color:var(--eb-brand-tint)]"
-        >
-          {m.icon}
-        </span>
-        <span className="text-[12px] font-semibold tabular-nums tracking-[0.12em] text-[color:var(--eb-ink-mute)]">
-          {m.num}
-        </span>
-      </div>
-
-      {/* name */}
-      <h3 className="relative mt-5 text-[1.35rem] font-medium leading-tight tracking-tight text-[color:var(--eb-ink)]">
-        {m.name}
-      </h3>
-
-      {/* blurb — clamped to a uniform 2-line height so chips + footer
-          align across every card in a row */}
-      <p className="relative mt-2.5 line-clamp-2 min-h-[2.9rem] text-[0.925rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
-        {m.blurb}
-      </p>
-
-      {/* topics */}
-      <ul className="relative mt-5 flex flex-wrap gap-1.5">
-        {m.topics.map((t) => (
-          <li
-            key={t}
-            className="rounded-full border border-[color:var(--eb-border)] bg-[color:var(--eb-bg-soft)] px-2.5 py-1 text-[11.5px] font-medium text-[color:var(--eb-ink-soft)]"
-          >
-            {t}
-          </li>
-        ))}
-      </ul>
-
-      {/* footer */}
-      <div className="relative mt-auto flex items-center justify-between border-t border-[color:var(--eb-border)] pt-4 text-[12.5px]">
-        <span className="font-medium text-[color:var(--eb-ink-mute)]">
-          {m.pages} pages
-        </span>
-        <span className="inline-flex items-center gap-1.5 font-semibold text-[color:var(--eb-brand)] transition-all duration-300 group-hover:gap-2.5">
-          Read
-          <svg
-            width="18"
-            height="8"
-            viewBox="0 0 20 8"
-            fill="none"
-            className="transition-transform duration-300 group-hover:translate-x-0.5"
+      {/* title, note, topics */}
+      <div className="min-w-0">
+        <div className="flex items-baseline gap-3">
+          <h3 className="eb-display text-[1.3rem] leading-snug text-[color:var(--eb-ink)] sm:text-[1.5rem]">
+            {m.name}
+          </h3>
+          <span
             aria-hidden
-          >
-            <path
-              d="M1 4h17M14 1l4 3-4 3"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
+            className="hidden h-px flex-1 translate-y-[-0.35rem] bg-[color:var(--eb-border)] sm:block"
+          />
+          <span className="hidden shrink-0 translate-y-[-0.1rem] text-[0.95rem] text-[color:var(--eb-ink-mute)] transition-opacity duration-300 group-hover:opacity-0 sm:inline">
+            <span className="eb-numeral">{m.pages}</span> pages
+          </span>
+        </div>
+
+        <p className="mt-2 max-w-[58ch] text-[0.95rem] leading-relaxed text-[color:var(--eb-ink-soft)]">
+          {m.blurb}
+        </p>
+
+        <ul className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          {m.topics.map((t, i) => (
+            <li
+              key={t}
+              className="flex items-center gap-3 text-[0.8125rem] text-[color:var(--eb-ink-mute)]"
+            >
+              {i > 0 && (
+                <span aria-hidden className="text-[color:var(--eb-border-strong)]">
+                  /
+                </span>
+              )}
+              {t}
+            </li>
+          ))}
+          <li className="text-[0.8125rem] text-[color:var(--eb-ink-mute)] sm:hidden">
+            · {m.pages} pages
+          </li>
+        </ul>
       </div>
+
+      {/* read affordance — appears in place of the page count on hover */}
+      <span className="col-start-2 mt-4 inline-flex items-center gap-2 text-[0.8125rem] font-medium text-[color:var(--eb-brand)] sm:col-start-3 sm:row-start-1 sm:mt-1 sm:translate-x-2 sm:opacity-0 sm:transition-all sm:duration-300 sm:group-hover:translate-x-0 sm:group-hover:opacity-100">
+        Read
+        <svg
+          width="18"
+          height="8"
+          viewBox="0 0 20 8"
+          fill="none"
+          aria-hidden
+          className="transition-transform duration-300 group-hover:translate-x-0.5"
+        >
+          <path
+            d="M1 4h17M14 1l4 3-4 3"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
     </Link>
   );
 }

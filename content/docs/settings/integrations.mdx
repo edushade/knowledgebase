@@ -1,0 +1,127 @@
+---
+title: "Integrations"
+description: "Connecting outside services — payment gateways, sign-in providers, calendars, conferencing and tracking."
+---
+
+<Path>Settings > Integrations</Path> is one screen with five sections. Each connects
+something outside your academy.
+
+<WhoCan roles="Admin" />
+
+<Screenshot
+  src="/kb/settings/integrations.png"
+  alt="Payment Gateways, with one gateway active and the rest showing Setup required."
+  caption="A connected gateway shows Active and gets Test and Configure buttons. The others wait on Setup required."
+/>
+
+## The five sections
+
+| Section | What it connects |
+|---|---|
+| **Payment Gateways** | The services that take money. |
+| **Sign-in Providers** | Google, Facebook, Apple, GitHub sign-in. |
+| **Calendar** | A calendar for bookings. |
+| **Conferencing** | Zoom, Google Meet and the like. |
+| **Server-side tracking** | Sending conversions to tracking services. |
+
+Each section is gated separately, so somebody allowed to manage payments may see that
+section and not the others — what they cannot open shows a short notice rather than an
+error.
+
+## Payment Gateways
+
+**Set up** a gateway and fill in its credentials. Each connection carries:
+
+| Control | What it does |
+|---|---|
+| **Enabled** | On or off. **Turn off to pause without losing the setup.** |
+| **Live mode** | Production credentials, or test. |
+| **Gateway** | Which service. |
+| Priority | Which is offered first. |
+
+<Callout type="warn">
+**Secrets are stored encrypted and never shown again.** Once saved, you cannot read a
+key back — you can only replace it. Keep your own copy where your team keeps such
+things.
+</Callout>
+
+A gateway that is removed takes its configuration with it. Disable rather than delete
+when you are only pausing.
+
+See [Payment methods](/docs/knowledgebase/selling-payments/payment-methods) for which
+gateways exist and what each needs.
+
+## Sign-in Providers
+
+Let people sign in with an account they already have: **Google**, **Facebook**,
+**Apple**, **GitHub**.
+
+Each takes a client ID and secret from that provider, and shows you the **authorized
+redirect URI** to paste back into their console. Some values — the client ID — can only
+be set at creation; to change one, remove the integration and set it up again.
+
+Signing in through your own academy needs nothing set up at all.
+
+<Callout type="info">
+Social sign-in raises completed registrations, especially on phones. It also means a
+learner's name and email come from that provider, which matters if those names go on
+certificates — see **Locked Profile Fields** in
+[the Control Panel](/docs/knowledgebase/settings/control-panel).
+</Callout>
+
+## Calendar and Conferencing
+
+Connect a calendar so bookings appear on it, and a conferencing service so a meeting
+link is created for you instead of pasted in by hand.
+
+Once conferencing is connected, a **Live** lesson or a booking can create its own
+meeting. See [Live sessions and bookings](/docs/knowledgebase/bookings/integrations).
+
+## Server-side tracking
+
+Sends conversions to tracking destinations from the server rather than the browser.
+Each destination has its own setup and an **event log**, which is where you check
+whether anything is actually arriving.
+
+This is about measuring your marketing. The scripts that run in a visitor's browser are
+in **Analytics & Tracking** on
+[the Control Panel](/docs/knowledgebase/settings/control-panel).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I cannot see one of the sections.">
+Your role does not cover it. The sections are gated separately, and the one you cannot
+open says so rather than failing.
+</Accordion>
+
+<Accordion title="A gateway was working and stopped.">
+Check **Enabled** and **Live mode** first, then whether the credentials were rotated at
+the gateway's end. A key changed there has to be changed here.
+</Accordion>
+
+<Accordion title="Social sign-in returns an error about the redirect.">
+The redirect URI in the provider's console must match the one shown here exactly,
+including the protocol and any trailing slash.
+</Accordion>
+
+<Accordion title="I need to change a client ID.">
+Remove the integration and set it up again. Some values are fixed at creation.
+</Accordion>
+
+<Accordion title="Nothing is reaching my tracking destination.">
+Open its **event log**. It will tell you whether events are being sent and refused, or
+not sent at all — two different problems.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Payment methods" description="Which gateways exist and what each needs." href="/docs/knowledgebase/selling-payments/payment-methods" />
+  <Card title="The Control Panel" description="Browser-side tracking, and everything else academy-wide." href="/docs/knowledgebase/settings/control-panel" />
+  <Card title="Booking integrations" description="Calendars and conferencing for live sessions." href="/docs/knowledgebase/bookings/integrations" />
+  <Card title="Accounts and sign-in" description="What social sign-in means for learners." href="/docs/knowledgebase/account-people/accounts-and-sign-in" />
+</Cards>

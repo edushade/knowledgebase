@@ -1,58 +1,98 @@
 ---
 title: "Quiz Analytics"
-description: "See detailed results by quiz, question, and answer option, spot who hasn't attempted, and manage quizzes in bulk — duplicate, export/import, and recover."
+description: "What the attempts tell you — about the learners, and about the quiz itself."
 ---
 
-Analytics turn quiz results into insight. You can see how a quiz performed overall, which
-questions tripped learners up, and even which answer options were most chosen. You can also
-manage your quizzes in bulk and recover ones deleted by mistake.
+A quiz's analytics answer two different questions. *How did the learners do?* is the
+obvious one. *Is this quiz any good?* is the one worth asking.
 
-## Levels of detail
+<WhoCan roles="Admin, Instructor" />
 
-You can look at results at three levels:
+## The figures
 
-| Level | What it shows |
+| Figure | What it tells you |
 |---|---|
-| **Quiz level** | Overall performance — average scores, pass rate, attempts, and how learners did as a group. |
-| **Question level** | How each question performed — how many got it right or wrong. |
-| **Answer-option level** | For choice questions, which options learners picked — including popular wrong answers. |
+| **Attempts** | How many sittings, across everyone. |
+| **Average score** | The middle of the distribution. |
+| **Best score** | The top. |
+| **Average time** | How long it actually takes — useful for setting a time limit next term. |
+| **Completion rate** | The share of those who could sit it who did. |
+
+Alongside them, three lists:
+
+- **Participants** — who sat it, when, and the state of each attempt.
+- **Non-participants** — who did not. This is the one you act on.
+- **Leaderboard** — the ranking.
+
+## Reading the quiz, not the learners
+
+Per-question figures are where a quiz gets better:
+
+| Pattern | What it usually means |
+|---|---|
+| Almost everyone got it **wrong** | A wrong answer key, or a question nobody was taught. Check the key first. |
+| Almost everyone got it **right** | It is not telling you anything. Keep one or two of these as openers; drop the rest. |
+| One option never chosen | A wrong answer that is obviously wrong. Replace it and the question gets harder honestly. |
+| The quiz finished far faster than its time limit | The limit is not doing anything. |
 
 <Callout type="info">
-A question almost everyone gets wrong may be too hard, badly worded, or have an incorrect
-answer key. Cross-check it against [question reports](/docs/knowledgebase/assessments/question-reports).
+**Check the per-question figures before you release results.** A bad answer key is much
+cheaper to fix before anyone has seen a mark than afterwards.
 </Callout>
 
-## Tracking who hasn't attempted
+## Comparing two quizzes
 
-Analytics can show you the **non-participants** — learners who have not yet taken the quiz.
-Use this to follow up before a deadline, send a reminder, or plan a makeup.
+Where a programme has at least two quizzes, you can compare learners' scores between
+them — did the class improve between the mock and the final, and who went backwards. It
+needs two quizzes to work; with one, there is nothing to compare.
 
-## Managing quizzes in bulk
+## Non-participants is the useful list
 
-| Action | What it does |
+Average score tells you about the people who turned up. **Non-participants** tells you
+about the ones who did not, and that is usually the bigger number and the bigger
+problem.
+
+It can be filtered by programme, so "who in Batch 12 has not sat the mid-term" is a
+list you can act on — see [Campaigns](/docs/knowledgebase/communication/campaigns) for
+sending them something.
+
+## Where to look
+
+| Question | Screen |
 |---|---|
-| **Duplicate** | Make a copy of a quiz to reuse as a starting point. |
-| **Bulk export** | Download quiz data as a spreadsheet (CSV) file. |
-| **Bulk import** | Upload questions in bulk from a spreadsheet (CSV) file. |
-| **Recover deleted** | Restore a quiz that was deleted by mistake. |
+| How did this one quiz go? | The quiz's own analytics |
+| How is this course's assessment going overall? | The course's [Assessment Report](/docs/knowledgebase/progress-grading/assessment-report) |
+| How are grades distributed across the academy? | [Grades analytics](/docs/knowledgebase/analytics/grades) |
 
-These tools save time when you run many quizzes or want to build a question library.
+## Common questions
 
-## Putting analytics to use
+<Accordions type="single">
 
-- **Improve weak questions** — rewrite or replace questions that consistently confuse
-  learners.
-- **Set a fair pass mark** — use the overall results to check your pass mark isn't too harsh
-  or too easy. See [Quiz settings](/docs/knowledgebase/assessments/quiz-settings).
-- **Follow up with learners** — use the non-participant list to nudge those who haven't taken
-  it.
-- **Review the merit list** — see top performers alongside the
-  [leaderboard](/docs/knowledgebase/assessments/leaderboards).
+<Accordion title="The average score dropped sharply this term.">
+Check whether the paper changed, and check the per-question figures. A single bad
+question moves an average more than a weaker cohort does.
+</Accordion>
+
+<Accordion title="The completion rate looks wrong.">
+It counts the learners who could sit it. Someone without access to that content — through
+partial access or an eligibility rule — is not counted against it.
+</Accordion>
+
+<Accordion title="Can I export the attempts?">
+Yes, from the participants list.
+</Accordion>
+
+<Accordion title="Why does a learner appear twice?">
+They have more than one attempt. Which one counts towards their grade follows the
+programme's replacement policy, not the order in this list.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes)
-- [Question reports](/docs/knowledgebase/assessments/question-reports)
-- [Leaderboards](/docs/knowledgebase/assessments/leaderboards)
-- [Quiz settings](/docs/knowledgebase/assessments/quiz-settings)
-- [Progress tracking](/docs/knowledgebase/progress-grading/progress-tracking)
+<Cards>
+  <Card title="Question reports" description="What learners are flagging about the questions." href="/docs/knowledgebase/assessments/question-reports" />
+  <Card title="The assessment report" description="Completion across a whole programme." href="/docs/knowledgebase/progress-grading/assessment-report" />
+  <Card title="Grades analytics" description="How grades are distributed across the academy." href="/docs/knowledgebase/analytics/grades" />
+</Cards>

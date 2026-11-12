@@ -1,11 +1,15 @@
 {
-  "title": "Certificates",
+  "title": "Certificates & Documents",
   "icon": "Award",
   "defaultOpen": true,
   "pages": [
     "index",
+    "certificate-types",
     "certificate-requirements",
     "issuing-certificates",
-    "verifying-certificates"
+    "verifying-certificates",
+    "certificate-templates",
+    "transcript-designs",
+    "designing-a-document"
   ]
 }

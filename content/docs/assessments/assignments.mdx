@@ -1,72 +1,124 @@
 ---
 title: "Assignments"
-description: "Set tasks where learners submit text or files, then score them by hand with feedback — and feed the result into the course grade."
+description: "Work a learner submits for you to read — setting one up, and the scheduling decision that trips people up."
 ---
 
-An assignment is a task you set for learners to complete and submit. Unlike most quiz
-questions, assignments are graded by hand — you read each submission, give a score, and add
-feedback. They are perfect for essays, projects, and file hand-ins.
+An assignment is work handed in rather than answered: an essay, a file, a project. Every
+one is marked by a person, so an assignment is a promise of your time as much as the
+learner's.
 
-## Types of assignment
+Assignments are added from the course builder with **+ Assignment**, or from an item's
+**⋯** menu.
 
-| Type | What the learner does |
+<WhoCan roles="Admin, Instructor" />
+
+## What you set
+
+| Field | Notes |
 |---|---|
-| **File upload** | Uploads one or more files (document, image, and so on). |
-| **Text submission** | Writes their answer directly in a text box. |
-| **Quiz-linked** | Completes a linked quiz as the assignment. |
+| **Assignment Title** | Required. Up to 100 characters. |
+| **Description** | What it is about. |
+| **Instructions** | The brief — what to produce, in what form, how it will be judged. |
+| **Total Marks** | What it is out of. At least 1. |
+| **Passing Marks** | The minimum to pass. |
+| **Maximum attempts** | How many times a learner may submit. |
+| **Time limit** | Optional. |
+| **Attachments** | Materials that come with the brief — a template, a dataset, a rubric. |
+| **Status** | **Draft** or **Published**. |
 
-A single assignment can accept text, files, or both.
+### Merit list
 
-## Creating an assignment
+| Setting | What it does | Default |
+|---|---|---|
+| **Show Merit List To Learner** | Whether learners see the ranking at all. | On |
+| **Show Other Merit List** | Whether they see other learners' positions, or only their own. | On |
 
-1. Go to **Admin → Assignments** (or add one inside a course) and click **New Assignment**.
-2. Give it a **title** and **instructions** so learners know what to do.
-3. Choose the **type** — file upload, text, or quiz-linked.
-4. Set the **total marks** and the **passing marks**.
-5. Set a **start date** and **end date** (the deadline).
-6. Optionally set a **time limit** and a **maximum number of attempts** (leave blank for
-   unlimited).
-7. Attach any **supporting files** learners may need (a brief, a template, examples).
-8. Optionally turn on **merit-list display** to rank submissions.
-9. Save as **draft**, then **publish** when ready. You can **archive** it later.
+See [Merit lists](/docs/knowledgebase/assessments/merit-lists).
 
-## How learners submit
+## The scheduling trap
 
-1. The learner opens the assignment and reads the instructions.
-2. They write their text and/or upload their files.
-3. They submit before the **deadline**.
-4. If resubmission is allowed (within the attempt limit and before the deadline), each new
-   submission counts as a **new attempt**.
+**An assignment has no due date of its own.** There is no deadline field on the
+assignment form.
 
-## Grading an assignment
-
-1. Open the assignment and pick a learner's submission.
-2. Enter a **score** (it cannot exceed the total marks).
-3. Add **feedback** and any **comments** for the learner.
-4. Save. **Pass or fail** is worked out from the passing marks you set.
-
-<Callout type="info">
-The assignment score feeds into the learner's overall course grade. Decide how much it counts
-using [weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
-</Callout>
-
-## What the learner sees
-
-- The instructions, supporting files, total marks, and deadline.
-- A place to type their answer and/or upload files.
-- After grading: their score, pass/fail, and your feedback and comments.
-- The merit list, if you turned it on.
-
-## Good to know
+The dates come from the [drip schedule](/docs/knowledgebase/enrollment-access/drip-scheduling)
+on the assignment item in the course: **unlock** is when it opens, **lock** is the
+deadline.
 
 <Callout type="warn">
-Resubmissions only count while attempts remain **and** the deadline has not passed. Once the
-end date arrives, no new submissions are accepted.
+Setting up an assignment and expecting a deadline to appear is the most common mistake
+here. If you did not set a lock date on the item, the assignment has no deadline —
+whatever the instructions say.
 </Callout>
+
+To extend the deadline for one learner, use a user-level override on that item rather
+than moving the date for everyone.
+
+## When does it count as done?
+
+By default, a learner who submits has completed the assignment — whether or not it has
+been marked, and whatever mark it gets.
+
+Change that from the item's **⋯** menu, **Completion Rule**:
+
+- **Attempt only** — submitting is enough. The default behaviour.
+- **Attempted with a Pass** — it must reach the passing marks.
+
+See [Completion rules](/docs/knowledgebase/progress-grading/completion-rules).
+
+## Marking
+
+Submissions arrive in the course's **Assignments** screen. Open one and you get **Grade
+Submission**:
+
+| Field | Who sees it |
+|---|---|
+| **Score** | The learner. |
+| **Feedback** | The learner. |
+| **Comments (Internal)** | Only you and your colleagues. |
+
+Internal comments are where you record "second marker agreed", "late by two days,
+allowed" — the context that matters next term when somebody queries the mark.
+
+See [Assignment submissions](/docs/knowledgebase/assessments/assignment-submissions).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Where do I set the due date?">
+On the assignment's item in the course, under **Drip Schedule** — the **lock** date is
+the deadline. There is no due date on the assignment itself.
+</Accordion>
+
+<Accordion title="A learner submitted after the deadline.">
+If a lock date was set, they could not have — so either there was none, or they have an
+override. Check the item's drip schedule and its user-level overrides.
+</Accordion>
+
+<Accordion title="Can learners submit more than once?">
+Up to the maximum attempts you set. Which submission counts follows the programme's
+replacement policy, the same as a quiz — see
+[Retakes and replacement](/docs/knowledgebase/progress-grading/retakes-and-replacement).
+</Accordion>
+
+<Accordion title="Can two instructors mark the same assignment?">
+Both can open and mark it, and the last save stands. Use **Comments (Internal)** to
+record who marked it and what was agreed.
+</Accordion>
+
+<Accordion title="Does an unmarked assignment pull a learner's result down?">
+Only if **Treat Ungraded Items as Zero** is on for the programme. Off, it is left out
+until it is marked. See
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Files & Media](/docs/knowledgebase/files) — how learner uploads are handled.
-- [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading)
-- [Exams](/docs/knowledgebase/assessments/exams)
-- [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes)
+<Cards>
+  <Card title="Assignment submissions" description="Working the marking queue." href="/docs/knowledgebase/assessments/assignment-submissions" />
+  <Card title="Drip scheduling" description="Where an assignment's dates actually live." href="/docs/knowledgebase/enrollment-access/drip-scheduling" />
+  <Card title="Merit lists" description="Ranking learners on an assignment." href="/docs/knowledgebase/assessments/merit-lists" />
+  <Card title="Completion rules" description="Submitting versus passing." href="/docs/knowledgebase/progress-grading/completion-rules" />
+</Cards>

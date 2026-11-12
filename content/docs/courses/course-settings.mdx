@@ -1,0 +1,144 @@
+---
+title: "Course Settings"
+description: "Every field on the last step of a course, what it changes, and which ones actually matter on day one."
+---
+
+The settings step is the last of the three, reached from **Settings** at the top right of
+the course builder or by clicking the **3**. It holds two cards: **Basic Settings**
+describes the course, **Settings Behavior** decides what it does.
+
+<WhoCan roles="Admin, Instructor" />
+
+<Screenshot
+  src="/kb/courses/course-settings.png"
+  alt="The course settings step, Basic Settings on the left with Difficulty Level, Language, Maximum Enrollments and Duration; Settings Behavior on the right with Enrollment Open, Enable Certificate and Enable Transcript"
+  caption="Only three of these need a decision on day one: Maximum Enrollments, Enrollment Open and Enable Certificate."
+/>
+
+## Basic Settings
+
+| Setting | What it does |
+|---|---|
+| **Difficulty Level** | Beginner, Intermediate or Advanced. Shown on the course page and usable as a filter in your catalogue. |
+| **Language** | The language the course is taught in. Shown on the course page and in the catalogue filters. This is not the same as the languages you *write* the course in. |
+| **Maximum Enrollments** | How many learners may be in the course at once. **0 means unlimited.** |
+| **Duration** | How long the course takes, as hours, minutes and seconds. Shown to learners as a rough guide; it does not time anything. |
+| **Course Instructions** | A note shown to learners taking the course — house rules, what to bring, how it is marked. |
+| **Completion Message** | What a learner reads when they finish. Leave it empty for the standard message. |
+| **Search Keywords** | Other names people might search for — an abbreviation, the name in another language. Keywords are never shown to learners; they only widen what finds the course. |
+
+## Settings Behavior
+
+### Who can get in
+
+| Setting | What it does |
+|---|---|
+| **Enrollment Open** | Off closes the course to new learners. People already in it keep their access. Use this to retire a course without deleting it. |
+
+### What the course awards
+
+| Setting | What it does |
+|---|---|
+| **Enable Certificate** | Whether this course awards a certificate at all. Off means no certificate, whatever the rules say. |
+| **Enable Transcript** | Whether learners can see and download their own result for this course. Off hides it from the learner's panel — you can still view and print it yourself. |
+| **Certificate Code** | A short code for the course, used in certificate numbers. Leave it empty and the course's slug is used instead. See [Certificate numbers](/docs/knowledgebase/certificates/issuing-certificates). |
+| **Completion certificate type** | Which certificate this course grants when a learner finishes. The pass rules live on the type, not here. |
+| **Enrollment certificate type (instant)** | A certificate granted the moment someone enrols — useful for a proof-of-admission document. |
+| **Enrollment design** | Which design that enrolment certificate is printed on. **Use default design** falls back to your academy's default. |
+
+Certificate types are made once and reused across courses — see
+[Certificate types](/docs/knowledgebase/certificates/certificate-types).
+
+### When results are released (self-paced only)
+
+| Setting | What it does |
+|---|---|
+| **Certificate available from** | A date before which a passing learner still cannot download their certificate. Leave it empty to release it the moment they pass. |
+| **Transcript available from** | The same, for the result or transcript. Leave it empty to release it immediately. |
+
+On a cohort-based course, release is governed by the batch's own dates instead.
+
+### How content behaves
+
+| Setting | What it does |
+|---|---|
+| **Customize video playback for this program** | Off means this course follows your academy-wide video settings. On lets you decide, for this course only, where YouTube and Vimeo videos play and whether learners can skip ahead or change speed. See [Video playback](/docs/knowledgebase/files/video-playback). |
+
+### What learners may do
+
+| Setting | What it does |
+|---|---|
+| **Enable Discussion** | Lets learners discuss the course content. See [Discussions](/docs/knowledgebase/community/discussions). |
+| **Enable Rating** | Lets learners leave a star rating and review. See [Reviews and ratings](/docs/knowledgebase/community/reviews-and-ratings). |
+
+### What the course page promises
+
+| Setting | What it does |
+|---|---|
+| **Learning Outcomes** | What a learner will be able to do afterwards. Up to 30 lines, each added with **Add outcome**. |
+| **Requirements** | What someone needs before they enrol. Up to 30 lines, each added with **Add requirement**. |
+
+Both appear on the public course page. They are promises, not rules — nothing is
+enforced. To actually stop the wrong people enrolling, use
+[eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules).
+
+## Publishing
+
+The status button at the top right carries the course's state:
+
+| Status | Who can see it |
+|---|---|
+| **Draft** | Only you and your team. Nothing is live. |
+| **Published** | Live in your catalogue and open to enrolment. |
+| **Archived** | Retired. Out of the catalogue; existing learners keep what they have. |
+
+<Callout type="info">
+Published is not the same as for sale. A published course with no price cannot be
+bought — you can still enrol people into it yourself. See
+[Pricing](/docs/knowledgebase/selling-payments/pricing).
+</Callout>
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="What is the difference between Enrollment Open and Archived?">
+**Enrollment Open** off keeps the course in your catalogue but refuses new learners —
+good for "this intake is full". **Archived** takes it out of the catalogue altogether —
+good for "we do not teach this any more". In both cases the people already enrolled keep
+their access.
+</Accordion>
+
+<Accordion title="I turned on Enable Certificate but nobody is getting one.">
+The switch allows a certificate; it does not decide who earns one. A learner also has to
+meet the rules on the certificate type — usually passing everything that counts. See
+[Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements),
+which walks through why a certificate has not appeared.
+</Accordion>
+
+<Accordion title="What is the difference between Language and the flag buttons on step 1?">
+**Language** says what language the teaching is in, and is a label on the course page.
+The flag buttons let you write the title and description in several languages at once,
+so a learner reading your site in Bangla sees the Bangla title. They are unrelated.
+</Accordion>
+
+<Accordion title="Maximum Enrollments is set but people are still getting in.">
+On a cohort-based course the limit that bites is the batch's seat count, not this one.
+Check the batch. See [Cohorts and batches](/docs/knowledgebase/courses/cohorts).
+</Accordion>
+
+<Accordion title="Where did Pass Mark go?">
+There is no pass mark on the course settings step. What counts as a pass is decided by
+the grading scheme and the course's grading setup. See
+[Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Creating a course" description="The three steps, start to finish." href="/docs/knowledgebase/courses/creating-a-course" />
+  <Card title="Course grading setup" description="How this course turns marks into a result." href="/docs/knowledgebase/progress-grading/course-grading-setup" />
+  <Card title="Publishing and the catalog" description="What happens when a course goes live." href="/docs/knowledgebase/courses/publishing-and-catalog" />
+</Cards>

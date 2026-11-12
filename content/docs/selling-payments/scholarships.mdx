@@ -1,61 +1,101 @@
 ---
 title: "Scholarships"
-description: "Offer discounted or free access through an application program tied to a course, path, or cohort."
+description: "Reducing or waiving the price for a named learner — setting one up, and deciding what happens if it is revoked."
 ---
 
-A **scholarship** gives learners a discount — or free access — through an application
-process. Unlike a coupon code, a scholarship has learners **apply**, and you **approve**
-who gets it. Each scholarship is tied to a specific course, learning path, or cohort.
+A scholarship reduces what one learner pays. Unlike a
+[coupon](/docs/knowledgebase/selling-payments/coupons-and-offers), which anyone with the
+code can use, a scholarship is granted to a person.
 
-## The two types
+Scholarships live in <Path>Billing > Offers & Promotions > Scholarships</Path>.
 
-| Type | What it does |
+<WhoCan roles="Admin" />
+
+## Setting one up
+
+| Field | What it is |
 |---|---|
-| **Fixed percentage** | Every approved applicant gets the same discount (for example, 50% off). |
-| **Up to a limit** | You set the exact percentage for each approved applicant, up to a maximum you've chosen. |
+| **Title** | What it is called. |
+| **Description** | A note. |
+| **Scholarship Type** | **Percentage**, **Fixed** or **Up to Limit**. |
+| **Scholarship Percentage** | How much, where the type is a percentage. |
+| **Entity Type** and the programme | What it applies to. A cohort-based course needs the **batch**. |
+| **User (Learner)** | Who it is for. |
+| **Start Date** / **End Date** | When it is valid. |
+| **Application Form** | A form applicants fill in, where you want one. |
+| **Show Scholarship Percentage** | Whether the learner is told how much they were awarded. |
+| **Status** | Active or not. |
 
-In both cases:
+**Up to Limit** covers the cost up to a ceiling, with the learner paying anything above
+it. It is the right shape for "we will cover up to ৳10,000 of any programme".
 
-- **100%** means free, immediate access.
-- A **partial** percentage means the learner buys at a reduced price.
+## Applications
 
-## What you can attach
+Where a scholarship has an **Application Form**, learners apply and their applications
+arrive in <Path>Billing > Offers & Promotions > Scholarship Applications</Path> — see
+[Scholarship applications](/docs/knowledgebase/selling-payments/scholarship-applications).
 
-- An **application form** — questions the learner answers when applying.
-- **Revoke rules** — conditions that automatically disqualify a learner later, such as
-  failing a quiz or going inactive.
-- **Active dates** — the window during which the scholarship accepts applications.
+Without a form, you grant it directly.
 
-## How it works, step by step
+## Revoking one
 
-1. **You create the scholarship** in **Admin → Scholarships → New Scholarship**: pick the
-   course/path/cohort, choose the type and percentage, optionally add a **form** and
-   **revoke rules**, and set the **active dates**.
-2. **A learner applies** — they browse the public scholarships and submit an application
-   (filling in your form if you added one).
-3. **You review each application** and either:
-   - **Approve** it. For the "up to a limit" type, you set the exact percentage for that
-     learner.
-   - **Reject** it, with a reason the learner can see.
-4. **Later, you can revoke** an approved scholarship — manually, or automatically through
-   the revoke rules you set.
+A scholarship can be revoked, and the important part is what happens to the learner's
+access. **Revoke Policies**:
+
+| Policy | What happens |
+|---|---|
+| **Remain existing access** | They keep what they have. The scholarship stops applying to anything new. |
+| **Revoke access** | Their access is withdrawn. |
+| **Limit access** | Their access is reduced. |
+
+<Callout type="warn">
+Decide the policy before you revoke, not after. **Revoke access** takes a learner out of
+a programme they may be halfway through, and there is no undo that gives the time back.
+</Callout>
 
 ## What the learner sees
 
-- A list of **public scholarships** they can apply to.
-- The result of their application — approved (with the discount applied) or rejected
-  (with your reason).
-- If approved at **100%**, immediate free access. If approved partially, a **reduced
-  price** at checkout.
+A scholarship reduces the price at checkout. The transaction records **Scholarship
+Applied**, so the gap between the price and what they paid is explained on the record.
 
-## Good to know
+With **Show Scholarship Percentage** off, they see the lower price without being told
+what proportion was waived — which some institutions prefer.
 
-- Scholarships are reviewed and approved one application at a time, so you stay in control
-  of who receives them.
-- You can export scholarship data to a spreadsheet from the billing area.
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A scholarship is not reducing the price.">
+Check it is active, in date, for that learner, and for the exact thing they are buying —
+on a cohort-based course it must name the batch, not the course.
+</Accordion>
+
+<Accordion title="Can one learner hold two scholarships?">
+Each applies to what it names. For two scholarships on the same purchase, grant one for
+the right total instead.
+</Accordion>
+
+<Accordion title="Scholarship or coupon?">
+Scholarship when it is about *this learner* and you may need to justify it. Coupon when
+it is about *this campaign* and anybody with the code may use it.
+</Accordion>
+
+<Accordion title="Can I give a full scholarship?">
+Yes — a percentage of 100, or a fixed amount equal to the price. The learner still goes
+through checkout, at nothing to pay.
+</Accordion>
+
+<Accordion title="Does a scholarship appear in revenue reports?">
+The transaction shows what was actually paid, with the scholarship recorded as the
+reason for the difference. Your revenue is the real figure.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Coupons & offers](/docs/knowledgebase/selling-payments/coupons-and-offers) — instant discount codes with no application.
-- [Checkout](/docs/knowledgebase/selling-payments/checkout) — how a 100% award skips payment.
-- [Refunds](/docs/knowledgebase/selling-payments/refunds) — how access can be changed later.
+<Cards>
+  <Card title="Scholarship applications" description="Reviewing, approving and rejecting applications." href="/docs/knowledgebase/selling-payments/scholarship-applications" />
+  <Card title="Coupons and offers" description="Discounts anyone with a code can use." href="/docs/knowledgebase/selling-payments/coupons-and-offers" />
+  <Card title="Forms and leads" description="Building the application form." href="/docs/knowledgebase/website/forms-and-leads" />
+</Cards>

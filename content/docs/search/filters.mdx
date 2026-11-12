@@ -1,59 +1,78 @@
 ---
 title: "Filters"
-description: "Narrow a list of search results by content type, status, and language — each option showing how many matches it has."
+description: "How learners narrow a long list of results — and why consistent tagging is what makes filters work."
 ---
 
-When a search returns a lot of results, filters help people zoom in on exactly what they
-want. Each filter shows a count next to it, so learners can see at a glance how many
-matches fall under each option before they click.
+Filters let a learner cut a page of results down to the few that fit. They appear beside
+search results and in your catalogue.
 
-## What you can filter by
+<WhoCan roles="Learner" />
 
-| Filter | What it does |
+## What learners can filter by
+
+| Filter | Where it comes from |
 |---|---|
-| **Content type** | Show only one kind of result — for example, only courses, only products, or only blog posts. |
-| **Status** | Filter by whether content is published, draft, or archived. |
-| **Language** | Show only results in a chosen language. |
+| **Category** | The course's categories. |
+| **Tags** | Its tags. |
+| **Difficulty** | Beginner, Intermediate, Advanced. |
+| **Language** | The course's language. |
+| **Type** | Course, learning path, bundle, product, event. |
+| **Access type** | How access is granted. |
 
-## The count next to each option
+Each filter shows how many results it would leave, so a learner can see before they
+click that "Advanced" has two.
 
-Every filter option shows a number — how many of the current results match that option.
-For example, a search might show:
+## Filters are only as good as your data
 
-- **Courses (42)**
-- **Products (9)**
-- **Pages (5)**
-
-This tells the learner where most of the matches are before they even click. As they pick
-filters, the list updates to show only matching results.
-
-## How to use filters
-
-1. Run a search to get a list of results.
-2. Look at the filter options beside or above the results.
-3. Click an option — for example, **Courses** — to show only that kind of result.
-4. Add more filters to narrow further, or remove a filter to widen the list again.
-
-## What learners see vs. what admins see
-
-- **Learners** filter only across content that's published and available to them, so the
-  **Status** filter mainly matters to admins.
-- **Admins** can use the **Status** filter to focus on drafts they're still working on, or
-  on archived items.
-
-<Callout type="info">
-The count shows matches within the current search, not your entire catalog. Change the
-search words and the counts change too.
+<Callout type="warn">
+**Inconsistent values are what break filters.** "IELTS", "ielts" and "I.E.L.T.S." are
+three tags and one useless filter. A course with no difficulty set does not appear under
+any difficulty.
 </Callout>
 
-## Good to know
+Three habits that keep them working:
 
-- An option only appears when it has at least one match — empty options are hidden, so the
-  filter list stays tidy.
-- Filters and the search words work together: filtering narrows the words you already
-  searched for.
+1. **Agree the tag names** and write them down.
+2. **Set difficulty and language on every course**, even when it feels obvious.
+3. **Keep categories few.** A filter with thirty options is a list, not a filter.
+
+## Filters and search together
+
+A learner usually searches first and filters second: "English", then Beginner, then
+Bangla. That only helps if the courses carry those values — a search that returns
+fifteen results of which eleven have no difficulty set makes the filter useless.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A course is missing from a filtered list.">
+It has no value for that filter. A course with no difficulty set does not appear under
+Beginner, Intermediate or Advanced.
+</Accordion>
+
+<Accordion title="Can I add our own filter?">
+The filters above are what exists. Products can carry their own
+[taxonomies](/docs/knowledgebase/selling-payments/products-catalog) for attributes
+specific to them.
+</Accordion>
+
+<Accordion title="Can I change the order of filters?">
+How your catalogue listings are laid out is part of your website — see
+[Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+</Accordion>
+
+<Accordion title="We have duplicate tags.">
+Pick one spelling, re-tag, delete the rest. See
+[Categories and tags](/docs/knowledgebase/account-people/categories-and-tags).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Search basics](/docs/knowledgebase/search/search-basics) — what each content type is.
-- [Languages](/docs/knowledgebase/website/languages) — publish content in more than one language.
+<Cards>
+  <Card title="How search works" description="What makes something findable at all." href="/docs/knowledgebase/search/search-basics" />
+  <Card title="Categories and tags" description="The values filters are built from." href="/docs/knowledgebase/account-people/categories-and-tags" />
+  <Card title="Publishing and the catalog" description="Getting a course into the list." href="/docs/knowledgebase/courses/publishing-and-catalog" />
+</Cards>

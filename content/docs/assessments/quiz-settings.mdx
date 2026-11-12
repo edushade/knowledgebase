@@ -1,98 +1,135 @@
 ---
 title: "Quiz Settings"
-description: "Control attempts, timers, shuffling, navigation, what learners see, and the certificate on pass — all the rules that shape how a quiz behaves."
+description: "Every setting on a quiz, grouped by what it protects — time, attempts, order, scoring, and who sees what."
 ---
 
-Quiz settings decide how a quiz behaves: how many tries a learner gets, how long they have,
-whether questions are shuffled, what they can see during and after, and more. This page
-covers every setting. For when a quiz opens and closes, see
-[Quiz availability](/docs/knowledgebase/assessments/quiz-availability).
+A quiz's settings decide how it is sat and when its score appears. They are grouped on
+the quiz's **Settings** step.
 
-## Status
+<WhoCan roles="Admin, Instructor" />
 
-Every quiz has one of three states:
+## Timing
 
-| Status | What it means |
-|---|---|
-| **Draft** | Still being built. Only you can see it. |
-| **Published** | Live. Learners can take it (subject to availability and access). |
-| **Archived** | Retired. Kept for records but no longer offered. |
+| Setting | What it does | Default |
+|---|---|---|
+| **Time limit** | Switch on, then set the minutes. | Off |
+| **Allow Pause** | Lets a learner stop the clock and come back. | Off |
 
-## Attempts and retakes
+Leave **Allow Pause** off for anything that counts. On, the time limit stops meaning
+very much.
 
-- **Maximum attempts** — how many times a learner may take the quiz. Leave it open for
-  unlimited tries, or cap it (for example, 3).
-- **Retake policy** — what happens after an attempt is used:
+## Attempts and participants
 
-| Policy | Behaviour |
-|---|---|
-| **Immediate** | The learner can retry right away. |
-| **Wait a cooldown** | The learner must wait a set time before retrying. |
-| **Needs approval** | An admin must approve another attempt. |
-| **None** | No retake once the attempt limit is reached. |
+| Setting | What it does | Default |
+|---|---|---|
+| **Maximum Attempts** | How many times a learner may sit it. At least 1. | 1 |
+| **Maximum Participants** | A cap on how many people may take it. Switch on, then set the number. | Off |
 
-## Timers
+Which attempt actually counts is not set here — it comes from the programme's
+[grade replacement policy](/docs/knowledgebase/progress-grading/retakes-and-replacement).
+A quiz allowing three attempts under a **Best** policy is practice; the same quiz under
+**Replace** is three chances to do worse.
 
-- **Quiz time limit** — total time for the whole quiz.
-- **Per-question time limit** — an optional countdown on individual questions.
-- **Grace period** — a small buffer after time runs out before the quiz locks.
-- **Auto-submit** — when time is up, the quiz submits automatically with whatever has been
-  answered.
+## Order and completeness
 
-## Shuffling
+| Setting | What it does | Default |
+|---|---|---|
+| **Shuffle questions** | Each learner gets the questions in a different order. | Off |
+| **Shuffle answer options** | Options are scrambled within each question. | Off |
+| **Require All Questions** | A learner cannot submit with anything blank. | Off |
 
-- **Shuffle questions** — each learner sees the questions in a different order.
-- **Shuffle answer options** — the choices within a question appear in a different order.
+Shuffling is the most practical thing you can do about learners sitting a quiz side by
+side. It does not stop anyone determined, but it stops "what did you put for 3?".
 
-Shuffling makes it harder for learners to copy each other and keeps repeat attempts fresh.
+## Scoring
 
-## Navigation controls
+| Setting | What it does | Default |
+|---|---|---|
+| **Pass Score Enabled** | Whether this quiz has a pass mark at all. | On |
+| **Pass Score** | The minimum percentage required to pass. | 70 |
+| **Show answer after activity** | Whether learners see the correct answers afterwards. | Off |
 
-Decide how learners move through the quiz:
+## When the score appears
 
-- **Allow going back** — can they return to earlier questions, or only move forward?
-- **Allow skipping** — can they leave a question unanswered and come back?
-- **Required questions** — mark questions that must be answered before submitting.
+This is the group people get wrong, so it is worth being exact:
 
-## What learners see
+| Setting | What it does | Default |
+|---|---|---|
+| **Show each learner's score as soon as they submit** | The learner sees their score immediately. | On |
+| **Release scores on** | A date and time that releases everyone's score at once. | None |
 
-Control the display during and after the quiz:
-
-- **Progress bar** — show how far along they are.
-- **Score breakdown** — show how points were earned after finishing.
-- **Reveal correct answers** — show the right answers after submitting.
-- **Reveal explanations** — show the explanation you wrote for each question.
-- **Custom completion message** — a message shown when they finish (for example,
-  "Well done — your instructor will release final marks by Friday").
+Switch the first **off** and a learner's score waits — for the release date if you set
+one, or for someone to mark it if you did not.
 
 <Callout type="info">
-For a high-stakes exam, you may want to hide correct answers and the score breakdown until
-grading is complete. For practice, showing them right away helps learners learn.
+Release everyone at once for an exam. It stops the first learner out of the room
+telling the queue how they did, and it gives you time to check the paper before anyone
+sees a mark.
 </Callout>
 
-## Scoring settings
+## Access
 
-- **Points per question** — set how much each question is worth.
-- **Negative marking** (optional) — subtract points for wrong answers.
-- **Pass mark** — the percentage needed to pass.
+| Setting | What it does | Default |
+|---|---|---|
+| **Password protected** | A password learners must type to start. | Off |
 
-See [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes) for how scores are
-calculated.
+A password suits an invigilated sitting, where you give it out in the room. It is not
+much use for a quiz taken at home.
 
-## Certificate on pass
+## Merit list
 
-You can award a certificate automatically when a learner passes the quiz. Connect a
-certificate template to the quiz, and it issues on a passing result. See
-[Certificates](/docs/knowledgebase/certificates).
+| Setting | What it does | Default |
+|---|---|---|
+| **Show Merit List To Learner** | Whether learners see the ranking at all. | On |
+| **Show Other Merit List** | Whether they see other learners' positions, or only their own. | On |
 
-## Difficulty level
+See [Merit lists](/docs/knowledgebase/assessments/merit-lists).
 
-Tag a quiz with a difficulty level (for example, Easy, Medium, Hard) to help organize your
-library and set learner expectations.
+## The rest
+
+| Setting | What it does |
+|---|---|
+| **Completion Message** | What a learner reads when they finish. |
+| **Instructions** | Shown before they start — rules, materials allowed, what to do if something breaks. |
+| **Certificate** | Whether this quiz can award one on its own. |
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner's attempt ran out of time and submitted itself.">
+That is what a time limit does. Whether the attempt counts depends on the programme's
+replacement policy — see
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+</Accordion>
+
+<Accordion title="Learners say they cannot see their score.">
+**Show each learner's score as soon as they submit** is off. They are waiting for the
+release date, or for someone to mark the written questions.
+</Accordion>
+
+<Accordion title="Can I give one learner extra time?">
+Not on the quiz's time limit. Give them a reschedule instead — see
+[Reschedules](/docs/knowledgebase/assessments/reschedules).
+</Accordion>
+
+<Accordion title="What is the difference between Required on a question and Require All Questions?">
+**Required** is per question. **Require All Questions** applies to the whole quiz at
+once. Use the quiz-wide one for an exam where nothing may be skipped.
+</Accordion>
+
+<Accordion title="Should I show the answers afterwards?">
+For practice, yes — that is where the learning happens. For anything that counts, no:
+the first learners through will hand the answers to the rest.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Quiz availability](/docs/knowledgebase/assessments/quiz-availability) — open/close times, passwords, seat limits.
-- [Proctoring](/docs/knowledgebase/assessments/proctoring) — lock down a quiz for high-stakes tests.
-- [Creating quizzes](/docs/knowledgebase/assessments/creating-quizzes)
-- [Certificates](/docs/knowledgebase/certificates)
+<Cards>
+  <Card title="Creating quizzes" description="Building the quiz these settings apply to." href="/docs/knowledgebase/assessments/creating-quizzes" />
+  <Card title="Quiz availability" description="When a quiz opens and closes." href="/docs/knowledgebase/assessments/quiz-availability" />
+  <Card title="Attempts and retakes" description="How many goes, and which one counts." href="/docs/knowledgebase/assessments/attempts-and-retakes" />
+  <Card title="Keeping an exam honest" description="What is actually available for exam integrity." href="/docs/knowledgebase/assessments/proctoring" />
+</Cards>

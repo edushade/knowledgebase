@@ -1,43 +1,69 @@
 ---
-title: "Autocomplete"
-description: "Instant suggestions that appear in the search box as people type, so they reach the right result in fewer keystrokes."
+title: "Autocomplete and Suggestions"
+description: "What appears as a learner types, and the two things that make it useful."
 ---
 
-Autocomplete shows matching suggestions the moment someone starts typing. Instead of
-typing a whole title and pressing Enter, a learner can pick a suggestion after just a few
-letters — and land straight on the right page.
+As a learner types into the search box, suggestions appear. It is the most-used part of
+search and the part nobody configures — because it works from what you have already
+written.
 
-## What it does
+<WhoCan roles="Learner" />
 
-- Suggests matching content **as you type**, updating with every keystroke.
-- Highlights the part of each suggestion that matched what was typed.
-- Shows what kind of result each suggestion is — for example, a course or a page.
-- Lets people choose a suggestion to jump straight to it, or keep typing for a full search.
+## What appears
 
-## How learners use it
+| As they type | They see |
+|---|---|
+| Nothing yet | Their [recent searches](/docs/knowledgebase/search/search-history) and what is [trending](/docs/knowledgebase/search/trending-and-popular) |
+| A few characters | Matching courses and suggested searches |
+| Something with no matches | **Did you mean…**, with a closer spelling |
 
-1. Click the search box and begin typing.
-2. After a couple of letters, a short list of suggestions appears below the box.
-3. Click a suggestion to open it, or press **Enter** to see the full results list instead.
+Suggestions start after a couple of characters, so a single letter does not produce
+noise.
 
-The suggestions refresh smoothly as the learner types, so the list always reflects what's
-in the box right now.
+## Why it matters more than the results page
 
-## What gets suggested
+Most learners never reach the results page. They type three characters, see the thing
+they wanted, and click it.
 
-- Suggestions are drawn from your **published** content only — drafts never appear as
-  type-ahead suggestions, even for admins. To find a draft, an admin runs a full search
-  with drafts included. See [Search basics](/docs/knowledgebase/search/search-basics).
-- The list is kept short and free of duplicates, so it's quick to scan.
+That means the first few words of a course title do almost all the work. "Spoken English
+— Beginner" shows usefully after three characters; "Module 1: An Introduction to
+Communication" does not.
 
-## Good to know
+## Making suggestions better
 
-- Suggestions start appearing after a couple of letters, so a single keystroke doesn't
-  fill the box with noise.
-- You can control **how many suggestions** appear at once in the search settings. See
-  [Trending and popular](/docs/knowledgebase/search/trending-and-popular#admin-settings).
+1. **Front-load titles.** The distinguishing word first.
+2. **Fill in search keywords.** They feed suggestions, and they are never shown — see
+   [How search works](/docs/knowledgebase/search/search-basics).
+3. **Use the words learners use.** "IELTS", not "International English Language Testing
+   System".
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Nothing appears as I type.">
+Suggestions need a couple of characters. If still nothing, check that published,
+matching content exists.
+</Accordion>
+
+<Accordion title="Can I pin a course to the top?">
+No. Suggestions come from what matches.
+</Accordion>
+
+<Accordion title="Can I switch autocomplete off?">
+It is part of the search bar on your site.
+</Accordion>
+
+<Accordion title="Why does a course not appear until I type its full name?">
+Its distinguishing word is late in the title. Rename it so the useful word comes first.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Search basics](/docs/knowledgebase/search/search-basics) — how full search works.
-- [Filters](/docs/knowledgebase/search/filters) — narrow the full results list.
+<Cards>
+  <Card title="How search works" description="What is searched, and search keywords." href="/docs/knowledgebase/search/search-basics" />
+  <Card title="Search history" description="A learner's recent searches." href="/docs/knowledgebase/search/search-history" />
+  <Card title="Trending and popular" description="What everyone is looking for." href="/docs/knowledgebase/search/trending-and-popular" />
+</Cards>

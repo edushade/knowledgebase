@@ -1,0 +1,17 @@
+{
+  "title": "Analytics & Reports",
+  "icon": "BarChart3",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "dashboard",
+    "programmes",
+    "enrollments",
+    "progress",
+    "learners",
+    "grades",
+    "certificates",
+    "instructors",
+    "course-statistics"
+  ]
+}

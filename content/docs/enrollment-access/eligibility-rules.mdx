@@ -1,83 +1,118 @@
 ---
 title: "Eligibility Rules"
-description: "Decide who is allowed to see an offering or a specific item, based on conditions you set."
+description: "Deciding who may access a programme or an item at all — building a rule, previewing who it lets in, and the honest limitation you should know about."
 ---
 
-Eligibility rules decide **whether a learner is allowed to see content at all** — your
-audience. For example, only learners enrolled in a certain program, or only those who passed
-a certain quiz, or only members of a particular group.
+An eligibility rule answers *who*. Not when, not after what — who. "Only learners in
+Bangladesh." "Only people already enrolled in the foundation course." "Only learners
+whose profile says they are over 18."
 
-This is different from [drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling)
-and [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites), which control **when**
-content opens. Eligibility decides **who** gets to see it in the first place.
+Rules live on the **Prerequisites** tab of a programme, and on an item's **⋯** menu
+under **Access Rules**.
 
-<Callout type="warn">
-**Naming note.** In the admin screens this tab is currently labelled **"Prerequisite"**, but
-it does **not** control content order. It controls **eligibility** — who is allowed in. (True
-content sequencing lives in
-[Prerequisites / drip](/docs/knowledgebase/enrollment-access/prerequisites).)
-</Callout>
+<WhoCan roles="Admin" />
 
-## How rules are built
+## Building a rule
 
-You build a rule out of **conditions** — facts about a learner — combined into groups:
+A rule is one or more conditions. Each condition is a **field**, an **operator** and a
+**value** — "Country is one of Bangladesh, India".
 
-- **ALL (and)** — the learner must match **every** condition in the group.
-- **ANY (or)** — the learner must match **at least one** condition in the group.
+Fields are grouped so they are findable, in categories such as **User Profile**,
+**Classification**, **Contact Info**, **Enrollment**, **Activity** and **Preferences**.
+The ones you will reach for most:
 
-You can combine groups to express things like "must be in Program A **and** (passed Quiz 1
-**or** belongs to the Scholarship group)".
-
-Examples of conditions you can use:
-
-- Enrolled in a certain program.
-- Passed a certain quiz.
-- Belongs to a particular group or audience.
-
-## Where you can apply a rule
-
-| Level | What it controls |
+| Field | Useful for |
 |---|---|
-| **Whole offering** | Who can access the entire course, learning path, or cohort. |
-| **A specific item** | Who can access one particular lesson, section, or quiz. |
+| **Enrolled in Course** / **Learning Path** / **Cohort** | Requiring a learner to already be in something. |
+| **Total Enrollments** | Rules for learners with more than one programme. |
+| **Country** / **Continent** | Regional pricing, regional cohorts. |
+| **Gender** | Separate sections where your institution runs them. |
+| **Is Learner** / **Is Instructor** | Limiting content to staff. |
+| **Last Seen** / **First Seen** | Reaching dormant or new learners. |
+| **Email Verified**, **Status** | Keeping unverified accounts out. |
+
+Operators follow the kind of field: text fields offer *equals*, *contains*, *is one of*;
+numbers offer *greater than*, *between*; dates offer *before*, *in the last*; and so on.
 
 <Callout type="info">
-A rule on a whole **course or cohort** also restricts the content **inside** it. A learner
-who isn't eligible for the course can't reach its inner lessons by any route — there's no
-back door.
+These are the same fields the notification
+[audiences](/docs/knowledgebase/communication/audiences) are built from. A rule you have
+worked out for one is a rule you can reason about in the other.
 </Callout>
 
-## How to set it up
+## Preview before you save
 
-1. Open the offering (or a specific item) in **Admin** and go to the eligibility tab
-   (currently labelled **Prerequisite**).
-2. Add a condition, and choose **ALL** or **ANY** for how conditions combine.
-3. Add more conditions or groups as needed.
-4. Save.
+**Eligible Users Preview** shows who the rule currently lets in. Use it — a rule that
+reads correctly and matches nobody is the most common mistake, and the preview catches
+it in a second.
 
-Edits take effect **immediately** — there's no waiting period for a changed rule to apply.
+With no rules at all, the preview has nothing to show, because everyone is eligible.
 
-## What the learner sees
+## The honest limitation
 
-Content a learner isn't eligible for **simply doesn't appear** in their view — it's filtered
-out.
+**A learner is never told why they cannot see something.** Restricted content simply
+does not appear.
 
-<Callout type="warn">
-The learner is **not** shown a detailed reason for why something is hidden. There's no "you
-need to pass Quiz 1" message — the content just isn't there. Keep this in mind when you
-design rules, and tell learners about requirements through other channels (like an
-announcement) if they need to know.
-</Callout>
+That is good for privacy and bad for support, because from the learner's side there is
+no difference between "you are not eligible" and "this course has no content". If a rule
+is likely to exclude people who will ask, say so somewhere they can read — the course
+description, or an [announcement](/docs/knowledgebase/communication/announcements).
 
-## Reused content stays independent
+## Removing a rule
 
-Like scheduling, eligibility is **independent** between a standalone course and the same
-course reused inside a learning path. A rule you set inside the learning path doesn't change
-the standalone course, and vice versa.
+**Remove all prerequisites** deletes the saved rule, after which everyone can reach the
+content. It cannot be undone, and the screen says so before you confirm.
 
-<Callout type="info">
-To control the **order** learners move through content (rather than who can see it), use
-[prerequisites](/docs/knowledgebase/enrollment-access/prerequisites). To see how eligibility,
-scheduling, and prerequisites combine, read
-[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
-</Callout>
+## Eligibility is not drip
+
+They are easy to confuse and behave quite differently:
+
+| | **Eligibility rule** | **Drip schedule** |
+|---|---|---|
+| Asks | Who | When |
+| A held item | Does not appear | Appears, locked, with its date |
+| Changes when | The learner's details change | The clock moves |
+
+See [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="My rule matches nobody.">
+Open **Eligible Users Preview**. The usual causes are conditions that have to be true at
+once when you meant either/or, and fields that are empty for most of your learners —
+a rule on Gender excludes everyone who never filled it in.
+</Accordion>
+
+<Accordion title="A learner says the course is empty.">
+That is what an eligibility rule looks like from their side. Check the rules on the
+programme and on its items, and check the preview for whether that learner is in it.
+</Accordion>
+
+<Accordion title="Can a rule stop someone buying a course?">
+Rules govern access to content. To close a programme to purchase, use **Enrollment
+Open** on its settings, or an
+[enrolment window](/docs/knowledgebase/enrollment-access/enrollment-windows).
+</Accordion>
+
+<Accordion title="A learner met the rule and still sees nothing.">
+Something else is holding it. Work down
+[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together)
+— partial access and publishing both cause this.
+</Accordion>
+
+<Accordion title="Do rules apply to admins?">
+Rules govern the content a person can open. Your own view of the course from the builder
+is not the learner's view — always check as a learner before deciding a rule is broken.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="How access works together" description="Every rule, in the order it applies." href="/docs/knowledgebase/enrollment-access/how-access-works-together" />
+  <Card title="Prerequisites" description="Requiring one thing to be finished before another." href="/docs/knowledgebase/enrollment-access/prerequisites" />
+  <Card title="Audiences" description="The same conditions, used to choose who gets a message." href="/docs/knowledgebase/communication/audiences" />
+</Cards>

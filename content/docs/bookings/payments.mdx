@@ -1,58 +1,90 @@
 ---
-title: "Charging for Meetings"
-description: "Charge for a session — either before a student can book it, or after the booking is confirmed."
+title: "Booking Payments"
+description: "Charging for a meeting — setting a price, and what happens to a slot nobody has paid for."
 ---
 
-Meetings can be free or paid. If you charge, you choose **when** the payment is collected:
-before the booking is locked in, or after it is confirmed. Paid bookings use the same
-checkout your platform already uses for everything else.
+A meeting plan can be free or paid. Charging for consultations, tutorials and
+assessments is often the most direct money an academy makes.
 
-## Free meetings
+<WhoCan roles="Admin" />
 
-If a meeting plan has no price, booking is instant. The student picks a time, confirms, and
-the booking is **confirmed** right away — the meeting link and calendar invite are created
-automatically.
+## Setting a price
 
-## Paid meetings
+In [Pricing](/docs/knowledgebase/selling-payments/pricing), with the entity type
+**Meeting Plan**. The same options apply as anywhere else — one-time, instalment or
+free.
 
-When a meeting plan has a price, you decide the timing:
+For most meetings, one-time and lifetime access is the right shape: they are buying a
+slot, not a subscription.
 
-| Option | What happens |
-|---|---|
-| **Collect payment before booking** | The student must pay to lock in the time. Until they pay, the booking is held as **Pending**. Once payment goes through, it becomes **Confirmed**. |
-| **Collect payment after confirmation** | The booking is confirmed first, and payment is collected afterward. Useful when you invoice or settle later. |
+## The unpaid slot
 
-## Pending bookings that aren't paid
+**Pending booking expiry**, on the meeting plan, decides "how long an unpaid booking
+holds its slot".
 
-When payment is required first, the slot is held as **Pending** while the student completes
-checkout. If they do not pay within the allowed time, the booking **expires automatically**
-and the time opens back up for others. This keeps your calendar from filling with bookings
-that were never paid for.
-
-## How to add a price
-
-1. Open the meeting plan in **Admin → Bookings → Meeting Plans**.
-2. Add a **price** for the meeting.
-3. Choose when to collect it — **before booking** or **after confirmation**.
-4. Click **Save**.
-
-## What the student sees
-
-- For **pay before booking**: after choosing a time, the student is taken to checkout. The
-  time is held for them while they pay. Once paid, they see a confirmation and receive the
-  calendar invite. If they do not finish in time, they are told the hold expired and can try
-  again.
-- For **pay after confirmation**: the student is booked right away and pays afterward.
-
-<Callout type="info">
-Paid meetings use your platform's normal payment options. To set those up, see
-[Payment methods](/docs/knowledgebase/selling-payments/payment-methods).
+<Callout type="warn">
+**Set this deliberately.** Too short and somebody fetching their phone loses the slot;
+too long and one unpaid booking blocks an hour nobody else can take. Fifteen to thirty
+minutes suits most academies.
 </Callout>
 
-## Good to know
+When it expires, the slot is released and offered again.
 
-- A **Pending** booking is waiting for payment. A **Requested** booking is waiting for your
-  approval. They are different — see
-  [Group & request bookings](/docs/knowledgebase/bookings/group-and-request-bookings) and
-  [Managing bookings](/docs/knowledgebase/bookings/managing-bookings).
-- Expired pending bookings free up the slot automatically — you do not need to clean them up.
+## What you can see
+
+The booking list shows paid and unpaid bookings, and the payment appears in
+[Transactions](/docs/knowledgebase/selling-payments/transactions) like any other.
+
+**Team members to notify** on the plan covers "confirmed and paid bookings", so whoever
+takes the meeting knows it is paid before they join.
+
+## Paid and request-based together
+
+A plan can be both paid and request-based. The order is: they request, you approve, they
+pay, it is confirmed.
+
+It is the right shape for anything you may decline — an assessment interview, a
+consultation that needs the right person. It is also more steps, and some people fall
+out at each one, so use it only where approval genuinely matters.
+
+## Refunds
+
+A refunded booking follows the same path as any other refund, including the decision
+about access. See [Refunds](/docs/knowledgebase/selling-payments/refunds).
+
+For a meeting that has already happened, the question is your policy rather than the
+platform's.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A booking is confirmed but not paid.">
+Check the plan's **Payment Setting** and that the price exists. A plan with no price is
+free, whatever you intended.
+</Accordion>
+
+<Accordion title="Somebody paid and has no booking.">
+Find the transaction. If it succeeded, the booking should exist — if it does not, that
+is one to look at directly. See
+[Transactions](/docs/knowledgebase/selling-payments/transactions).
+</Accordion>
+
+<Accordion title="Can I charge different prices for the same plan?">
+A restricted price with named users gives a rate only they see. See
+[Pricing](/docs/knowledgebase/selling-payments/pricing).
+</Accordion>
+
+<Accordion title="Can a learner pay in instalments for a meeting?">
+Technically yes. For a single session it rarely makes sense.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Pricing" description="Giving a meeting plan a price." href="/docs/knowledgebase/selling-payments/pricing" />
+  <Card title="Meeting plans" description="Pending booking expiry and payment settings." href="/docs/knowledgebase/bookings/meeting-plans" />
+  <Card title="Transactions" description="Where booking payments land." href="/docs/knowledgebase/selling-payments/transactions" />
+</Cards>

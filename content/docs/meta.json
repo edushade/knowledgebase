@@ -2,6 +2,8 @@
   "root": true,
   "pages": [
     "index",
+    "---Start here---",
+    "start",
     "---Teaching---",
     "courses",
     "enrollment-access",
@@ -15,9 +17,16 @@
     "communication",
     "community",
     "bookings",
+    "---Insights---",
+    "analytics",
     "---Platform---",
+    "account-people",
+    "settings",
     "files",
     "search",
-    "account-people"
+    "---For learners---",
+    "learner",
+    "---Step by step---",
+    "how-to"
   ]
 }

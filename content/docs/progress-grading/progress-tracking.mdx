@@ -1,72 +1,120 @@
 ---
 title: "Progress Tracking"
-description: "How your platform measures each learner's progress through a lesson and rolls it up into overall course progress."
+description: "How a learner's percentage is worked out, where to see it, and why it sometimes moves when nobody did anything."
 ---
 
-Every time a learner opens a lesson, takes a quiz, or works through your content, your
-platform quietly keeps track of how far they have got. Learners see a progress bar; you
-see exactly who is on track and who has stalled.
+Progress is the share of a programme's content a learner has finished. It is a count of
+ticks, not of marks — a learner can be 100% through a course and have no result yet,
+because progress asks "did they do it?" and grading asks "how well?".
 
-## What gets tracked for each activity
+<WhoCan roles="Admin, Instructor" />
 
-Every activity has a simple status:
+## How the percentage is worked out
 
-| Status | What it means |
-|--------|----------------|
-| **Not started** | The learner has not opened it yet. |
-| **In progress** | They have started but not finished. |
-| **Completed** | They have met the [completion rule](/docs/knowledgebase/progress-grading/completion-rules) for that activity. |
+```
+progress = items finished ÷ published items that count
+```
 
-Alongside the status, your platform also records:
+Three rules decide what is in that denominator:
 
-- **Time spent** on the activity.
-- A **resume position** for video and audio, so a learner can pick up exactly where they
-  left off.
+1. **Only published items count.** An unpublished lesson is not in the course as far as
+   progress is concerned.
+2. **What "finished" means comes from the item's completion rule.** Opened, watched to a
+   point, sat, or passed. See
+   [Completion rules](/docs/knowledgebase/progress-grading/completion-rules).
+3. **Attachments do not count.** A file hanging off a lesson is an extra; a file item in
+   the outline is part of the course.
 
-## Smart video and audio tracking
+## Where to see it
 
-Video and audio are tracked carefully so progress is honest:
+| Screen | What it gives you |
+|---|---|
+| A programme's **Progress** tab | Every learner's progress through the course structure, item by item. |
+| A programme's **Statistics** tab | The shape of it — average progress, completion rate, how learners are distributed. |
+| A learner's **Overview** | One person: overall progress, lessons completed, assessments completed, time spent, active days. |
+| <Path>Analytics > Progress</Path> | The same question across your whole academy. See [Analytics](/docs/knowledgebase/analytics/progress). |
 
-- It records **which parts of the video the learner actually watched** — not just how
-  long the player was open.
-- If a learner jumps back and re-watches a section, that part is **not counted twice**.
-  Overlapping views are merged.
-- From this, it works out a true **watched percentage**.
-- When the learner returns, the video **resumes** from where they stopped.
+The figures you will meet most often:
 
-<Callout type="info">
-This means a learner cannot finish a video just by dragging the progress slider to the
-end. They have to genuinely watch it (up to whatever threshold you set in the
-[completion rule](/docs/knowledgebase/progress-grading/completion-rules)).
-</Callout>
+| Figure | What it means |
+|---|---|
+| **Overall Progress** | The learner's percentage through the programme. |
+| **Average Progress** | The mean across everyone enrolled. |
+| **Completion Rate** | The share of learners who have finished. |
+| **Lessons Completed** / **Assessments Completed** | Counts rather than percentages. |
+| **Est. Time Remaining** | What is left, from the durations you set on lessons. |
+| **Total Active Days** / **Total Time Spent** | How much the learner has actually turned up. |
 
-## How course progress adds up
+## Why progress moves on its own
 
-A course's progress percentage is simple:
+Progress is a share, so changing the denominator moves everyone:
 
-> **Course progress = items completed ÷ total available items**
+- **Unpublishing a finished item** — everyone who had finished it loses it from both
+  sides of the sum, and percentages change.
+- **Adding new content** — everyone's percentage drops, because there is more to do.
+- **Changing a completion rule** — tightening a rule can un-finish an item people had
+  already ticked.
 
-"Available items" means the lessons, quizzes, and assignments that this learner can
-actually access. Content that is hidden from them or restricted does not count for or
-against them.
+None of these is a fault. But they explain the "my progress went down" message you will
+get the day after you edit a live course.
 
-### Programs that contain other courses
+## Partial access
 
-A learning path or cohort can contain whole courses inside it. When a learner finishes
-one of those inner courses, the **parent program's progress updates right away** — there
-is no waiting and no manual refresh needed.
+A learner who bought one semester is measured against that semester, not the whole
+programme. Content they do not have is left out of both sides. See
+[Partial access](/docs/knowledgebase/enrollment-access/partial-access).
 
-## What the learner sees
+## Resetting and completing
 
-- A **progress bar** on each course showing how far along they are.
-- A clear **tick or "Completed"** marker on every lesson they have finished.
-- Their **video resuming** at the exact spot they last reached.
+From a learner's row you can:
 
-## Good to know
+- **Reset Progress** — clear their ticks for one item, or for the whole enrolment. It
+  cannot be undone.
+- **Complete Progress** — mark everything done and set the enrolment to completed.
 
-- Progress is **sticky**: once an activity is marked completed, it stays completed. Going
-  back to review it will not undo their progress.
-- When a course reaches 100%, it can trigger a completion notice and, if set up,
-  automatically issue a [certificate](/docs/knowledgebase/certificates).
-- The rule for *what counts as done* is fully in your control — see
-  [Completion rules](/docs/knowledgebase/progress-grading/completion-rules).
+Both are blunt instruments; see
+[Resetting progress](/docs/knowledgebase/enrollment-access/resetting-progress) before
+using them on someone with marks.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner is at 100% but has no certificate.">
+Progress and certificates ask different questions. A certificate usually needs a
+**pass**, not merely completion. See
+[Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
+</Accordion>
+
+<Accordion title="A learner finished a video but it is not ticked.">
+Check the lesson's **Duration** — progress is measured against the figure you typed, so
+one that is longer than the real video can never be reached. See
+[Lesson types](/docs/knowledgebase/courses/lesson-types).
+</Accordion>
+
+<Accordion title="The same lesson is in two courses. Does finishing it once count for both?">
+Yes, where it is genuinely the same content — finishing it is recorded against each
+enrolment that contains it. Marks, though, stay with the enrolment they were earned in.
+</Accordion>
+
+<Accordion title="Progress sits at 99% and will not finish.">
+Something small is unticked — usually a file item nobody opens, or a lesson with a
+percentage rule set too high. Open the learner's **Progress** view for that programme
+and look for the one row without a tick.
+</Accordion>
+
+<Accordion title="Does time spent affect progress?">
+Only where an item's completion rule is **Spend minimum time**. Otherwise time spent is
+reported but changes nothing.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Completion rules" description="What counts as finished, per item." href="/docs/knowledgebase/progress-grading/completion-rules" />
+  <Card title="Resetting progress" description="Clearing a learner's record safely." href="/docs/knowledgebase/enrollment-access/resetting-progress" />
+  <Card title="The assessment report" description="Completion across quizzes and assignments." href="/docs/knowledgebase/progress-grading/assessment-report" />
+  <Card title="Progress analytics" description="The same question across every programme." href="/docs/knowledgebase/analytics/progress" />
+</Cards>

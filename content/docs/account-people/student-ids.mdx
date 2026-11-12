@@ -1,0 +1,101 @@
+---
+title: "Student IDs"
+description: "Giving every learner an ID in your institution's own pattern — and what to do about the learners you already have."
+---
+
+A unique ID is the number your institution knows a person by — on a form, on a
+certificate, on a list. Edushade can generate one for every learner, instructor and
+admin in a pattern you choose.
+
+<WhoCan roles="Admin" />
+
+## Setting the pattern
+
+<Path>Settings > Control Panel</Path>, under **User Settings → Unique ID Generation
+Rules**. There are three, set separately:
+
+| Pattern | For |
+|---|---|
+| **Learner ID Pattern** | Learners. |
+| **Instructor ID Pattern** | Instructors. |
+| **Admin ID Pattern** | Admins and staff. |
+
+Each takes a pattern built from tokens:
+
+| Token | Becomes |
+|---|---|
+| `{YEAR}` | The year — `{YEAR:2}` gives two digits. |
+| `{MONTH}` | The month. |
+| `{RANDOM:n}` | n random characters. |
+
+So `{YEAR:2}-{MONTH}-{RANDOM:6}` gives something like `26-11-K4D9QA`.
+
+<Callout type="info">
+**Put the year in it.** An ID that says when somebody joined answers half the questions
+you would otherwise have to look up, and makes an intake obvious at a glance.
+</Callout>
+
+## Where an ID shows
+
+On the person's own record, under **Unique ID**. It can also be printed on certificates
+and transcripts by adding the field to the design — see
+[Designing a document](/docs/knowledgebase/certificates/designing-a-document).
+
+## Changing one
+
+A person's ID can be replaced with a newly generated one, or set to a specific value you
+type.
+
+| Action | What it does |
+|---|---|
+| **Generate a new one** | Replaces the current ID. The screen warns that this cannot easily be undone. |
+| **Enter a new ID** | Set one by hand — "make sure it follows your institution's guidelines". |
+
+Changing an ID that is already printed on a document leaves the document saying one
+thing and the record another, so do it early or not at all.
+
+## Learners you already have
+
+Accounts created before you set a pattern have no ID. They can be given one, following
+the pattern you have set — and where an account has no sign-up date on record, its
+first enrolment is used as the date so the ID still lands in a sensible year.
+
+Do this once, after you have settled the pattern. Doing it before means doing it twice.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner has no unique ID.">
+Their account was created before the pattern was set. Give them one from their record.
+</Accordion>
+
+<Accordion title="Can two people get the same ID?">
+Use enough random characters. `{RANDOM:2}` on a thousand learners will collide;
+`{RANDOM:6}` will not.
+</Accordion>
+
+<Accordion title="Can I use our existing ID numbers?">
+Yes — set each person's ID by hand to the number you already use. There is no bulk
+import for that, so it suits a small institution or a fresh intake.
+</Accordion>
+
+<Accordion title="Does the ID appear on certificates?">
+Only if you put the field on the design. The certificate *number* is a separate thing —
+see [Issuing certificates](/docs/knowledgebase/certificates/issuing-certificates).
+</Accordion>
+
+<Accordion title="Can learners see or change their own ID?">
+They can see it. Whether they can change it depends on **Locked Profile Fields** — and
+an ID learners can edit is not an ID.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="The Control Panel" description="Where the patterns are set." href="/docs/knowledgebase/settings/control-panel" />
+  <Card title="Adding people" description="Getting learners onto your platform." href="/docs/knowledgebase/account-people/adding-people" />
+  <Card title="Designing a document" description="Printing the ID on a certificate or transcript." href="/docs/knowledgebase/certificates/designing-a-document" />
+</Cards>

@@ -1,100 +1,168 @@
 ---
-title: "People & Roles"
-description: "Find and manage everyone on your platform, and control what each team member is allowed to do."
+title: "People and Roles"
+description: "What each member of your team can do — building a role, limiting it to their own programmes, and checking what it actually opens."
 ---
 
-As an admin, you have a single place to manage everyone on your platform — learners,
-instructors, and fellow admins. You can also set up **roles** that control what each team
-member is allowed to do.
+Everyone on your platform has an account. What they can *do* comes from their **role**.
 
-## Managing people
+Two separate things decide what somebody sees, and confusing them is the single
+commonest support question about staff:
 
-Go to **Admin → Users** to see everyone on your platform. From there you can search,
-filter, view, create, edit, and remove people.
-
-### Finding people
-
-A rich set of filters helps you find exactly who you're looking for:
-
-| Filter by | Examples |
+| | Decides |
 |---|---|
-| **Status** | Active, pending, inactive, suspended. |
-| **Type** | Learner, instructor, admin. |
-| **Verification** | Whether email or phone is confirmed. |
-| **Location** | Country, state, or city. |
-| **Dates** | When they joined or were last active. |
+| **Learner / Instructor / Admin** marks | What kind of person they are — whether they can enrol, whether they can be put on a programme as an instructor. |
+| **Role** | What they are actually allowed to open and change. |
 
-### Creating and editing people
+Marking somebody as an instructor does not let them do anything. Their role does.
 
-1. Go to **Admin → Users**.
-2. Click **New** to add a person, or open someone and click **Edit**.
-3. Fill in their details and **Save**.
+<Screenshot
+  src="/kb/account-people/roles-list.png"
+  alt="The roles list, with each role's permissions, how many people hold it and its status."
+  caption="The Users column is the one to check before you change a role — it is how many people the change reaches."
+/>
 
-<Callout type="info">
-Accounts you create from the admin area are **active immediately** — the person can sign
-in right away without a verification step.
+<WhoCan roles="Admin" />
+
+## The people lists
+
+<Path>People</Path> holds five views of the same people:
+
+| View | Who is in it |
+|---|---|
+| **All Users** | Everyone. |
+| **Learners** | People marked as learners. |
+| **Instructors** | People marked as instructors. |
+| **Admins & Staff** | Your team. |
+| **Roles & Permissions** | The roles themselves. |
+
+## Building a role
+
+<Path>People > Roles & Permissions</Path>, then create one.
+
+| Field | What it is |
+|---|---|
+| **Name** | What the role is called. Required. |
+| **Permissions** | What it allows. Search them — "lesson", "quiz.create", "manage". |
+| **Status** | **Active** or **Inactive**. |
+
+<Callout type="warn">
+**You cannot grant a permission you do not hold yourself.** That is deliberate — it
+stops somebody building a role more powerful than their own and then assigning it to
+themselves.
 </Callout>
 
-### Friendly IDs
+Rather than starting from nothing, **clone** a role that is close and adjust it.
 
-Every person gets an easy-to-read ID based on their type — for example **STU-001** for a
-student or **INS-002** for an instructor. These make people simple to reference in
-support, reports, and conversations.
+## Limiting a role to its own programmes
 
-### Bulk actions
+A role can be switched, in one action, between:
 
-When you have many people to handle at once:
+- **Only the programmes they are assigned to** — an instructor sees their own batches.
+- **Every programme** — academy-wide.
 
-| Action | What it does |
+This applies to every permission in the role that can be limited, at once. It is the
+difference between a teacher and a head of department, and it is one click rather than
+thirty.
+
+A limited role is also refused a few academy-wide screens — the
+[instructor comparison](/docs/knowledgebase/analytics/instructors), for instance, which
+needs the whole picture by definition.
+
+## Checking what a role actually opens
+
+**Preview access** shows *"which admin pages this permission set can open right now"*,
+and where a page is only partly available it tells you which permissions are missing to
+make it whole.
+
+Use it every time you build a role. A role that looks right and opens nothing is the
+normal first attempt — a page usually needs the permission to *list* as well as the
+permission to *view*.
+
+## Seeing what a role allows, without editing it
+
+**View permissions** on any role opens a read-only view. You do not need permission to
+*edit* roles to use it, which matters — "what can this person actually do?" is a question
+people ask far more often than they change anything.
+
+It reads in plain words, not in code: **View Courses**, not `course.view`, grouped by the
+area each one belongs to. Beside the role it says whether it covers the **Whole academy**
+or is **Limited to assigned programmes**.
+
+Super admin is described rather than listed: *"Super admin can do everything in this
+academy, including anything added later."*
+
+## Exporting your roles
+
+**Export** gives you one role, or every role, as a spreadsheet — the permission grid,
+with each permission named the way the role form names it and grouped by area.
+
+Two things it is genuinely useful for:
+
+- **An audit or an inspection.** "Show us who can change grades" is a download rather
+  than a morning of screenshots.
+- **Reviewing access with somebody who does not have a login.** A spreadsheet can be read
+  by the person who owns the risk, not just by whoever has admin.
+
+## Assigning a role
+
+From a person's record, **Assign Roles**. From the role, its **Members** list and
+**Change role** for several people at once.
+
+A person can hold more than one role, and holds the sum of what they allow.
+
+## System roles
+
+Some roles are built in and cannot be deleted. You can see what they hold and assign
+them; the platform keeps them intact so an academy cannot lock itself out.
+
+## Roles worth having
+
+| Role | Allowed to |
 |---|---|
-| **Export to spreadsheet (CSV)** | Download a list of the selected (or filtered) people for your records or reporting. |
-| **Bulk delete** | Remove many people at once. |
+| **Instructor** | See and teach their own programmes; mark work. |
+| **Course builder** | Create and edit content; no access to people or money. |
+| **Registrar** | Enrolments, transfers, progression; no content editing. |
+| **Finance** | Billing, transactions, refunds; nothing else. |
+| **Support** | Read people and enrolments; change very little. |
 
-## Roles & permissions
+Start narrow. Widening a role when somebody asks is easy; discovering that everyone has
+been able to delete courses is not.
 
-Roles let you decide **what each team member is allowed to do**. Instead of setting this
-person by person, you build a role once and assign it to anyone who should have that
-level of access.
+## Common questions
 
-A few examples of roles you might create:
+<Accordions type="single">
 
-- **Course Admin** — can manage courses and content, but not billing.
-- **Moderator** — can manage discussions and comments only.
-- **Support** — can view people and help them, but not change settings.
+<Accordion title="A colleague says a page is empty or refuses them.">
+Open **Preview access** on their role. The usual cause is holding the permission to view
+one thing but not to list them — a list page needs the list permission.
+</Accordion>
 
-### How roles work
+<Accordion title="An instructor cannot see their own course.">
+Three things: are they marked as an **Instructor**; does their role allow opening
+courses; and are they actually on that programme's instructor or staff list. All three.
+</Accordion>
 
-1. **Create a role** and give it a clear name.
-2. **Choose what it can do** — pick the allowed actions, neatly grouped by area (for
-   example, people, courses, payments).
-3. **Assign the role** to the right team members.
+<Accordion title="I cannot give somebody a permission I can see.">
+You do not hold it yourself. Someone who does has to grant it.
+</Accordion>
 
-That's it — anyone with that role can do exactly what the role allows, and nothing more.
+<Accordion title="Can a role be limited to one batch?">
+It can be limited to the programmes a person is assigned to. Put them on that batch and
+nothing else, and that is what they see.
+</Accordion>
 
-### Cloning a role
+<Accordion title="What happens if I deactivate a role?">
+The people holding it lose what it allowed. Check the role's **Members** first — a
+deactivated role with twelve people on it is twelve colleagues locked out.
+</Accordion>
 
-Need a role that's almost the same as one you already have? **Clone** it to copy all its
-allowed actions, then adjust the copy. This saves setting everything up from scratch.
-
-### Individual exceptions
-
-Sometimes one person needs a little more (or less) than their role gives. You can grant a
-**one-off exception** to a specific person — handy for a temporary need without creating a
-whole new role.
-
-<Callout type="info">
-Keep it simple: most teams need only a handful of roles. Start with the few that match
-how your team actually works, and add more only when a real need comes up.
-</Callout>
-
-## What people see
-
-Team members only see the parts of the admin area their role allows. Buttons and menus
-they can't use are simply hidden, so the platform stays clean and uncluttered for
-everyone.
+</Accordions>
 
 ## Related pages
 
-- [Support login](/docs/knowledgebase/account-people/support-login) — step into a person's account to help them.
-- [Activity history](/docs/knowledgebase/account-people/activity-history) — see what your team has done.
-- [Security](/docs/knowledgebase/account-people/security) — growth stats and account protection.
+<Cards>
+  <Card title="Adding people" description="Creating the accounts roles are assigned to." href="/docs/knowledgebase/account-people/adding-people" />
+  <Card title="Instructors and staff" description="Putting somebody on a programme." href="/docs/knowledgebase/courses/instructors" />
+  <Card title="Support login" description="Seeing the platform as one of your people." href="/docs/knowledgebase/account-people/support-login" />
+  <Card title="Activity history" description="What was done, and by whom." href="/docs/knowledgebase/account-people/activity-history" />
+</Cards>

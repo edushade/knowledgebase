@@ -1,52 +1,93 @@
 ---
-title: "Terms & Periods"
-description: "Split a long program into semesters, weeks, or custom periods to organize content and get a grade for each period."
+title: "Terms and Periods in Grading"
+description: "How a term's result is worked out, what belongs to it, and the one mistake that produces a strange semester mark."
 ---
 
-A **term** (or period) is a time-based divider inside a program — think "Semester 1",
-"Week 3", or "Month 2". Terms help you organize a long course into manageable chunks and
-get a separate grade, or GPA, for each chunk.
+When a batch is divided into [terms](/docs/knowledgebase/courses/terms-and-breakpoints),
+each term produces a result of its own beside the overall one. A learner's record then
+reads "Semester 1: 78%, Semester 2: 81%, Overall: 79%".
 
-They are most useful in **cohort-style programs**, where everyone moves through the
-material together on a schedule.
+<WhoCan roles="Admin, Instructor" />
 
-## What terms do for you
+## What belongs to a term
 
-- **Organize content** into clear stretches of time instead of one long list.
-- **Group grades by period**, so each term has its own GPA.
-- **Show learners where they are** in a longer journey.
+**A term's result counts only what sits inside it.** Its subjects, its assessments, its
+weights. Nothing else.
 
-## Creating terms
+That gives three cases worth knowing:
 
-You split a date range into periods. Choose how the range is divided:
+| Where the content sits | Counts towards the term? | Counts towards the overall result? |
+|---|---|---|
+| Inside the term | Yes | Yes |
+| Outside every term | No | Yes |
+| Inside a *different* term | No — it counts there | Yes |
 
-| Option | Result |
-|--------|--------|
-| **Monthly** | One period per month. |
-| **Biweekly** | One period every two weeks. |
-| **Weekly** | One period per week. |
-| **Custom** | Periods of your own design. |
+<Callout type="warn">
+**Content outside every term is the usual cause of a strange semester result.** A quiz
+sitting above the first breakpoint, or in the gap between two of them, shows on the
+overall result and on no semester. Keep anything that should be marked inside the term
+it belongs to.
+</Callout>
 
-For example, take a six-month program and split it into six monthly terms, or into
-twenty-four weekly terms — whatever fits how you teach.
+## A subject in two terms
 
-## How a term completes and gets graded
+If the same course sits under Semester 1 and Semester 2, each semester counts only the
+part under it. The learner is not marked twice, but neither semester sees the whole
+subject, and both results look wrong.
 
-- A term **completes** when all of the content inside it is complete.
-- The grades from that term's assessments **roll up into a term GPA**.
-- If you have set [weights](/docs/knowledgebase/progress-grading/weighted-grading) on the
-  assessments, the term GPA uses those weights. If not, it is a simple average.
+Put a subject in one term. If it genuinely spans two, split it into two subjects.
 
-## What the learner sees
+## The overall result is not an average of the terms
 
-- Their content is grouped under each term name (for example, **Semester 1**, **Semester 2**).
-- As they finish a term's content, that term shows as complete.
-- A learner's [marksheet](/docs/knowledgebase/progress-grading/marksheets) for a cohort
-  program shows a GPA for each term, not just one overall grade.
+Semester results do not add up to the final result, and they are not meant to. The final
+result is calculated from the programme's subjects and their weights across the whole
+thing. A term with two subjects and a term with eight do not count equally.
 
-## Good to know
+## Releasing a term's result
 
-- Terms are mainly a feature of cohort programs, where the schedule is the same for everyone.
-- A term's GPA is built from the same grading rules as the rest of the program — see
-  [Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes) and
-  [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+Each term carries its own **Transcript available from** date. Leave it empty and the
+term's own end date is used. That is what lets Semester 1 results go out in April while
+Semester 2 is still running.
+
+A term also has a status: an unpublished term keeps its results back entirely.
+
+## Terms and progression
+
+At the end of a term you decide, per learner, whether they go up or repeat. The rules
+read the term's result and the pass line from the grading scheme. See
+[Progression](/docs/knowledgebase/enrollment-access/progression).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A semester shows no result but the learner has marks.">
+Either the content they were marked on is not inside that term, or the term's results
+are being withheld — by its date, by being unpublished, or by an assessment whose
+result has not been released.
+</Accordion>
+
+<Accordion title="A semester reads Pending with a subject count beside it.">
+That is deliberate. The count tells the learner how many subjects the semester holds
+while its results are still held back — more honest than a blank or a zero.
+</Accordion>
+
+<Accordion title="I moved a quiz into a term. Do old marks follow it?">
+Yes — marks already recorded against that quiz are counted in the term once the quiz is
+inside it. Run **Calculate All Grades** so the semester result is rebuilt.
+</Accordion>
+
+<Accordion title="Can a self-paced course have terms?">
+No. Terms are dated periods inside a batch, and a self-paced course has no dates to
+divide.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Terms and semesters" description="Creating terms and setting their dates." href="/docs/knowledgebase/courses/terms-and-breakpoints" />
+  <Card title="GPA and results" description="How semester and final results are formed." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+  <Card title="Progression" description="Who moves up at the end of a term." href="/docs/knowledgebase/enrollment-access/progression" />
+</Cards>

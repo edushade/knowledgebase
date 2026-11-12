@@ -1,52 +1,111 @@
 ---
 title: "Blog"
-description: "Publish blog posts with featured images, authors, tags, hierarchical categories, and related posts — in more than one language."
+description: "Posts on your site — switching the blog on, how posts are displayed, and what to write."
 ---
 
-A blog is a great way to share news, tips, and stories, and to bring visitors to your
-site. You can write posts, give each one a featured image and author, organize them with
-tags and categories, and show related posts to keep readers reading.
+A blog is how people who have never heard of you arrive. For a course business it is
+usually the cheapest traffic there is.
 
-## What a post can have
+<Path>Configure > Website</Path>, under posts and blog settings.
 
-| Part | What it does |
+<WhoCan roles="Admin" />
+
+## Switching it on
+
+| Setting | What it does |
 |---|---|
-| **Title and content** | The headline and the body of the post. |
-| **Languages** | Write the post in more than one language so each reader sees it in theirs. |
-| **Featured image** | The main picture shown at the top and in listings. |
-| **Authors** | Who wrote the post. |
-| **Tags** | Short keywords for grouping related posts. |
-| **Categories** | Bigger groupings that can nest — a category can sit inside another. |
-| **Related posts** | Other posts to suggest at the end. |
+| **Enable Blog** | Turns the blog on. |
+| **Blog Page URL** | Where it lives — `/blog`. |
+| **Posts Per Page** | How many before paging. |
+| **URL Structure** | **Path-based** (`/blog/page/2`) or **query-based** (`/blog?page=2`). |
 
-Featured images come from your [Files & Media](/docs/knowledgebase/files) library.
+## A post
 
-## How to write a post
+| Field | What it is |
+|---|---|
+| **Post Content** | The writing. |
+| **Post Metadata** | Title, description, slug. See [SEO](/docs/knowledgebase/website/seo). |
+| **Categories** and **Tags** | How posts are grouped. |
+| **Author** | Who wrote it. |
+| **Published Date** | When it went out. |
+| **Post Preview** | What it looks like before publishing. |
 
-1. Go to **Admin → Website → Blog** and click **New Post**.
-2. Add a **title** and write the **content**.
-3. Choose a **featured image**.
-4. Set the **author(s)**.
-5. Add **tags** and pick a **category** (you can nest categories for structure).
-6. Choose any **related posts** to suggest.
-7. Add other languages if you run a multi-language site.
-8. **Publish** when ready — see [Publishing](/docs/knowledgebase/website/publishing).
+## How posts are displayed
 
-## Categories and tags
+| Setting | Choices |
+|---|---|
+| **Post Layout** | **List View**, **Masonry**, **Infinite scroll** |
+| **Show Author**, **Show Categories**, **Show Tags** | What appears with each post |
+| **Related Posts to Display** | How many at the end |
+| **Enable Social Sharing** | Share buttons |
+| **Enable RSS Feed** | A feed of your posts |
 
-- **Categories** are your main groupings, and they can nest — for example "Study Tips"
-  could contain "Exam Prep". Use them as the backbone of your blog.
-- **Tags** are lighter, free-form keywords. A post can carry several tags.
+Related posts matter more than they look: somebody who read one thing is the most likely
+person to read a second.
 
-## Good to know
+## Comments
 
-- You can set where your blog lives and how many posts show per page — see
-  [Navigation & menus](/docs/knowledgebase/website/navigation-menus).
-- Strong titles and descriptions help your posts appear in search — see
-  [Search visibility (SEO)](/docs/knowledgebase/website/seo).
+| Setting | Choices |
+|---|---|
+| **Comment System** | **Native Comments**, **Disqus**, **Facebook Comments** or **Disabled** |
+| **Require Comment Approval** | Nothing appears until you approve it |
+| **Spam protection** | Guards against automated comments |
+
+If you enable comments, turn on approval. A blog with spam comments looks abandoned.
+
+## What to write
+
+The posts that bring a course business traffic are the questions people ask **before**
+they buy:
+
+- "How long does it take to get IELTS 7?"
+- "What is the difference between a certificate and a diploma?"
+- "Can I learn web development without a degree?"
+
+Each of those is something somebody types into a search engine, and each ends naturally
+at one of your courses.
+
+What does not work: announcements about your academy. Nobody searches for those.
+
+## Showing posts elsewhere
+
+A **Posts** block puts your latest writing on any page — your homepage, a course page,
+a category page. See [Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The blog page is empty.">
+**Enable Blog** is off, no posts are published, or the blog page URL points somewhere
+else.
+</Accordion>
+
+<Accordion title="Can several people write posts?">
+Yes, with the right role. Each post carries its author. See
+[People and roles](/docs/knowledgebase/account-people/people-and-roles).
+</Accordion>
+
+<Accordion title="Can posts be in more than one language?">
+Each field can be written in each of your site's languages. See
+[Languages](/docs/knowledgebase/website/languages).
+</Accordion>
+
+<Accordion title="Can I schedule a post?">
+Set its published date in the future.
+</Accordion>
+
+<Accordion title="Do posts help us appear in search?">
+More than any other single thing you can do, if they answer questions people actually
+ask. See [SEO](/docs/knowledgebase/website/seo).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Languages](/docs/knowledgebase/website/languages) — write posts in more than one language.
-- [Search visibility (SEO)](/docs/knowledgebase/website/seo) — help posts get found.
-- [Files & Media](/docs/knowledgebase/files) — manage featured images.
+<Cards>
+  <Card title="SEO" description="Making posts findable." href="/docs/knowledgebase/website/seo" />
+  <Card title="Pages and blocks" description="Showing posts elsewhere on your site." href="/docs/knowledgebase/website/pages-and-blocks" />
+  <Card title="Forms and leads" description="Turning a reader into a contact." href="/docs/knowledgebase/website/forms-and-leads" />
+</Cards>

@@ -1,54 +1,96 @@
 ---
-title: "Instructors"
-description: "Assign teachers and assistants to your courses, paths, and cohorts, and feature them publicly."
+title: "Instructors and Staff"
+description: "Who teaches a programme, who helps run it, and what each of them can see."
 ---
 
-Instructors are the people who teach. You can assign them to any course, learning path,
-or cohort, give each one a role, and feature your best teachers so learners can discover
-them.
+Two different lists decide who is attached to a course, batch, learning path or event.
+**Instructors** are the people whose names learners see. **Staff** are everyone else who
+helps run it.
 
-## Instructor roles
+<WhoCan roles="Admin" />
 
-When you assign someone, you choose a role:
+## Instructors
 
-| Role | Typical use |
+Instructors are set on the programme itself — step 1 of a course or learning path, and
+in the batch form for a cohort. **At least one is required**, and the form will not save
+without one.
+
+Learners see instructors on the course page and in the catalogue. On an **event** the
+same list is shown as **Speakers**.
+
+## Staff
+
+Staff are added from the programme's **Staff** screen, and are not shown to learners.
+Each person is given one relation:
+
+| Role | Who it is for |
 |---|---|
-| **Instructor** | The main teacher leading the course. |
-| **Co-instructor** | A second teacher sharing the lead. |
-| **Assistant** | A helper supporting the class — answering questions, grading, and so on. |
+| **Coordinator** | Runs the batch day to day — schedules, chases, keeps it on track. |
+| **Support** | Answers learners' questions. |
+| **Assistant** | Helps with marking and content. |
+| **Mentor** | Attached to learners rather than to the material. |
 
-You can assign more than one person, and mix roles — for example, one instructor and two
-assistants.
+These labels describe the *job*, not the permissions. What a person can actually do
+comes from their role — see
+[People and roles](/docs/knowledgebase/account-people/people-and-roles). Adding someone
+as an Assistant does not by itself let them mark anything.
 
-## How to assign an instructor
+## Where staff are set
 
-1. Open the course, learning path, or cohort you want.
-2. Go to its **Instructors** area.
-3. Click **Add Instructor** and choose the person.
-4. Pick their **role**: instructor, co-instructor, or assistant.
-5. Optionally turn on **Featured** to highlight them publicly.
-6. Click **Save**.
+| Programme | Where |
+|---|---|
+| Course | The course's **Staff** screen |
+| Batch | The batch's **Staff** screen |
+| Learning path | The path's **Staff** screen |
+| Event | The event's **Staff** screen |
 
-## Featuring instructors
+A batch can have different staff from its course. That is the point: the June batch's
+coordinator need not be the September one's.
 
-Mark an instructor as **featured** to highlight them. Your platform also has a public
-list of instructors, so learners can browse and discover the people who teach. Featuring
-your strongest teachers helps attract enrollments.
+## My Programmes
 
-## What the learner sees
+Anyone marked as an instructor gets **My Programmes** at the top of the Teach menu. It
+lists only the programmes they are attached to — as instructor, speaker or staff — with
+**Your role**, what they are **Part of**, and how many **Learners** are in it.
 
-Learners see the assigned instructors on the course, path, or cohort page. Featured
-instructors appear in your platform's public instructor list, where learners can browse
-teachers and the courses they offer.
+For someone who teaches two batches out of your forty courses, this is the only list
+they need. An admin who teaches nothing sees it empty, which is why it only appears for
+people marked as instructors.
 
-## Tips
+## Common questions
 
-- Assign at least one instructor to every offering so learners know who teaches it.
-- Use assistants for large classes so questions and grading get covered.
-- Feature your most experienced or popular teachers to build trust with new learners.
+<Accordions type="single">
+
+<Accordion title="The Instructors box is empty and I cannot save the course.">
+Nobody on your team is marked as an instructor yet. Instructor is a property of the
+person, set on their account — not something you can grant from inside the course form.
+See [People and roles](/docs/knowledgebase/account-people/people-and-roles).
+</Accordion>
+
+<Accordion title="An instructor says they cannot see their course.">
+Check two things. First, are they actually on that programme's instructor or staff list?
+Second, does their role carry permission to open courses at all? Being named on a course
+and being allowed to open courses are separate, and both are needed.
+</Accordion>
+
+<Accordion title="Can an instructor only see their own learners?">
+Yes — that is what **My Programmes** does, and the screens behind it are limited to the
+programmes they are on. Note that a few academy-wide screens, such as the instructor
+comparison in Analytics, are refused to someone limited to their own programmes.
+</Accordion>
+
+<Accordion title="What is the difference between an instructor and a Mentor?">
+An instructor teaches the programme and learners see their name. A mentor is attached to
+help learners and is not shown publicly. Use instructor for the person delivering the
+course.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Creating a course](/docs/knowledgebase/courses/creating-a-course) — assign instructors as you build.
-- [Cohorts](/docs/knowledgebase/courses/cohorts) — each cohort can have its own instructors.
-- [People and roles](/docs/knowledgebase/account-people/people-and-roles) — what each team member can do.
+<Cards>
+  <Card title="People and roles" description="What each team member is allowed to do." href="/docs/knowledgebase/account-people/people-and-roles" />
+  <Card title="Cohorts and batches" description="Setting different staff per intake." href="/docs/knowledgebase/courses/cohorts" />
+  <Card title="Instructor analytics" description="Comparing how colleagues mark and how their learners do." href="/docs/knowledgebase/analytics/instructors" />
+</Cards>

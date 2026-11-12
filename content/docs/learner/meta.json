@@ -1,0 +1,20 @@
+{
+  "title": "The Learner Experience",
+  "icon": "GraduationCap",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "learner-dashboard",
+    "my-courses",
+    "taking-a-lesson",
+    "saved",
+    "assignments",
+    "exams",
+    "results-and-certificates",
+    "my-calendar",
+    "notices-and-notifications",
+    "payment-history",
+    "profile-and-settings",
+    "report-a-problem"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "title": "Settings",
+  "icon": "Settings",
+  "defaultOpen": true,
+  "pages": ["index", "control-panel", "integrations", "holidays"]
+}

@@ -1,0 +1,93 @@
+---
+title: "Grade Analytics"
+description: "The spread of results across your academy — and how to tell a hard course from a badly built one."
+---
+
+A distribution of results tells you things an average cannot. This screen shows what
+grades are actually being awarded, and where.
+
+<WhoCan roles="Admin, Instructor" />
+
+## What is on it
+
+| View | What it shows |
+|---|---|
+| **Spread of Results** | Overall grades in bands of ten points. |
+| **Grades Awarded** | How many results got each grade, highest first. |
+| **At or above the pass mark** | The share of results that passed. |
+| **Average**, **Median** | The middle, two ways. |
+
+Average and median together are more useful than either alone. When the average is well
+below the median, a small group of very low results is pulling it down — usually
+learners who never started and were marked as zero.
+
+## Reading the shape
+
+| Shape | What it usually means |
+|---|---|
+| A bulge near the pass mark | The pass line is doing its job, or the marking is drifting towards it. |
+| Everybody above 90 | The assessments are too easy, or the completion rules are too loose. |
+| Two humps | Two groups — often learners who did the work and learners who did not. |
+| A spike at zero | Unmarked work counted as zero, not genuine failures. |
+
+<Callout type="warn">
+**A spike at zero is usually a setting, not a cohort.** With **Treat Ungraded Items as
+Zero** on, every learner with outstanding work is counted at or near zero. Check that
+before concluding anything about teaching. See
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+</Callout>
+
+## Before you trust the numbers
+
+Three things can make the distribution misleading:
+
+1. **Rounding.** A grade is matched to its band after rounding, so a pass line at 50
+   with rounding set to nearest passes everyone on 49.5. See
+   [Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision).
+2. **Different schemes.** Two programmes on different grading schemes do not share a
+   scale. Narrow to one programme before comparing.
+3. **Unreleased results.** Held results are not here yet, so a distribution read the day
+   after an exam is incomplete.
+
+## What to do about a bad distribution
+
+- **Everyone passing** — look at the quiz analytics per question. Questions everybody
+  gets right are not measuring anything. See
+  [Quiz analytics](/docs/knowledgebase/assessments/quiz-analytics).
+- **Everyone failing one assessment** — check the answer key before you conclude
+  anything about the learners. See
+  [Question reports](/docs/knowledgebase/assessments/question-reports).
+- **A hump at the bottom** — check whether those learners ever started, on
+  [Progress](/docs/knowledgebase/analytics/progress).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The academy-wide distribution looks meaningless.">
+It usually is. Programmes on different schemes and different subjects do not share a
+scale. Filter to one programme.
+</Accordion>
+
+<Accordion title="Why is a learner missing from the distribution?">
+They have no final result — nothing marked, or their results are held.
+</Accordion>
+
+<Accordion title="The pass rate here does not match the certificates issued.">
+They are different questions. Passing is one of six gates a certificate has to clear.
+See [Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
+</Accordion>
+
+<Accordion title="Can I export this?">
+Yes. The lists on the analytics screens export.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Grading schemes" description="The bands this distribution is drawn against." href="/docs/knowledgebase/progress-grading/grading-schemes" />
+  <Card title="Quiz analytics" description="Per-question figures behind a bad distribution." href="/docs/knowledgebase/assessments/quiz-analytics" />
+  <Card title="Certificates" description="What was actually awarded." href="/docs/knowledgebase/analytics/certificates" />
+</Cards>

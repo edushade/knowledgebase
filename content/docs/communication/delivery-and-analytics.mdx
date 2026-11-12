@@ -1,71 +1,112 @@
 ---
-title: "Delivery & Analytics"
-description: "See what was delivered, opened, and clicked across your messaging — plus unsubscribe, suppression, and consent tools."
+title: "Delivery and Analytics"
+description: "What happened to every message you sent — and how to tell a problem on your side from one on theirs."
 ---
 
-This page is your view into how your messaging is doing and how to stay compliant. You can
-see what reached people, what they opened, and what they clicked — and you have the tools
-to honor opt-outs and keep proper consent records.
+A message sent is not a message received. Three screens under
+<Path>Notifications > Monitoring</Path> tell you which.
 
-## Delivery and engagement at a glance
+<WhoCan roles="Admin" />
 
-You get results at two levels:
+## The three views
 
-| Level | What it shows |
+| Screen | What it shows |
 |---|---|
-| **Per campaign** | Results for one specific [campaign](/docs/knowledgebase/communication/campaigns). |
-| **Platform-wide** | The big picture across all your sending. |
+| **System Notifications** | Messages the platform sent by itself — verification, enrolment, payment. |
+| **Campaign Notifications** | Messages from campaigns you sent. |
+| **Delivery Logs** | Every attempt, with what happened. |
 
-The key numbers you can track:
+A campaign also has its own analytics, for just that send.
 
-- **Delivered** — how many messages reached people.
-- **Opened** — how many were opened.
-- **Clicked** — how many people clicked a link inside.
-- **Bounced** — how many could not be delivered.
+## Reading a delivery log
 
-You can also see:
-
-- A **channel breakdown** — compare email vs SMS vs push vs chat apps.
-- A **timeline** — how activity built up over time.
-- An **export** — download the figures to a spreadsheet for your own records.
-
-## Delivery logs
-
-Beyond the totals, you can look at a record of individual messages to see what happened to
-each one — whether it was sent, delivered, opened, or clicked. This is useful when a learner
-says they did not receive something and you want to check.
-
-## Compliance tools
-
-Staying compliant keeps your messages trusted and delivered. Your platform includes:
-
-| Tool | What it does |
+| Field | What it tells you |
 |---|---|
-| **One-click unsubscribe** | A link in your messages that lets a recipient opt out instantly, with no sign-in needed. |
-| **Suppression list** | A list of people who should never be messaged — opt-outs are added here so they are not contacted again by mistake. |
-| **Consent & retention controls** | Settings to record that people agreed to be contacted, and to control how long message records are kept. |
+| **Recipient** | Who it was for. |
+| **Channel** | Email, SMS, push, in-app. |
+| **Provider** | Which service carried it. |
+| **Status** | **Sent**, **Delivered**, **Not delivered**. |
+| **Attempts** | How many times it was tried. |
+| **Error** | Why it failed. |
+| **Sent At** | When. |
+
+**Sent** and **Delivered** are different. Sent means handed to the service; delivered
+means it arrived. The gap between the two is where problems live.
+
+## Telling the two kinds of problem apart
+
+| What you see | Whose problem |
+|---|---|
+| Nothing sent at all | **Yours.** No service connected, or it is switched off. |
+| Sent, not delivered, many recipients | **Yours.** Rate limits, or the service rejecting you. |
+| Sent, not delivered, one recipient | **Theirs.** A bad address, a full mailbox, a dead number. |
+| Delivered but they say otherwise | **Theirs.** Spam folder. |
+| Nothing sent to one person | **Their preferences.** They switched that channel off. |
 
 <Callout type="info">
-When someone unsubscribes, they are added to the suppression list automatically. From then
-on, your campaigns skip them — you do not have to remember to remove them yourself.
+Check this before replying to "I never got the email". It takes a minute and it answers
+the question properly — "it was delivered at 14:12, please check spam" rather than a
+guess.
 </Callout>
 
-## How to view your results
+## What to watch
 
-1. Go to **Admin → Communication → Analytics** for the platform-wide view.
-2. Or open a single campaign and view its **Results** tab for that campaign's numbers.
-3. Use **Export** to download a spreadsheet.
+**Not delivered, rising.** Something changed — a service's limits, your sending
+reputation, a credential. Catch it in a week, not a term.
 
-## What the learner sees
+**Attempts above one.** Messages are being retried. Occasional is normal; routine means
+a service that is struggling.
 
-- A clear unsubscribe option in marketing messages.
-- Once they opt out, the messaging stops — they will not keep getting the same campaigns.
+**A channel at zero.** Nothing is going out on it. Usually a service switched off, and
+usually discovered far too late.
 
-## Good to know
+## Before an intake
 
-- Watch **bounces**: a rising bounce rate often means out-of-date addresses or numbers, and
-  hurts how often your messages get delivered.
-- Compare the **channel breakdown** to learn where your audience actually pays attention, then
-  focus your effort there.
-- Keeping the suppression list and consent records in good shape protects your sender
-  reputation and keeps you compliant.
+Four things, every time:
+
+1. Send a test on each channel you use.
+2. Check nothing is at zero.
+3. Check the rate limits against what you are about to send.
+4. Register a test account and go through it — verification, welcome, the lot.
+
+An academy that skips this discovers on registration day that no verification emails are
+going out, and loses the intake.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner says they never got the verification email.">
+Find it in the delivery logs. **Delivered** means spam folder. **Not delivered** with an
+error means the address. Nothing at all means your sending service.
+</Accordion>
+
+<Accordion title="A campaign shows fewer sent than the audience size.">
+Learners who switched that channel off are not sent to. The gap is usually preferences,
+not failure.
+</Accordion>
+
+<Accordion title="Everything stopped at once.">
+A service's credentials or limits. Run its connection test — see
+[Channels](/docs/knowledgebase/communication/channels).
+</Accordion>
+
+<Accordion title="Can I resend to the ones that failed?">
+Build an audience of those recipients and send again. Fix the cause first, or they will
+fail the same way.
+</Accordion>
+
+<Accordion title="How long are logs kept?">
+Long enough for the question in front of you, not forever. Export anything you need to
+keep.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Channels" description="Connecting and testing a sending service." href="/docs/knowledgebase/communication/channels" />
+  <Card title="Campaigns" description="The sends these logs record." href="/docs/knowledgebase/communication/campaigns" />
+  <Card title="Notification preferences" description="What learners can switch off." href="/docs/knowledgebase/communication/notification-preferences" />
+</Cards>

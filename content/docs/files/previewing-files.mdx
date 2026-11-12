@@ -1,46 +1,80 @@
 ---
 title: "Previewing Files"
-description: "View images, PDFs, video, and audio right inside your platform — no download needed."
+description: "Looking at a file without downloading it — what previews, what does not, and what learners see."
 ---
 
-You can preview common file types directly in your platform. This lets you check that
-you've got the right file — and that it looks correct — before you attach it anywhere.
+A preview opens a file in place. It saves downloading something to find out it is the
+wrong one.
 
-## What you can preview
+<WhoCan roles="Admin, Instructor, Learner" />
 
-| Type | What you see |
+## What previews
+
+| Type | In the file manager | In a lesson |
+|---|---|---|
+| **Images** | Yes | Yes |
+| **Video** | Yes | Yes, in the player |
+| **PDF** | — | Yes, in the reader |
+| **Audio** | — | Yes, in the player |
+| **Everything else** | Download it | Download it |
+
+In the file manager, *"preview is only available for image and video files"*. Inside a
+course, a **PDF lesson** opens in a reader — which is the reason to make a document a
+PDF lesson rather than a file download when you want it read rather than kept.
+
+## What learners get
+
+| Content | How it opens |
 |---|---|
-| **Images** | The picture, shown full size |
-| **PDFs** | The document, page by page |
-| **Video** | A built-in player to watch the clip |
-| **Audio** | A built-in player to listen |
+| A **PDF lesson** | In the reader, with full screen. |
+| A **video** or **audio lesson** | In the player, with their position remembered. |
+| A **file item** | Opens for viewing, and can be downloaded. |
+| An **attachment** | A download under the lesson. |
 
-Other file types (for example, slides or spreadsheets) may not preview in the browser.
-For those, download the file to open it on your device.
+Where **Restrict paid content download** is on, paid content can be viewed and not
+downloaded or printed. See
+[Sharing and limits](/docs/knowledgebase/files/sharing-and-limits).
 
-## How to preview a file
+## PDF lesson or file?
 
-1. Go to **Files & Media**.
-2. Find the file you want to check.
-3. Click it to open the preview.
+| | **PDF lesson** | **File item** |
+|---|---|---|
+| How it opens | In the reader | Downloads |
+| Counts towards progress | Yes | Yes |
+| Can be read without leaving | Yes | No |
+| Good for | A reading | A worksheet to fill in |
 
-The file opens right there — no need to download it first. Close the preview to return to
-your library.
+Use a PDF lesson for anything you want learners to read, and a file for anything they
+need to keep.
 
-## Why preview first
+## Common questions
 
-- Confirm you picked the **right** file before attaching it to a course or page.
-- Check that an image looks sharp and is the right shape.
-- Make sure a video or audio file plays correctly from start to finish.
-- Scan a PDF to confirm it's the final, correct version.
+<Accordions type="single">
 
-<Callout type="info">
-Previewing is a quick quality check. Build the habit of previewing a file before you
-attach it to a lesson, assignment, or website page — it saves fixing mistakes later.
-</Callout>
+<Accordion title="A file will not preview.">
+Only images and videos preview in the file manager. Everything else downloads.
+</Accordion>
 
-## What's next
+<Accordion title="A learner says a PDF will not open.">
+Check whether it is a PDF lesson or a file item — a file downloads, and on a phone that
+depends on them having something to open it with. For a reading, use a PDF lesson.
+</Accordion>
 
-- [Organize your files](/docs/knowledgebase/files/organizing-files) into folders.
-- Attach previewed files to your [courses and lessons](/docs/knowledgebase/courses) or
-  [website pages](/docs/knowledgebase/website).
+<Accordion title="Can learners read a PDF full screen?">
+Yes, in the reader.
+</Accordion>
+
+<Accordion title="Does opening a PDF count as completing it?">
+It depends on the item's completion rule. See
+[Completion rules](/docs/knowledgebase/progress-grading/completion-rules).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Lesson types" description="PDF lessons and the rest." href="/docs/knowledgebase/courses/lesson-types" />
+  <Card title="Files and resources" description="Attachments against file items." href="/docs/knowledgebase/courses/files-and-resources" />
+  <Card title="Sharing and limits" description="Download restrictions on paid content." href="/docs/knowledgebase/files/sharing-and-limits" />
+</Cards>

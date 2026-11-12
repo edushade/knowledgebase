@@ -1,69 +1,142 @@
 ---
 title: "Meeting Plans"
-description: "Create the kinds of meetings you offer — set the length, the location type, and how the meeting looks to students."
+description: "The kind of meeting people can book with you — how long, with whom, where, and on what terms."
 ---
 
-A **meeting plan** is one type of meeting you offer. You might have a few different plans —
-for example, a 15-minute intro call, a 30-minute advising session, and a one-hour tutoring
-lesson. Each plan has its own booking page and its own settings, so students always know
-exactly what they are booking.
+A meeting plan is a bookable thing: "30-minute consultation", "one-hour tutorial". You
+set it up once and people book slots against it.
 
-## What a meeting plan includes
+<Path>Teach > Live Sessions > Meeting Plans</Path>.
 
-| Setting | What it does |
+<WhoCan roles="Admin, Instructor" />
+
+Each row carries the plan's name and duration, its **Status**, its **Categories** and
+its **Timezone**. The icons beside it edit, delete, unpublish, or open the public
+booking page so you can see what an invitee sees.
+
+**Integrations** on this screen is where the calendar and conferencing connections live
+— see [Integrations](/docs/knowledgebase/bookings/integrations).
+
+## What a plan holds
+
+| Field | What it is |
 |---|---|
-| **Title** | The name of the meeting, shown to students (for example, "30-Minute Advising Call"). |
-| **Description** | A short explanation of what the meeting is for. |
-| **Length** | How long the meeting lasts — for example, 15, 30, or 60 minutes. |
-| **Location type** | How the meeting happens: Google Meet, Zoom, in person, or by phone. See below. |
-| **Web address** | The link students use to reach this plan's booking page. You can pick a short, friendly name. |
-| **Color** | A color label that helps you tell plans apart in your dashboard. |
-| **Thumbnail / cover image** | A picture that gives the booking page a polished look. |
-| **Active or inactive** | Turn a plan on when you are ready to take bookings, or off to pause it. |
+| **Meeting Plan Name** | "The name invitees see and the address they book at." |
+| **URL Slug** | The address people book at. |
+| **Description** / **Summary** | What the meeting is for. |
+| **Meeting Plan Type** | **One to One** or **One to Many**. |
+| **Duration (minutes)** | How long it runs. |
+| **Host** | Who takes it. |
+| **Max Participants Limit** | For a group meeting. |
+| **Group Meeting Spots** | How many places. |
+| **Guests Allowed** | Whether an invitee may bring others. |
+| **Thumbnail** / **Cover** | Its images. |
+| **Intro Video URL** | A short video on the booking page. |
+| **Categories** | For your own organisation. |
 
-You also set the plan's **availability** (open days and times) and booking rules — those
-have their own page: [Availability](/docs/knowledgebase/bookings/availability).
+## Instant or by request
 
-## How to create a meeting plan
+**Booking Mode** is the decision that shapes everything else:
 
-1. Go to **Admin → Bookings → Meeting Plans**.
-2. Click **New Meeting Plan**.
-3. Enter a **title**, a short **description**, and the **length** of the meeting.
-4. Choose a **location type** (Google Meet, Zoom, in person, or phone).
-5. Set your **availability** — the days and times you are open.
-6. (Optional) Add a **thumbnail**, pick a **color**, and set a friendly **web address**.
-7. Click **Save**, then set the plan to **Active** when you are ready.
-
-## Location types
-
-When you create a plan, you choose how the meeting will take place. The right link or
-details are added automatically once a booking is confirmed.
-
-| Location type | What students get |
+| Mode | What happens |
 |---|---|
-| **Google Meet** | A video meeting link, created for you and added to the calendar invite. |
-| **Zoom** | A Zoom link (with any join details), created for you and added to the invite. |
-| **In person** | The address you enter, shown on the booking and in the invite. |
-| **Phone call** | A phone number, or simply an agreement to call — no online link. |
+| **Instant Booking** | "Customers can pick a time from your available slots and book instantly." |
+| **Request-Based Booking** | "Customers request a time, and you must approve it before it's confirmed." |
 
-For Google Meet and Zoom links to be created automatically, connect those accounts first.
-See [Integrations](/docs/knowledgebase/bookings/integrations).
+Instant suits office hours and anything routine. Request-based suits meetings you may
+need to decline, or where the time has to be negotiated — and it means a queue you have
+to work.
 
-## What the student sees
+## Where the meeting happens
 
-On the booking page, the student sees the plan's title, description, length, and a calendar
-of open times. After they book, the confirmation shows the location — a join link, an
-address, or a phone number — and the same details appear in their calendar invite.
+**Medium Type** decides the venue:
+
+| Medium | Notes |
+|---|---|
+| **Zoom**, **Google Meet**, **Microsoft Teams** | Need the matching provider connected. |
+| **Live** / **Other** | A link you supply. |
+| **Offline** | A **Physical Address**. |
+
+"Video options need the matching provider connected" — see
+[Integrations](/docs/knowledgebase/bookings/integrations). Connected, every booking gets
+its join link automatically; not connected, you paste one in each time.
+
+An **Access Password** and **Joining Instructions** can be added for either.
+
+## Scheduling rules
+
+Every one already has a sensible default. Change only what this plan needs.
+
+| Rule | What it does |
+|---|---|
+| **Buffer before** | "Free time held before each meeting." |
+| **Buffer after** | "Free time held after each meeting." |
+| **Minimum notice (minutes)** | "How close to the start time invitees can still book." |
+| **Max meetings per day** | A cap. Leave empty for no limit. |
+| **Pending booking expiry** | "How long an unpaid booking holds its slot." |
+| **Interval** | How slots are spaced. |
 
 <Callout type="info">
-You can have as many meeting plans as you like. Keep each one focused on a single kind of
-meeting so students always know what to expect.
+**Buffers are what stop a day from becoming unworkable.** Fifteen minutes after each
+meeting turns eight back-to-back calls into a day you can survive.
 </Callout>
 
-## Good to know
+## Cancellation and rescheduling
 
-- Set a plan to **inactive** when you want to stop taking new bookings without deleting it.
-  Existing bookings are not affected.
-- Want several students in the same session, or want students to suggest their own times?
-  See [Group & request bookings](/docs/knowledgebase/bookings/group-and-request-bookings).
-- To charge for a meeting, see [Payments](/docs/knowledgebase/bookings/payments).
+| Setting | Choices |
+|---|---|
+| **Cancellation** | Don't allow, or allow up to 1, 2, 4, 6, 12 or 24 hours before. |
+| **Rescheduling** | The same. |
+
+Allowing changes up to 24 hours before is usually the right balance: it gives people a
+way out that is not simply not turning up.
+
+## Payment
+
+A meeting plan can be charged for — see
+[Booking payments](/docs/knowledgebase/bookings/payments). **Pending booking expiry**
+decides how long an unpaid booking holds its slot before releasing it.
+
+## Who hears about bookings
+
+**Team members to notify** — "covers new requests, confirmed and paid bookings, and
+invitee cancellations or reschedules". Name the people who actually need to know,
+including the host.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Nobody can book anything.">
+The plan needs availability. A plan with no hours set has no slots to offer. See
+[Availability](/docs/knowledgebase/bookings/availability).
+</Accordion>
+
+<Accordion title="Bookings have no join link.">
+No conferencing provider is connected, or the medium is set to one you supply yourself.
+</Accordion>
+
+<Accordion title="People book with five minutes' notice.">
+Raise **Minimum notice**.
+</Accordion>
+
+<Accordion title="Can one plan have several hosts?">
+A plan has a host. For several people offering the same meeting, make a plan each.
+</Accordion>
+
+<Accordion title="What is the difference between One to One and One to Many?">
+One to One is a private meeting. One to Many is a group session with a number of spots —
+a group tutorial rather than a webinar. For a webinar, use an
+[event](/docs/knowledgebase/bookings/events).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Availability" description="The hours people can actually book." href="/docs/knowledgebase/bookings/availability" />
+  <Card title="The booking page" description="What an invitee sees." href="/docs/knowledgebase/bookings/booking-page" />
+  <Card title="Managing bookings" description="Confirming, rescheduling and cancelling." href="/docs/knowledgebase/bookings/managing-bookings" />
+  <Card title="Integrations" description="Connecting a calendar and a video provider." href="/docs/knowledgebase/bookings/integrations" />
+</Cards>

@@ -1,79 +1,166 @@
 ---
 title: "Grading Quizzes"
-description: "How quiz scores are worked out — instant auto-grading, partial credit, manual grading with feedback, and score overrides."
+description: "Reviewing what a learner actually answered, overriding a score, and putting right a wrong answer key."
 ---
 
-Quizzes are graded in two ways: **automatically** for objective questions, and **by hand** for
-written or creative answers. Most quizzes use a mix of both. This page explains how scoring
-works and how you grade the parts that need a human.
+Every question type a quiz can contain marks itself the moment a learner submits, so a
+quiz needs no marking queue. What it sometimes needs is a **correction** — because the
+answer key was wrong, or because a learner's answer was right in a way the key did not
+anticipate.
 
-## Auto-grading
+That is what this page is about.
 
-Objective question types score themselves the instant a learner submits. This includes
-multiple choice, true/false, dropdown, matching, ordering, fill-in-the-blank, numeric, and
-more — see [Question types](/docs/knowledgebase/assessments/question-types).
-
-The learner can get an **instant partial score** from these questions right away.
-
-### Partial credit
-
-Some auto-graded questions can award **part** of the points instead of all-or-nothing:
-
-- **Multiple choice (multiple answers)** — credit for each correct option chosen.
-- **Matching** — each pair can be scored on its own.
-- **Fill-in-the-blank** — each blank is checked separately, and you can make each blank
-  case-sensitive or not.
-- **Numeric** — you set an **accepted tolerance**, so an answer close enough to the target
-  still counts as correct.
-
-## Scoring rules you control
-
-| Setting | What it does |
-|---|---|
-| **Points per question** | How much each question is worth. |
-| **Negative marking** | Optionally subtract points for a wrong answer. |
-| **Pass mark** | The percentage a learner must reach to pass. |
-
-A learner's score is the total points earned, and pass/fail comes from the pass mark.
-
-## Manual grading
-
-Written and creative answers — short answer, essay, open ended, code, file upload, audio,
-video, draw/sketch, comprehension, and case study — need a person to grade them.
-
-1. Go to **Admin → Quizzes**, open the quiz, and find the attempts that need grading.
-2. Open an attempt. Questions waiting on you are marked **pending**.
-3. Read the learner's answer, then enter a **score** for that question.
-4. Add **feedback** so the learner understands the mark.
-5. Save. Once all pending questions are graded, the learner's **final score** updates.
+<WhoCan roles="Admin, Instructor" />
 
 <Callout type="info">
-A quiz with any manually graded questions shows the learner an instant partial score for the
-auto-graded part, then the final score after you finish grading.
+**Looking for work waiting to be marked?** That is assignments, not quizzes —
+<Path>Grading > Assignment Submissions</Path>. See
+[Assignment submissions](/docs/knowledgebase/assessments/assignment-submissions).
 </Callout>
 
-## Overriding a score
+## Looking at what a learner answered
 
-Sometimes an auto-graded answer needs a human decision — for example, a valid answer the
-system did not anticipate. You can **override** the score on any question and enter the mark
-you want, along with feedback explaining why.
+Open the quiz and go to its **Participants** list: everyone who sat it, and the state of
+each attempt. Open an attempt and you see the paper as the learner left it — each
+question, what they chose, what the key says, and the score that was awarded.
 
-## What the learner sees
+Each answer shows:
 
-After grading is complete, the learner sees their result according to your display settings —
-the score, pass/fail, and optionally the correct answers, explanations, and your feedback. See
-[Quiz settings](/docs/knowledgebase/assessments/quiz-settings) and
-[Taking quizzes](/docs/knowledgebase/assessments/taking-quizzes).
+- The score awarded out of the question's full marks.
+- **Correct** or not, against the key.
+- The learner's answer and the right one side by side.
 
-## How scores feed the final grade
+You can reach the same view from a learner's own record, so you can start from either
+end — "what did this class do with question 7?" or "what has this learner been doing?".
 
-When a quiz is used as a graded assessment inside a course, its score flows into the learner's
-overall grade. You decide how much it counts using
-[weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+## Overriding an answer
+
+On any answer there is **Override Answer**. It changes that one answer's score, and the
+attempt's total follows.
+
+Use it when:
+
+- The key was wrong and the learner was right.
+- A **Fill in the Blank** answer is correct but spelled or phrased differently from the
+  key.
+- A question was ambiguous and you have decided to give it to everyone.
+
+Override is per answer, per learner. There is no "give everybody the mark" button, which
+is deliberate — see below for the right way to handle a whole batch.
+
+## When the answer key was wrong
+
+A learner [reports](/docs/knowledgebase/courses/reported-problems) that a question is
+marked wrong, and they are right. Fixing the question does **not** re-mark the attempts
+already sat.
+
+Do this instead:
+
+<Steps>
+
+<Step>
+
+### Fix the question
+
+Correct the key so nobody else meets it.
+
+</Step>
+
+<Step>
+
+### Find everyone affected
+
+The quiz's **Participants** list, and its
+[analytics](/docs/knowledgebase/assessments/quiz-analytics) — a question almost
+everybody got "wrong" is the signature of a bad key.
+
+</Step>
+
+<Step>
+
+### Override their answers
+
+Open each affected attempt and override that answer. Work through the participants list
+in order so you do not miss anyone.
+
+</Step>
+
+<Step>
+
+### Recalculate
+
+Run **Calculate All Grades** on the programme so the subject and final results catch up
+with the corrected marks. Nothing above the assessment level moves until you do.
+
+</Step>
+
+</Steps>
+
+<Callout type="warn">
+**Do not delete the quiz and run it again.** You lose the learners' work, and anyone who
+has already moved on has to sit it a second time for a mistake that was not theirs.
+</Callout>
+
+There is a step-by-step version of this with the exact screens:
+[Fixing a wrong answer key](/docs/knowledgebase/how-to/fix-a-wrong-answer-key).
+
+## Holding results while you correct
+
+If you are part-way through correcting a batch, learners comparing marks in the meantime
+is a conversation nobody needs. **Release scores on** in
+[Quiz settings](/docs/knowledgebase/assessments/quiz-settings) decides when a score
+becomes visible — set it to a date after you expect to be finished, correct everything,
+then let it go.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner's quiz shows no score.">
+Check the attempt's state. A quiz that was started and never submitted has no score
+because it was never sat — see
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes). A
+submitted attempt always has one.
+</Accordion>
+
+<Accordion title="I corrected the marks but the course result has not moved.">
+Run **Calculate All Grades** on the programme. Results above the assessment level are
+stored as they are calculated, not worked out fresh each time you look. See
+[Learner grades](/docs/knowledgebase/progress-grading/learner-grades).
+</Accordion>
+
+<Accordion title="Can an instructor override a mark?">
+Only for their own programmes, and only if their role allows it. **My Programmes**
+limits what they can see; the permission decides whether they can change anything. See
+[People and roles](/docs/knowledgebase/account-people/people-and-roles).
+</Accordion>
+
+<Accordion title="Can I give a whole batch the mark for one question?">
+Not in one action. Override it on each attempt from the participants list. If it is a
+large batch and the question was genuinely unfair, consider dropping the question's
+weight instead — that changes the result for everybody at once and leaves an honest
+record of why.
+</Accordion>
+
+<Accordion title="Does overriding a mark notify the learner?">
+No. They see the new score when they next look, under the quiz's release settings. If
+you have corrected something, it is worth telling them yourself — a mark that changes
+silently reads as a mistake either way.
+</Accordion>
+
+<Accordion title="Where do written answers get marked, then?">
+In [assignment submissions](/docs/knowledgebase/assessments/assignment-submissions).
+Assignments are the written half of assessment, and they carry a mark into the grade
+exactly as a quiz does.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Question types](/docs/knowledgebase/assessments/question-types)
-- [Quiz settings](/docs/knowledgebase/assessments/quiz-settings)
-- [Quiz analytics](/docs/knowledgebase/assessments/quiz-analytics)
-- [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading)
+<Cards>
+  <Card title="Question types" description="The six types a quiz can contain." href="/docs/knowledgebase/assessments/question-types" />
+  <Card title="Attempts and retakes" description="The states an attempt can be in." href="/docs/knowledgebase/assessments/attempts-and-retakes" />
+  <Card title="Assignment submissions" description="Where work is marked by hand." href="/docs/knowledgebase/assessments/assignment-submissions" />
+  <Card title="Learner grades" description="Where the corrected marks end up." href="/docs/knowledgebase/progress-grading/learner-grades" />
+</Cards>

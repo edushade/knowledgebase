@@ -1,63 +1,90 @@
 ---
-title: "Versions & Redirects"
-description: "Roll back to an earlier version of a page, and send old web addresses to new ones so no link ever breaks."
+title: "Redirects"
+description: "Sending an old address to a new one — and why you need one every time a page moves."
 ---
 
-Two safety nets keep your site tidy: a **version history** that lets you undo changes,
-and a **redirect manager** that sends old web addresses to new ones. Together they mean
-you can edit freely and rename pages without worrying about breaking links.
+A redirect sends somebody arriving at one address to another. Every time a page's
+address changes, you need one.
 
-## Version history
+<Path>Configure > Website</Path>, under redirects.
 
-Every meaningful change is kept, so you can always go back.
+<WhoCan roles="Admin" />
 
-| Feature | What it does |
-|---|---|
-| **Automatic versions** | The platform keeps earlier versions as you work, with no effort from you. |
-| **Named versions** | Save a version with a name you choose (for example "Before summer sale"), so it's easy to find later. |
-| **Side-by-side compare** | View an earlier version next to the current one to see exactly what changed. |
-| **Instant restore** | Roll back to any earlier version in one click. |
+## Why they matter
 
-### How to roll back a page
+A page's address is in more places than you think:
 
-1. Open the page and go to its **Version history**.
-2. Browse the list of versions, or pick a **named** one.
-3. Use **Compare** to see what changed.
-4. Click **Restore** on the version you want.
+- Links other sites made to you.
+- Search engine results, for months afterwards.
+- Links your learners shared in group chats.
+- Printed material, where it never changes.
+- Your own old blog posts.
 
-<Callout type="info">
-Save a **named version** before any big change — a redesign, a price update, or a
-seasonal campaign. If it doesn't work out, restore in one click.
+Change the address without a redirect and all of those land on nothing. With one, they
+land where you meant.
+
+<Callout type="warn">
+**The traffic you lose this way does not come back.** A course page that ranked well,
+moved without a redirect, starts again from nothing.
 </Callout>
 
-## Redirects
+## Adding one
 
-A redirect sends a visitor from an old web address to a new one. This matters when you
-rename a page or move content — anyone who clicks an old link lands in the right place
-instead of hitting a dead end.
+Each redirect is an old address and a new one. Add them as you change pages — not in a
+clean-up later, by which time nobody remembers what the old addresses were.
 
-| Feature | What it does |
+**Bulk Import Redirects** takes a list, which is what you need when moving a site onto
+Edushade from somewhere else. That is the moment redirects matter most: everything the
+old site ranked for arrives at an address that no longer exists.
+
+## When you need one
+
+| Change | Redirect needed |
 |---|---|
-| **Old → new** | Map an old web address to its new home. |
-| **Redirect type** | Choose how the redirect behaves — for example a permanent move versus a temporary one. |
-| **Hit counts** | See how often each redirect is used, so you know which old links still get traffic. |
-| **Bulk import** | Add many redirects at once instead of one by one. |
-| **Loop prevention** | The manager stops you from creating a redirect that points back to itself in a circle. |
+| A page's slug changes | **Yes** |
+| A page is deleted | **Yes** — to the nearest sensible page |
+| A course is renamed and its slug follows | **Yes** |
+| The blog moves | **Yes** |
+| Moving from another website | **Yes**, in bulk |
+| A page's content changes | No |
+| A menu label changes | No |
 
-### How to add a redirect
+## Better than a redirect: not moving
 
-1. Go to **Admin → Website → Redirects** and click **New Redirect**.
-2. Enter the **old web address** and the **new web address**.
-3. Choose the **redirect type**.
-4. Click **Save**.
+The cheapest redirect is the one you did not need. When you create a page, give it an
+address you will be happy with in three years — short, readable, and about the thing
+rather than the campaign.
 
-## Good to know
+`/courses/spoken-english` will still be right. `/courses/spoken-english-january-2026`
+will not.
 
-- Whenever you change a page's web address, add a redirect from the old one so existing
-  links keep working.
-- Hit counts help you spot popular old links that still need a redirect.
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="We moved a page and traffic disappeared.">
+Add the redirect now. Some of it comes back once search engines re-crawl.
+</Accordion>
+
+<Accordion title="How long should a redirect stay?">
+Permanently. It costs nothing and something somewhere still points at the old address.
+</Accordion>
+
+<Accordion title="Can I redirect to another site?">
+Point a redirect wherever it needs to go.
+</Accordion>
+
+<Accordion title="We are moving our site to Edushade. What do we need?">
+A list of your old addresses and their new equivalents, imported in bulk before you
+switch the domain over.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pages & blocks](/docs/knowledgebase/website/pages-and-blocks) — where web addresses are set.
-- [Publishing](/docs/knowledgebase/website/publishing) — preview and publish your changes safely.
+<Cards>
+  <Card title="SEO" description="Addresses, metadata and being found." href="/docs/knowledgebase/website/seo" />
+  <Card title="Publishing your site" description="Going live, and your own domain." href="/docs/knowledgebase/website/publishing" />
+  <Card title="Pages and blocks" description="Where a page's slug is set." href="/docs/knowledgebase/website/pages-and-blocks" />
+</Cards>

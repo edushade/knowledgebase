@@ -1,63 +1,108 @@
 ---
-title: "Search Visibility (SEO)"
-description: "Set titles, descriptions, and share images so your pages look good in search results and when shared on social media."
+title: "SEO"
+description: "Being found by search engines — the metadata, the sitemap, and the switch that undoes everything else."
 ---
 
-SEO is short for "search engine optimisation" — the settings that help people find your
-pages in search results like Google, and make your links look good when shared on social
-media. You set sensible defaults once for the whole site, then fine-tune any page that
-needs special treatment.
+Search engines read your pages the way a visitor cannot: titles, descriptions,
+structure. Getting those right is most of what you can do.
 
-## Site-wide defaults
+<WhoCan roles="Admin" />
 
-Set these once and they apply across your site:
+## The switch that matters most
+
+**Allow search engines to index this site.** Off, nothing on this page helps — your site
+asks search engines to stay away.
+
+<Callout type="error">
+Check this first. A site switched off during building and never switched on is the
+single most common reason an academy is invisible, and it can sit unnoticed for months.
+</Callout>
+
+## Per-page metadata
+
+Every page has **Meta Title**, **Meta Description** and **Meta Keywords**, under its
+**Metadata** tab.
+
+| Field | What it does |
+|---|---|
+| **Meta Title** | The headline in search results. |
+| **Meta Description** | The two lines underneath. Not a ranking factor, but it decides whether anybody clicks. |
+| **Meta Keywords** | Largely ignored by search engines now. |
+
+**Meta Title Template** sets the pattern for every page at once — for example
+`{page_title} | {site_name}`.
+
+Write the description as a promise to the person reading it: what they will get, in one
+sentence, in their words.
+
+## Site-wide settings
 
 | Setting | What it does |
 |---|---|
-| **Title template** | A pattern for page titles, with placeholders. For example, a pattern can automatically add your academy name after each page's own title. |
-| **Default description** | The summary shown under your link in search results when a page has no description of its own. |
-| **Keywords** | General terms that describe your site. |
-| **Share image** | The picture shown when someone shares a link from your site (this is the Open Graph image). |
-| **Twitter handle** | Your account, so shared links can credit you. |
-| **Indexing control** | Whether you let search engines list your pages or ask them to stay out. |
+| **Enable XML Sitemap** | Tells search engines what exists. Leave it on. |
+| **Enable Structured Breadcrumbs** | Makes your site structure legible in results. |
+| **Social Share Image** | The picture shown when a link is shared. |
+| **Twitter Handle** | Attribution when your pages are shared. |
+| **Enable Social Sharing** | Share buttons on your content. |
 
-## Per-page settings
+## Addresses
 
-Any page can have its own title, description, and share image that override the defaults.
-Use this for important pages — your homepage, a key course page, or a campaign landing
-page — so each one reads exactly how you want in search and on social media.
+A page's **slug** is its address. Two rules:
 
-## Automatic help
+1. **Make it readable.** `/courses/spoken-english` beats `/p/12345`.
+2. **Do not change it once it is live.** If you must, set a redirect — see
+   [Versions and redirects](/docs/knowledgebase/website/versions-and-redirects).
 
-Two things are handled for you:
+**URL Structure** also decides how languages appear in addresses — a subdirectory,
+a subdomain, or a query parameter. See
+[Languages](/docs/knowledgebase/website/languages).
 
-- **Sitemaps** — a behind-the-scenes list of your pages is kept up to date automatically,
-  so search engines can find everything.
-- **Breadcrumbs** — the small "you are here" trail (for example, Home › Courses ›
-  Spoken English) is generated for you, which helps both visitors and search engines.
+## What actually brings an academy traffic
 
-## How to set it up
+In order of return:
 
-1. Go to **Admin → Website → SEO** for your site-wide defaults.
-2. Set your **title template**, **default description**, **keywords**, **share image**,
-   and **Twitter handle**.
-3. Choose your **indexing** setting.
-4. For a specific page, open it and set its own title, description, and share image.
-5. Click **Save**.
+1. **Course pages that answer the question somebody typed.** "IELTS preparation course
+   in Dhaka" is a page, not a keyword.
+2. **A [blog](/docs/knowledgebase/website/blog) answering real questions.** The ones your
+   learners ask before they buy.
+3. **Titles and descriptions written for people**, not stuffed with terms.
+4. **A site that is fast on a phone** — leave **Lazy Load Images** and **Minify CSS/JS**
+   on.
 
-<Callout type="info">
-If your site is not ready for the public yet, you can ask search engines not to list it.
-Remember to switch indexing back on when you launch. See
-[Publishing](/docs/knowledgebase/website/publishing) for site status modes.
-</Callout>
+## Common questions
 
-## Good to know
+<Accordions type="single">
 
-- A clear description is your free advert in search results — write it for a real person.
-- A good share image makes links far more clickable when posted on social media.
+<Accordion title="We are not in Google at all.">
+Check indexing is allowed, the sitemap is on, and the site state is **Live**. Then
+submit your sitemap to Google's own tools and wait — indexing is not instant.
+</Accordion>
+
+<Accordion title="Our page title shows wrongly in results.">
+Search engines sometimes write their own. Make sure the meta title describes the page
+honestly, and it is usually used.
+</Accordion>
+
+<Accordion title="We changed a page's address and lost traffic.">
+Set a redirect from the old address to the new one. See
+[Versions and redirects](/docs/knowledgebase/website/versions-and-redirects).
+</Accordion>
+
+<Accordion title="Does the knowledge base of our courses get indexed?">
+Your public pages are indexed; content behind enrolment is not. That is correct —
+nobody should find your paid lessons in a search.
+</Accordion>
+
+<Accordion title="Should I fill in meta keywords?">
+They do very little now. Spend the time on the title and description.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pages & blocks](/docs/knowledgebase/website/pages-and-blocks) — every page can have its own SEO.
-- [Templates & themes](/docs/knowledgebase/website/templates-and-themes) — your branding feeds share previews.
-- [Publishing](/docs/knowledgebase/website/publishing) — control whether your site is public.
+<Cards>
+  <Card title="Publishing your site" description="Site states and the go-live checklist." href="/docs/knowledgebase/website/publishing" />
+  <Card title="Blog" description="Content that brings people in." href="/docs/knowledgebase/website/blog" />
+  <Card title="Versions and redirects" description="Changing an address safely." href="/docs/knowledgebase/website/versions-and-redirects" />
+</Cards>

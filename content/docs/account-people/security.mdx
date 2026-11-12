@@ -1,58 +1,114 @@
 ---
 title: "Security"
-description: "How your platform protects against repeated failed sign-ins, how account deletion works, and the growth stats available to admins."
+description: "Two-factor, sessions, lockouts and the handful of settings that actually matter for an academy."
 ---
 
-Your platform includes built-in protection to keep accounts safe, along with a clean way
-to delete an account and a view of how your audience is growing.
+Security here is mostly four things: who can sign in, from how many places, with what,
+and what you can see afterwards.
 
-## Protection against repeated failed sign-ins
+<WhoCan roles="Admin" />
 
-To stop someone guessing a password, your platform watches for repeated wrong attempts:
+## Two-factor authentication
 
-- **Too many wrong tries temporarily locks the account.** The person simply waits and
-  tries again later.
-- **The wait grows** with each new round of failures, so guessing becomes slower and
-  slower.
-- **Abusive sources are blocked** for a while when they show clearly bad behavior.
-- **A successful sign-in clears it** — once the right password (or code) goes in, things
-  return to normal.
+A second step at sign-in. Set separately for learners and staff in
+<Path>Settings > Control Panel</Path> under **Security & Compliance**.
 
-This all happens automatically. There's nothing to switch on.
+**Require it for staff.** Anyone who can change a grade, issue a certificate or refund a
+payment should have it. For learners it is usually more friction than it is worth.
 
-<Callout type="info">
-If a learner says they're locked out, the usual fix is simple: wait a little, then try
-again — or use [Forgot password](/docs/knowledgebase/account-people/accounts-and-sign-in#forgot-password)
-to reset it. A correct sign-in clears the lock.
-</Callout>
+If somebody loses their second factor, you can **reset two-factor authentication** from
+their record. The screen asks you to confirm, because resetting it removes their
+protection until they set it up again.
 
-## Account deletion
+## Sessions
 
-A person can delete their own account whenever they choose.
+Each person's record lists their sessions: the **current session** — "the session you
+are using now" — and the others, which can all be ended at once.
 
-- They'll be asked to **confirm with their password**. (If they only ever used social
-  sign-in and never set a password, no password is needed.)
-- **All of their signed-in devices are signed out immediately.**
-- The account moves to a **deleted** state — hidden from view, with the record kept for a
-  short while before final cleanup.
+**Maximum concurrent sessions** limits how many devices an account can be on. It is
+genuinely a security control and genuinely an account-sharing control: one login on
+five devices is usually five people.
 
-See the [account statuses](/docs/knowledgebase/account-people/accounts-and-sign-in#account-statuses)
-for how "deleted" fits with the other states.
+**Idle timeout** ends a session that has been left. Short for staff, generous for
+learners.
 
-<Callout type="warn">
-Deletion ends access right away. If someone is unsure, suggest they step away first —
-deactivating or simply not signing in is often enough, without losing their account.
-</Callout>
+## Failed sign-ins and locked accounts
 
-## Growth stats
+A person's record shows whether they are **locked**, and how many failed sign-in
+attempts they have had. The people list can be filtered by both — **Is Locked**,
+**Min/Max Failed Login Attempts** — which turns "is somebody attacking us?" into a
+filter.
 
-As an admin, you can see how your audience is growing — **totals** and **trends** over
-time. It's a quick way to track how many people are joining and how that's changing.
+A spread of failed attempts across many accounts is a different problem from one
+account with forty.
 
-You'll find these in your admin dashboards alongside your other reports.
+## What is recorded
+
+| Log | What it holds |
+|---|---|
+| **Audit Logs** | Admin actions, with actor, result and IP address. |
+| **Activity Logs** | What learners did. |
+| **Data access logs** | Who looked at what, where you switch it on. |
+
+See [Activity and audit logs](/docs/knowledgebase/account-people/activity-history).
+
+## Account states
+
+| State | Meaning |
+|---|---|
+| **Active** | Normal. |
+| **Inactive** | Dormant. |
+| **Suspended** | Deliberately blocked. |
+| **Pending Verification** | Waiting to confirm an email or phone. |
+
+Suspending is the right answer to a problem account. Deleting takes their work with it.
+
+## A workable baseline
+
+1. **Two-factor required for staff.**
+2. **Staff passwords at 12 characters** with complexity; learners at 8.
+3. **Short idle timeout for staff**, generous for learners.
+4. **Concurrent sessions capped** for both.
+5. **All three logs on**, with a retention period you have actually thought about.
+6. **Roles kept narrow** — see [People and roles](/docs/knowledgebase/account-people/people-and-roles).
+
+The sixth does more for your security than the first five together. Most damage to an
+academy's data is done by somebody who was allowed to do it.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A staff member is locked out.">
+Check their account state and failed attempts on their record. If they have lost their
+second factor, reset two-factor from there.
+</Accordion>
+
+<Accordion title="We think an account is shared.">
+Look at its sessions and lower **Maximum concurrent sessions**. The sessions list shows
+how many places it is signed in from.
+</Accordion>
+
+<Accordion title="Someone left the organisation.">
+Suspend the account, remove their roles, and end their other sessions. Do not delete it
+while it is attached to records you need.
+</Accordion>
+
+<Accordion title="Can I force everybody to sign in again?">
+Per person, by ending their other sessions. There is no single academy-wide sign-out.
+</Accordion>
+
+<Accordion title="Should learners have two-factor?">
+Usually not required — offer it. The accounts worth protecting with it are the ones that
+can change things.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Accounts & sign-in](/docs/knowledgebase/account-people/accounts-and-sign-in) — sign-in methods, passwords, and statuses.
-- [Profiles & devices](/docs/knowledgebase/account-people/profiles-and-devices) — manage signed-in devices.
-- [Activity history](/docs/knowledgebase/account-people/activity-history) — a full record of account activity.
+<Cards>
+  <Card title="Accounts and sign-in" description="Every sign-in setting, for learners and staff." href="/docs/knowledgebase/account-people/accounts-and-sign-in" />
+  <Card title="People and roles" description="The control that matters most." href="/docs/knowledgebase/account-people/people-and-roles" />
+  <Card title="Privacy and consent" description="Retention, deletion and consent." href="/docs/knowledgebase/account-people/privacy-and-consent" />
+</Cards>

@@ -1,0 +1,14 @@
+{
+  "title": "Start Here",
+  "icon": "Rocket",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "what-you-can-build",
+    "admin-tour",
+    "learner-tour",
+    "launch-checklist",
+    "who-does-what",
+    "glossary"
+  ]
+}

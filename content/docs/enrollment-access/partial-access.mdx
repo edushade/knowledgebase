@@ -1,73 +1,102 @@
 ---
 title: "Partial Access"
-description: "Give a learner access to only part of an offering, such as one semester or one purchased section."
+description: "Giving a learner one semester rather than the whole programme — how it is set, what it changes, and how it is marked."
 ---
 
-Sometimes a learner should see only **part** of an offering — for example, someone who
-bought just "Semester 1", or one section of a larger course. Partial access lets you do
-exactly that.
+A diploma runs four semesters and a learner pays for one. Partial access is how that
+works: the learner is enrolled in the whole programme but holds only the part they
+bought, and everything — content, progress, marks — follows what they hold.
 
-## The simple rule
+The screens call each part a **scope**.
 
-- **No partial access set = full access.** By default, an enrolled learner sees everything
-  in the offering.
-- **With partial access set,** the learner sees **only the parts you grant** — the rest is
-  hidden from them.
+<WhoCan roles="Admin" />
 
-So partial access is something you switch on for an enrollment when you want to narrow it.
-If you never touch it, the learner gets the whole offering.
+## Where it comes from
 
-## What you can grant access to
+Two ways:
 
-You grant access to specific **parts** of an offering — for example a particular section or
-a particular term/period (such as a semester). A learner can hold access to one part, or
-several parts at once.
+- **They bought it.** A learner who buys one semester gets that semester. See
+  [Pricing](/docs/knowledgebase/selling-payments/pricing).
+- **You gave it.** From an enrolment, **Assign Content Scope** — pick the parts they
+  should hold.
 
-## How learners get partial access
-
-| Source | How it happens |
-|---|---|
-| **A purchase** | A learner buys a specific part, and gets access to only that part. |
-| **Admin assignment** | You grant specific parts to a learner yourself. |
-
-## Granting or changing access for many learners
-
-You can adjust partial access for a whole group at once:
-
-1. Open any enrollments list (the global one, or a course/cohort/learning path
-   **Learners** tab).
-2. Select the learners you want to change.
-3. Choose the **parts** they should have access to.
-4. **Preview** the change — you'll see a before-and-after for each learner, with what's being
-   added and what's being removed.
-5. Save.
-
-The selection becomes the learner's **exact** set of accessible parts: anything you picked
-is added, and anything you didn't pick is removed.
-
-<Callout type="warn">
-Bulk partial-access edits only affect learners who **already** have partial access. Learners
-with **full** access are left untouched, so you can't accidentally restrict everyone by
-applying a partial set. You must select at least one part — there is no "remove everything"
-shortcut.
-</Callout>
-
-## Purchases and refunds
-
-Partial access stays in sync with what a learner bought:
-
-- Buying a part **grants** access to that part.
-- **Refunding** a part **removes** access to just that part — the learner keeps everything
-  else they still hold.
-
-## What the learner sees
-
-A learner with partial access simply sees the parts they have. The parts they don't have
-aren't shown. There's no separate "locked" notice for content they were never granted — it
-just isn't part of their view.
+For many learners at once, **Bulk edit enrollment scopes** does the same job across a
+selection, and **Review scope changes** shows what is about to change before it does.
 
 <Callout type="info">
-Partial access controls **which parts a learner owns**. When those parts open and close over
-time is handled separately by
-[drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling).
+The selection you bulk-edit is whatever your filters have narrowed the enrolment list
+to. Filter first, check the count, then act.
 </Callout>
+
+## What partial access changes
+
+**Content.** They see what they hold. Everything else simply is not there — no locked
+panel, no explanation.
+
+**Progress.** Measured against what they hold, not the whole programme. A learner with
+one semester out of four can reach 100%.
+
+**Marks.** Worked out from what they hold, on both sides of the sum. Their result is out
+of what they actually took, not out of a diploma they have a quarter of.
+
+**Certificates.** A certificate for the whole programme needs the whole programme. A
+learner who holds one semester has not finished the diploma — see
+[Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
+
+## Seeing what someone holds
+
+The enrolment list has a **Scopes** column, and an enrolment's own screen shows **This
+learner can** — the parts they hold, in words.
+
+Both are worth checking before you answer "why can this learner not see the final exam?"
+
+## Growing access
+
+A learner who buys the next semester, or is moved up by
+[progression](/docs/knowledgebase/enrollment-access/progression), gains that part. They
+keep what they already had — access is added, not swapped.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner says content is missing and I cannot see why.">
+Check the **Scopes** column on their enrolment first. Restricted content does not appear
+at all, so from the learner's side it looks identical to a course that was never built.
+</Accordion>
+
+<Accordion title="A learner's progress says 100% but they have done a quarter of the diploma.">
+That is correct for partial access: they are measured against what they hold. Their
+transcript shows which semesters they actually took.
+</Accordion>
+
+<Accordion title="Why did a learner's result change after I gave them another semester?">
+Because the denominator changed. They are now marked out of two semesters rather than
+one, and the new semester's unmarked work is in the picture. See
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+</Accordion>
+
+<Accordion title="Can I give partial access on a self-paced course?">
+Partial access works on the parts a programme is divided into, which means
+[terms](/docs/knowledgebase/courses/terms-and-breakpoints) on a batch. A self-paced
+course has no terms, so there is nothing to divide. Use
+[eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules) or separate
+courses instead.
+</Accordion>
+
+<Accordion title="A learner bought a semester but still cannot open it.">
+Work down [How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+The usual answers are a drip schedule holding the content until a date, or the semester
+not being published yet.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="How access works together" description="The order in which every rule is applied." href="/docs/knowledgebase/enrollment-access/how-access-works-together" />
+  <Card title="Terms and semesters" description="The parts a programme is divided into." href="/docs/knowledgebase/courses/terms-and-breakpoints" />
+  <Card title="Progression" description="Granting the next semester." href="/docs/knowledgebase/enrollment-access/progression" />
+  <Card title="Pricing" description="Selling one semester at a time." href="/docs/knowledgebase/selling-payments/pricing" />
+</Cards>

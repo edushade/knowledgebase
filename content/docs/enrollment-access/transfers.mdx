@@ -1,0 +1,153 @@
+---
+title: "Transfers"
+description: "Moving a learner from one batch or programme to another, and deciding what comes with them."
+---
+
+A learner registered into the wrong batch, or needs to move to the evening group, or is
+repeating with next year's intake. A transfer moves them without destroying their
+record — and lets you decide whether their marks travel with them.
+
+<WhoCan roles="Admin" />
+
+## Transferring
+
+From <Path>Enrollments > Transfers</Path>, or from a learner's enrolment, choose
+**Transfer Learners**. You pick:
+
+1. **Who** is moving — one learner or many.
+2. **Where to** — the programme and batch they are moving into.
+3. **Why** — a reason, kept on the transfer trail. "Registered into the wrong batch" is
+   a real answer, and the one you will be glad of later.
+
+Before it happens you get **Review transfer**: what is about to change, for whom. Read
+it. A transfer is not something you want to discover was wrong a week later.
+
+## What comes with them
+
+This is the decision that matters, and it is made **per assessment**, not once for the
+whole transfer.
+
+Under **Marks they already have**, every assessment the learner has a mark for is listed
+and **everything is ticked by default** — that is what a transfer has always done.
+
+Untick one and the learner **starts it again in the new programme**:
+
+- Their old mark stops counting there.
+- It stays on record — nothing is deleted.
+- They may sit it again **even if the assessment allows a single attempt**.
+
+The list is grouped the way the programme is, so you can untick a whole semester with
+one tick rather than hunting through it, and there is a search box — **Find an
+assessment** — for a long curriculum. A **Start again:** line summarises what you have
+unticked, so you can check it before committing.
+
+<Callout type="warn">
+**The default carries everything, including the failures.** A failed attempt that
+travels with a learner counts in the new batch as the attempt it was. If somebody is
+repeating a semester, untick that semester's assessments — otherwise their old failures
+follow them into the fresh start you meant to give them.
+</Callout>
+
+| Situation | What to untick |
+|---|---|
+| Wrong batch at sign-up, same content | Nothing. Everything should follow. |
+| Timetable clash, moving sideways mid-term | Nothing. |
+| Repeating a semester they failed | That semester's assessments. |
+| Moving to a different programme | Most of it — the content is not the same, so the marks are not comparable. |
+
+## Keeping their access as it is
+
+A learner who holds only part of a programme — one semester, say — keeps the equivalent
+part in the new one, where there is an equivalent. If any learner's part has no match in
+the target, the transfer **stops rather than moving them without it**, so nobody arrives
+with less access than they left with and nobody notices three weeks later.
+
+See [Partial access](/docs/knowledgebase/enrollment-access/partial-access).
+
+## The transfer trail
+
+Every transfer your academy has ever made is on one screen — <Path>Enrollments >
+Transfers</Path>, titled **Transfer Trail**. A learner who has moved twice shows both
+moves.
+
+<Screenshot
+  src="/kb/enrollment-access/transfer-trail.png"
+  alt="The Transfer Trail, one row per transfer, showing where each learner moved from and to."
+  caption="Learner names are blurred here. On your own screen they are readable — this is a record of real people."
+/>
+
+Each row carries:
+
+| Column | What it tells you |
+|---|---|
+| **Learner** | Who moved. |
+| **From → To** | The batch or course they left, and the one they joined. |
+| **Scopes** | How much access went with them — `1 → 1 scopes`, or **Full access**. |
+| **Payment** | Whether money had been taken, and through which gateway. |
+| **Certificate** | **Issued** if one had already been given. |
+| **Status** | Whether the transfer itself went through. |
+| **Reason** | What you typed at the time. |
+| **By** | Who did it. |
+
+That record is the answer to "why is this learner in this batch?" and "why do their
+marks start in week six?". The **Reason** column is the one that does that work, and it
+is only as good as what you type — *"wrong section purchase"* tells the next person
+everything; a blank tells them nothing.
+
+You can filter the trail by **Status** and by **Program Type**, and search it by name.
+
+## What a transfer does not do
+
+- **It does not refund or re-charge.** Money is separate — see
+  [Transactions](/docs/knowledgebase/selling-payments/transactions).
+- **It does not re-issue a certificate.** A certificate already issued stands.
+- **It does not change the learner's account.** Same person, same sign-in, different
+  batch.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Should I transfer or just enrol them again?">
+Transfer. Enrolling someone a second time leaves two enrolments, two progress records
+and two places their marks could be — and the duplicate will confuse every report you
+run afterwards.
+</Accordion>
+
+<Accordion title="I transferred someone and their old failed attempt is still counting.">
+Carry forward was left on for that assessment — it is on by default. Untick it on the
+transfer, or give them another attempt in the new batch. The old mark stays on record
+either way.
+</Accordion>
+
+<Accordion title="A learner's marks appeared in a batch they never attended.">
+They were carried forward in a transfer. Check the transfer trail on their enrolment to
+see when, and from where.
+</Accordion>
+
+<Accordion title="Can I transfer between two different courses?">
+You can move a learner to another programme, not only another batch of the same course.
+Where the content differs, carrying marks forward makes little sense — reset instead.
+</Accordion>
+
+<Accordion title="Can I undo a transfer?">
+Not as a single action. Transfer them back, which adds a second entry to the trail
+rather than erasing the first. That is the honest record of what happened.
+</Accordion>
+
+<Accordion title="What happens to a learner who only bought one semester?">
+Their partial access travels with them. Check afterwards that the new batch's semesters
+line up with what they paid for. See
+[Partial access](/docs/knowledgebase/enrollment-access/partial-access).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Admin and bulk enrollment" description="Putting learners in a programme in the first place." href="/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment" />
+  <Card title="Partial access" description="What a learner can open, and how it moves with them." href="/docs/knowledgebase/enrollment-access/partial-access" />
+  <Card title="Progression" description="Moving a learner up a semester rather than across a batch." href="/docs/knowledgebase/enrollment-access/progression" />
+  <Card title="Resetting progress" description="Clearing a record without moving anyone." href="/docs/knowledgebase/enrollment-access/resetting-progress" />
+</Cards>

@@ -12,8 +12,8 @@ If a sentence would only make sense to an engineer, it does not belong here.
 ## 1. The golden rules (never break these)
 
 ### 1.1 NEVER mention multi-tenancy — in any form
-This product is sold as the customer's **own** branded platform (white-label). The
-customer must never learn that the system is shared infrastructure.
+This product is sold as the customer's **own** branded platform. The customer must never
+learn that the system is shared infrastructure.
 
 **Banned words and ideas — never write any of these, anywhere:**
 `tenant`, `multi-tenant`, `multi-tenancy`, `tenant_id`, `tenant isolation`,
@@ -35,34 +35,53 @@ Never mention or hint at any of the following:
   "connect another app", not the mechanism), tokens, JWT, `localStorage`, cookies,
   sessions-as-tokens, refresh tokens, OAuth flow internals.
 - **Code / infra:** file names, service names (`auth-service`, `learning-service`…),
-  programming languages (Go, Gin), databases (PostgreSQL, Redis), search engines
-  (Typesense), pub/sub, queues, microservices, "backend", "frontend", caching,
-  fail-closed/fail-open, idempotency.
+  programming languages, databases, search engines, pub/sub, queues, microservices,
+  "backend", "frontend", caching, fail-closed/fail-open, idempotency.
 - **Internal field names:** never write database column names or flags like
   `is_learner`, `locked_until`, `enrollment_open`, `course_type`, `program_type`,
-  `max_enrollments`. Describe the *setting in plain words* ("the **Enrollment** toggle",
-  "the **seat limit**").
-- **Admin URL paths:** never write `/admin/users/{id}/edit`. Say *where in the UI*:
-  "in **Admin → Users**, open a learner and click **Edit**".
+  `max_enrollments`. Describe the *setting in plain words* ("the **Enrollment Open**
+  toggle", "the **Maximum Enrollments** box").
+- **Admin URL paths:** never write `/admin/users/{id}/edit`. Say *where in the UI*
+  using the `<Path>` component: `<Path>People > All Users</Path>`, then "open a learner
+  and click **Edit**".
 
 When the underlying behavior matters to the user, translate it into what they see and
 do — not how it works.
 
 ### 1.3 Only document what actually exists (accuracy guardrails)
-Do **not** invent features, and respect these confirmed corrections:
-- **Quizzes have NO IELTS / band-score / Listening-Reading-Writing-Speaking features.**
-  Never claim IELTS support.
+
+**The rule: every claim on a page must be traceable to something checked.** Before you
+write a page, you must have (a) read the screen's own code for its labels and options,
+or (b) opened the screen on the reference site — preferably both. If you cannot confirm
+it, leave it out. A missing paragraph is a small problem; a wrong one destroys trust in
+every other page.
+
+**Three things are easy to get wrong, so check them every time:**
+
+1. **A control that exists in the code may be commented out.** Commented-out UI is not
+   shipping. (Pass Mark and Password Protection on course settings are commented out —
+   do not document them.)
+2. **A page that exists may not be reachable.** If nothing in the menus leads to a
+   screen, the reader cannot use it. Say so, or leave the page out.
+3. **The reference site runs slightly behind the current build.** Something absent there
+   may still be shipping. Trust the current code for *what exists*; trust the reference
+   site for *what it looks like*.
+
+**Confirmed corrections — do not undo these:**
+- **Quizzes have NO IELTS / band-score features.** Never claim IELTS support.
 - **Selling is single-item today.** There is **no shopping cart, no multi-item orders,
-  no order numbers, no inventory/stock, no shipping, no tax engine, no wishlist, no
-  product reviews storage, no gift cards.** A buyer purchases one thing per checkout.
-  Do not document any of the missing items as if they exist.
+  no inventory/stock, no shipping, no tax engine, no wishlist, no gift cards.** A buyer
+  purchases one thing per checkout.
 - **Coupons are entered manually at checkout** — there is no automatic apply.
 - **Recurring notices are not functional** — do not document recurring announcements.
-- **Notice board delivery is in-app only** (notifications module handles email/SMS/push).
-- **Transcripts/marksheets are an admin tool** — learners do not self-download a transcript.
-- **Access/eligibility rules do not show the learner a detailed "why"** — restricted
+- **Noticeboard delivery is in-app only** (notifications handle email/SMS/push).
+- **Marksheets and transcripts are an admin tool** — learners do not self-serve one.
+- **Access and eligibility rules do not show the learner a detailed "why"** — restricted
   content simply does not appear. Note this honestly where relevant.
-- If you are unsure whether something exists, leave it out rather than guess.
+- **Learner-to-learner messaging is not switched on.** The learner menu has no Message
+  item. Do not document chat, servers, channels or direct messages.
+- **Subscriptions exist but are not in the Billing menu.** Document subscription
+  *pricing* where it is set; do not send readers to a menu item that is not there.
 
 ---
 
@@ -72,64 +91,152 @@ Do **not** invent features, and respect these confirmed corrections:
 - **Plain English. Short sentences.** Prefer a 12-word sentence over a 30-word one.
 - **Task-first.** Lead with what the reader wants to accomplish.
 - **No hype, no marketing fluff, no buzzwords.** No "robust", "powerful", "seamless",
-  "leverage", "cutting-edge", "enterprise-grade", "revolutionize".
+  "leverage", "cutting-edge", "enterprise-grade", "revolutionize", "simply", "just".
 - **Define any necessary term in one short clause** the first time it appears.
 - **Concrete examples** beat abstract description ("for example, release one module
   every Monday").
+- **Never say a thing is easy.** If it were, the reader would not be here.
 - Indian/Bangladeshi English is fine; the platform is Bangladesh-first. Use simple,
   globally understandable wording. Currency examples can use ৳ / Taka where natural.
 
 ---
 
-## 3. Page structure (use this shape)
+## 3. The two page shapes
 
-Every page is a `.mdx` file with frontmatter:
+Every page is one of two shapes. Pick one before you start writing.
+
+### 3.1 A **concept page** — "what this is and how it behaves"
+
+Answers *what is this, what are my options, what will happen*. Lives in a feature
+section (`courses/`, `progress-grading/`, …).
 
 ```mdx
 ---
-title: "Short, Clear Page Title"
-description: "One sentence a non-technical person understands, for search and previews."
+title: "Grading Schemes"
+description: "One sentence a non-technical person understands."
 ---
+
+<intro: one to three sentences, no heading>
+
+<WhoCan roles="Admin" />
+
+## What a grading scheme does
+## Setting it up            ← short; the long version is a how-to page
+## What the learner sees
+## Good to know
+## Common questions         ← <Accordions>, each answer 1–5 sentences
 ```
 
-(Do **not** add `module:`, `order:`, `feature:` keys — ordering is controlled by
-`meta.json`.)
+### 3.2 A **how-to page** — "do this one task, start to finish"
 
-Then the body, roughly in this order (adapt as needed — not every page needs every part):
+Answers *how do I actually do it*. One task per page. Numbered steps with real button
+names and at least one screenshot.
 
-1. **One- to three-sentence intro** — what this is and why it helps. No heading.
-2. **"What you can do" / "What it does"** — a short bullet list or small table of
-   capabilities, in plain language.
-3. **Step-by-step "how to"** — numbered lists. Use real button/menu names in **bold**
-   (e.g. **Save**, **Publish**, **Admin → Courses → New Course**). Keep steps short.
-4. **What the learner sees** — when admin actions change the learner experience,
-   describe it from the learner's side. This is highly valued.
-5. **Tips / Good to know / Common questions** — short practical notes, gotchas,
-   recommendations.
+Most how-to pages live in `how-to/`. The exception is a task whose URL a feature section
+already owns — `courses/creating-a-course` is the walkthrough for creating a course and
+keeps that address. Do not duplicate it under `how-to/`; link to it from the how-to
+index instead.
 
-Keep pages focused. If a topic gets long, split it into sibling pages.
+```mdx
+---
+title: "How to create a course"
+description: "..."
+---
+
+<one-sentence promise: what you will have at the end>
+
+<WhoCan roles="Admin, Instructor" />
+
+**Before you start** — what must already exist.
+
+<Steps>
+<Step>### Open the new course form …</Step>
+…
+</Steps>
+
+## What happens next
+## If something goes wrong    ← the two or three real failure modes
+## Related questions          ← links onward to more how-to pages
+```
+
+### 3.3 The question chain (this is the house style)
+
+A concept page must never swallow a long procedure, and a how-to page must never
+swallow a second task. They hand off to each other:
+
+> **Concept page** → its *Common questions* → a question whose honest answer is long
+> → **a how-to page of its own** → its *Related questions* → further how-to pages.
+
+Keep going until nothing is left unexplained. The rules:
+
+- An answer that fits in **five sentences** stays in the accordion.
+- An answer that needs **steps, a screenshot, or a decision table** becomes a how-to page
+  and the accordion holds a two-sentence summary plus the link.
+- **Never leave a dead end.** Every how-to page ends with at least two onward links.
+- **Never link to a page that does not exist.** Write the destination, or do not link.
 
 ---
 
-## 4. Allowed MDX components (and nothing exotic)
+## 4. Screenshots
 
-Use standard Markdown plus these Fumadocs components (already globally available):
+Screenshots are part of the documentation, not decoration. A reader who cannot find a
+button is stuck no matter how good the sentence is.
 
-- **Tables** — great for "setting → what it does" and option lists.
-- **`<Callout type="info">…</Callout>`** — also `type="warn"`, `type="error"`,
-  `type="success"`. Use for tips, warnings, and "good to know". Keep them short.
-- **`<Cards>` / `<Card title="…" description="…" href="/docs/knowledgebase/…" />`** —
-  use on overview/index pages to link to child pages.
+**Use the `<Screenshot>` component:**
 
-Do **not** use `<Steps>`, `<Tabs>`, `<TypeTable>`, JSX imports, or any component not
-listed above (they may not be registered and will break the build). Numbered Markdown
-lists are the way to show steps.
+```mdx
+<Screenshot
+  src="/kb/courses/choose-course-type.png"
+  alt="The Choose Course Type dialog, with Self Paced and Cohort-Based side by side"
+  caption="Pick the type first — it decides how many steps the rest of the form has."
+/>
+```
+
+Rules:
+
+- **One screenshot per step that is hard to find**, not one per step. A form everyone
+  can read does not need a picture; a dialog hidden behind a three-dot menu does.
+- **Capture the real product**, signed in to the reference academy, at 1512px wide.
+- **`alt` describes what is on screen** for someone who cannot see it. **`caption` says
+  what to notice** — never repeat the sentence above the image.
+- **Never annotate with red circles.** If a thing is hard to point at, say where it is
+  in words ("top right, next to **Save Draft**").
+- **No real people's names, emails or phone numbers** in a screenshot. The reference
+  academy's seeded demo names are fine.
+- Files live in `public/kb/<section>/<name>.png`, kebab-case.
+- If a feature is too new to appear on the reference site, write the page without a
+  screenshot rather than faking one.
 
 ---
 
-## 5. Links & file conventions
+## 5. Allowed MDX components
+
+Standard Markdown plus these, all registered in `components/mdx.tsx`:
+
+| Component | Use it for |
+|---|---|
+| `<Callout type="info\|warn\|error\|success">` | a tip, a warning, a "good to know" |
+| `<Cards>` / `<Card title description href>` | linking onward from an index page |
+| `<Accordions type="single">` / `<Accordion title>` | the *Common questions* block |
+| `<Steps>` / `<Step>` | a numbered walkthrough on a how-to page |
+| `<Screenshot src alt caption>` | a picture of a real screen |
+| `<Path>People > All Users</Path>` | where to click, as one chip |
+| `<WhoCan roles="Admin, Instructor" />` | who is allowed to do this |
+| `<Tabs>` / `<Tab>` | the same task done two ways (use sparingly) |
+| Tables | "setting → what it does" and option lists |
+
+Do **not** import anything, and do not use components outside this list.
+
+Inside `<Steps>`, each `<Step>` starts with a `###` heading — that heading is the step's
+name, and it is what shows in the page's own table of contents.
+
+---
+
+## 6. Links & file conventions
 
 - File names: **kebab-case**, `.mdx` (e.g. `drip-scheduling.mdx`).
+- **Never rename or delete an existing page's file.** These URLs carry real search
+  traffic. Rewrite a page in place; add new pages beside it.
 - Cross-link generously with absolute doc paths:
   `[Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling)`.
 - Every folder has a `meta.json`:
@@ -141,44 +248,59 @@ lists are the way to show steps.
     "pages": ["index", "creating-a-course", "..."]
   }
   ```
-  `icon` is a **lucide-react** icon name (e.g. `BookOpen`, `GraduationCap`,
-  `CreditCard`, `Globe`, `Megaphone`, `MessagesSquare`, `CalendarClock`, `FolderOpen`,
-  `Search`, `Users`, `Award`, `ListChecks`, `LockKeyhole`, `LineChart`).
-- Each folder has an `index.mdx` overview page that introduces the section and links to
-  its pages (use `<Cards>`).
+  `icon` is a **lucide-react** icon name.
+- Each folder has an `index.mdx` overview that introduces the section and links to its
+  pages with `<Cards>`.
 
 ---
 
-## 6. Preferred vocabulary (internal term → what to write)
+## 7. Preferred vocabulary (internal term → what to write)
 
 | Internal / technical | Write this instead |
 |---|---|
 | tenant / your tenant | your platform / your academy / your account |
-| learner / user / `is_learner` | learner (or "student") |
+| user / `is_learner` | learner (or "student") |
 | instructor / `is_instructor` | instructor (or "teacher") |
 | admin / `is_admin` | admin (or "you", for the owner) |
-| RBAC / roles & permissions | roles & permissions (keep simple: "what each team member can do") |
-| enrollment | enrollment (fine) |
-| program (course/path/cohort) | "a course, learning path, or cohort" (say the real type) |
+| RBAC | roles & permissions ("what each team member can do") |
+| program (course/path/cohort) | programme — or name the real type |
 | curriculum tree / curriculum item | course content / lessons and sections |
 | drip schedule | drip scheduling / scheduled content release |
 | completion condition | completion rule |
 | access rule / "Prerequisite" tab | eligibility rules / who can access |
 | prerequisite (completion-based drip) | prerequisite (must finish X before Y) |
-| breakpoint | term / period (e.g. semester) |
+| breakpoint | term / semester |
 | transcript | marksheet / transcript / grade report |
 | scope (enrollment scope) | partial access (e.g. "Semester 1 only") |
 | provider (notifications) | sending service / connected service |
 | segment | audience |
 | facet | filter |
+| attempt | attempt (fine) |
+| entity type | what it applies to |
 
 ---
 
-## 7. Quality bar
+## 8. Quality bar
 
 Before finishing a page, check:
-- [ ] Zero banned words (section 1.1) — search your text for "tenant".
-- [ ] Zero technical internals (section 1.2) — no endpoints, files, field names, infra.
-- [ ] Every claim is something the investigation confirmed exists (section 1.3).
-- [ ] A non-technical reader could follow every step.
-- [ ] Frontmatter present; links valid; uses only allowed components.
+- [ ] Zero banned words (§1.1) — search your text for "tenant".
+- [ ] Zero technical internals (§1.2) — no endpoints, files, field names, infra.
+- [ ] Every button, field and option name matches the product **exactly**, including
+      capitalisation (§1.3).
+- [ ] No commented-out or unreachable feature is documented as shipping.
+- [ ] A non-technical reader could follow every step without guessing.
+- [ ] The page is one shape (§3), not a hybrid.
+- [ ] Every long answer became a how-to page; every how-to page links onward.
+- [ ] Frontmatter present; every internal link resolves to a page that exists.
+- [ ] Screenshots have real `alt` text and a caption that adds something.
+
+---
+
+## 9. Keeping this true (the standing rule)
+
+**A change that reaches `main` is not finished until the knowledge base says so.**
+
+When anything ships in `backend`, `frontend`, `website-builder-v2` or `packages` that a
+customer can see — a new screen, a renamed button, a changed default, a removed option —
+the same work updates the pages that describe it. See `.claude/KB_UPDATE_RULE.md` for
+how to find the affected pages and what counts as done.

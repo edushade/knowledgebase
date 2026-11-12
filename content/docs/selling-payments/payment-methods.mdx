@@ -1,62 +1,105 @@
 ---
 title: "Payment Methods"
-description: "Connect card, mobile-wallet, and offline payment options, and record payments on a buyer's behalf."
+description: "The payment services you can connect, the difference between a method and a gateway, and taking money offline."
 ---
 
-Payment methods are how buyers actually pay you. You can connect several at once and let
-buyers choose. You can also record a payment yourself when someone pays in cash or by
-bank transfer.
+Two different things are often called "payment method", and keeping them apart makes
+everything else clearer.
 
-## The kinds of payment you can accept
+| | What it is | Example |
+|---|---|---|
+| **Payment method** | What the buyer uses. | bKash, Nagad, a card, cash |
+| **Payment gateway** | The service that processes it. | SSLCommerz, bKash, Stripe |
 
-| Kind | Examples |
+A learner pays with **bKash** through **SSLCommerz**. Both are recorded on the
+transaction, and when you reconcile against a statement it is the gateway's own
+reference you match on.
+
+<WhoCan roles="Admin" />
+
+## The gateways you can connect
+
+Set up in <Path>Settings > Integrations</Path>.
+
+| Gateway | What it needs |
 |---|---|
-| **Card / online payments** | SSLCommerz, Stripe, PayPal, Razorpay |
-| **Mobile-wallet payments** | bKash, Nagad, Rocket |
-| **Offline / manual** | Cash, bank transfer |
+| **SSLCommerz** | Store ID, store password, store currency. |
+| **EPS** | Merchant ID, store ID, user name, password, hash key — all five. |
+| **bKash** | App key, app secret, username, password. |
+| **Stripe** | Secret key, and a webhook secret. |
+| **PayPal** | Client ID, client secret, webhook ID. |
 
-## Connecting and managing a payment option
+Each value is copied from that provider's own dashboard, under whatever they call their
+developer or API settings. The field names here match theirs, so they are findable.
 
-For each online or mobile-wallet option, you can:
+For an academy selling in Bangladesh, **SSLCommerz** is usually the one to start with —
+it covers bKash, Nagad, Rocket and cards through one connection.
 
-1. Go to **Admin → Payment Methods**.
-2. **Add** the option and enter its **credentials** (the keys the provider gives you).
-3. **Run a test** to confirm the credentials work before you go live.
-4. Switch between **test mode** and **live mode**.
-5. Turn the option **on or off**.
-6. Set a **priority** when several options are active, to control their order for buyers.
+Each connection also carries:
+
+- **Label** — a name of your own, where you have more than one.
+- **Priority** — which is offered first.
+- **Enabled** — on or off without deleting the configuration.
+- **Live** — whether it is processing real money or test payments.
 
 <Callout type="warn">
-  Always run the built-in **test** and confirm it passes before switching an option to
-  **live**. This catches wrong credentials before a real buyer tries to pay.
+**Check the live switch before you announce a course.** A gateway left in test mode
+takes payments that are not real, and learners are enrolled against money that never
+arrived.
 </Callout>
 
-## Recording an offline or cash payment
+## Taking money offline
 
-When a buyer pays you directly — in cash, by bank transfer, or any way outside the
-online options — you can record it yourself:
+Not every payment goes through a gateway, and in Bangladesh most academies take some in
+cash or by bank transfer. Two routes:
 
-1. Go to **Admin → Payments → Record Payment**.
-2. Choose the **buyer**, the **item**, and the **price**.
-3. Pick the **method** and the **date** (you can **back-date** it if the payment happened
-   earlier).
-4. (Optional) Add a **discount**, **fees**, or **notes**.
-5. Mark it as **pending** or **verified**.
+1. **Record it yourself** — [Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
+2. **Verify what somebody else recorded** — the **Pending Verification** queue on
+   [Transactions](/docs/knowledgebase/selling-payments/transactions).
 
-Recording a verified payment grants the buyer access just as an online payment would.
+Both produce a real transaction, so your revenue figures include the cash.
 
 ## What the buyer sees
 
-- A choice of the payment options you've turned on, in the order you set.
-- Their own **transaction history** of past purchases.
+The methods shown at checkout are part of your checkout page — their names, their order
+and their brand marks are yours to set. See
+[Checkout](/docs/knowledgebase/selling-payments/checkout).
 
-## What you see
+## Common questions
 
-You get an enriched view of all transactions across your platform, and you can **export**
-them to a spreadsheet.
+<Accordions type="single">
+
+<Accordion title="A learner paid but the transaction says failed.">
+Check with the gateway using its own reference. A payment that succeeded there and
+failed here usually means the gateway could not tell us — the money is real, and the
+right fix is to record and verify it.
+</Accordion>
+
+<Accordion title="Can I use more than one gateway?">
+Yes. Connect several, set their priority, and enable the ones you want offered.
+</Accordion>
+
+<Accordion title="Our gateway is not on the list.">
+Those five are what is available.
+</Accordion>
+
+<Accordion title="Do I need a gateway at all?">
+Not to run an academy. You can take payments offline and record them. You do need one to
+sell without being involved in every sale.
+</Accordion>
+
+<Accordion title="Which currencies can I charge in?">
+Bangladeshi Taka and US Dollars. See
+[Pricing](/docs/knowledgebase/selling-payments/pricing).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Checkout](/docs/knowledgebase/selling-payments/checkout) — where the buyer chooses a method and pays.
-- [Installments](/docs/knowledgebase/selling-payments/installments) — recording monthly payments offline.
-- [Refunds](/docs/knowledgebase/selling-payments/refunds) — reversing a payment later.
+<Cards>
+  <Card title="Integrations" description="Where gateways are connected." href="/docs/knowledgebase/settings/integrations" />
+  <Card title="Manual payments" description="Recording cash and bank transfers." href="/docs/knowledgebase/selling-payments/manual-payments" />
+  <Card title="Transactions" description="Where every payment lands." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Checkout" description="What the buyer is offered." href="/docs/knowledgebase/selling-payments/checkout" />
+</Cards>

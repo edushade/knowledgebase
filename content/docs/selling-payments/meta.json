@@ -4,15 +4,18 @@
   "defaultOpen": true,
   "pages": [
     "index",
-    "products-catalog",
     "pricing",
-    "bundles",
-    "subscriptions",
     "installments",
+    "subscriptions",
+    "bundles",
+    "products-catalog",
     "coupons-and-offers",
     "scholarships",
+    "scholarship-applications",
     "checkout",
     "payment-methods",
+    "manual-payments",
+    "transactions",
     "refunds",
     "revenue-reports"
   ]

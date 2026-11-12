@@ -1,0 +1,130 @@
+---
+title: "Privacy and Consent"
+description: "Retention, deletion, consent, age limits and the legal pages — every data-privacy setting and what it actually does."
+---
+
+Everything here lives in <Path>Settings > Control Panel</Path> under **Security &
+Compliance → Data Privacy**, with the records themselves under
+<Path>Audit > Consent Records</Path>.
+
+<Callout type="warn">
+Several of these settings **delete data on a schedule**. Read what each one does before
+switching it on — there is nothing to undo afterwards.
+</Callout>
+
+<WhoCan roles="Admin" />
+
+## The master switch
+
+**GDPR compliance** turns on the stricter handling: consent prompts, the deletion rules,
+the representative details. You do not have to be in Europe to want it — it is a
+reasonable default for any academy holding learners' personal details.
+
+## Keeping and deleting
+
+| Setting | What it does |
+|---|---|
+| **Keep personal data in logs for (days)** | How long personal details stay in your logs. |
+| **Delete inactive learner accounts after (days)** | Accounts dormant for longer are removed. |
+| **Remove accounts that were never used** | Clears accounts that signed up and never arrived. |
+| **Notice before removal (days)** / **Reminder before removal (days)** | Warnings sent before an account goes. |
+| **Email only addresses at well-known providers** | Only warn people whose address is at a provider likely to deliver it. |
+
+**Delete inactive learner accounts** is the one to be careful with. A learner who
+finished a diploma three years ago and comes back for their certificate is "inactive".
+Set the window long enough for that, and make sure the notice and reminder give real
+warning.
+
+## Age
+
+| Setting | What it does |
+|---|---|
+| **Minimum age to sign up** | Below this, no account. |
+| **Parent confirms sign-ups under (age)** | Between the two, a parent's email is asked for and their agreement collected. |
+
+That second setting is what puts the date-of-birth and parent's email questions on
+[checkout](/docs/knowledgebase/selling-payments/checkout). The resulting state —
+**Awaiting parent**, **Allowed** or **Declined** — is on the consent record.
+
+## Consent
+
+| Setting | What it does |
+|---|---|
+| **Ask about news and offers at sign-up** | A marketing consent question at registration. |
+| **Cookie consent banner** | Shows a banner on your website. |
+| **Who is asked** | Which visitors see it. |
+
+The cookie banner governs the scripts in **Analytics & Tracking**. Without consent, they
+do not run — which is the point, and also why your analytics may look thinner after you
+switch it on.
+
+## The legal pages
+
+| Setting | What it is |
+|---|---|
+| **Terms of service page** | Where your terms live. |
+| **Privacy policy page** | Where your privacy policy lives. |
+| **Cookie policy page** | Where your cookie policy lives. |
+| **Terms last changed** | A version marker. Change it when the terms change and people are asked to agree again. |
+
+Write the pages on your website, then point these settings at them. See
+[Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+
+## Who is responsible
+
+| Setting | What it is |
+|---|---|
+| **Data protection officer** | Their contact details. |
+| **Representative in the EU** / **Representative in the UK** | Where you need one. |
+
+These appear where a learner or a regulator looks for them. Fill them in if you hold
+data on people in those places.
+
+## What you can do for one person
+
+From a person's record:
+
+| Action | What it does |
+|---|---|
+| **Export their data** | Produces what you hold on them. |
+| **Restrict use of their data** | Limits processing, with a note of why — for example, "disputes the address on file, asked by email on 6 October". |
+| **Erase their data** | Closes the account and erases their personal data everywhere. It cannot be undone, and asks you to type **ERASE** to confirm. |
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Accounts are being deleted and we did not expect it.">
+**Delete inactive learner accounts after (days)** or **Remove accounts that were never
+used** is on. Switch it off, then decide on a window you are comfortable with.
+</Accordion>
+
+<Accordion title="Does erasing somebody remove their certificates?">
+It closes the account and erases their personal data. Think about what you need to keep
+for your own records — and export it — before you erase.
+</Accordion>
+
+<Accordion title="A learner under the age limit cannot sign up.">
+That is **Minimum age to sign up** working. Between the minimum and the parental-consent
+age, they can sign up with a parent's agreement; below the minimum, not at all.
+</Accordion>
+
+<Accordion title="The parent never confirmed.">
+Their consent record reads **Awaiting parent**. The learner's access depends on your
+rules; the record tells you where they are.
+</Accordion>
+
+<Accordion title="Our analytics dropped after enabling the cookie banner.">
+Expected. Visitors who decline are not tracked. Your learning analytics are unaffected —
+those are not cookie-based.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="The Control Panel" description="Where every one of these settings lives." href="/docs/knowledgebase/settings/control-panel" />
+  <Card title="Activity and audit logs" description="The records, including consent." href="/docs/knowledgebase/account-people/activity-history" />
+  <Card title="Security" description="Sign-in, sessions and two-factor." href="/docs/knowledgebase/account-people/security" />
+</Cards>

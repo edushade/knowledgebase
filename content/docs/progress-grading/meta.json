@@ -6,10 +6,17 @@
     "index",
     "progress-tracking",
     "completion-rules",
-    "terms-and-periods",
+    "learning-streaks",
     "grading-schemes",
+    "course-grading-setup",
     "weighted-grading",
+    "rounding-and-precision",
+    "retakes-and-replacement",
+    "gpa-and-results",
+    "terms-and-periods",
+    "learner-grades",
+    "transcripts",
     "marksheets",
-    "learning-streaks"
+    "assessment-report"
   ]
 }

@@ -1,60 +1,85 @@
 ---
-title: "Your Booking Page"
-description: "The public page students use to pick a time and book — plus how to customize its title, layout, web address, and colors."
+title: "The Booking Page"
+description: "What an invitee sees, what they fill in, and the small things that decide whether they finish booking."
 ---
 
-Every meeting plan has a **booking page** — the page a student opens to see your open times
-and book a meeting. You share it by sending its web address. Anyone with the link can view
-your availability and request a time.
+Every meeting plan has a public booking page at its own address — "the name invitees see
+and the address they book at".
 
-## What the booking page shows
+<WhoCan roles="Learner" />
 
-- Your meeting plan's title, description, and length.
-- A calendar of open times, shown in the **student's own time zone**.
-- A short form to enter their details and confirm.
-- The meeting location (a join link, an address, or a phone number) once the booking is made.
+## What they see
 
-## How a student books
-
-1. The student opens your booking page using its web address.
-2. They pick a date, then choose an open time.
-3. They fill in a short form — usually their name and email, and any details you ask for.
-4. (Optional) They add a guest or two if the plan allows it.
-5. They confirm. Depending on the plan, the booking is **confirmed**, held as **pending**
-   for payment, or sent to you as a **request** to approve.
-6. They receive a confirmation, and once the booking is confirmed, a calendar invite with the
-   meeting details.
-
-## Customize how your page looks
-
-You can give your booking page a polished, on-brand look.
-
-| Setting | What it does |
+| Part | Where it comes from |
 |---|---|
-| **Page title** | The heading students see at the top of the page. |
-| **Layout** | The arrangement of the page — choose the look you prefer. |
-| **Web address** | The friendly link you share. Pick a short, memorable name. |
-| **Background color** | The page's background, to match your style. |
-| **Cover image** | A banner across the top of the page. |
-| **Thumbnail** | A smaller image used to represent the meeting. |
+| The name and description | The meeting plan |
+| The cover image and intro video | The meeting plan |
+| The length | **Duration** |
+| Available times | Your [availability](/docs/knowledgebase/bookings/availability), in their timezone |
+| The price | Its [pricing](/docs/knowledgebase/bookings/payments), where you charge |
 
-To change these, go to **Admin → Bookings**, open the meeting plan (or its page settings),
-adjust the options, and click **Save**.
+## What they do
 
-## What the student sees
+They pick a time and give their details. Anything you ask for is "information submitted
+by the attendee during booking" and is kept with the booking.
 
-A simple, branded page with your title, your colors, and your image — then a calendar and a
-short form. Because times appear in their own time zone, students rarely book the wrong slot.
+Then, depending on the plan:
 
-<Callout type="info">
-Pick a clear web address that is easy to say out loud and type, especially if you will share
-it in a class, an email, or on social media.
-</Callout>
+- **Instant booking** — confirmed immediately, with their joining details.
+- **Request-based** — their request goes to you, and they wait for approval.
+- **Paid** — they pay. The slot is held until **Pending booking expiry** passes.
 
-## Good to know
+## Making the page work
 
-- Set a plan to **inactive** to take its booking page offline temporarily. See
-  [Meeting plans](/docs/knowledgebase/bookings/meeting-plans).
-- Which times appear is controlled by your
-  [Availability & booking rules](/docs/knowledgebase/bookings/availability).
-- To charge before someone can book, see [Payments](/docs/knowledgebase/bookings/payments).
+The page is short, so each piece carries weight:
+
+1. **Say what the meeting is for**, in the description. "30-minute consultation" tells
+   nobody whether it is for them.
+2. **Use the intro video.** Thirty seconds of the person they will be meeting does more
+   than any paragraph.
+3. **Ask for as little as possible.** Every extra field loses people.
+4. **Offer real times.** A page whose next slot is in nine days is a page people leave.
+
+## Sharing it
+
+The page has its own address — put it in your email signature, on your course pages, in
+a [campaign](/docs/knowledgebase/communication/campaigns). It works for anybody, whether
+or not they have an account on your platform.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The page shows no times.">
+No availability, or every slot is removed by buffers, notice period or a daily cap. See
+[Availability](/docs/knowledgebase/bookings/availability).
+</Accordion>
+
+<Accordion title="An invitee booked and got no joining details.">
+For a request-based plan, nothing is confirmed until you approve it. For instant, check
+a conferencing provider is connected — see
+[Integrations](/docs/knowledgebase/bookings/integrations).
+</Accordion>
+
+<Accordion title="Can I change what the page looks like?">
+What it shows comes from the meeting plan — name, description, images, intro video.
+There is no separate design.
+</Accordion>
+
+<Accordion title="Do invitees need an account?">
+Not to book. They give their details on the page.
+</Accordion>
+
+<Accordion title="Can I stop a plan being bookable for a while?">
+Set it inactive, or clear its availability.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Meeting plans" description="Everything the page shows." href="/docs/knowledgebase/bookings/meeting-plans" />
+  <Card title="Availability" description="The times it offers." href="/docs/knowledgebase/bookings/availability" />
+  <Card title="Booking payments" description="Charging for a meeting." href="/docs/knowledgebase/bookings/payments" />
+</Cards>

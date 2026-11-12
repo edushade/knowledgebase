@@ -1,64 +1,138 @@
 ---
 title: "Pricing"
-description: "Set how much an item costs — one-time, free, recurring, or pay-over-time — plus sale prices, schedules, and access windows."
+description: "Giving something a price — the three payment modes, how long access lasts, and selling one semester instead of a whole programme."
 ---
 
-Pricing is how you decide what an item costs and what a buyer gets for it. Every item
-you sell needs at least one price. You can also give an item **more than one price** —
-for example, a one-time price and a pay-over-time plan side by side.
+A price connects a thing you sell to an amount. Until something has one, it cannot be
+bought — however published it is.
 
-## The four price models
+Prices live in <Path>Billing > Pricing Management > Product Pricing</Path>.
 
-Each price uses exactly one of these models:
+<WhoCan roles="Admin" />
 
-| Model | What it means |
+<Screenshot
+  src="/kb/selling-payments/pricing-list.png"
+  alt="The pricing list, with tabs for each kind of thing you can price and summary cards above."
+  caption="The tabs across the top are everything that can carry a price. Total Entities counts the ones that currently do."
+/>
+
+The cards above the list are worth a glance each time you open it. **Most Popular Model**
+tells you how your learners actually prefer to pay, and **Average Price** across your
+catalogue is the number most academies have never worked out.
+
+## What you can price
+
+| Type | Notes |
 |---|---|
-| **One-time** | Pay once, get access. The most common choice for a course or book. |
-| **Free** | No payment needed — the buyer gets access right away. |
-| **Subscription** | A recurring charge that renews each cycle. See [Subscriptions](/docs/knowledgebase/selling-payments/subscriptions). |
-| **Installment** | Split the cost into a down payment plus monthly payments. See [Installments](/docs/knowledgebase/selling-payments/installments). |
+| **Course** | A self-paced course. |
+| **Cohort** | A batch. This is what learners buy on a cohort-based course — not the course. |
+| **Learning Path** | A whole programme. |
+| **Bundle** | Several things as one purchase. |
+| **Event** | A seat at an event. |
+| **Product** | Something that is not a course. |
+| **Meeting Plan** | A bookable session. |
 
-## Extra options on a price
+<Callout type="warn">
+**Pricing the course instead of the batch is the commonest mistake on a cohort-based
+course.** Learners enrol into a batch, so the batch needs the price. A priced course
+with unpriced batches sells nothing.
+</Callout>
 
-Beyond the model, each price can carry these settings:
+## The three payment modes
 
-| Option | What it does |
+| Mode | What it means |
 |---|---|
-| **Access window** | How long access lasts (for example, 6 months). If you leave this empty, access doesn't expire — it's effectively lifetime. |
-| **Sale price** | Show a lower price next to the regular one. Buyers see both, with the regular price struck through. |
-| **Schedule** | Set a start and end date so a price is only active during a chosen period. |
-| **Allowed buyers** | Restrict a price to specific people — a private price meant for one learner. |
-| **Currency** | The currency for this price. Your platform is Bangladesh-first, so Taka (৳) is common, but you choose. |
+| **One-time Purchase** | The customer pays once and gets access. |
+| **Installment** | They pay over time. See [Installments](/docs/knowledgebase/selling-payments/installments). |
+| **Free** | No charge. They still need an account, and they still enrol. |
 
-## Setting a price
+## The amounts
 
-1. Open the item in **Admin → Products** (or the course/path/event you want to sell).
-2. Go to its **Pricing** area and click **Add Price**.
-3. Choose a **model**: one-time, free, subscription, or installment.
-4. Enter the **amount** and pick the **currency**.
-5. (Optional) Add a **sale price** to run a discount.
-6. (Optional) Set an **access window** so access expires after a set time.
-7. (Optional) Set a **schedule** if the price should only be active for a period.
-8. (Optional) Limit it to **allowed buyers** for a private price.
-9. **Save**.
+| Field | What it is |
+|---|---|
+| **Amount** | What they actually pay. |
+| **Regular amount** | The original price before discount, optional. Shown struck through, so the saving is visible. |
+| **Currency** | Bangladeshi Taka (৳) or US Dollar ($). |
 
-## What the buyer sees
+**Regular amount** is how you show a discount without a coupon. Set the amount to 2,000
+and the regular amount to 3,000 and the course reads "৳2,000, was ৳3,000".
 
-- The **price** (and the regular price struck through if there's a sale).
-- For a recurring or pay-over-time price, the **billing terms** — how much and how often.
-- After paying, access begins. If you set an **access window**, they'll have it for that
-  period; otherwise it doesn't expire.
+## How long access lasts
 
-## Good to know
+| Choice | What it means |
+|---|---|
+| **Lifetime** | Unlimited access forever. |
+| **Limited** | Access expires after a set duration — a number and a unit: days, weeks, months or years. |
 
-- An item can have several prices at once — for example, a standard price plus a private
-  price for a sponsored learner.
-- A **free** price (or a 100% discount from a coupon or scholarship) skips payment and
-  grants access immediately. See [Checkout](/docs/knowledgebase/selling-payments/checkout).
-- You can export your prices to a spreadsheet from the billing area.
+Limited access is how a subscription-like arrangement is actually built here: a year's
+access, bought again when it runs out.
+
+When access expires the enrolment lapses, and the learner's content closes. They keep
+their record.
+
+## When the price is live
+
+| Field | What it does |
+|---|---|
+| **Start date** | When the price becomes active. |
+| **End date** | When it becomes inactive. |
+
+That is how an early-bird price works: an early price that ends, and a standard price
+that starts the same day.
+
+## Selling part of a programme
+
+A price can name particular **content scopes** — semesters — rather than the whole
+programme. That is what partial access is sold through: Semester 1 at one price, the
+whole diploma at another.
+
+A semester-scoped price is governed by that semester's own enrolment window rather than
+the batch's late-entry rule, which is what lets a running batch still sell Semester 3.
+See [Partial access](/docs/knowledgebase/enrollment-access/partial-access) and
+[Enrolment windows](/docs/knowledgebase/enrollment-access/enrollment-windows).
+
+## A price only some people can see
+
+**Restrict price visibility** with **Allowed users** means only the people you name can
+see and buy at that price. Use it for a corporate rate, an alumni rate, or a negotiated
+price you do not want published.
+
+A restricted price and a public price can exist side by side on the same thing — the
+named people see theirs, everyone else sees the public one.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The course is published but there is no Enrol button.">
+It has no price. Publishing puts it in the catalogue; a price makes it buyable.
+</Accordion>
+
+<Accordion title="A free course — do learners still have to register?">
+Yes. Free means no payment, not no account. They sign up and are enrolled immediately.
+</Accordion>
+
+<Accordion title="Can I change the price of something people have already bought?">
+Yes. Existing purchases are unaffected — they bought at the price that was live then.
+</Accordion>
+
+<Accordion title="Can I sell in a currency other than Taka and Dollars?">
+No. Those two are what is available.
+</Accordion>
+
+<Accordion title="Is there a subscription that renews by itself?">
+Not from the pricing form. The three modes are one-time, instalment and free. A
+recurring arrangement is built as **limited** access that the learner buys again. See
+[Subscriptions](/docs/knowledgebase/selling-payments/subscriptions).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Subscriptions](/docs/knowledgebase/selling-payments/subscriptions) — recurring memberships.
-- [Installments](/docs/knowledgebase/selling-payments/installments) — pay over time.
-- [Coupons & offers](/docs/knowledgebase/selling-payments/coupons-and-offers) — discount codes on top of a price.
+<Cards>
+  <Card title="Installments" description="Letting learners pay over time, and what happens when they fall behind." href="/docs/knowledgebase/selling-payments/installments" />
+  <Card title="Checkout" description="What the buyer goes through." href="/docs/knowledgebase/selling-payments/checkout" />
+  <Card title="Coupons and offers" description="Discount codes, and the one thing to know about them." href="/docs/knowledgebase/selling-payments/coupons-and-offers" />
+  <Card title="Partial access" description="Selling a programme one semester at a time." href="/docs/knowledgebase/enrollment-access/partial-access" />
+</Cards>

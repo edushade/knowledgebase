@@ -1,73 +1,129 @@
 ---
-title: "Notification Preferences"
-description: "Let learners choose which messages they get, on which channels, and when — with a no-login link to update or unsubscribe."
+title: "Notification Settings"
+description: "What your academy sends automatically, the channel defaults behind it, and what learners can switch off."
 ---
 
-Notification preferences put each learner in control of the messages they receive. They
-choose which channels to use, which kinds of messages they want, and when it is okay to
-reach them. This keeps your messaging welcome instead of annoying — and helps you stay on
-the right side of messaging rules.
+Most of what your academy sends is not a campaign — it is the platform telling somebody
+something happened. A payment succeeded, an assignment is due, a certificate was issued.
 
-## What a learner can choose
+<Path>Notifications > Settings</Path> is where all of that is governed.
 
-| Setting | What it controls |
+<WhoCan roles="Admin" />
+
+## The channel switches
+
+| Setting | What it does |
 |---|---|
-| **Channels** | Which ways they want to be reached — email, SMS, push, or a chat app. |
-| **Message types** | Which kinds of messages they want (see below). |
-| **Quiet hours** | A daily window when they should not be messaged. |
-| **Timezone** | So quiet hours line up with their actual day. |
-| **Frequency** | How often messages arrive — immediately, a daily summary, or a weekly summary. |
+| **Enable Email Notifications** | Email on or off academy-wide. |
+| **Enable SMS Notifications** | SMS on or off. |
+| **Enable Push Notifications** | Push on or off. |
+| **Enable In-App Inbox** | The bell inside your platform. |
 
-## The three message types
+Each channel also has its defaults — for email, a **Default From Name**, **Default From
+Email** and a **reply-to address**; for push, a default icon and badge.
 
-Learners can opt in or out of each type separately:
-
-- **Transactional** — essential messages tied to their account and activity, like receipts,
-  password resets, and enrollment confirmations.
-- **Marketing** — promotions, offers, and news about new courses.
-- **Announcements** — general updates you broadcast to a group.
-
-<Callout type="info">
-Essential transactional messages keep people informed about their own account, so they are
-the messages a learner is least likely to want to switch off.
+<Callout type="warn">
+**Set the From name and reply-to address before you send anything.** An email from "no
+reply" that a learner cannot answer is a support request they will send some other way.
 </Callout>
 
-## Frequency: immediate, daily, or weekly
+## What can be notified about
 
-- **Immediate** — each message arrives as it happens.
-- **Daily** — messages are grouped into one daily summary.
-- **Weekly** — messages are grouped into one weekly summary.
+Notification types are grouped by what they are about. The groups you will actually
+configure:
 
-A summary reduces interruptions for learners who prefer fewer messages.
+| Group | Examples |
+|---|---|
+| **Account Updates** | Verification, password reset, sign-in from a new device, profile updated. |
+| **Course Updates** | Course started, new content added, lesson completed, milestone reached. |
+| **Assignment Updates** | Deadline approaching, graded, overdue. |
+| **Quizzes** | Completed, deadline approaching, attempts exhausted. |
+| **Enrolment** | Expiring soon, expired, extended, revoked, bulk enrolment created. |
+| **Cohorts** | Starting soon, started, ended, enrolment opened. |
+| **Payment & Billing** | Payment successful, payment failed, invoice generated, instalment due, instalment overdue. |
+| **Certificates** | Issued, expiring soon, expired, revoked. |
+| **Class & Meeting Alerts** | Scheduled, reminder, started, cancelled, rescheduled, recording available. |
+| **Discussions** | Reply received, mentioned, instructor replied, answer accepted. |
+| **Learning Paths** | Started, course unlocked, completed. |
 
-## Quiet hours and timezone
+For each, you choose which channels carry it.
 
-A learner can set a personal **quiet window** — for example, no messages between 10 pm and
-7 am — and set their **timezone** so the window matches their real day. Learn more in
-[Quiet hours](/docs/knowledgebase/communication/quiet-hours).
+## The ones worth getting right
 
-## What admins can do
+| Notification | Why |
+|---|---|
+| **Account Verification** | Nobody gets in without it. |
+| **Password Reset** | Nobody gets back in without it. |
+| **Payment Successful / Failed** | Money. The failed one especially — it is a sale you can still save. |
+| **Instalment Due Soon / Overdue** | Money you are owed. |
+| **Enrollment Expiring Soon** | A renewal you will otherwise lose. |
+| **Assignment Deadline Approaching** | The single most effective nudge in any academy. |
+| **Certificate Issued** | The moment a learner tells other people about you. |
 
-- View any learner's preferences.
-- Override a learner's preferences when needed — for example to make sure they receive a
-  critical account message.
+## Rate limits and marketing
 
-## The no-login update link
+Separate limits for marketing, per user:
 
-Every learner can update their preferences or unsubscribe **without signing in**. Messages
-can include a simple link that opens their preference page directly. This makes it easy to
-honor opt-out requests and is an important part of staying compliant. See
-[Delivery & analytics](/docs/knowledgebase/communication/delivery-and-analytics) for the
-unsubscribe and suppression tools.
+| Setting | What it caps |
+|---|---|
+| **Marketing Emails per Day** / **per Week** | How often one person is emailed. |
+| **Marketing SMS per Day** / **per Week** | The same for SMS. |
+| **Marketing Push per Day** / **per Week** | And push. |
+| **Exclude Transactional from Limits** | Keeps payment and verification messages flowing whatever the marketing cap. |
 
-## How to find preferences
+**Turn on Exclude Transactional.** Otherwise a marketing cap can block a verification
+email, and the learner cannot get in at all.
 
-- Learners: in their account, open **Settings → Notifications**.
-- Admins: in **Admin → People**, open a learner and view their **Notification preferences**.
+## Quiet hours
 
-## Good to know
+**Enable Quiet Hours**, with a start time, an end time and a timezone, stops messages
+going out overnight. **Apply to Marketing Only** keeps urgent messages flowing while
+holding the rest.
 
-- Respecting preferences protects your sender reputation — messages people want are far more
-  likely to be delivered and opened.
-- A daily or weekly summary is a great option to offer learners who feel overwhelmed but
-  still want to stay informed.
+See [Quiet hours](/docs/knowledgebase/communication/quiet-hours).
+
+## What learners control
+
+From their own settings, learners choose what they receive and on which channel.
+Marketing can be switched off; transactional messages they need cannot.
+
+That is why categorising a message honestly matters — see
+[Message templates](/docs/knowledgebase/communication/message-templates).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Learners are not getting payment confirmations.">
+Check the notification type is enabled on a channel, that the channel is on, and that a
+sending service is connected. See [Channels](/docs/knowledgebase/communication/channels).
+</Accordion>
+
+<Accordion title="We are sending too much.">
+Lower the marketing rate limits and turn on quiet hours. Both act per learner, so one
+enthusiastic campaign cannot flood anybody.
+</Accordion>
+
+<Accordion title="A learner says they opted out but still gets emails.">
+They opted out of marketing. Transactional messages — payments, verification,
+deadlines — still reach them, and should.
+</Accordion>
+
+<Accordion title="Can I change the wording of these?">
+Yes, through [templates](/docs/knowledgebase/communication/message-templates).
+</Accordion>
+
+<Accordion title="SMS is costing too much.">
+Narrow which notification types use it. Verification and payment are worth it; a lesson
+completed is not.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Channels" description="The services these notifications travel on." href="/docs/knowledgebase/communication/channels" />
+  <Card title="Quiet hours" description="Not messaging people at 3am." href="/docs/knowledgebase/communication/quiet-hours" />
+  <Card title="The notification inbox" description="What a learner sees." href="/docs/knowledgebase/communication/notification-inbox" />
+</Cards>

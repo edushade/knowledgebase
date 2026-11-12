@@ -1,61 +1,131 @@
 ---
 title: "Audiences"
-description: "Build groups of people to send to — fixed manual lists or rule-based groups that update on their own."
+description: "Defining who a message reaches — built-in audiences, your own conditions, and previewing before you send."
 ---
 
-An audience is a group of people you want to message. Build an audience once, then reuse it
-in any [campaign](/docs/knowledgebase/communication/campaigns). Audiences let you reach the
-right people instead of messaging everyone every time.
+An audience — the screens call it a **segment** — is a group of people defined by
+conditions. "Learners in Dhaka who have not signed in for 30 days" is an audience.
 
-## Two kinds of audience
+<Path>Notifications > Segments</Path>.
 
-| Type | What it is | Best for |
-|---|---|---|
-| **Static** | A manual list of people you pick yourself. | A fixed group that does not change, like a specific event's attendees. |
-| **Dynamic** | A group defined by rules, which updates itself as people match or stop matching. | An ever-changing group, like "learners who haven't finished Module 1". |
+<WhoCan roles="Admin" />
 
-A static audience stays exactly as you set it. A dynamic audience refreshes on its own — new
-people who match the rules join automatically, and people who no longer match drop out.
+## Built-in audiences
 
-## What dynamic rules can use
+Five come with your academy, marked **Built-in**, and they keep themselves up to date —
+nobody has to maintain the list.
 
-You build a dynamic audience by setting conditions on what you know about each learner. You
-can filter on:
+| Audience | Who is in it |
+|---|---|
+| **All learners** | Everyone with a learner account. |
+| **Instructors** | Everyone who teaches. |
+| **Learners with an active enrollment** | Enrolled in at least one course, batch or learning path right now. |
+| **Learners active in the last 30 days** | Opened any of their courses in the last 30 days. |
+| **Learners not enrolled in anything** | Registered, never enrolled. |
 
-- **Learner details** — the basic information on their profile.
-- **Enrollment** — what they are enrolled in.
-- **Progress** — how far they have gotten.
-- **Completion** — what they have finished.
-- **Quiz scores** — how they performed on quizzes.
-- **Subscription or billing status** — for example, active or lapsed.
-- **Engagement** — how active they have been recently.
+<Screenshot
+  src="/kb/communication/segments.png"
+  alt="The Segments screen, showing built-in audiences with a live count of people in each."
+  caption="Each card shows how many people are currently in that audience. The number moves on its own as people enrol and go quiet."
+/>
 
-For example: "learners enrolled in *Photography Basics* who are less than 50% through and
-have not signed in for two weeks."
+Those last two are the quietly valuable ones. **Learners not enrolled in anything** is
+everybody who signed up and never bought — the cheapest audience you will ever have.
+**Learners active in the last 30 days** inverted gives you the people slipping away.
 
-## Preview and size
+For anything else, build your own.
 
-Before you send, you can:
+## Building one
 
-- **Preview** the audience to see who is in it right now.
-- See an **estimated size** — how many people it currently includes.
+An audience is conditions on fields, grouped under **Advanced Options**:
 
-This helps you confirm you are reaching the right group before launching a campaign.
+| Category | Fields |
+|---|---|
+| **User Profile** | Name, Email, Phone, Gender, Language, Timezone, Status, Created At |
+| **Classification** | Is Learner, Is Instructor, Is Guest, Source |
+| **Contact Info** | Email Verified, Consent Given, User Status |
+| **Enrollment** | Enrolled in Course / Learning Path / Cohort, Total Enrollments |
+| **Activity** | First Seen, Last Seen |
+| **Preferences** | Country, Continent |
 
-## How to create an audience
+Operators follow the field: text offers *equals*, *contains*, *is one of*; numbers offer
+*greater than*, *between*; dates offer *before*, *in the last*, *in the next*.
 
-1. Go to **Admin → Communication → Audiences**.
-2. Click **New Audience**.
-3. Choose **Static** (pick people) or **Dynamic** (set rules).
-4. For dynamic, add your conditions.
-5. Click **Preview** to check who matches and the estimated size.
-6. Click **Save**.
+<Callout type="info">
+These are the same fields
+[eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules) are built
+from. An audience you have worked out is a rule you can reason about, and the reverse.
+</Callout>
 
-## Good to know
+## Always preview
 
-- Dynamic audiences are powerful for ongoing campaigns — set the rule once and the right
-  people always receive it.
-- Use **Preview** before every important send, so there are no surprises about who gets it.
-- For comparison, the [notice board](/docs/knowledgebase/communication/announcements) has
-  its own built-in targeting (by role, course, cohort, and more) — audiences here are for
-  email, SMS, push, and chat campaigns.
+**Preview results** shows who is currently in the audience. Use it every time.
+
+Two failures it catches instantly:
+
+- **Nobody matches.** Usually a condition on a field most learners never filled in, or
+  conditions that have to be true at once when you meant either.
+- **Everybody matches.** Usually a condition that does nothing.
+
+A campaign to nobody is a wasted afternoon. A campaign to everybody is worse.
+
+## Static and dynamic
+
+| Type | Behaviour |
+|---|---|
+| **Dynamic** | Recalculated when it is used. Somebody who becomes inactive joins it automatically. |
+| **Static** | A fixed list, as it was. |
+
+Dynamic for anything you will send repeatedly. Static when you need the same people
+twice — a before-and-after message to exactly one group.
+
+## Audiences worth keeping
+
+| Name | Conditions |
+|---|---|
+| Never signed in | Registered, never seen |
+| Gone quiet | Last seen more than 30 days ago |
+| Enrolled, not started | Has enrolments, no progress |
+| About to lapse | Access ending in the next 7 days |
+| Finished last term | Completed a programme recently |
+
+Build them once as dynamic audiences and they stay useful for years.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Save is refused.">
+Add at least one condition with a field actually selected. An empty condition row counts
+as incomplete.
+</Accordion>
+
+<Accordion title="Preview shows nobody.">
+Your conditions all have to be true at once. Check each one on its own — a condition on
+Gender, for instance, excludes everyone who never filled it in.
+</Accordion>
+
+<Accordion title="Can I build an audience from grades or progress?">
+Not from these fields. For "everyone behind in this course", work from the
+[progress analytics](/docs/knowledgebase/analytics/progress) and use a programme-based
+audience.
+</Accordion>
+
+<Accordion title="Does an audience respect notification preferences?">
+Yes. A learner who has switched a channel off does not receive on it, whatever audience
+they are in.
+</Accordion>
+
+<Accordion title="Can I export an audience?">
+Use the people or enrolment list with the same filters, which exports.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Campaigns" description="Sending to an audience." href="/docs/knowledgebase/communication/campaigns" />
+  <Card title="Eligibility rules" description="The same conditions, deciding access." href="/docs/knowledgebase/enrollment-access/eligibility-rules" />
+  <Card title="Notification preferences" description="What learners can switch off." href="/docs/knowledgebase/communication/notification-preferences" />
+</Cards>

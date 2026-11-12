@@ -4,15 +4,15 @@
   "defaultOpen": true,
   "pages": [
     "index",
-    "announcements",
-    "notification-inbox",
-    "notification-preferences",
     "channels",
-    "campaigns",
-    "message-templates",
-    "audiences",
-    "push-notifications",
+    "notification-preferences",
     "quiet-hours",
-    "delivery-and-analytics"
+    "campaigns",
+    "audiences",
+    "message-templates",
+    "announcements",
+    "delivery-and-analytics",
+    "notification-inbox",
+    "push-notifications"
   ]
 }

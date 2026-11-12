@@ -1,54 +1,149 @@
 ---
-title: "Installments (Pay Over Time)"
-description: "Let buyers split a purchase into a down payment plus scheduled monthly payments."
+title: "Installments"
+description: "Letting learners pay over time — building a plan, offering it, and what happens when somebody falls behind."
 ---
 
-An **installment plan** lets a buyer pay for something over time instead of all at once.
-They pay a **down payment** up front, then a set number of **monthly payments**. This
-makes higher-priced courses and programs easier to afford. (You may also hear this called
-"EMI" or "pay over time.")
+An instalment plan — the screens call it an **EMI plan** — lets a learner pay a
+programme off over months instead of all at once. For an expensive diploma it is often
+the difference between selling and not selling.
 
-## What you can configure
+Plans live in <Path>Billing > Pricing Management > EMI Plans</Path>.
 
-| Setting | What it does |
+<WhoCan roles="Admin" />
+
+<Screenshot
+  src="/kb/selling-payments/emi-plans.png"
+  alt="The EMI Plans list, with each plan's duration, down payment, and how many things and people are using it."
+  caption="Entities Using and Customers Using are the two columns to read before you change a plan."
+/>
+
+Two columns on that list save you from the commonest mistake:
+
+- **Entities Using** — how many courses, batches or products currently offer this plan.
+- **Customers Using** — how many learners are part-way through paying on it.
+
+<Callout type="warn">
+**A plan with customers on it is not safe to edit.** They agreed to the terms that were
+there when they bought. Changing the duration or the interest underneath them changes
+what they owe. Make a new plan instead, and switch the price over to it — people already
+paying stay on the old one.
+</Callout>
+
+The **Active EMIs** tab beside the list is the other side of the same thing: not the
+plans, but the learners currently paying on one.
+
+## Building a plan
+
+A plan is a reusable arrangement. Build a few and attach them to prices.
+
+| Field | What it is |
 |---|---|
-| **Number of months** | How many monthly payments the buyer makes. |
-| **Down payment** | The amount due up front — as a **percentage** or a **fixed amount**, with a minimum you set. |
-| **Processing fee** | An optional one-time fee added to the plan. |
-| **Interest** | Choose **none**, **flat**, **per-installment**, or **reducing**. |
-| **Late fee** | An optional charge if a payment is missed. |
-| **Grace period** | Extra days a buyer has after a due date before a late fee applies. |
+| **Title** | What learners see — "6 months, 20% down". |
+| **Duration in months** | 1 to 60. |
+| **Down payment** | What they pay up front, as a **percentage** or a **fixed** amount. |
+| **Minimum down payment** | A floor, so a percentage of a cheap course is still worth taking. |
+| **Processing fee** | Your charge for the arrangement, **percentage** or **fixed**. |
+| **Interest type** | **None**, **Flat**, **Per Installment** or **Reducing**. |
+| **Interest rate** | Up to 100%. |
+| **Grace period (days)** | How long a late payment is tolerated before access is affected. |
+| **Late fee** | **Percentage** or **fixed**. |
+| **Status** | Active or inactive. |
 
-## Setting up a plan
+<Callout type="info">
+**Set a grace period you can live with.** It is the number that decides when a learner
+loses access, and a learner locked out two days after a missed payment will be on the
+phone the same afternoon.
+</Callout>
 
-1. On the item's price, choose the **Installment** model — see
-   [Pricing](/docs/knowledgebase/selling-payments/pricing).
-2. Set the **number of months** and the **down payment**.
-3. (Optional) Add a **processing fee** and choose an **interest** option.
-4. (Optional) Set a **late fee** and a **grace period**.
-5. **Save**.
+## Offering a plan on a price
 
-## How a buyer pays
+On the price: switch on **Enable EMI payment**, choose which **installment plans** may
+be used, and set a **minimum amount** — the purchase total below which instalments are
+not offered.
 
-1. At checkout, the buyer pays the **down payment**.
-2. They get access according to the item's access rules.
-3. Each month, they make the next **installment** — online, or recorded by an admin if
-   they pay another way (for example, cash).
+A learner buying above that minimum sees the plans at checkout and picks one.
 
-## What you see
+Academy-wide rules — which entity types may offer instalments at all, and the global
+minimum — are in **Global EMI Settings**.
 
-In **Admin → Installments** you can see who is on a pay-over-time plan and **how many
-payments remain** for each buyer. You can record a payment manually when someone pays
-offline.
+## When the instalments are due
 
-## Good to know
+| Choice | What it means |
+|---|---|
+| **Same date every month** | The 5th, every month. |
+| **Every set number of days** | 30 days from the last payment. |
 
-- An installment plan applies to **one purchase**. The buyer is paying for a single item
-  over time, not building up a cart.
-- You can export installment plans to a spreadsheet from the billing area.
+## How a learner's standing is reported
+
+Every learner on a plan carries a state, and it is on the enrolment list:
+
+| State | Meaning |
+|---|---|
+| **On track** | Nothing owing. |
+| **Due date passed (in grace)** | Late, still inside the grace period. Access continues. |
+| **Past grace — access paused** | Late beyond the grace period. **Their content is closed.** |
+| **Defaulted** | Written off. |
+| **Paid off** | Finished. |
+
+**Past grace — access paused** is the one that generates support messages, and it is
+worth recognising: the learner's enrolment looks live, but nothing opens. See
+[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+
+## Chasing what is owed
+
+The billing overview carries the lists:
+
+- **Instalments overdue**, grouped by how late — **due in the next 7 days**,
+  **1–7 days late**, **8–30 days late**, **over 30 days late**.
+- **Outstanding and at-risk**, with the next due date per learner.
+
+The grouping is the useful part. A learner 1–7 days late usually just forgot; one over
+30 days late is a different conversation.
+
+## Recording a payment taken outside the platform
+
+**Pay Installment** records a payment against a plan — for a learner who paid you in
+cash or by bank transfer. The amount is worked out for you. See
+[Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner cannot see instalments at checkout.">
+Four things, in order: **Enable EMI payment** on the price; at least one plan selected;
+the purchase total above the **minimum amount**; and that entity type allowed to offer
+instalments in **Global EMI Settings**.
+</Accordion>
+
+<Accordion title="A learner paid but is still locked out.">
+The payment may not be recorded against the instalment. Check their plan and record the
+payment if it came in outside the platform.
+</Accordion>
+
+<Accordion title="Can I change a plan a learner is already on?">
+Editing a plan changes what it offers from then on. For a learner already on it, treat
+their arrangement as agreed and handle exceptions on their own schedule.
+</Accordion>
+
+<Accordion title="What is the difference between Flat, Per Installment and Reducing interest?">
+**Flat** charges on the original amount for the whole term. **Per Installment** charges
+per payment. **Reducing** charges on what is still owed, so it falls as they pay.
+Reducing is the cheapest for the learner and the most familiar to anyone who has had a
+bank loan.
+</Accordion>
+
+<Accordion title="Does a paused learner lose their progress?">
+No. Their record is intact; access is closed. When the payment arrives, they carry on.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pricing](/docs/knowledgebase/selling-payments/pricing) — the installment price model.
-- [Payment methods](/docs/knowledgebase/selling-payments/payment-methods) — including recording offline payments.
-- [Checkout](/docs/knowledgebase/selling-payments/checkout) — how the down payment is taken.
+<Cards>
+  <Card title="Pricing" description="Where a plan is attached to something you sell." href="/docs/knowledgebase/selling-payments/pricing" />
+  <Card title="Manual payments" description="Recording cash and bank transfers." href="/docs/knowledgebase/selling-payments/manual-payments" />
+  <Card title="Transactions" description="Every payment, and the ones that need you." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="How access works together" description="Why a paused learner sees nothing." href="/docs/knowledgebase/enrollment-access/how-access-works-together" />
+</Cards>

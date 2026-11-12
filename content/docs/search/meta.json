@@ -5,8 +5,8 @@
   "pages": [
     "index",
     "search-basics",
-    "filters",
     "autocomplete",
+    "filters",
     "trending-and-popular",
     "search-history"
   ]

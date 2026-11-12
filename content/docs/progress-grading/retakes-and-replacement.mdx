@@ -1,0 +1,108 @@
+---
+title: "Retakes and Replacement"
+description: "When a learner sits the same assessment twice, which attempt counts — and what each of the three policies really does."
+---
+
+Letting a learner retake a quiz raises a question the system has to answer the same way
+every time: which attempt is their mark? That answer is one setting on the programme's
+**Grading** tab.
+
+<WhoCan roles="Admin" />
+
+## Turning it on
+
+**Allow Grade Replacement** off means the latest attempt simply stands — the newest mark
+is the mark.
+
+On, you must choose a **Grade Replacement Policy**:
+
+| Policy | Which attempt counts |
+|---|---|
+| **Replace (Use new grade only)** | The most recent attempt. |
+| **Average (Average both attempts)** | The average of the attempts that have been marked. |
+| **Best (Use higher grade)** | The highest attempt. |
+
+## What each one is for
+
+**Replace** suits a course where a retake is a second chance and the second attempt is
+the real one. It is also what you get with grade replacement switched off.
+
+**Average** discourages guessing. A learner who sits a quiz twice carries both results,
+so a careless first attempt costs them. Note that only attempts which have actually
+been **marked** are averaged — one still waiting for marking is left out, so an
+unmarked attempt does not drag the average down to zero.
+
+**Best** suits practice. A learner can sit a quiz as often as they like and keep their
+highest score. Use it where the point is mastery rather than ranking.
+
+<Callout type="info">
+**Best, when an attempt is deleted.** If you delete the attempt that was a learner's
+best, their next-best attempt takes its place automatically — their progress and grade
+are both reworked. You do not have to recalculate by hand.
+</Callout>
+
+## How many retakes
+
+The policy decides which attempt counts; **how many attempts are allowed** is a setting
+on the quiz itself. The two are separate, and both have to line up:
+
+- A quiz that allows one attempt will never produce a second, whatever the policy says.
+- A quiz that allows unlimited attempts with **Replace** means the last try is the mark,
+  however many times they go round.
+
+See [Quiz settings](/docs/knowledgebase/assessments/quiz-settings) and
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+
+## Where the policy is read from
+
+The policy comes from the programme the assessment belongs to:
+
+- A quiz sitting directly in the programme follows that programme's setup.
+- A quiz inside a course that is itself inside a learning path follows **that course's**
+  setup, if the course has one of its own.
+
+This is why the same quiz can be marked differently in two programmes — and that is
+intended. The quiz is shared; the rules it is marked by belong to the programme.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner retook a quiz and their old, lower mark is still showing.">
+Check the policy. Under **Best**, a lower second attempt changes nothing — the higher
+one stands, which is what Best means. Under **Replace**, the new one should be showing;
+if it is not, the attempt may not have been marked yet.
+</Accordion>
+
+<Accordion title="A learner's mark briefly showed 0% after they submitted.">
+Under **Replace**, the most recent attempt is the mark — and an attempt that has been
+submitted but not yet marked has nothing in it. Once it is marked, the real figure
+appears.
+</Accordion>
+
+<Accordion title="I changed the policy. Why have marks not moved?">
+Results are stored as they are calculated. Run **Calculate All Grades** on the
+programme's learner grades screen. See
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+</Accordion>
+
+<Accordion title="Can one quiz in a course use Best and another use Replace?">
+No. The policy belongs to the programme, not to the quiz. To mark two assessments by
+different rules, they need to sit in different programmes — a nested course with its own
+grading setup, for instance.
+</Accordion>
+
+<Accordion title="A learner needs one more attempt but the quiz is closed.">
+Give them a reschedule rather than reopening the quiz for everybody. See
+[Reschedules](/docs/knowledgebase/assessments/reschedules).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Attempts and retakes" description="How many attempts a quiz allows, and resetting one." href="/docs/knowledgebase/assessments/attempts-and-retakes" />
+  <Card title="Course grading setup" description="Where the policy is chosen." href="/docs/knowledgebase/progress-grading/course-grading-setup" />
+  <Card title="Makeup assessments" description="A second sitting that is a different assessment." href="/docs/knowledgebase/assessments/makeup-assessments" />
+</Cards>

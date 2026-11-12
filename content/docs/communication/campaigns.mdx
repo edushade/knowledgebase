@@ -1,86 +1,234 @@
 ---
 title: "Campaigns"
-description: "Send one message to many people at once — now, scheduled, or repeating — across the channels you choose."
+description: "Sending a message to many learners at once — choosing who, writing it, and knowing what happened."
 ---
 
-A campaign is how you send the same message to a group of people at once. Pick a message,
-choose who gets it, choose the channels, and send. Campaigns are great for welcome series,
-course launches, reminders, and promotions.
+A campaign is one message sent to a group. A reminder to everyone who has not started, a
+notice to a batch, an offer to learners who finished last term.
 
-Campaigns reach people over [channels](/docs/knowledgebase/communication/channels) like
-email, SMS, push, and chat apps. If you only want a notice inside your platform, use the
-[notice board](/docs/knowledgebase/communication/announcements) instead.
+<Path>Notifications > Campaigns</Path>.
 
-## What goes into a campaign
+<WhoCan roles="Admin" />
 
-| Part | What it is |
+## Sending one
+
+Five steps, in one dialog. **New Campaign** on the Campaigns screen starts it, and you
+can go **Back** at any point without losing what you have filled in.
+
+<Screenshot
+  src="/kb/communication/new-campaign.png"
+  alt="Step 1 of the campaign dialog, with campaign name and the three campaign types."
+  caption="Step 1 of 5. The progress dots at the top tell you how far through you are."
+/>
+
+<Steps>
+
+<Step>
+
+### Campaign Details
+
+A **Campaign Name**, a **Campaign Type**, and optionally a **Description** and **Tags**.
+
+The name is for your own list, not for learners — in six months "Reminder 3" tells you
+nothing.
+
+The type is the part that matters:
+
+| Type | What it is for |
 |---|---|
-| **Audience** | The group of people who will receive it — see [Audiences](/docs/knowledgebase/communication/audiences). |
-| **Message template** | The message design to send — see [Message templates](/docs/knowledgebase/communication/message-templates). |
-| **Channels** | The ways to deliver it — email, SMS, push, or a chat app. |
-| **Timing** | Send now, schedule for later, or repeat on a regular basis. |
+| **Transactional** | Automated messages triggered by what someone did. |
+| **Marketing** | Promotions and newsletters. |
+| **Announcement** | Important updates and notifications. |
 
-## How to send a campaign
-
-1. Go to **Admin → Communication → Campaigns**.
-2. Click **New Campaign**.
-3. Choose the **audience**.
-4. Choose the **message template**.
-5. Pick the **channels** to send on.
-6. Choose the **timing** — now, scheduled, or recurring.
-7. Review, then click **Send** (or **Schedule**).
-
-## Timing options
-
-- **One-off** — send a single message right away.
-- **Scheduled** — pick a future date and time; the campaign sends itself then.
-- **Recurring** — send on a regular schedule, such as a weekly digest.
-
-## The life of a campaign
-
-A campaign moves through clear stages, and you stay in control at each step:
-
-| Action | What happens |
-|---|---|
-| **Draft** | Saved while you set it up. Nothing is sent yet. |
-| **Send** | The campaign starts going out to the audience. |
-| **Pause** | Sending stops temporarily. |
-| **Resume** | Paused sending picks up again. |
-| **Cancel** | The campaign is stopped for good. |
-| **Duplicate** | Make a copy to reuse the setup for a new send. |
-| **Rerun** | Run a finished campaign again. |
-
-<Callout type="info">
-**Duplicate** is the fastest way to repeat a successful campaign — copy it, tweak the
-audience or wording, and send.
+<Callout type="warn">
+**Mislabelling an offer as Transactional sends marketing to people who opted out.**
+Learners can switch marketing off and still receive transactional messages — that is the
+whole point of the distinction, and it is the one setting here that can get you into
+trouble.
 </Callout>
 
-## See how it performed
+</Step>
 
-Every campaign comes with its own results so you can learn what worked:
+<Step>
 
-- **Delivered** — how many messages reached people.
-- **Opened** — how many were opened.
-- **Clicked** — how many people clicked a link inside.
-- **Bounced** — how many could not be delivered.
-- A **channel breakdown**, so you can compare email vs SMS vs push.
-- A **timeline** showing activity over time.
+### Select Audience
 
-For the full picture across all your sending, see
-[Delivery & analytics](/docs/knowledgebase/communication/delivery-and-analytics).
+Either **Use Existing Segment** and pick one, or **Create New Segment** and define it
+here. See [Audiences](/docs/knowledgebase/communication/audiences).
 
-## What the learner sees
+Once you pick one, the dialog shows the **Estimated Audience Size** — the number of
+people this will reach.
 
-- The message arrives on the channels they have agreed to receive — and only those.
-- It respects their [preferences](/docs/knowledgebase/communication/notification-preferences)
-  and [quiet hours](/docs/knowledgebase/communication/quiet-hours).
-- Marketing messages always include a way to unsubscribe.
+<Screenshot
+  src="/kb/communication/campaign-audience.png"
+  alt="Step 2 of the campaign dialog, with a segment chosen and an estimated audience size of 330 users."
+  caption="Read the number before you go on. A campaign to nobody and a campaign to everybody look identical until you look."
+/>
 
-## Good to know
+The screen warns that *"Audience size may change by send time based on segment
+criteria"*, and it means it. An audience defined by conditions is recounted when the
+campaign actually goes out, so a campaign scheduled for next week reaches whoever
+qualifies next week — not the people who qualify today.
 
-- Send a [test](/docs/knowledgebase/communication/message-templates) of your template to
-  yourself before launching to a big audience.
-- A smaller, well-chosen [audience](/docs/knowledgebase/communication/audiences) usually
-  beats sending to everyone — people open messages that are relevant to them.
-- Scheduling lets you write a campaign during work hours but send it at the best time for
-  your learners.
+</Step>
+
+<Step>
+
+### Template & Channels
+
+Pick a **template**, then tick the **channels** it goes out on. The two are one step
+because the template decides what is available.
+
+<Screenshot
+  src="/kb/communication/campaign-channels.png"
+  alt="The channel list, with Email, Push Notification and SMS ticked and WhatsApp greyed out as Not configured."
+  caption="A channel the template has no version for cannot be ticked. One that your academy has not connected shows Not configured."
+/>
+
+Each channel is marked:
+
+- **Available in template** — the template has a version for it, so you can tick it.
+- **Not configured** — your academy has not connected that service. See
+  [Channels](/docs/knowledgebase/communication/channels).
+
+**You can only select channels configured in the template.** If you want to send by SMS
+and the option is greyed out, the fix is in the template, not here — add an SMS version
+to it and come back.
+
+Push is worth understanding: it reaches phones with the app installed, and everyone else
+in the audience who has an account sees the same message in their notification bell
+instead. Nobody is missed because they have no phone.
+
+</Step>
+
+<Step>
+
+### Schedule
+
+**When to Send**, and the options that keep a campaign from annoying people.
+
+<Screenshot
+  src="/kb/communication/campaign-schedule.png"
+  alt="Step 4, showing Send Immediately, Schedule for Later and Recurring, with sending options below."
+  caption="The three sending options below the schedule are all on sensible defaults. Leave them alone unless you have a reason."
+/>
+
+| When to Send | What it does |
+|---|---|
+| **Send Immediately** | Starts as soon as you confirm. |
+| **Schedule for Later** | A specific date and time. |
+| **Recurring** | A repeating schedule. |
+
+Then **Sending Options**:
+
+| Option | Default | What it does |
+|---|---|---|
+| **Respect user quiet hours** | On | Nothing is delivered during the hours a learner marked as quiet. See [Quiet hours](/docs/knowledgebase/communication/quiet-hours). |
+| **Skip users who received notification recently** | On, 24 hours | Anyone already messaged inside that window is left out of this one. |
+| **A/B Test (send to 10% sample first)** | Off | Sends to a tenth of the audience before everyone. |
+
+That second one is the quiet hero. Two campaigns scheduled on the same morning would
+otherwise both land on the same people; with it on, the second skips anyone the first
+already reached.
+
+</Step>
+
+<Step>
+
+### Review & Confirm
+
+Everything on one card — name, type, audience and its size, template and its version,
+channels, schedule — and an **Estimated Cost** before you commit.
+
+<Screenshot
+  src="/kb/communication/campaign-review.png"
+  alt="The review card, showing audience, template, channels, schedule and an estimated cost broken down per channel."
+  caption="The cost is worked out per channel and per recipient. SMS is where the money goes."
+/>
+
+The cost is broken down by channel, so you can see exactly where it comes from. Email
+and push are fractions of a penny each; SMS is not. On a 330-person audience that
+difference is the whole bill.
+
+If the number surprises you, go **Back** and untick SMS.
+
+</Step>
+
+</Steps>
+
+## Priority
+
+A campaign also carries a **Priority** — **High**, **Medium** or **Low**. It decides what
+goes first when several campaigns are queued at once. Medium is right for almost
+everything; save High for something genuinely time-bound, like a cancelled class.
+
+## After it has gone
+
+Each campaign has its own analytics: sent, delivered, not delivered, and the errors. See
+[Delivery and analytics](/docs/knowledgebase/communication/delivery-and-analytics).
+
+## Campaigns worth running
+
+| Audience | Message |
+|---|---|
+| Enrolled, never started | "Your course is waiting — here is the first lesson." |
+| Started, nothing for 14 days | "You stopped at lesson 4. Ten minutes gets you to 5." |
+| Access expiring in 7 days | "Your access ends on the 14th." |
+| Finished a course | "You have finished — here is what comes next." |
+| Instalment 1–7 days late | A gentle reminder. |
+
+Each of those is an audience you can build from conditions, and each recovers learners
+or money that would otherwise be lost quietly.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="My campaign went to nobody.">
+The audience matched nobody. Step 2 shows the **Estimated Audience Size** — read it
+before going on. A condition on a field most learners have never filled in excludes
+almost everyone.
+</Accordion>
+
+<Accordion title="Some learners did not receive it.">
+Three causes, in order: their notification preferences, a rate limit, or a delivery
+failure. The delivery logs say which.
+</Accordion>
+
+<Accordion title="Can I send to one person?">
+A campaign is for groups. For one learner, message them directly or use a notice.
+</Accordion>
+
+<Accordion title="Can I stop a campaign mid-send?">
+A scheduled campaign can be paused before it starts. Once sending has begun, what has
+gone has gone.
+</Accordion>
+
+<Accordion title="Does a campaign cost money?">
+SMS and WhatsApp do, per message, through your sending service. Email and push are
+fractions of a penny. The last step shows an **Estimated Cost** broken down per channel
+before you confirm, so you never find out afterwards.
+</Accordion>
+
+<Accordion title="Can a campaign repeat?">
+Yes — **Recurring** on the schedule step sets up a repeating send. Be careful pairing it
+with an audience defined by conditions: each run recounts the audience, which is usually
+what you want, but it means the list is not the same every time.
+</Accordion>
+
+<Accordion title="The channel I want is greyed out.">
+Either the template has no version for that channel, or your academy has not connected
+the service. The label says which: **Not configured** means the service, anything else
+means the template. Add the missing version to the template and the tick box comes back.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Audiences" description="Choosing who a campaign reaches." href="/docs/knowledgebase/communication/audiences" />
+  <Card title="Message templates" description="Writing once and reusing it." href="/docs/knowledgebase/communication/message-templates" />
+  <Card title="Delivery and analytics" description="What actually happened." href="/docs/knowledgebase/communication/delivery-and-analytics" />
+  <Card title="Channels" description="The services a campaign travels on." href="/docs/knowledgebase/communication/channels" />
+</Cards>

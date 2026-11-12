@@ -1,53 +1,90 @@
 ---
 title: "Verifying Certificates"
-description: "How a certificate number and verification code let anyone confirm a certificate is genuine."
+description: "What is actually on a certificate that proves it is genuine — and the public check that does not exist yet."
 ---
 
-Every certificate is verifiable. That means a learner can prove their certificate is
-real, and anyone they show it to — like an employer — can confirm it. This page explains
-how that works.
-
-## How verification works
-
-Each certificate carries two things that make it unique:
-
-- A **certificate number** — a one-of-a-kind reference for that certificate.
-- A **verification code** — a private code that proves the certificate is genuine.
-
-Together, these let anyone check that a certificate was really awarded by your platform
-and has not been faked.
-
-## How a third party verifies a certificate
-
-When a learner shares their certificate, the certificate number and verification code
-are shown on it. Someone who wants to confirm it is genuine can use those details to
-look the certificate up and see that it is valid.
-
-A genuine certificate will confirm:
-
-- The course or learning path it was earned for.
-- The learner's grade and completion date.
-- That the certificate is still **valid** (not revoked or expired).
-
-## Expiry
-
-A certificate can have an **expiry date** if you set one when configuring the offering.
-
-- Most certificates do **not** expire — they stay valid forever.
-- If you set an expiry date, the certificate is only valid up to that date. After it
-  passes, the certificate shows as expired.
-
-Use an expiry date when a credential should be renewed periodically — for example, a
-certification that needs refreshing every couple of years.
-
-## Good to know
-
-<Callout type="info">
-A **revoked** certificate will not pass verification. If you revoke a certificate
-awarded by mistake, anyone who checks it will see that it is no longer valid.
-</Callout>
+An employer has a certificate with your academy's name on it and wants to know it is
+real. Here is exactly what you can offer them today.
 
 <Callout type="warn">
-The verification code is what proves a certificate is real, so it should be treated as
-part of the certificate itself. It is shown on the certificate the learner downloads.
+**There is no public verification page.** A third party cannot type a code into your
+website and be told whether a certificate is genuine. The QR code a certificate can
+carry currently leads to the course's page, not to a verification result.
 </Callout>
+
+<WhoCan roles="Admin" />
+
+## What a certificate carries
+
+| On the document | What it is |
+|---|---|
+| **Certificate number** | A unique number, built from your pattern. See [Issuing certificates](/docs/knowledgebase/certificates/issuing-certificates). |
+| **Verification code** | A code that identifies this certificate. |
+| **A QR code** | Optional, if the design includes one. |
+| **The learner's name, programme, grade and dates** | The claim itself. |
+
+The number and the code are what make a certificate checkable. A design that prints
+neither leaves you nothing to check against.
+
+## How verification works today
+
+Somebody sends you a number or a code. You look it up:
+
+1. Find the learner, in <Path>People</Path> or <Path>Enrollments</Path>.
+2. The enrolment list carries **Certificate** and **Certificate Issued At**.
+3. Check the number and the details on the document against what you hold.
+
+It is a manual answer, and for most academies the volume makes that fine. Where it is
+not, say so to the person asking rather than pointing them at a page that will not
+help.
+
+## Making certificates checkable
+
+Three things, now, that make verification work when you are asked:
+
+1. **Put the number on the document.** A design without the certificate number cannot
+   be checked at all.
+2. **Use a readable pattern.** `ES-{PROGRAM_CODE}-{COHORT_CODE}-{RANDOM:4}` tells you
+   the programme and the batch before you look anything up.
+3. **Set the pattern before you issue.** Certificates keep the number they were given,
+   so a later change leaves two schemes in circulation.
+
+## What learners can do
+
+A learner can view and download their own certificate from their dashboard at any time,
+and send the file on. That is the ordinary route — the file itself, from the person it
+belongs to.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can I put a QR code on the certificate?">
+A design can include one, and the data to drive it exists. Be aware of where it
+currently leads — the course's page, not a verification result — before you tell anyone
+it verifies the certificate.
+</Accordion>
+
+<Accordion title="Someone sent me a certificate that looks wrong.">
+Check the number against your records. A number that does not exist, or exists against
+a different learner or programme, is your answer.
+</Accordion>
+
+<Accordion title="Can I stop certificates being edited after download?">
+No more than any PDF. The number is what makes a forgery checkable, which is the
+argument for always printing it.
+</Accordion>
+
+<Accordion title="Is there an open badge or a credential standard?">
+Not implemented. What exists is the certificate document, its number and its code.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Issuing certificates" description="Numbers, patterns, and issuing by hand." href="/docs/knowledgebase/certificates/issuing-certificates" />
+  <Card title="Certificate templates" description="Putting the number and code on the document." href="/docs/knowledgebase/certificates/certificate-templates" />
+  <Card title="Certificate analytics" description="What has been issued, across your academy." href="/docs/knowledgebase/analytics/certificates" />
+</Cards>

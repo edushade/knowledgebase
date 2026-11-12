@@ -1,68 +1,141 @@
 ---
 title: "Lesson Types"
-description: "The different kinds of lessons you can add — video, audio, text, PDF, live sessions, embeds, and more."
+description: "The seven kinds of lesson, what each one needs before it will save, and which one to reach for."
 ---
 
-A lesson is a single piece of teaching inside a course. You choose the type that fits
-your content, and learners open it like any other item in the course outline.
+A lesson is a single piece of teaching. You pick its type when you create it, and the
+form then asks only for what that type needs.
 
-## The lesson types
+<WhoCan roles="Admin, Instructor" />
 
-| Type | What it is |
+## The seven types
+
+| Type | What it is | What it needs |
+|---|---|---|
+| **Video** | A video learners watch. | The video, and a **duration**. |
+| **Audio** | An audio recording. | The file, and a **duration**. |
+| **Text** | A written lesson with formatting, links and images. | Some actual text — an empty editor will not save. |
+| **PDF** | A document learners read in the page. | The PDF file. |
+| **Live** | A scheduled class. | A **provider**, a **start time** and a **duration**. |
+| **Embed** | Content pulled in from somewhere else. | The source, and what it contains. |
+| **iFrame** | Another page shown inside the lesson. | The address, and what it contains. |
+
+Every type also takes a **Title**, which is required, and an optional description. Both
+can be written in each of your site's languages.
+
+## Video and audio
+
+A video can come from three places:
+
+- **Self hosted** — upload the file and it is served from your own library.
+- **YouTube** — paste the link.
+- **Vimeo** — paste the link.
+
+**Duration is required**, and it is not decoration: progress is measured against it, so
+a wrong duration makes a learner look further along — or further behind — than they are.
+
+How a YouTube or Vimeo video behaves — whether learners can skip ahead, change speed, or
+see the source site's branding — is controlled separately. See
+[Video playback](/docs/knowledgebase/files/video-playback).
+
+## Live lessons
+
+A **Live** lesson is a class with a time attached. It asks for:
+
+| Field | Notes |
 |---|---|
-| **Video** | A video lesson learners watch. |
-| **Audio** | An audio lesson learners listen to. |
-| **Text** | A written lesson with formatted text, images, and links (rich text). |
-| **PDF** | A PDF document learners read inside the lesson. |
-| **Live session** | A scheduled live class with a meeting time, and an optional password. |
-| **Embed** | Content pulled in from another place — can hold a video, audio, document, or other. |
-| **Iframe** | A framed view of another page or player — can hold a video, audio, document, or other. |
+| **Live Session Provider** | **Zoom**, **Google Meet**, **Microsoft Teams**, **Self Hosted**, **Direct URL** or **Other**. Required. |
+| **Meeting Starts At** | The date and time. Required. |
+| **Duration** | How long it runs. Required. |
+| **Meeting Link (Join Link)** | Where learners join. |
+| **Meeting Password** | Optional, for meetings that need one. |
 
 <Callout type="info">
-**Embed** and **iframe** let you reuse content that already lives elsewhere. For each
-one, you tell the platform what it contains — video, audio, document, or other — so it
-behaves correctly for learners.
+Zoom and Google Meet can create the meeting for you once they are connected, instead of
+you pasting a link. See [Integrations](/docs/knowledgebase/settings/integrations).
 </Callout>
 
-## How to add a lesson
+A live lesson is a lesson, not a booking. If you want learners to pick a slot from your
+availability, that is [Live sessions and bookings](/docs/knowledgebase/bookings)
+instead.
 
-1. Open your course and go to the **Curriculum** (content) area.
-2. Inside a section, click **Add → Lesson**.
-3. Enter a **Title** and an optional **Description**.
-4. Choose the **lesson type** (video, audio, text, PDF, live session, embed, or iframe).
-5. Add the content for that type — upload or link the media, write the text, or set the
-   live session details.
-6. Click **Save**.
+## Embed and iFrame
 
-## Setting up a live session
+Both show content that lives elsewhere. The difference is small: an **Embed** takes a
+source you paste in, an **iFrame** takes a web address.
 
-A live session is a lesson with a scheduled meeting time. When you create it:
+Both ask one extra question — **Embed content type**, "Select what this embed contains":
 
-1. Choose the **Live session** type.
-2. Set the **meeting time** — the date and time the class will run.
-3. Optionally add a **password** that learners must enter to join.
-4. **Save**.
+| Answer | Why it matters |
+|---|---|
+| **Video** | Treated like a video for completion — watched counts as done. |
+| **Audio** | Same as video. |
+| **Document (PDF / reading)** | Treated like a reading. |
+| **Other** | No assumption made. |
 
-Learners see the scheduled time and can join when the session starts.
+Get this right. It is how the lesson inherits the correct
+[completion rule](/docs/knowledgebase/progress-grading/completion-rules); a video
+embedded as "Other" will not count itself finished when it is watched.
+
+## Attachments
+
+Any lesson can carry **Attachments** — handouts, slides, datasets — listed under the
+lesson for learners to download. Attachments are not separate items in the outline and
+do not count towards progress. For a download that *should* be its own item, add a
+**File** to the course instead. See
+[Files and resources](/docs/knowledgebase/courses/files-and-resources).
 
 ## What the learner sees
 
-- **Video and audio** lessons play inside the lesson page.
-- **Text** lessons appear as a formatted reading.
-- **PDF** lessons open the document to read.
-- **Live sessions** show the upcoming meeting time and a way to join at the right time.
-- **Embeds and iframes** display the linked content right inside the lesson.
+- **Video** and **audio** play in the page, with their position remembered.
+- **Text** reads as a formatted page.
+- **PDF** opens in a reader, with full-screen available.
+- **Live** shows the scheduled time and a way to join when it is due.
+- **Embed** and **iFrame** show the outside content in place.
 
-## Tips
+Under every one of them is a **Report a problem** link, so a learner who hits a broken
+video can tell you without leaving the lesson. See
+[Reported problems](/docs/knowledgebase/courses/reported-problems).
 
-- Mix types to keep a course engaging — a short video, a reading, then a quiz.
-- For a live class series, create one live session lesson per session.
-- You can attach extra files to a lesson as handouts; see
-  [Files and resources](/docs/knowledgebase/courses/files-and-resources).
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="My video lesson will not save.">
+Two fields are required and easy to miss: the video itself, and **Duration**. A video
+lesson with a duration of zero is refused.
+</Accordion>
+
+<Accordion title="Can one lesson hold a video and a reading?">
+Not as one lesson. Make the video lesson and the text lesson separately — learners get a
+clearer outline and you get honest progress, because each piece can be counted as done
+on its own.
+</Accordion>
+
+<Accordion title="Which should I use, Self hosted or YouTube?">
+Self hosted keeps the video inside your academy, with no outside branding and no related
+videos at the end. YouTube costs you nothing to serve and plays well on weak
+connections. If the course is paid, self hosted is usually worth it.
+</Accordion>
+
+<Accordion title="Learners say the video says watched before they have watched it.">
+Check the lesson's **Duration** against the real length of the video. Progress is
+measured against the duration you typed, so a ten-minute video entered as one minute is
+"finished" after sixty seconds.
+</Accordion>
+
+<Accordion title="Can I change a lesson's type after it is made?">
+Yes — open the lesson, pick a different type and supply what the new type needs. The old
+content is not carried across, so copy anything you want to keep first.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Course structure](/docs/knowledgebase/courses/course-structure) — where lessons live.
-- [Files and resources](/docs/knowledgebase/courses/files-and-resources) — downloadable materials.
-- [Progress tracking](/docs/knowledgebase/progress-grading/progress-tracking) — how lessons count toward progress.
-- [Completion rules](/docs/knowledgebase/progress-grading/completion-rules) — when a lesson counts as done.
+<Cards>
+  <Card title="The course builder" description="Where lessons are added, nested and published." href="/docs/knowledgebase/courses/curriculum-builder" />
+  <Card title="Completion rules" description="What a learner must do for a lesson to count as done." href="/docs/knowledgebase/progress-grading/completion-rules" />
+  <Card title="Video playback" description="Skipping, speed and branding on YouTube and Vimeo." href="/docs/knowledgebase/files/video-playback" />
+  <Card title="Files and resources" description="Handouts, attachments, and when to use each." href="/docs/knowledgebase/courses/files-and-resources" />
+</Cards>

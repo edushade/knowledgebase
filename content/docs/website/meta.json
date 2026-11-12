@@ -7,11 +7,11 @@
     "pages-and-blocks",
     "templates-and-themes",
     "navigation-menus",
-    "forms-and-leads",
+    "languages",
     "blog",
     "seo",
-    "languages",
-    "versions-and-redirects",
-    "publishing"
+    "forms-and-leads",
+    "publishing",
+    "versions-and-redirects"
   ]
 }

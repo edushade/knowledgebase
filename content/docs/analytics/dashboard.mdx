@@ -1,0 +1,107 @@
+---
+title: "The Dashboard and Overview"
+description: "The first screen you see, the numbers on it, and what each one is actually counting."
+---
+
+Two screens share this job. **Dashboard** is where you land when you sign in. **Analytics
+Overview** is the fuller version.
+
+<WhoCan roles="Admin, Instructor" />
+
+## The dashboard
+
+<Screenshot
+  src="/kb/analytics/admin-dashboard.png"
+  alt="The admin dashboard, with four headline cards above Learning Performance, Completion Rate Over Time and Assessment Results."
+  caption="Names are blurred here. The four quick actions sit under the greeting — the fastest way to start something new."
+/>
+
+The four cards at the top are the shape of your academy:
+
+| Card | What it counts |
+|---|---|
+| **Total Learners** | Everyone with a learner account. |
+| **Active Courses** | Published courses, split into cohort-based and self-paced. |
+| **Total Instructors** | People marked as instructors. |
+| **Learning Paths** | Published paths, split the same way. |
+
+Each carries a comparison against the previous 30 days, so the number is a direction as
+well as a figure.
+
+Below them:
+
+| Panel | What it shows |
+|---|---|
+| **Learning Performance** | Programmes ranked by average progress, with how many are enrolled and completed. |
+| **Completion Rate Over Time** | Cumulative — of everyone enrolled by each week, the share who had completed. |
+| **Assessment Results** | Passed against failed, across every learning item. |
+| **Leaderboard** | The top learners by points. |
+| **Notices** and **Recent Enrollments** | What has just happened. |
+
+Across the top sit quick actions — **Course +**, **Assignment +**, **Quiz +**,
+**Learning Path +** — which is the fastest way to start something new.
+
+<Callout type="info">
+**Learning Performance leaves small programmes out of its ranking.** Programmes with
+very few learners are not ranked, because an average over three people says more about
+those three than about the course. The note on the panel says so.
+</Callout>
+
+## Analytics Overview
+
+The same question, with more room:
+
+- **User Growth Trend** — accounts over time.
+- **Top Performing Courses** — by completion.
+- **Total Hours Watched** and **Time spent** — how much learning is actually happening.
+- **Completion rate** — as a gauge.
+
+Narrow it to one programme, or to a period, with the controls at the top.
+
+## Reading the headline numbers honestly
+
+**Total Learners counts accounts, not students.** Somebody who registered and never
+returned is in that number. **Learners** analytics is where you find out how many are
+real — see [Learners](/docs/knowledgebase/analytics/learners).
+
+**Completion rate depends on what counts as complete.** It is built from progress, which
+is built from completion rules. A course whose rules are loose will show a flattering
+completion rate. See
+[Completion rules](/docs/knowledgebase/progress-grading/completion-rules).
+
+**A pass rate across every assessment mixes practice with exams.** Narrow to a programme,
+or use the [assessment report](/docs/knowledgebase/progress-grading/assessment-report).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The dashboard says we have 331 learners but only 40 are active.">
+Both are true, and the gap is the thing worth working on. See
+[Learners](/docs/knowledgebase/analytics/learners) for who is actually turning up, and
+filter the enrolment list by **Never signed in**.
+</Accordion>
+
+<Accordion title="A course is missing from Learning Performance.">
+Programmes with very few enrolled learners are not ranked.
+</Accordion>
+
+<Accordion title="Does the dashboard show the same thing to an instructor?">
+It shows what their role allows. An instructor limited to their own programmes sees
+those, not the academy.
+</Accordion>
+
+<Accordion title="Why does the completion rate chart only go up?">
+It is cumulative: of everyone enrolled by each week, the share who had completed by
+then. It is a different question from "how many completed this week".
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Programmes" description="Which courses are working." href="/docs/knowledgebase/analytics/programmes" />
+  <Card title="Learners" description="Who is actually turning up." href="/docs/knowledgebase/analytics/learners" />
+  <Card title="Progress" description="Who is stuck, and who has stopped." href="/docs/knowledgebase/analytics/progress" />
+</Cards>

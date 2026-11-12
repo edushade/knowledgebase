@@ -87,6 +87,7 @@
   --eb-brand-deep: #003e9c;
   --eb-brand-tint: #e6f0ff;
   --eb-dot: rgba(0, 62, 156, 0.16);
+  --eb-leader: rgba(43, 43, 43, 0.3);
 
   background-color: var(--eb-bg);
   color: var(--eb-ink);
@@ -108,6 +109,7 @@
   --eb-brand-deep: #99c2ff;
   --eb-brand-tint: rgba(77, 148, 255, 0.12);
   --eb-dot: rgba(120, 170, 255, 0.16);
+  --eb-leader: rgba(238, 242, 248, 0.34);
 
   background-color: var(--eb-bg);
   color: var(--eb-ink);
@@ -309,5 +311,154 @@
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE HANDBOOK — home page
+   A reference manual, set the way a publisher sets one: hairline rules
+   instead of floating cards, a serif display face, numerals in the
+   margin, and a real contents page with leaders. Nothing glows.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Display face. Fraunces is already loaded as --font-display and was
+   going unused, which is why the page read as a default grotesque. */
+.eb-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 28;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+.eb-display-ital {
+  font-style: italic;
+  font-variation-settings: 'SOFT' 48;
+}
+
+/* Running head / folio line — a book's margin note, not a badge. */
+.eb-folio {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--eb-ink-mute);
+}
+
+/* Marginal numerals — set in the display face, tabular so columns align. */
+.eb-numeral {
+  font-family: var(--font-display), Georgia, serif;
+  font-variant-numeric: tabular-nums;
+  font-variation-settings: 'SOFT' 20;
+  letter-spacing: 0;
+}
+
+/* Dotted leader, the way a printed contents page joins a title to its
+   page number. Pure background — no extra element to lay out. */
+.eb-leader {
+  background-image: radial-gradient(
+    circle,
+    var(--eb-leader) 0.85px,
+    transparent 1px
+  );
+  background-size: 5px 1px;
+  background-repeat: repeat-x;
+  background-position: 0 center;
+}
+
+/* Rules that draw themselves in on load. */
+@keyframes eb-rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.eb-rule-draw {
+  transform-origin: left center;
+  animation: eb-rule-draw 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Primary action — a set block, not a pill. */
+.eb-action {
+  background: var(--eb-ink);
+  color: var(--eb-bg);
+  border-radius: 3px;
+  transition:
+    background 0.3s cubic-bezier(0.2, 0.7, 0.15, 1),
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.15, 1);
+}
+.eb-action:hover {
+  background: var(--eb-brand);
+  transform: translateY(-1px);
+}
+
+/* Secondary action — a rule that grows under the words. */
+.eb-action-quiet {
+  position: relative;
+  color: var(--eb-ink);
+  transition: color 0.3s ease;
+}
+.eb-action-quiet::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.eb-action-quiet:hover {
+  color: var(--eb-brand);
+}
+.eb-action-quiet:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* Index rows — the section list reads as a contents page. The tint is
+   drawn from the left so a hover feels like a finger on the line. */
+.eb-row {
+  position: relative;
+  transition: background 0.35s ease;
+}
+.eb-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--eb-brand);
+  transform: scaleY(0);
+  transform-origin: center top;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.eb-row:hover {
+  background: var(--eb-bg-soft);
+}
+.eb-row:hover::before {
+  transform: scaleY(1);
+}
+
+/* Hairline panel — one border, no shadow, barely any radius. */
+.eb-panel {
+  border: 1px solid var(--eb-border-strong);
+  border-radius: 4px;
+  background: var(--eb-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eb-rule-draw,
+  .eb-action,
+  .eb-action-quiet::after,
+  .eb-row::before {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 }

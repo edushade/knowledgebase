@@ -1,0 +1,135 @@
+---
+title: "How to Set Up Email That Actually Arrives"
+description: "Connecting a sending service, proving it works, and the check to run before every intake."
+---
+
+Nothing in your academy works without email. Verification, password resets, receipts,
+certificates, reminders — all of it.
+
+<Callout type="error">
+An academy that discovers on registration day that its email is misconfigured loses that
+intake. Do this before you need it.
+</Callout>
+
+<WhoCan roles="Admin" />
+
+<Steps>
+
+<Step>
+
+### Connect a service
+
+<Path>Notifications > Settings</Path>. Choose an email service — SendGrid, Mailgun or
+Cloudflare — and fill in its credentials.
+
+Set it **Enabled**, and set its **rate limits** to what your plan actually allows.
+
+[Channels](/docs/knowledgebase/communication/channels)
+
+</Step>
+
+<Step>
+
+### Set who it comes from
+
+**Default From Name**, **Default From Email**, and a **reply-to address**.
+
+Use a real address somebody reads. A "no reply" address turns every question into a
+support request sent some other way.
+
+</Step>
+
+<Step>
+
+### Test the connection
+
+Run the service's connection test. It checks the credentials without sending anything —
+so a failure here is a credential problem, not a delivery problem.
+
+</Step>
+
+<Step>
+
+### Send a real test
+
+**Send Test Notification** to your own address. Then check:
+
+- It arrived.
+- It is not in spam.
+- The sender name is right.
+- Replying to it reaches somebody.
+
+</Step>
+
+<Step>
+
+### Turn on the setting that prevents lockouts
+
+**Exclude Transactional from Limits**, under the rate limits.
+
+Without it, a marketing cap can block a verification email — and a learner who cannot
+verify cannot get in at all.
+
+[Notification settings](/docs/knowledgebase/communication/notification-preferences)
+
+</Step>
+
+<Step>
+
+### Check the notifications that matter are on
+
+| Notification | Why |
+|---|---|
+| **Account Verification** | Nobody gets in without it. |
+| **Password Reset** | Nobody gets back in without it. |
+| **Payment Successful** / **Failed** | Money. |
+| **Instalment Due Soon** / **Overdue** | Money you are owed. |
+| **Assignment Deadline Approaching** | The most effective nudge there is. |
+| **Certificate Issued** | The moment learners tell other people about you. |
+
+</Step>
+
+<Step>
+
+### Prove it end to end
+
+Register a brand new account with an address you can read, and go through registration.
+
+This is the only test that counts. It exercises the service, the template, the
+notification setting and the rate limit at once — exactly as a learner will.
+
+</Step>
+
+</Steps>
+
+## Before every intake
+
+Four minutes, and it has saved more academies than any other check in this knowledge
+base:
+
+1. Send a test on each channel you use.
+2. Open [Delivery and analytics](/docs/knowledgebase/communication/delivery-and-analytics)
+   and check nothing is sitting at zero.
+3. Check your rate limits against what you are about to send.
+4. Register a test account and go through verification.
+
+## If something goes wrong
+
+**Nothing is sent at all.** No service connected, or it is disabled. The connection test
+tells you which.
+
+**Sent but not delivered, many recipients.** Rate limits, or your sending reputation.
+
+**Sent but not delivered, one recipient.** Their address.
+
+**Delivered and they say otherwise.** Spam folder. Ask them to check, and tell them the
+sender name to look for.
+
+## Related questions
+
+<Cards>
+  <Card title="Channels" description="Every sending service and channel." href="/docs/knowledgebase/communication/channels" />
+  <Card title="Message templates" description="The eight to write first." href="/docs/knowledgebase/communication/message-templates" />
+  <Card title="Delivery and analytics" description="What happened to each message." href="/docs/knowledgebase/communication/delivery-and-analytics" />
+  <Card title="Verification" description="What learners are waiting for." href="/docs/knowledgebase/account-people/verification" />
+</Cards>

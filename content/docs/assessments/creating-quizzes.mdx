@@ -1,91 +1,154 @@
 ---
-title: "Creating Quizzes"
-description: "Build a quiz step by step — add questions, set points and a pass mark, then publish it for your learners."
+title: "Creating a Quiz"
+description: "Building a quiz in three steps — details, questions, settings — and attaching it to the course that should use it."
 ---
 
-A quiz is a set of questions you give to learners. You can build a short practice quiz in a
-few minutes, or a full graded exam with timers and rules. This page walks through making one
-from start to finish.
+A quiz is built once and can be used in several courses. It has its own list at
+<Path>Quizzes</Path>, and its own three-step builder.
 
-## Before you start
+<WhoCan roles="Admin, Instructor" />
 
-Decide a few things first:
+**Before you start** — decide whether this quiz counts. A practice quiz and a final exam
+are built the same way but settled very differently at step 3.
 
-- **What is it for?** Practice (low stakes) or a graded test that counts toward the grade?
-- **How will it be graded?** Questions that grade themselves, questions you grade by hand,
-  or a mix. See [Question types](/docs/knowledgebase/assessments/question-types).
-- **Where will learners find it?** A quiz can stand on its own, or sit inside a course as
-  an [exam](/docs/knowledgebase/assessments/exams).
+<Steps>
 
-## Create a quiz
+<Step>
 
-1. Go to **Admin → Quizzes** and click **New Quiz**.
-2. Give it a **title** and a short **description** so learners know what to expect.
-3. Pick a **difficulty level** if you use them (for example, Easy, Medium, Hard).
-4. Save. The quiz starts as a **draft** — only you can see it until you publish.
+### Describe the quiz
 
-## Add questions
+From <Path>Quizzes</Path>, choose **Create Quiz**. Step 1 takes:
 
-1. Open your quiz and click **Add Question**.
-2. Choose the **question type** — multiple choice, true/false, matching, essay, and many
-   more. See the full list in [Question types](/docs/knowledgebase/assessments/question-types).
-3. Type the **question text** and fill in the answers (and mark the correct ones for
-   auto-graded types).
-4. Set the **points** the question is worth. You can also add an optional **explanation**
-   that learners may see after they finish.
-5. Repeat for each question. You can reorder questions by dragging them.
+| Field | Notes |
+|---|---|
+| **Quiz Title** | Required. Up to 200 characters, and writable in each of your languages. |
+| **Description** | What it covers. |
+| **Quiz Type** | Your own classification — "Weekly test", "Final exam". See below. |
+| **Categories** | For finding it again in a long list. |
+| **Difficulty Level** | Beginner, Intermediate or Advanced. |
+| **Thumbnail** | Optional cover image. |
+| **Instructions** | Shown before a learner starts: rules, materials allowed, what to do if something breaks. |
 
-<Callout type="info">
-You can attach an **image, audio clip, or video** to a question, and add a per-question
-**time limit** if you want each question timed on its own.
-</Callout>
+<Screenshot
+  src="/kb/assessments/create-quiz-step-1.png"
+  alt="Step 1 of the quiz builder, with title, categories, description and instructions on the left and type and difficulty on the right."
+  caption="The small flags beside Title and Description switch between your languages. A dot on a flag means that language is still empty."
+/>
 
-## Set scoring and the pass mark
+**Continue** at the end of step 1 creates the quiz — it appears in your list straight
+away as a draft, so nothing is lost if you stop here. **Save Draft** does the same
+without moving on. Nothing is visible to learners until you publish at the end.
 
-- **Points per question** — give harder questions more weight.
-- **Pass mark** — the percentage a learner needs to pass (for example, 50%). Learners below
-  it are marked as not passed.
-- **Partial credit** — for some question types, a learner can earn part of the points for a
-  partly-correct answer. See [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes).
-- **Negative marking** (optional) — subtract points for a wrong answer to discourage
-  guessing.
+</Step>
 
-## Set the rules
+<Step>
 
-Before publishing, decide how the quiz behaves:
+### Add the questions
 
-- **Attempts and timers** — how many tries, how long, and whether to shuffle questions. See
-  [Quiz settings](/docs/knowledgebase/assessments/quiz-settings).
-- **When it's open** — start and end times, a password, or a seat limit. See
-  [Quiz availability](/docs/knowledgebase/assessments/quiz-availability).
-- **Proctoring** — full-screen lock, webcam, and monitoring for high-stakes tests. See
-  [Proctoring](/docs/knowledgebase/assessments/proctoring).
+Step 2 is the question builder. **Add Question** opens the type picker.
 
-## Publish
+Six types are available, and all six mark themselves — a quiz needs no marking queue. If
+you need written work, that is an
+[assignment](/docs/knowledgebase/assessments/assignments) rather than a quiz question.
+See [Question types](/docs/knowledgebase/assessments/question-types).
 
-When the quiz is ready, change its status from **Draft** to **Published**. Learners can now
-take it (subject to availability and access rules). Later you can move it to **Archived** to
-retire it without deleting it.
+Each question takes a title, a score and its own options or pairs. Drag to reorder.
+**Preview** shows the quiz as a learner will meet it — worth doing before you publish.
 
-## Reuse and recover
+You can also pull questions from the
+[Content Bank](/docs/knowledgebase/courses/content-bank) rather than writing them here.
 
-- **Duplicate** an existing quiz to use it as a starting point for a similar one.
-- **Import/export** questions in bulk using a spreadsheet (CSV) file.
-- **Recover** a quiz you deleted by mistake — deleted quizzes can be restored.
+</Step>
 
-See [Quiz analytics](/docs/knowledgebase/assessments/quiz-analytics) for duplicate, import,
-export, and recovery details.
+<Step>
 
-## Good to know
+### Settle how it is sat
 
-<Callout type="info">
-Keep practice quizzes generous (many attempts, no proctoring) and save the strict rules for
-graded exams. You can always copy a practice quiz and tighten the rules for the real test.
-</Callout>
+Step 3 is the settings: the time limit, how many attempts, the pass mark, whether
+answers are shown afterwards, and when scores appear.
+
+This is where a practice quiz and an exam part company. Full detail:
+[Quiz settings](/docs/knowledgebase/assessments/quiz-settings).
+
+Then **Publish**.
+
+</Step>
+
+</Steps>
+
+## Putting it in a course
+
+A published quiz is not yet in anything. Open the course builder, use **+ Quiz**, and
+pick it. The same quiz can go into several courses — see
+[Reusable content](/docs/knowledgebase/courses/reusable-content) for what that means
+when you edit it later.
+
+Once it is in a course you can also set, from the item's **⋯** menu:
+
+- **Completion Rule** — whether sitting it is enough, or it must be passed.
+- **Drip Schedule** — when it opens and closes.
+- **Access Rules** — who may take it.
+
+## Quiz types
+
+A **quiz type** is your own label — "Class test", "Mock exam", "Final". Manage them from
+**Manage Quiz Types**.
+
+They are worth setting up early: the
+[assessment report](/docs/knowledgebase/progress-grading/assessment-report) and the
+analytics both filter by type, so "how did everyone do on the mock exams?" is a filter
+rather than a spreadsheet.
+
+## What else a quiz gives you
+
+From a quiz's own screens:
+
+| Screen | What it is |
+|---|---|
+| **Questions** | The paper itself. |
+| **Participants** | Who has sat it. |
+| **Non-participants** | Who has not — the list you actually act on. |
+| **Reports** | Problems learners reported with its questions. |
+| **Reschedules** | Extra time or a second window for named learners. |
+| **Leaderboard** | Ranking by score. |
+| **Preview** | The learner's view. |
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can the system write questions for me?">
+No. There is no question generation available.
+</Accordion>
+
+<Accordion title="I published the quiz but learners cannot find it.">
+A published quiz still has to be added to a course. Until it is, it exists only in your
+quiz list.
+</Accordion>
+
+<Accordion title="Can I copy a quiz?">
+Yes — **Duplicate Quiz** from the quiz list. You get an independent copy to edit without
+disturbing the original.
+</Accordion>
+
+<Accordion title="Can I change a quiz learners have already taken?">
+You can, and you should think twice. Editing a question does not re-mark attempts
+already sat, so you end up with two groups marked by different papers. See
+[Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes).
+</Accordion>
+
+<Accordion title="Can I edit several quizzes at once?">
+Yes. Select them in the quiz list and bulk-edit their settings. You are shown what is
+about to change, across how many quizzes, before it is applied.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Question types](/docs/knowledgebase/assessments/question-types)
-- [Quiz settings](/docs/knowledgebase/assessments/quiz-settings)
-- [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes)
-- [Exams](/docs/knowledgebase/assessments/exams) — placing a quiz inside a course.
+<Cards>
+  <Card title="Question types" description="The ten that work, and the six that do not." href="/docs/knowledgebase/assessments/question-types" />
+  <Card title="Quiz settings" description="Time, attempts, pass mark and score release." href="/docs/knowledgebase/assessments/quiz-settings" />
+  <Card title="Quiz availability" description="When a quiz opens and closes." href="/docs/knowledgebase/assessments/quiz-availability" />
+  <Card title="Grading quizzes" description="Marking the written questions." href="/docs/knowledgebase/assessments/grading-quizzes" />
+</Cards>

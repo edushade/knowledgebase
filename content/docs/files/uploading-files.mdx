@@ -1,56 +1,93 @@
 ---
 title: "Uploading Files"
-description: "Add documents, images, audio, video, and PDFs to your library — including large files."
+description: "Getting files into your library — the four ways in, and what is refused."
 ---
 
-Uploading puts a file into your library so you can preview it and attach it anywhere on
-your platform. You can upload many kinds of file, and large files are supported.
+Every image, video, PDF and document on your platform lives in the file manager. Upload
+once, use anywhere.
 
-## What you can upload
+<WhoCan roles="Admin, Instructor" />
 
-| Type | Examples |
+## Four ways in
+
+**Upload Files** opens the uploader, which takes files four ways:
+
+| Way | For |
 |---|---|
-| **Documents** | Word files, slides, spreadsheets, text files |
-| **PDFs** | Handouts, worksheets, e-books, certificates |
-| **Images** | Photos, logos, thumbnails, banners |
-| **Audio** | Lessons, recordings, podcasts |
-| **Video** | Lectures, demos, intro clips |
+| **Choosing files** | The ordinary route. Several at once. |
+| **Dragging and dropping** | The same, faster. |
+| **Camera** | Taking a photo there and then. |
+| **Screen Capture** | Recording your screen — **Record** and **Stop**. |
 
-Large files — like full-length lecture videos — upload reliably. You do not need to do
-anything special; just pick the file and let it finish.
+Screen capture is quietly useful: a two-minute walkthrough of a thing learners keep
+asking about, recorded in the browser, with no editing software.
 
-## How to upload a file
+## What is allowed
 
-1. Go to **Files & Media** in your admin area.
-2. Open the folder where you want the file to live (or stay in the main view).
-3. Click **Upload**.
-4. Choose one or more files from your device, or drag them onto the upload area.
-5. Wait for each file to finish. A progress bar shows how it is going.
+Two settings, in <Path>Settings > Control Panel</Path> under **Media**:
 
-When the upload completes, the file appears in your library, ready to preview or attach.
-
-## Uploading several files at once
-
-You can select multiple files in one go. Each uploads on its own, so a slow file will
-not hold up the others. You can keep working while uploads finish in the background.
-
-## Tips
+| Setting | What it does |
+|---|---|
+| **Max upload file size (MB)** | The limit for your team. |
+| **Max upload file size for learners (MB)** | A separate, usually smaller, limit for learners. |
+| **Allowed file types** | A list of the types accepted. |
 
 <Callout type="info">
-Give files clear, descriptive names before you upload (for example,
-`week-1-handout.pdf` instead of `scan001.pdf`). It makes them far easier to find later.
+Learners have their own size limit because they upload assignments. Set it to what a
+real submission needs and no more — a limit that is too generous fills your storage
+with phone video.
 </Callout>
 
-- For video and audio, upload the final version — you can always replace it by uploading
-  a new file and attaching that one instead.
-- If an upload is interrupted (for example, your internet drops), just try the file
-  again.
-- Some file types and sizes are limited for safety. See
-  [Sharing and limits](/docs/knowledgebase/files/sharing-and-limits) if a file is
-  refused.
+## After uploading
 
-## What's next
+Files land in the current folder. From there you can **rename**, **move**, **delete**,
+**download** and **preview** them, and a **Crop Image** tool handles the thumbnail that
+is the wrong shape.
 
-- [Organize your files](/docs/knowledgebase/files/organizing-files) into folders.
-- [Preview files](/docs/knowledgebase/files/previewing-files) without downloading them.
-- Attach files to your [courses and lessons](/docs/knowledgebase/courses).
+## Naming things
+
+The file manager is shared, and a year in it is either usable or it is not. Three
+habits:
+
+1. **Name files for what they are**, not what the camera called them.
+   `data-structures-week-1.mp4`, not `VID_20261104_143022.mp4`.
+2. **Put them in folders** before you have hundreds.
+3. **Upload once.** The same file in four courses should be one file, not four.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="An upload failed.">
+Usually size or type. Check the limits in **Media** settings, and the allowed types
+list.
+</Accordion>
+
+<Accordion title="A learner cannot upload their assignment.">
+They are on the learner size limit, which is separate and lower. Raise it, or tell them
+what the limit is.
+</Accordion>
+
+<Accordion title="Can I upload a whole folder?">
+Select the files and upload them together; then organise them into a folder.
+</Accordion>
+
+<Accordion title="Where do videos go?">
+The same library. How they play is a separate matter — see
+[Video playback](/docs/knowledgebase/files/video-playback).
+</Accordion>
+
+<Accordion title="Can I replace a file and have every use update?">
+Uploading a new version makes a new file. Replace the reference where it is used, or
+keep the name and re-link.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Organizing files" description="Folders, sorting and finding things later." href="/docs/knowledgebase/files/organizing-files" />
+  <Card title="Sharing and limits" description="Size limits, storage and downloads." href="/docs/knowledgebase/files/sharing-and-limits" />
+  <Card title="Files and resources" description="Using a file inside a course." href="/docs/knowledgebase/courses/files-and-resources" />
+</Cards>

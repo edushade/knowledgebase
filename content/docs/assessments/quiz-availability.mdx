@@ -1,55 +1,101 @@
 ---
 title: "Quiz Availability"
-description: "Decide when a quiz is open, protect it with a password, and limit how many learners can take it at once."
+description: "When a quiz opens and closes, and how to give one learner a different window."
 ---
 
-Availability settings control **when** a quiz can be taken and **who** can get in. Use them to
-run a quiz only during a set window, lock it behind a password, or cap the number of
-participants.
+A quiz's availability is not a setting on the quiz. It belongs to the quiz *in a
+course* — which is what lets the same quiz be a practice test in one course and a timed
+exam in another.
 
-## Open and close times
+It is set from the quiz item's **⋯** menu in the course builder, under **Drip
+Schedule**.
 
-Set a **start time** and an **end time** for the quiz:
+<WhoCan roles="Admin, Instructor" />
 
-- Before the start time, learners can see the quiz is coming but cannot begin.
-- During the window, learners can take it (if they have access and attempts left).
-- After the end time, the quiz closes and no new attempts can start.
+## Opening and closing
 
-This is ideal for a scheduled exam — for example, "open Sunday 10:00 AM to 12:00 PM".
+| You set | What it does |
+|---|---|
+| **Unlock** | When the quiz becomes available. |
+| **Lock** | When it closes again. **No Lock** leaves it open. |
+
+The unlock can be a fixed date, a period after the learner enrolled, a period after the
+previous item opened, or on completion of something else. See
+[Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) for all six
+strategies.
 
 <Callout type="info">
-If a quiz lives inside a course, you can also tie its release to your course schedule. See
-[Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) and
-[Exams](/docs/knowledgebase/assessments/exams).
+**Lock is what makes an exam window.** Without one, a quiz that "ran on Tuesday" is
+still open on Friday — and a learner who sits it late is indistinguishable from one who
+sat it on the day.
 </Callout>
 
-## Password protection
+## Availability is not the time limit
 
-Add a **password** so only learners who have it can start the quiz. Share the password at the
-right moment — for example, read it out at the start of a live exam session — to control
-exactly when people begin.
+Two different clocks, and people confuse them constantly:
 
-## Maximum participants
+| | **Availability window** | **Time limit** |
+|---|---|---|
+| Set on | The quiz item in the course | The quiz's settings |
+| Means | The quiz exists between these times | A learner has this many minutes once they start |
+| Example | Open 6pm–8pm on Tuesday | 45 minutes |
 
-Set a **seat limit** to cap how many learners can take the quiz. Once the limit is reached, no
-new learners can start. Useful for limited-capacity assessments or staggered sittings.
+A quiz can have both: a window of two hours in which to start, and 45 minutes once you
+do.
+
+## One learner, a different window
+
+**Re-schedule quiz for selected users**, from the quiz's **Reschedules** screen, gives
+named learners their own window:
+
+| Field | Notes |
+|---|---|
+| **Program** | Which course this reschedule applies to. |
+| **Unlock at** | Required. |
+| **Lock at** | Optional. |
+
+Use it for the learner who was ill, the one with an agreed extension, the one whose
+connection failed halfway through. It leaves the deadline intact for everyone else, and
+leaves a record of who was given extra.
+
+See [Reschedules](/docs/knowledgebase/assessments/reschedules).
 
 ## What the learner sees
 
-- Before it opens: the quiz appears but cannot be started yet.
-- If a password is required: the learner is asked for it before the quiz begins.
-- If seats are full: the learner is told it is not currently available.
-- After it closes: the quiz is no longer open for new attempts.
+A quiz that has not opened shows as **locked**, with the date it will open. A quiz that
+has locked is no longer available to start. In both cases they are told — availability
+is one of the few access rules that explains itself.
 
-<Callout type="warn">
-A learner who is partway through an attempt when the close time arrives may be auto-submitted,
-depending on your timer settings. Give a clear close time and a sensible grace period — see
-[Quiz settings](/docs/knowledgebase/assessments/quiz-settings).
-</Callout>
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner started before the lock time and was still cut off.">
+Check whether it was the lock or the time limit. A lock closes the quiz; a time limit
+ends that learner's attempt. Both can submit an attempt automatically.
+</Accordion>
+
+<Accordion title="The same quiz needs different dates in two courses.">
+That is how it already works — availability belongs to the quiz item in each course, so
+set them separately.
+</Accordion>
+
+<Accordion title="Can I open a quiz for just one learner?">
+Yes, with a reschedule. Leave the quiz locked for everyone and give that learner their
+own unlock time.
+</Accordion>
+
+<Accordion title="I locked a quiz by accident and learners lost attempts in progress.">
+Attempts already submitted are safe. Any in progress end. Reopen it and give the
+affected learners a reschedule or another attempt.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Quiz settings](/docs/knowledgebase/assessments/quiz-settings) — attempts, timers, and grace period.
-- [Taking quizzes](/docs/knowledgebase/assessments/taking-quizzes) — the learner's experience.
-- [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling) — release content on a set date.
-- [Exams](/docs/knowledgebase/assessments/exams) — quizzes inside course content.
+<Cards>
+  <Card title="Reschedules" description="A different window for named learners." href="/docs/knowledgebase/assessments/reschedules" />
+  <Card title="Quiz settings" description="The time limit, which is a different clock." href="/docs/knowledgebase/assessments/quiz-settings" />
+  <Card title="Drip scheduling" description="The six unlock strategies in full." href="/docs/knowledgebase/enrollment-access/drip-scheduling" />
+</Cards>

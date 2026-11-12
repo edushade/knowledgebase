@@ -1,0 +1,103 @@
+---
+title: "Transcript Designs"
+description: "Laying out the document a result is printed on — the two kinds, the column choices, and which design a programme uses."
+---
+
+A transcript design decides what a learner's result looks like on paper. Programmes
+choose one; a programme that chooses nothing uses your default.
+
+Designs live in <Path>Settings > Transcript Design</Path>.
+
+<WhoCan roles="Admin" />
+
+## The two kinds
+
+You choose the kind when you create the design, and **it cannot be changed afterwards** —
+the two share no parts, so switching would discard the document.
+
+| Kind | What it prints |
+|---|---|
+| **Simple percentage marksheet** | One line per subject, in a single percentage. |
+| **Detailed GPA transcript** | One line per assessment, with weights, grade points and a cumulative result. |
+
+Choose the marksheet if your academy reports percentages. Choose the GPA transcript if
+you report grade points, or if learners need to see each assessment.
+
+## What a marksheet can show
+
+A **Simple percentage marksheet** has one more choice — **Results show**:
+
+| Choice | Each subject row shows |
+|---|---|
+| **Percentage, each subject out of 100** | A percentage. |
+| **Marks, as each subject was marked** | The raw marks — 68, 45. |
+| **Marks, with a percentage column** | Both. |
+
+When it shows marks, **Show the Total Marks column** prints what each subject was marked
+out of beside the marks obtained. Without it, a 68 does not say whether it was out of
+70 or 100.
+
+The subject table and the semester summary both follow this choice, so the document
+never reports one thing at the top and another at the bottom.
+
+Column headings are the design's own text. Change them in the builder — they are not
+fixed labels.
+
+## Choosing which design a programme uses
+
+| Setting | Where | Effect |
+|---|---|---|
+| **Use as the default** | On the design | Every programme that has not chosen a design prints this one. |
+| **Transcript design** | On a course's settings step | That programme's own choice. |
+| **Active** | On the design | An archived design is never printed; programmes using it fall back to your default. |
+
+<Callout type="info">
+Archiving is the safe way to retire a design. Programmes still pointing at it quietly
+fall back to your default, rather than failing to print anything.
+</Callout>
+
+## Writing the design
+
+**Used for** is a note for your team — "which programmes should print this". It is worth
+filling in: a year from now, four designs with similar names are impossible to tell
+apart.
+
+The document itself is drawn in the builder — see
+[Designing a document](/docs/knowledgebase/certificates/designing-a-document).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="I picked the wrong kind.">
+Create a new design of the right kind. The kind is fixed once a design exists, because
+the two kinds share no parts.
+</Accordion>
+
+<Accordion title="A programme is printing the wrong design.">
+Check its **Transcript design** setting. A programme with none set uses your default,
+and a programme pointing at an archived design also falls back to the default.
+</Accordion>
+
+<Accordion title="Can a batch have its own design?">
+Designs are chosen on the programme. A batch follows its course.
+</Accordion>
+
+<Accordion title="Learners cannot see their transcript at all.">
+That is a different setting — **Enable Transcript** on the course. See
+[Transcripts and results](/docs/knowledgebase/progress-grading/transcripts).
+</Accordion>
+
+<Accordion title="Can one design serve both certificates and transcripts?">
+No. A certificate design and a transcript design are different kinds of document.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Designing a document" description="The builder, its fields, rules and tables." href="/docs/knowledgebase/certificates/designing-a-document" />
+  <Card title="Marksheets" description="Reading the finished document." href="/docs/knowledgebase/progress-grading/marksheets" />
+  <Card title="Transcripts and results" description="Who can see a result, and when." href="/docs/knowledgebase/progress-grading/transcripts" />
+</Cards>

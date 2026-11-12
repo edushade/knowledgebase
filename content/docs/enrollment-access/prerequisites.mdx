@@ -1,75 +1,106 @@
 ---
 title: "Prerequisites"
-description: "Keep a lesson locked until an earlier required lesson is finished."
+description: "Making one piece of content wait until another is finished — and how to set it without locking everybody out."
 ---
 
-A prerequisite keeps one item locked until another item is **completed**. For example, lock
-"Quiz 2" until "Lesson 2" is done. This is how you build a learning sequence and stop
-learners jumping ahead.
+A prerequisite says: this opens when that is done. Module 2 after Module 1, the final
+exam after every assignment, the advanced course after the foundation one.
 
-A prerequisite is simply the **Completion-based** unlock option from
-[drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling), pointed at the work
-that must come first.
+It is one of the six [drip strategies](/docs/knowledgebase/enrollment-access/drip-scheduling) —
+**Completion Based** — and it is set from a programme's **Prerequisites** tab or an
+item's **⋯** menu.
 
-## Two ways to set it up
+<WhoCan roles="Admin, Instructor" />
 
-| Flavor | How it behaves |
+## Setting one
+
+1. Open the item that should wait.
+2. Choose **Completion Based** as its unlock strategy.
+3. Pick what must be finished first.
+
+The item then stays locked for a learner until they have completed the thing it depends
+on.
+
+## "Finished" means whatever you said it means
+
+A prerequisite is satisfied when the item it points at counts as **complete** — and what
+counts as complete is that item's
+[completion rule](/docs/knowledgebase/progress-grading/completion-rules).
+
+That matters more than it sounds:
+
+| The prerequisite item's rule | The learner gets through by |
 |---|---|
-| **Require a specific item** | You pick the exact item that must be finished first. The locked item opens once that item is complete. |
-| **Sequential (generic)** | You don't pick anything specific. The item simply unlocks once the **previous item in order** is done. |
+| **Viewed / Opened** | Opening it. |
+| **Reach a percentage** | Watching or reading that far. |
+| **Attempt only** | Sitting the quiz — pass or fail. |
+| **Attempted with a Pass** | Passing it. |
 
-Use **specific** when one particular lesson or quiz is the gatekeeper. Use **sequential**
-when you just want learners to go through content in order.
-
-## How to set it up
-
-1. Open the offering in **Admin** and go to its **Drip Schedule** settings.
-2. On the item you want to lock, choose **Completion-based**.
-3. Either **pick the required item**, or leave it generic for "finish the previous item
-   first".
-4. Save.
-
-<Callout type="info">
-The item picker won't let you create a loop (for example, "A requires B" while "B requires
-A"). It also keeps the choices sensible so you can't pick something that could never be
-reached.
+<Callout type="warn">
+**A pass-only prerequisite with limited attempts can trap a learner.** If the gate quiz
+must be passed, and it allows two attempts, a learner who fails twice has nowhere to go.
+Before you set it, check how many attempts the quiz allows, and decide what you will do
+for the learner who does not make it.
 </Callout>
+
+## Prerequisites between courses
+
+A learning path can require one course before another: the second course's
+prerequisite is the first. A learner who skipped the foundation course finds the
+advanced one locked, with what they must finish first.
+
+See [Learning paths](/docs/knowledgebase/courses/learning-paths).
 
 ## What the learner sees
 
-A locked item appears greyed out with a lock badge explaining what to do:
+The item, **locked**, with what they must complete first. Unlike an
+[eligibility rule](/docs/knowledgebase/enrollment-access/eligibility-rules), a
+prerequisite tells them — which is the point. A gate nobody can see is just a broken
+course.
 
-- **"Complete in order"** — when items unlock one after another.
-- **"Complete [item] first"** — when a specific item must be finished first.
+## Removing them
 
-Once the required item is completed, the gate opens **permanently** — the learner won't get
-locked out of it again.
+**Remove all prerequisites** on a programme deletes its saved rule, after which
+everyone can reach the content. It cannot be undone.
 
-## Works across reused content
+## Common questions
 
-Prerequisites work even when content is nested. An item in a **learning path** can require a
-lesson that lives inside a **course reused within that path**. The path item stays locked
-until that inner lesson is done, then opens.
+<Accordions type="single">
 
-<Callout type="info">
-Completion is counted **once per item, everywhere it appears.** If a lesson shows up in more
-than one place, finishing it once satisfies the prerequisite in all of them — the learner
-never has to do the same lesson twice.
-</Callout>
+<Accordion title="A learner finished the prerequisite but the next item is still locked.">
+Check that the prerequisite item is actually ticked for them, on the programme's
+**Progress** tab. The usual cause is a completion rule they have not quite met — a
+video whose duration is set longer than the real video, for instance.
+</Accordion>
 
-## Prerequisites vs. eligibility
+<Accordion title="A learner failed the gate quiz and cannot continue.">
+Either give them another attempt, or set a makeup assessment that satisfies the same
+slot. See [Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes)
+and [Alternative assessments](/docs/knowledgebase/assessments/alternative-assessments).
+</Accordion>
 
-It's easy to mix these up:
+<Accordion title="Can one item depend on several others?">
+Yes — a final exam can wait on every assignment in the course. Be careful with long
+chains: one unticked item near the start holds up everything after it.
+</Accordion>
 
-- **Prerequisites** decide the **order** learners move through content (finish X before Y).
-- **Eligibility rules** decide **whether** a learner can see content at all (for example,
-  only learners in a certain group).
+<Accordion title="Do prerequisites change a learner's progress figure?">
+No. Locked content still counts in the denominator, so a learner at the start of a
+gated course is near 0%, not 100%.
+</Accordion>
 
-If you want to control your **audience** rather than the **sequence**, see
-[Eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules).
+<Accordion title="What is the difference between a prerequisite and an eligibility rule?">
+A prerequisite is about **what they have done**; an eligibility rule is about **who they
+are**. A prerequisite tells the learner what to finish; an eligibility rule says
+nothing at all.
+</Accordion>
 
-<Callout type="info">
-What counts as "finished" for an item is set by its
-[completion rule](/docs/knowledgebase/progress-grading/completion-rules) — for example,
-viewing a lesson or passing a quiz. That's what triggers a prerequisite to open.
-</Callout>
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Drip scheduling" description="The six strategies, including Completion Based." href="/docs/knowledgebase/enrollment-access/drip-scheduling" />
+  <Card title="Completion rules" description="What counts as finished, per item." href="/docs/knowledgebase/progress-grading/completion-rules" />
+  <Card title="How access works together" description="The order every access rule is applied in." href="/docs/knowledgebase/enrollment-access/how-access-works-together" />
+</Cards>

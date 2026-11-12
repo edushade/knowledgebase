@@ -1,56 +1,91 @@
 ---
-title: "Marksheets & Transcripts"
-description: "Generate a complete grade report for one learner in one course — every assessment, percentages, letter grades, and overall GPA."
+title: "Marksheets"
+description: "Reading a marksheet — what each column means, how the totals are built, and why a row sometimes shows nothing."
 ---
 
-A **marksheet** (also called a transcript or grade report) is a full breakdown of one
-learner's grades in one course. It is the document you hand over when someone needs proof
-of how a learner performed.
+A marksheet is the simple form of a result: one line per subject, with what the learner
+scored. It is the right document when your academy reports percentages rather than
+grade points.
 
-<Callout type="warn">
-A marksheet is an **admin tool**. You generate it for a learner. Learners do not download
-their own transcript.
-</Callout>
+The fuller form — one line per assessment, with weights, grade points and a cumulative
+result — is a [transcript](/docs/knowledgebase/progress-grading/transcripts).
 
-## What a marksheet shows
+<WhoCan roles="Admin, Instructor" />
 
-For one learner in one course (and, for a cohort program, optionally one cohort), the
-report includes:
+## What a marksheet can show
 
-- **Every assessment** the learner attempted.
-- **Marks obtained vs. total marks** for each assessment.
-- The **percentage** for each assessment.
-- The **letter grade and grade point** for each assessment.
-- **Grades for each course** inside a larger program.
-- An **overall final grade and GPA**.
-- A **GPA for each term** in cohort programs (see
-  [Terms & periods](/docs/knowledgebase/progress-grading/terms-and-periods)).
+How a marksheet reports results is set on its design, and there are three choices:
 
-## How the numbers are worked out
+| Choice | Each subject row shows |
+|---|---|
+| **Percentage, each subject out of 100** | One percentage per subject. |
+| **Marks, as each subject was marked** | The raw marks — 68, 45 — as given. |
+| **Marks, with a percentage column** | Both, side by side. |
 
-The marksheet follows the rules you already set up:
+When the marksheet shows marks, you can also switch on **Show the Total Marks column**,
+which prints what each subject was marked *out of* beside the marks obtained. Without
+it, a 68 does not say whether it was out of 70 or out of 100.
 
-- It uses each assessment's **best score**.
-- It applies your configured [weights](/docs/knowledgebase/progress-grading/weighted-grading).
-- It maps percentages to grades using your
-  [grading scheme](/docs/knowledgebase/progress-grading/grading-schemes).
-- For a [makeup or alternative assessment](/docs/knowledgebase/assessments/makeup-assessments),
-  it shows **only the version the learner actually took**.
+The subject table and the semester summary both follow the same choice, so a marksheet
+never reports one thing at the top and another at the bottom.
 
-## Generating a marksheet
+## Reading the totals
 
-1. Pick the **learner** and the **course** you want a report for.
-2. For a cohort program, choose the **cohort** if needed.
-3. **Generate** the marksheet.
+Each level is worked out from the rounded figure below it. That means the subject column
+really does add up to the result printed beside it — the number shown is the number
+used. If they disagree, the result was recorded under older settings and has not been
+recalculated. See
+[Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision).
 
-The report is built fresh from the learner's current grades, so it always reflects their
-latest results.
+A **semester** line counts only the subjects that sit inside that term. A subject
+sitting outside every term reaches the overall result and no semester line.
 
-## Good to know
+## When a row is empty
 
-- Because the marksheet uses best scores and your weights, it matches the final grade the
-  learner sees in the course.
-- For proof of *completion* rather than *grades*, use a
-  [certificate](/docs/knowledgebase/certificates) instead.
-- Grades come from [Assessments & Quizzes](/docs/knowledgebase/assessments); the marksheet
-  simply reports them.
+| What you see | What it means |
+|---|---|
+| A subject with no marks | Nothing in it has been marked yet. |
+| A semester reading "Pending" | Its results are held — by a date, by being unpublished, or by an assessment whose result has not been released. |
+| A result with no grade letter | The programme has no grading scheme, or the result falls in a gap between two bands. |
+| A blank marksheet for a learner | Usually **Enable Transcript** is off for the programme. |
+
+## Where it comes from
+
+Open a programme's **Learner Grades**, pick a learner, and view or print. The layout
+comes from the design the programme uses — see
+[Transcript designs](/docs/knowledgebase/certificates/transcript-designs).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The column headings are wrong for our academy.">
+They are the design's own text, not fixed labels. Change them in the design builder —
+see [Transcript designs](/docs/knowledgebase/certificates/transcript-designs).
+</Accordion>
+
+<Accordion title="Can I print marksheets for a whole batch at once?">
+Open the batch's learner list and print from there, learner by learner. There is no
+single button that produces the batch as one file.
+</Accordion>
+
+<Accordion title="A subject shows marks but the semester total ignores it.">
+That subject is not inside the term. Only content under a breakpoint counts towards that
+breakpoint. See [Terms and semesters](/docs/knowledgebase/courses/terms-and-breakpoints).
+</Accordion>
+
+<Accordion title="Should I use a marksheet or a transcript?">
+A marksheet if you report percentages and one line per subject is enough. A transcript
+if you report GPA, or if learners need to see each assessment. The kind is fixed when a
+design is created — the two share no parts, so one cannot be switched into the other.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Transcripts and results" description="The fuller document, and the four gates that hide one." href="/docs/knowledgebase/progress-grading/transcripts" />
+  <Card title="Transcript designs" description="Choosing the layout and writing the headings." href="/docs/knowledgebase/certificates/transcript-designs" />
+  <Card title="GPA and results" description="How subject, semester and final results are formed." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+</Cards>

@@ -1,5 +1,5 @@
 {
-  "title": "Bookings & Appointments",
+  "title": "Live Sessions & Events",
   "icon": "CalendarClock",
   "defaultOpen": true,
   "pages": [
@@ -7,9 +7,11 @@
     "meeting-plans",
     "availability",
     "booking-page",
+    "group-and-request-bookings",
+    "managing-bookings",
     "payments",
     "integrations",
-    "group-and-request-bookings",
-    "managing-bookings"
+    "events",
+    "event-participants"
   ]
 }

@@ -1,0 +1,107 @@
+---
+title: "Learner Grades"
+description: "One learner's marks, level by level — finding the figure that is wrong, and correcting it."
+---
+
+Every programme has a **Learner Grades** screen: everyone enrolled, with their result.
+Open a learner and you get their breakdown — subjects, the assessments inside them, and
+each semester.
+
+This is where you go when somebody says "my mark is wrong".
+
+<WhoCan roles="Admin, Instructor" />
+
+## Working down to the wrong number
+
+A result is built in four stages, so a wrong result has four possible causes. Check them
+in this order — it is almost always the lowest one:
+
+| Level | Check |
+|---|---|
+| **1. The assessment** | Did it get marked? Does the mark match what the learner actually scored? |
+| **2. Which attempt** | If they sat it twice, is the right attempt counting? See [Retakes and replacement](/docs/knowledgebase/progress-grading/retakes-and-replacement). |
+| **3. The subject** | Are the weights right, and is anything unmarked being left out? |
+| **4. The programme** | Is the right scheme, rounding and result policy in use? |
+
+Two settings explain most surprises:
+
+- **Treat Ungraded Items as Zero** — off, a learner is marked only on what has been
+  marked, so one good quiz can read as a near-perfect course.
+- **Rounding** — a result is matched to its band after rounding, so a learner on 49.6
+  may pass or fail depending on the direction.
+
+## Correcting a mark
+
+You can edit a mark directly. The grade form takes the learner, the item, the score and
+the status, and it keeps internal comments that the learner never sees — a note saying
+why you changed it, for the next person who asks.
+
+Use it for genuine corrections: a question marked wrong by a bad answer key, work
+submitted on paper, an agreed adjustment. For a learner who should sit the assessment
+again, give them another attempt instead of editing the number — see
+[Attempts and retakes](/docs/knowledgebase/assessments/attempts-and-retakes).
+
+<Callout type="warn">
+Editing one assessment does not automatically redo every figure above it. After a
+correction that matters, run **Calculate All Grades** on the programme so the subject,
+semester and final results all agree.
+</Callout>
+
+## Recalculating everyone
+
+**Calculate All Grades**, on the programme's learner grades screen, runs the current
+rules over every learner. It works in the background and can be cancelled while it is
+running.
+
+Run it after you change weights, the grading scheme, the rounding, the result policy, or
+**Treat Ungraded Items as Zero**. Without it, some learners carry results from the old
+rules and some from the new, and the two will not agree.
+
+## Per-learner, across programmes
+
+From a person's own record you also get their grades across everything they are in, split
+into quizzes and assignments. That is the view for "how is this learner doing overall?"
+rather than "how did this course go?".
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner has a result for a quiz they never sat.">
+Check for an alternative group — if the quiz is interchangeable with another, the slot
+shows the member they actually took. See
+[Alternative assessments](/docs/knowledgebase/assessments/alternative-assessments).
+Otherwise check for a transfer: marks can follow a learner from another batch.
+</Accordion>
+
+<Accordion title="Two learners with identical marks have different results.">
+Look for partial access or a transfer. A learner marked on one semester is marked out of
+that semester. See [Partial access](/docs/knowledgebase/enrollment-access/partial-access).
+</Accordion>
+
+<Accordion title="I edited a mark and the overall result did not change.">
+Run **Calculate All Grades**. Results above the assessment level are stored as they are
+calculated, not worked out afresh each time they are read.
+</Accordion>
+
+<Accordion title="An assignment is submitted but has no mark.">
+It is waiting for someone to mark it. The programme's assignment submissions screen is
+the queue. See [Assignment submissions](/docs/knowledgebase/assessments/assignment-submissions).
+</Accordion>
+
+<Accordion title="Can an instructor edit grades?">
+If their role allows it. Being named on a programme and being allowed to change marks
+are separate permissions. See
+[People and roles](/docs/knowledgebase/account-people/people-and-roles).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Course grading setup" description="The settings behind every figure on this screen." href="/docs/knowledgebase/progress-grading/course-grading-setup" />
+  <Card title="Grading quizzes" description="Marking what is waiting, and fixing a bad answer key." href="/docs/knowledgebase/assessments/grading-quizzes" />
+  <Card title="Transcripts and results" description="The document these figures end up on." href="/docs/knowledgebase/progress-grading/transcripts" />
+  <Card title="GPA and results" description="How the levels stack up." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+</Cards>

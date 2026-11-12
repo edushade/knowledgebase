@@ -1,0 +1,133 @@
+---
+title: "Designing a Document"
+description: "The builder behind certificates and transcripts — blocks, fields, formatting, and the rules that decide when something prints."
+---
+
+Certificates and transcripts are both drawn in the same builder. You place blocks on a
+page, point some of them at data, and the document fills itself in for each learner.
+
+<WhoCan roles="Admin" />
+
+## The three panels
+
+| Panel | What it is for |
+|---|---|
+| **Blocks** | What you can add to the page. |
+| **Content** | The page itself — drag, place, resize. |
+| **Design** | Properties of whatever is selected: font, size, colour, alignment, spacing. |
+
+An **outline** lists everything on the page, which is the reliable way to select
+something sitting behind something else.
+
+## Fields: the parts that change
+
+A field is a slot the document fills in per learner — the name, the grade, the
+certificate number. You point a field at its data by its path, so `learner_name`
+prints that learner's name.
+
+Each field can be formatted:
+
+| Setting | What it does |
+|---|---|
+| **As** | How to render the value — as typed, a percentage, an ordinal, a date. |
+| **Decimals** | How many decimal places a number shows. |
+| **Prefix** / **Suffix** | Text before or after — "Grade: ", "%". |
+| **Zero-pad to** | Pads a number to a width, so 7 prints as 007. |
+| **Capitalised** / **lowercase** | Case. |
+| **When empty, print** | What to show when there is no value. |
+
+<Callout type="warn">
+**Always set "When empty, print".** A learner with no grade yet, or a batch with no
+code, leaves a gap in the document — and a gap on a certificate looks like a mistake.
+A dash or a blank you chose is better than one you did not.
+</Callout>
+
+## Rules: when something prints
+
+Two controls decide whether a block appears at all:
+
+- **Show only when** — a condition. The block prints only if it holds.
+- **Treat as empty when** — tells the document to consider this empty even when it has a
+  value.
+
+Conditions read a field and compare it: *equals*, *does not equal*, *is greater than*,
+*is less than*, *has a value*, *has no value*, *is true*, *is false*.
+
+Useful examples:
+
+- A distinction seal that prints **only when** the grade is above 80.
+- A "Cohort" line that prints **only when** the learner is in one.
+- A signature block that prints **only when** the programme names a signatory.
+
+## Tables, for transcripts
+
+A transcript's subject list is a table that grows with the data. Its settings cover how
+it behaves across pages:
+
+| Setting | Choices |
+|---|---|
+| Repeat the header | **Repeat on every page**, **Once, at the top**, **Not at all** |
+| Borders | **Every edge**, **Inner rules only**, **Top/Bottom/Left/Right edge** |
+| Border style | **Solid**, **Dashed**, **Dotted** |
+| Long text | **Wrap**, **Shrink to one line** |
+| A group's label | **As a caption row**, **As a spanning cell**, **Group label** |
+
+## The page
+
+| Setting | Choices |
+|---|---|
+| Orientation | **Portrait**, **Landscape** |
+| Size | **Letter**, **Legal**, and the usual sizes |
+| Direction | **Left to right**, **Right to left** |
+| Images | **Contain**, **Cover**, **Fill**, **Stretch** |
+| Fonts | Your own, uploaded as `woff2` or `opentype (.otf)` |
+
+## Working practices that save a reprint
+
+- **Check with a sample**, every time. The editor shows your layout; the sample shows a
+  learner's document.
+- **Test the thin cases**: the longest name you have, a learner with no grade, a
+  programme with no batch.
+- **Put artwork behind, not in front.** Decoration layered over a field is a certificate
+  with a name you cannot read.
+- **Undo exists**, and so does **Reset to the default design** — which discards
+  everything you have drawn, and says so first.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A whole document came out blank.">
+Usually one field pointing at data that is not there for that learner. Give every field
+a **When empty, print** value and re-render the sample.
+</Accordion>
+
+<Accordion title="Something I added is not visible.">
+It may be behind another block. Use the outline to select it, then move it forward.
+Check its **Show only when** rule too — a condition that is not met prints nothing.
+</Accordion>
+
+<Accordion title="Can I use our own font?">
+Yes — upload a `woff2` or `.otf` file. Use the same family as your other documents, or
+the certificate will not look like it came from your academy.
+</Accordion>
+
+<Accordion title="Can I switch a design from a certificate to a transcript?">
+No. The two kinds share no parts, which is why the kind is fixed once a design exists.
+Make a new design of the other kind.
+</Accordion>
+
+<Accordion title="My transcript table breaks across pages badly.">
+Set the header to **Repeat on every page**, and set long subject names to **Wrap** or
+**Shrink to one line** rather than letting them overflow.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Certificate templates" description="Creating and assigning a certificate design." href="/docs/knowledgebase/certificates/certificate-templates" />
+  <Card title="Transcript designs" description="Choosing a layout for marksheets and transcripts." href="/docs/knowledgebase/certificates/transcript-designs" />
+  <Card title="Marksheets" description="What the finished document reports." href="/docs/knowledgebase/progress-grading/marksheets" />
+</Cards>

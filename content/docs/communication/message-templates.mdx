@@ -1,77 +1,120 @@
 ---
 title: "Message Templates"
-description: "Reusable, versioned message designs for each channel, with personalization placeholders and a test send."
+description: "Writing a message once and reusing it — one template, several channels, with the details filled in per learner."
 ---
 
-A message template is a ready-made message you design once and reuse whenever you need it.
-Each template is built for the channels you use — email, SMS, push, and chat apps — so the
-same idea lands well everywhere. Templates save time and keep your messaging consistent.
+A template is a message you keep. Write "payment confirmation" once and every payment
+confirmation reads the same.
 
-You use templates inside [campaigns](/docs/knowledgebase/communication/campaigns), and
-they go out over the [channels](/docs/knowledgebase/communication/channels) you have on.
+<Path>Notifications > Templates</Path>.
 
-## What a template holds
+<WhoCan roles="Admin" />
 
-A template can include the wording for each channel you plan to use:
+## One template, several channels
 
-| Channel | What you write |
+A template can carry a version for each channel it supports — the same message, written
+properly for each:
+
+| Channel | What it holds |
 |---|---|
-| **Email** | A subject line and the email body. |
-| **SMS** | A short text body. |
-| **Push** | A title and a short body. |
-| **Chat apps** | A message body for WhatsApp, Telegram, Slack, or Discord. |
+| **Email** | A **subject line** and a body, with formatting. |
+| **SMS** | 160 characters. "Keep it short and concise." |
+| **Push** | A title and a line. |
+| **In-app** | A title and a message. |
+| **Slack**, **Discord**, **Telegram**, **WhatsApp** | Each in its own format. |
 
-## Personalization placeholders
+Select which channels the template supports, then write each one. An SMS that is a
+truncated email reads like a mistake.
 
-You can drop in **placeholders** that fill in automatically for each person — so a single
-template feels personal to everyone who gets it. For example:
+## Tokens
 
-- The learner's **name**.
-- A **course title**.
+Tokens fill in per recipient:
 
-When the message goes out, each placeholder is replaced with that person's real details —
-for example, "Hi Aisha, your spot in *Photography Basics* is confirmed."
+| Token | Becomes |
+|---|---|
+| `{{user_name}}` | Their name |
+| `{{user_email}}` | Their email |
+| `{{course_name}}` | The programme |
+| `{{due_date}}` | The date |
+| `{{amount}}` | The amount |
+| `{{payment_method}}` | How they paid |
 
-## Choose a message type
+A subject of `Payment Confirmation - {{course_name}}` arrives as "Payment Confirmation -
+Data Structures".
 
-Each template has a **type** that shapes how it is treated:
+<Callout type="warn">
+Send yourself a test before using a template in anger. A token that does not resolve
+arrives as literal text, and "Dear &#123;&#123;user_name&#125;&#125;" is the sort of
+thing a learner screenshots.
+</Callout>
 
-- **Transactional** — essential account messages (receipts, confirmations). These are not
-  treated as promotions.
-- **Marketing** — promotions and offers. These always include an unsubscribe option and
-  follow stricter sending limits.
-- **Announcement** — general updates to a group.
+## Category
 
-The type affects sending limits and whether an opt-out is required, which helps keep your
-messaging compliant. See
-[notification preferences](/docs/knowledgebase/communication/notification-preferences) for
-how learners opt in and out by type.
+| Category | For |
+|---|---|
+| **Transactional** | Payments, verification, enrolment. Things people need. |
+| **Marketing** | Offers and promotion. Learners can switch these off. |
+| **Announcement** | News. |
+| **System Announcement** | Platform-level notices. |
 
-## Versions
+Categorise honestly. A learner who switched marketing off and receives an offer labelled
+transactional has been ignored, and they will notice.
 
-Templates are **versioned**. When you update a template, the earlier version is kept, so
-you can see what changed and roll back if needed. This is helpful when several people work
-on the same messages.
+## Starting from an existing one
 
-## How to create a template
+**Choose an Email Template** offers a starting point — *"select a template to get
+started; you can customise it after loading"*. Load one and edit rather than starting
+from an empty page.
 
-1. Go to **Admin → Communication → Templates**.
-2. Click **New Template**.
-3. Give it a clear **name** and choose its **type**.
-4. Write the content for each channel you plan to use.
-5. Add any **placeholders** for personalization.
-6. Click **Send test** to preview it (see below).
-7. Click **Save**.
+The email editor itself is configured in <Path>Settings > Control Panel</Path> under
+**Email Editor**.
 
-## Send a test
+## Templates worth having
 
-Before you use a template in a real campaign, use **Send test** to deliver a sample to
-yourself. Check that it reads well, the placeholders fill in correctly, and links work on
-each channel.
+| Template | When it goes |
+|---|---|
+| Welcome | They enrol |
+| Payment confirmation | They pay |
+| Payment reminder | An instalment is due |
+| Course starting | A batch begins |
+| Assignment due | Two days before |
+| Results published | A result is released |
+| Certificate earned | They qualify |
+| Access ending | Seven days before |
 
-## Good to know
+Writing these eight once is most of your communication for the year.
 
-- Keep SMS and push bodies short — they have little room, so lead with the key point.
-- Reuse one well-tested template across many campaigns instead of rewriting each time.
-- Set the right **type**: marking a promotion as transactional to dodge unsubscribe rules
-  is not allowed and harms trust.
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A token came out as literal text.">
+The token name is wrong, or it has no value for that recipient. Test before sending.
+</Accordion>
+
+<Accordion title="Can I use one template on several channels?">
+That is what they are for. Select the channels and write each version.
+</Accordion>
+
+<Accordion title="My email looks wrong on a phone.">
+Send yourself a test and open it on one. Most of your learners will read it there.
+</Accordion>
+
+<Accordion title="Can templates be in more than one language?">
+Write the version your audience reads, and use a separate audience and template per
+language where you teach in two.
+</Accordion>
+
+<Accordion title="Where do I see whether it arrived?">
+[Delivery and analytics](/docs/knowledgebase/communication/delivery-and-analytics).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Campaigns" description="Sending a template to an audience." href="/docs/knowledgebase/communication/campaigns" />
+  <Card title="Channels" description="The services these messages travel on." href="/docs/knowledgebase/communication/channels" />
+  <Card title="Delivery and analytics" description="What happened to each one." href="/docs/knowledgebase/communication/delivery-and-analytics" />
+</Cards>

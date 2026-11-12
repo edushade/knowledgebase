@@ -1,75 +1,117 @@
 ---
-title: "Forms & Lead Capture"
-description: "Build forms with the field types you need, collect submissions, get notified by email, and export to a spreadsheet."
+title: "Forms and Leads"
+description: "Collecting enquiries, applications and sign-ups — building a form, who is told, and what the person gets back."
 ---
 
-Forms let visitors send you information — a contact message, a sign-up, a question, or a
-file. You build a form by adding the fields you want, place it on a page, and then manage
-everything that comes in from one place. You can also be notified by email each time
-someone submits.
+A form is how somebody who is not ready to buy tells you they exist. A contact form, an
+enquiry, a scholarship application, a waiting list.
 
-## Building a form
+<Path>Configure > Website</Path>, under forms.
 
-Add the fields your form needs. Each field can be **required** or **optional**, and can
-have a placeholder, help text, and a translated label. Available field types:
+<WhoCan roles="Admin" />
 
-| Field type | Use it for |
+## Building one
+
+### Form information
+
+| Field | What it is |
 |---|---|
-| **Text** | A short answer, like a name. |
-| **Email** | An email address. |
-| **Long text** | A longer message or note. |
-| **Dropdown** | One choice from a list. |
-| **Checkbox** | A yes/no tick, or several tickable options. |
-| **Radio** | One choice from a small set shown together. |
-| **Number** | A numeric answer. |
-| **Date** | A calendar date. |
-| **File upload** | Let visitors attach a file. |
-| **Phone** | A phone number. |
-| **Web address** | A link, such as a portfolio. |
-| **Password** | A hidden, masked entry. |
+| **Title** | What it is called. |
+| **Description** | Shown above the fields. |
+| **Slug** | Its name in addresses — `contact-form`. |
+| **Status** | Active or inactive. |
 
-Forms **check entries before accepting them** — for example, an email field must contain
-a valid-looking email — so the information you receive is cleaner.
+### The fields
 
-## What happens after someone submits
+Add fields in the **Form Builder**. Each takes a **Label**, a **Placeholder**, a field
+name, and whether it is required. The types available include **Phone**, **Select**,
+**Radio**, **Checkbox** and **File Upload**, alongside the ordinary text ones.
 
-For each form, you decide what the visitor sees and who gets told:
+A field can also validate what is typed, which is how you stop a phone number field
+collecting "call me".
 
-- **Success message** — the thank-you text shown after submitting.
-- **Redirect** — send the visitor to another page after they submit.
-- **Email notifications** — email chosen recipients each time the form is submitted.
+<Callout type="info">
+**Ask for less than you want.** Every field loses people. Name and phone is usually
+enough to start a conversation; everything else can be asked once they reply.
+</Callout>
 
-## How to create a form
+## What happens on submit
 
-1. Go to **Admin → Website → Forms** and click **New Form**.
-2. Click **Add Field** for each piece of information you want, and pick its type.
-3. Mark fields **required** or **optional**, and add placeholders and help text.
-4. Set a **success message** and, if you like, a **redirect**.
-5. Add the email addresses that should be **notified** on each submission.
-6. Click **Save**, then place the form on a page using a **Form** block — see
-   [Pages & blocks](/docs/knowledgebase/website/pages-and-blocks).
+### The person who submitted
 
-## Managing submissions
+| Setting | What it does |
+|---|---|
+| **Success Message** | What they read immediately. |
+| Redirect | Send them to a page instead — `/thank-you`. |
+| **A reply for this form** | An automatic reply, written for this form. |
+| **The site's reply** | Your site-wide default reply. |
+| **No reply for this form** | Nothing is sent. |
 
-Everything visitors send arrives in one place. Each submission can be **new**, **read**,
-or **archived**. You can:
+Send a reply. Somebody who fills in a form and hears nothing assumes it did not work,
+and half of them will not try again.
 
-- Open a submission to see all its details.
-- Mark submissions as read or archive them.
-- **Bulk delete** submissions you no longer need.
-- **Export to a spreadsheet** for your records or follow-up.
+### Your team
 
-## Good to know
+**Admin notifications** decide who is told. Choose **people on your team** or whole
+**roles**, and set the **Subject** — for example `New submission: {form_name}`.
 
-- Forms also power other parts of your platform — for example, the form learners fill in
-  to request a certificate. See
-  [Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
-- Use the **file upload** field when you need documents from visitors; those files land
-  with the submission.
-- Keep forms short — ask only for what you truly need, to get more completed forms.
+<Callout type="warn">
+**Name somebody specific.** A form whose notifications go to a shared address nobody
+owns is a form whose submissions are never answered.
+</Callout>
+
+## Putting a form on a page
+
+A **Form** block puts it on any page — a contact page, the bottom of a course page, a
+landing page. See [Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+
+## Forms worth having
+
+| Form | Where |
+|---|---|
+| **Contact** | Your contact page and footer |
+| **Course enquiry** | On each course page, for people not ready to buy |
+| **Waiting list** | On a batch that is full or not yet open |
+| **Scholarship application** | Attached to a [scholarship](/docs/knowledgebase/selling-payments/scholarships) |
+| **Feedback** | Required by a [certificate type](/docs/knowledgebase/certificates/certificate-types) |
+
+The last two are not just marketing: a form can be a certificate requirement, and a
+scholarship's application form is how candidates reach you.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Submissions are not arriving.">
+Check **Admin notifications** names somebody, and then check the
+[delivery logs](/docs/knowledgebase/communication/delivery-and-analytics) — it is
+usually the sending service rather than the form.
+</Accordion>
+
+<Accordion title="We are getting spam.">
+Turn on spam protection, and consider a field a person would answer and a machine would
+not.
+</Accordion>
+
+<Accordion title="Can a form create an account?">
+No. A form collects an enquiry. Creating accounts is
+[Adding people](/docs/knowledgebase/account-people/adding-people).
+</Accordion>
+
+<Accordion title="Can I export submissions?">
+Submissions are listed for the form, and the list exports.
+</Accordion>
+
+<Accordion title="Can one form be on several pages?">
+Yes. Use the Form block wherever you need it.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Pages & blocks](/docs/knowledgebase/website/pages-and-blocks) — place a form on a page.
-- [Languages](/docs/knowledgebase/website/languages) — translate field labels.
-- [Files & Media](/docs/knowledgebase/files) — where uploaded files are kept.
+<Cards>
+  <Card title="Pages and blocks" description="Putting the form on a page." href="/docs/knowledgebase/website/pages-and-blocks" />
+  <Card title="Scholarships" description="Forms as applications." href="/docs/knowledgebase/selling-payments/scholarships" />
+  <Card title="Certificate types" description="A form as a certificate requirement." href="/docs/knowledgebase/certificates/certificate-types" />
+</Cards>

@@ -1,61 +1,166 @@
 ---
 title: "Weighted Grading"
-description: "Give each assessment a weight toward the final grade — for example, Midterm 20%, Final 50%, Participation 30% — and let the system do the maths."
+description: "Deciding how much each assessment is worth — the weights editor, the rule that they must total 100%, and optional bonus subjects."
 ---
 
-Weighted grading lets you decide **how much each assessment matters** in the final grade.
-A final exam can count for far more than a weekly quiz, just by giving it a bigger weight.
+A weight is how much an assessment counts towards the programme's result. A final exam
+at 50% matters as much as everything else put together.
 
-This page assumes you have chosen **Weighted** as your course's calculation method — see
-[Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes) for where to set
-that.
+Weights are set on a programme's **Grading** tab, in the weights editor, and they belong
+to that programme — a course's weights describe its own items, a learning path's
+describe the courses inside it.
 
-## How weights work
+<WhoCan roles="Admin" />
 
-You assign each assessment (or each course inside a larger program) a **weight %** toward
-the final grade. The weights add up to 100%.
+## The rule: weights share one whole
 
-A simple example:
+Each gradable item takes a weight from 0 to 100, and **together they must equal exactly
+100%**. The editor will not let you save until they do, and it tells you how far off you
+are.
 
 | Assessment | Weight |
-|------------|--------|
-| Midterm | 20% |
+|---|---|
+| Weekly quizzes | 20% |
+| Assignment | 30% |
 | Final exam | 50% |
-| Participation | 30% |
 | **Total** | **100%** |
 
-The system then:
+If you set no weights at all, the programme falls back to a plain average — every item
+counting the same.
 
-1. Takes each assessment's score.
-2. Applies its weight.
-3. Adds them up into a **weighted average**.
-4. **Rounds** the result to your chosen number of decimals.
-5. Maps it to a **letter grade and grade point** using your
-   [grading scheme](/docs/knowledgebase/progress-grading/grading-schemes).
+## Letting the editor do the arithmetic
 
-## Makeup and alternative assessments
+Typing twelve weights that come to exactly 100% by hand is miserable, so the editor can
+do the sharing for you.
 
-If you offer a makeup or alternative version of an assessment, the whole group counts as a
-**single weighted slot** — not two. The learner's grade uses whichever version they
-actually took. See
-[Makeup assessments](/docs/knowledgebase/assessments/makeup-assessments) for how these
-groups are set up.
+**Auto-distribute** is a switch at the top. With it on:
 
-## It updates by itself
+- Any weight you **type yourself is pinned** — the editor leaves it exactly where you
+  put it.
+- Every item you have **not** touched shares whatever is left, equally, so the total
+  stays at exactly 100%.
+- Clearing a weight **unpins** it, and it goes back to sharing the remainder.
 
-When a learner submits a quiz, their grade for that assessment updates immediately and the
-**final grade recalculates automatically**. You never have to add up weights by hand.
+So the way to use it is: switch it on, type the two or three weights you actually care
+about, and let the rest settle themselves.
 
-## What the learner sees
+| Control | What it does |
+|---|---|
+| **Auto-distribute** (switch) | Turns the sharing on or off. It asks before it changes anything, because turning it on rewrites every weight you have not pinned. |
+| **Distribute equally** | Resets all pins and splits 100% evenly across every gradable item. It asks first — it overwrites what you typed. |
+| **Reset to auto** (on one row) | Unpins that one item so it shares the remaining weight again. On an alternative, it goes back to matching its primary's weight. |
+| **Save Program Weights** | Saves. Greyed out until the total is exactly 100%. |
 
-- Their grade on each assessment.
-- A final grade that reflects how much each piece counted.
-- An up-to-date result as soon as new work is graded.
+<Callout type="info">
+**If your pinned weights already come to more than 100%,** the editor says so and names
+the figure — there is nothing left for the other items to share. Reduce a pinned weight
+and the rest settle again.
+</Callout>
 
-## Good to know
+## Setting the progression rule from here
 
-- Make sure your weights add up to 100% so the final grade reflects what you intend.
-- Weights can be applied to individual assessments, and in larger programs, to whole
-  courses inside the program.
-- The weighted final grade is what appears on a learner's
-  [marksheet](/docs/knowledgebase/progress-grading/marksheets).
+Beside each semester on this page there is a **Progression** control — how many of that
+semester's subjects a learner must pass before continuing to the next one.
+
+It lives here because this is where you are already deciding what the semester is made
+of, and because the rule counts the same subjects you are weighting: those marked
+**Full**, not the bonus ones. Once set, the control reads **Pass 4 to continue**.
+
+See [Progression](/docs/knowledgebase/enrollment-access/progression).
+
+## Alternative assessments in the weights list
+
+When two assessments are interchangeable — a main exam and its makeup — they form one
+slot, and the slot's weight sits on the **primary** member. The other members appear in
+the list too, with a link to their primary, but:
+
+- Their weight may be **at most** their primary's. The editor refuses more.
+- Their weight is **not** part of the programme's 100% total.
+
+See [Alternative assessments](/docs/knowledgebase/assessments/alternative-assessments).
+
+## Optional subjects: Full and Bonus
+
+If the programme's **Result Policy** is set to **Average with bonus**, each item gains a
+**Full / Bonus** choice:
+
+| Choice | What it means |
+|---|---|
+| **Full** | The item's whole score counts, and its weight is part of the 100% total. |
+| **Bonus** | Only what the item scores *above* the bonus threshold is added, and its weight is not counted in the total. |
+
+A bonus item can raise a learner's result but never lower it — which is what makes an
+optional subject safe to offer. With bonus items in play, the "must total 100%" rule
+applies only to the items marked **Full**.
+
+The threshold and the highest result a programme can reach are set beside the result
+policy. See
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+
+## What happens to an unmarked assessment
+
+This is where weights and the rest of the setup meet, and it is worth being clear about:
+
+- With **Treat Ungraded Items as Zero** off (the default), an unmarked assessment is
+  left out and **its weight is shared among the ones that have been marked**. A learner
+  who has sat only the 20% quiz is marked out of that quiz alone.
+- With it on, an unmarked assessment counts as a real zero.
+
+The weights are the same either way. What changes is the denominator.
+
+## After you change weights
+
+Results already recorded do not move on their own. Run **Calculate All Grades** on the
+programme's learner grades screen so everyone is judged by the new weights.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Save is greyed out.">
+The total is not exactly 100%. The editor shows the running total and how far off it is.
+If bonus items are in play, only the items marked **Full** count towards that 100%.
+</Accordion>
+
+<Accordion title="The editor keeps changing weights I did not touch.">
+That is auto-distribute doing its job: the items you have not typed into are sharing
+whatever is left. Type a weight into one and it is pinned — the editor will not move it
+again. Switch auto-distribute off if you would rather set all of them yourself.
+</Accordion>
+
+<Accordion title="I typed a weight and then cleared it, and it changed on its own.">
+Clearing a weight unpins the item, so it goes back to sharing the remainder. Type 0 if
+you want it pinned at nothing.
+</Accordion>
+
+<Accordion title="I want one quiz not to count at all.">
+Give it a weight of 0. It still appears in the course and learners still take it; it
+simply contributes nothing to the result.
+</Accordion>
+
+<Accordion title="A course inside my learning path is not using my weights.">
+It should not. A path's weights describe the path's own items. A course inside it uses
+its own grading setup; if it has none, it falls back to a plain average of its content —
+it never borrows the path's weights, because those weights point at sibling items, not
+at that course's lessons.
+</Accordion>
+
+<Accordion title="Why can a supplementary assessment not weigh more than its primary?">
+Because the slot's weight belongs to the primary. A makeup exam that counted for more
+than the exam it replaces would reward missing the original.
+</Accordion>
+
+<Accordion title="Where do I set weights for a batch?">
+On the batch's own Grading tab. A batch with no setup of its own follows the course's.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Course grading setup" description="The result policy, the scheme, and Treat Ungraded Items as Zero." href="/docs/knowledgebase/progress-grading/course-grading-setup" />
+  <Card title="Alternative assessments" description="Two assessments, one slot." href="/docs/knowledgebase/assessments/alternative-assessments" />
+  <Card title="GPA and results" description="How weighted scores become a result and a CGPA." href="/docs/knowledgebase/progress-grading/gpa-and-results" />
+  <Card title="Marksheets" description="The document that prints these weights and marks." href="/docs/knowledgebase/progress-grading/marksheets" />
+</Cards>

@@ -1,56 +1,117 @@
 ---
 title: "Issuing Certificates"
-description: "How certificates are awarded automatically, how to award or revoke one yourself, and what the learner sees."
+description: "How certificates go out on their own, how to issue one by hand, and how their numbers are built."
 ---
 
-A certificate can be awarded in two ways: **automatically**, when a learner meets the
-requirements you set, or **manually**, when you award it yourself. This page covers
-both, plus revoking and what the learner gets.
+Most certificates issue themselves. The system checks after anything that could change
+the answer — a grade recorded, a result released, a form submitted — and issues when
+the gates are clear.
 
-## Automatic issuing
+Sometimes you have to do it yourself.
 
-Once you have [turned on requirements](/docs/knowledgebase/certificates/certificate-requirements),
-the platform watches for the learner to meet them and awards the certificate on its own.
+<WhoCan roles="Admin" />
 
-It checks the requirements whenever something relevant happens, such as:
+## Automatic issue
 
-- The learner **finishes** the course or learning path.
-- The learner **submits** the required form.
-- The learner's **review is approved**.
+Nothing to do. When a learner clears all six gates, the certificate is created and
+appears in their dashboard.
 
-When that happens, the platform re-checks the requirements. If they are met (under your
-**All** or **Any** setting), the certificate is awarded right away. If they are not met
-yet, nothing happens until the learner does the remaining steps.
+The gates, and why one is not issuing, are on
+[Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
 
-<Callout type="success">
-A learner is never awarded the same certificate twice. Once it is issued, repeat events
-will not create a duplicate.
+## Issuing by hand
+
+From an enrolment, **Issue Certificate**. This **bypasses the requirements entirely** —
+it issues for a learner who has not met them.
+
+That is the point. Use it for:
+
+- The agreed exception, approved by someone who can approve it.
+- Work completed outside the platform.
+- A programme where the certificate is a judgement rather than a calculation.
+
+Do not use it to work around a gate you could fix. A learner waiting on a release date
+should wait; a learner waiting because the passing basis is wrong needs the basis
+corrected, or everyone else will be stuck too.
+
+<Callout type="warn">
+A manual issue is recorded as any other action is, with who did it and when. Issue one
+for the right reason and you will be glad of that record; issue one for the wrong
+reason and so will somebody else.
 </Callout>
 
-## Awarding a certificate yourself
+## Certificate numbers
 
-Sometimes you want to give a learner a certificate directly — for example, to recognise
-work done outside the usual flow, or when you have left requirements off. You can award
-a certificate to a learner by hand at any time, regardless of the automatic rules.
+Every certificate carries a number, built from a pattern you set once in
+<Path>Settings > Control Panel</Path> under **Certificate Number Generation**.
 
-1. Open the learner's enrollment for the course or learning path.
-2. Choose **Issue certificate**.
-3. The certificate is created with a unique number and verification code, ready for the
-   learner to view.
+The pattern can use:
 
-## Revoking a certificate
+| Token | Becomes |
+|---|---|
+| `{PROGRAM_CODE}` | The programme's **Certificate Code**, or its slug if you left that empty. |
+| `{COHORT_CODE}` | The batch's **Cohort Code**, or one worked out from its title. |
+| `{YEAR:4}` | The year. |
+| `{RANDOM:n}` | n random characters. |
+| `{SERIAL}` | A running number. |
 
-If a certificate was awarded by mistake, or should no longer stand, you can **revoke**
-it. A revoked certificate is no longer valid and the learner can no longer use it.
-
-## What the learner sees
-
-- When a certificate is awarded, the learner can **view it in their account**.
-- They can **download** it to keep, print, or share.
-- It shows the course or path title, their grade, the completion date, the time they
-  spent, the unique certificate number, and the verification code.
+For example `ES-{PROGRAM_CODE}-{COHORT_CODE}-{RANDOM:4}` produces `ES-DS-C1-9K2X`.
+Leave the pattern empty and `CERT-{YEAR:4}-{RANDOM:6}` is used.
 
 <Callout type="info">
-Want anyone to be able to confirm a certificate is real? See
-[Verifying certificates](/docs/knowledgebase/certificates/verifying-certificates).
+Set the pattern **before** you issue anything. Certificates already issued keep the
+numbers they were given, so changing the pattern later leaves you with two schemes in
+circulation.
 </Callout>
+
+Give each programme a short **Certificate Code** on its settings step, and each batch a
+**Cohort Code**, and the numbers become readable: someone holding `ES-DS-C1-9K2X` can
+be found without a lookup.
+
+## What the learner gets
+
+A certificate in their dashboard, which they can view and download. The design is
+whichever one the programme or its type uses — see
+[Certificate templates](/docs/knowledgebase/certificates/certificate-templates).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can I revoke a certificate?">
+An issued certificate stands. That is why the gates are checked before issuing rather
+than afterwards — and why the overall passing basis waits for everything to be marked.
+</Accordion>
+
+<Accordion title="Can I issue certificates to a whole batch at once?">
+There is no bulk issue. If a batch has all passed, automatic issue should be handling
+them — a whole batch waiting usually means a gate, not a missing button. See
+[Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements).
+</Accordion>
+
+<Accordion title="A learner's name is wrong on their certificate.">
+The certificate prints the name on their account. Correct the account and re-issue.
+</Accordion>
+
+<Accordion title="Can a learner get a certificate for one semester?">
+Not a completion certificate for the programme — a learner holding part of a programme
+never qualifies. What you can give them is an
+[enrolment certificate](/docs/knowledgebase/certificates/certificate-types), or a
+[transcript](/docs/knowledgebase/progress-grading/transcripts) for the semester.
+</Accordion>
+
+<Accordion title="Where do I see who has one?">
+The enrolment list has **Certificate** and **Certificate Issued At** columns, and
+[Certificate analytics](/docs/knowledgebase/analytics/certificates) shows the same
+across your academy.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Certificate requirements" description="The six gates, and which one is holding yours." href="/docs/knowledgebase/certificates/certificate-requirements" />
+  <Card title="Certificate templates" description="What the document looks like." href="/docs/knowledgebase/certificates/certificate-templates" />
+  <Card title="Verifying certificates" description="Checking one is genuine." href="/docs/knowledgebase/certificates/verifying-certificates" />
+</Cards>

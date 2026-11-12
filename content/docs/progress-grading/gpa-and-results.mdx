@@ -1,0 +1,128 @@
+---
+title: "GPA and Results"
+description: "How marks become a subject score, a semester result and a final CGPA — and why the levels have to agree."
+---
+
+A result is not one calculation. It is four, stacked, each working from the one below.
+Knowing the order is what lets you answer "why is this number what it is?" without
+guessing.
+
+<WhoCan roles="Admin, Instructor" />
+
+## The four levels
+
+| Level | What it produces |
+|---|---|
+| **1. An answer** | What one question in a quiz scored. |
+| **2. An assessment** | What the whole quiz or assignment scored. |
+| **3. A subject** | What a course or batch scored, from its assessments and their weights. |
+| **4. The programme** | The final result and CGPA, from its subjects and their weights. |
+
+Each level is rounded before the level above uses it. That is why a marksheet's columns
+add up to the percentage printed beside them — the number shown is the number used. See
+[Rounding and precision](/docs/knowledgebase/progress-grading/rounding-and-precision).
+
+## Where GPA comes in
+
+If the programme's grading scheme is a **GPA** scale, each band carries a grade point as
+well as a letter. A result of 86% lands in the B band, and B is worth 3.5.
+
+- A **subject** gets a grade point.
+- A **semester** gets a **GPA** — the result for that term, converted through the scheme.
+- The programme gets a **CGPA** — the result across everything.
+
+If the scheme is a **Percentage** scale, the same calculations happen but no grade
+points are shown. The points are still stored; Percentage just decides not to print
+them. See [Grading schemes](/docs/knowledgebase/progress-grading/grading-schemes).
+
+## Semester results
+
+When a batch is divided into [terms](/docs/knowledgebase/courses/terms-and-breakpoints),
+each term produces its own result alongside the overall one.
+
+**A semester's result counts only what sits inside that semester.** Its weights, its
+subjects, its assessments. Content that sits outside every term belongs to the
+programme but to no semester, so it reaches the final result and no semester result.
+
+<Callout type="warn">
+**A subject shared between two semesters is the usual cause of a strange semester
+result.** If the same course sits under Semester 1 and Semester 2, each semester counts
+only the part under it. Put a subject in one term, or split it.
+</Callout>
+
+## What stops a result appearing
+
+A learner can have marks and still see nothing. Four gates, in this order:
+
+1. **The programme has no grading scheme.** Then there is no scale to produce a grade,
+   and what the learner gets is a marks sheet rather than a result — no invented GPA.
+2. **Transcript is switched off** for the programme. Learners see no result at all;
+   you can still view and print theirs. See
+   [Course settings](/docs/knowledgebase/courses/course-settings).
+3. **A release date has not arrived.** A programme, and each term, can hold results
+   until a date.
+4. **A quiz result is being held.** An assessment whose result has not been released is
+   left out, and the semester holding it reads as pending — while still showing how many
+   subjects it contains, so "Semester 1 · 8 · Pending" rather than a misleading zero.
+
+## Nothing to grade yet
+
+A learner with no marked work has no result — not a zero. "Ungraded" and "scored zero"
+are different things, and the system keeps them apart. A zero is a mark somebody gave;
+ungraded means nobody has marked anything yet.
+
+Which of the two an unmarked assessment becomes is decided by **Treat Ungraded Items as
+Zero**. See
+[Course grading setup](/docs/knowledgebase/progress-grading/course-grading-setup).
+
+## Learners who bought part of a programme
+
+A learner with [partial access](/docs/knowledgebase/enrollment-access/partial-access) —
+one semester rather than the whole diploma — is marked on what they bought. Content
+they do not have is left out of both the top and the bottom of the calculation, so
+their result is out of what they actually took.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="The semester results do not add up to the final result.">
+They are not meant to be added. The final result is calculated from the subjects and
+their weights across the whole programme, not by averaging the semesters. A semester
+with two subjects and one with eight do not count equally.
+</Accordion>
+
+<Accordion title="A subject shows a result but contributes nothing to the semester.">
+It is probably not inside that term. Only content under a breakpoint counts towards that
+breakpoint's result. See [Terms and semesters](/docs/knowledgebase/courses/terms-and-breakpoints).
+</Accordion>
+
+<Accordion title="A learner has a CGPA but one semester is blank.">
+That semester is being withheld — either its release date has not arrived, or an
+assessment inside it is holding its result. The subject count still shows, so you can
+tell "pending" from "empty".
+</Accordion>
+
+<Accordion title="Two learners with the same marks have different results.">
+Check whether one of them has partial access, or a transfer behind them. A learner
+marked on one semester is marked out of that semester. See
+[Partial access](/docs/knowledgebase/enrollment-access/partial-access) and
+[Transfers](/docs/knowledgebase/enrollment-access/transfers).
+</Accordion>
+
+<Accordion title="Where do I see all of this for one learner?">
+The programme's **Learner Grades** screen, and from there one learner's breakdown — the
+subjects, the assessments inside them, and each semester. See
+[Learner grades](/docs/knowledgebase/progress-grading/learner-grades).
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Grading schemes" description="Where grade points and the pass line are defined." href="/docs/knowledgebase/progress-grading/grading-schemes" />
+  <Card title="Weighted grading" description="How much each subject and assessment counts." href="/docs/knowledgebase/progress-grading/weighted-grading" />
+  <Card title="Transcripts" description="The document that reports all of this." href="/docs/knowledgebase/progress-grading/transcripts" />
+  <Card title="Learner grades" description="One learner's marks, level by level." href="/docs/knowledgebase/progress-grading/learner-grades" />
+</Cards>

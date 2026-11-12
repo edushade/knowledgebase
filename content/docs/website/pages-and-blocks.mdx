@@ -1,93 +1,126 @@
 ---
-title: "Pages & Blocks"
-description: "Build pages by stacking ready-made blocks — hero banners, text, images, videos, forms, and more — with no coding."
+title: "Pages and Blocks"
+description: "Building your website from blocks — what a block is, which ones pull in live data, and the system pages you should not rebuild."
 ---
 
-Every page on your website is built from **blocks** — ready-made pieces you stack on top
-of one another and arrange. Want a big banner, then a paragraph, then a sign-up form?
-Add a hero block, a text block, and a form block, in that order. You build the whole
-page visually, drag pieces into place, and see how it looks as you go.
+Your website is made of pages, and a page is made of **blocks**. A block is a section —
+a hero, a course list, a pricing table, a FAQ — that you drop in, fill with your own
+words, and arrange.
+
+<Path>Configure > Website</Path>.
+
+<WhoCan roles="Admin" />
+
+## What a block is
+
+Each block is a ready-made section with its own fields. You do not lay out columns or
+choose spacing; you pick the block that does the job and fill it in.
+
+There are over a hundred, covering the sections a course business actually needs:
+
+| Kind | Examples |
+|---|---|
+| **Opening** | Hero, split hero, poster hero, masthead |
+| **Selling** | Pricing, plans, inclusions, outcomes, "is this for you?" |
+| **Proof** | Testimonials, reviews, ratings, stats, results, partners, logos |
+| **Content** | Features, FAQ, accordion, timeline, steps, gallery, team |
+| **Catalogue** | Courses, learning paths, bundles, categories, products, events, posts |
+| **Course pages** | Curriculum, instructor, course stats, cohort schedule, countdown |
+| **Enrolment** | Checkout, enrolment panel, cohort selector, "enrolment closed" |
+| **Framing** | Header, footer, announcement bar, call to action, mobile sticky bar |
+| **Building** | Section, row, column, grid, spacer, divider, text, image, video, button |
+
+## Blocks that pull in live data
+
+The ones worth knowing about do not hold content at all — they show what is already in
+your academy and stay current by themselves:
+
+| Block | Shows |
+|---|---|
+| **Courses**, **Learning Paths**, **Bundles**, **Products**, **Events** | Your published catalogue |
+| **Categories**, **Category programs** | Courses in a category |
+| **Curriculum** | A course's real outline |
+| **Course stats**, **Course ratings**, **Instructor** | That course's live figures |
+| **Cohort schedule**, **Cohort countdown**, **Cohort selector** | A batch's dates and seats |
+| **Enrolment panel**, **Checkout** | The real purchase flow |
+| **Posts** | Your [blog](/docs/knowledgebase/website/blog) |
+
+<Callout type="info">
+**Use these rather than typing your course list into a text block.** A list you typed is
+wrong the day you add a course; a Courses block never is.
+</Callout>
 
 ## Pages
 
-You can build as many pages as you like. Each page has:
+A page has:
 
-| Setting | What it does |
+| Part | What it is |
 |---|---|
-| **Title** | The name of the page. |
-| **Web address** | The part of the link after your domain, for example `/about` or `/contact`. This is the page's slug. |
-| **Status** | Whether the page is a **draft**, **published** (live for visitors), or **archived** (taken down but kept). |
+| **Content** | The blocks. |
+| **Metadata** | Title, description, slug — what search engines read. See [SEO](/docs/knowledgebase/website/seo). |
+| **Settings** | How the page behaves. |
+| **Preview** | What it will look like. |
 
-See [Publishing](/docs/knowledgebase/website/publishing) for how a page moves from draft to live.
+Every piece of text in a block can be written in each of your site's languages. See
+[Languages](/docs/knowledgebase/website/languages).
 
-## Blocks: the building pieces
+## System pages
 
-Add a block, set its content, and arrange it where you want. Common blocks include:
+Some pages are built in because the platform needs them: the course page, the checkout
+page, the catalogue, sign-in.
 
-| Block | What it's for |
-|---|---|
-| **Hero** | A large banner at the top of a page, usually with a headline and a button. |
-| **Text** | A paragraph or section of written content. |
-| **Image** | A single picture. |
-| **Gallery** | A group of images shown together. |
-| **Video** | An embedded video. |
-| **Form** | A form for visitors to fill in — see [Forms & lead capture](/docs/knowledgebase/website/forms-and-leads). |
-| **Column** | A layout block that splits a row into side-by-side columns. |
-| **Menu** | Shows one of your navigation menus inside the page. |
+You can **edit their metadata**, and you can **replace a system page** with one of your
+own — either a new page or an existing one.
 
-You also get blocks made for a course business:
-
-| Block | What it's for |
-|---|---|
-| **Course hero** | A banner built for a single course, pulling in its title and details. |
-| **Instructor list** | Shows the teachers on a course or page. |
-| **Cohort selector** | Lets a visitor pick which scheduled group (cohort) to join. |
-
-The images and videos you place in blocks come from your [Files & Media](/docs/knowledgebase/files) library.
-
-## Nesting and reusing blocks
-
-- **Nest blocks.** Put blocks inside a Column block to build side-by-side layouts, or
-  group blocks together. This lets you build rich pages from simple pieces.
-- **Reuse blocks.** Save a block to your **reusable block library**, then drop it onto
-  any page. Edit it once in the library, and the change appears everywhere you used it.
-  This is great for a call-to-action box or a promotion banner you show on many pages.
-
-<Callout type="info">
-Use the reusable block library for anything that should stay identical across pages —
-for example a "Talk to an advisor" box. Change it in one place, and every page updates.
+<Callout type="warn">
+Replace a system page only when you know what it has to do. A replaced checkout page
+that does not contain a Checkout block cannot take money.
 </Callout>
 
-## Site-wide bars: header, footer, announcement
+## Legal pages
 
-Some pieces appear on many pages, not just one:
+**Create legal pages** generates terms, privacy and cookie pages for you. It will tell
+you when they are live, and it asks before replacing pages you already have.
 
-- **Header** — the bar at the top of your site, usually with your logo and main menu.
-- **Footer** — the bar at the bottom, often with links and contact details.
-- **Announcement bar** — a thin strip (for example, "Enrollment closes Friday").
+Point your privacy settings at them afterwards — see
+[Privacy and consent](/docs/knowledgebase/account-people/privacy-and-consent).
 
-These are set once and shown across your site. For each one, you can control **which
-pages it appears on**, so an announcement can show on some pages and not others.
+## Common questions
 
-## How to build a page
+<Accordions type="single">
 
-1. Go to **Admin → Website → Pages** and click **New Page**.
-2. Give it a **Title** and a **Web address**.
-3. Click **Add Block** and choose a block type (for example **Hero**).
-4. Fill in the block's content and arrange it where you want.
-5. Add more blocks and stack them in the order you want.
-6. Click **Preview** to see it, then **Publish** when ready.
+<Accordion title="My course list is out of date.">
+It is a text block somebody typed. Replace it with a Courses block, which reads your
+catalogue.
+</Accordion>
 
-## Good to know
+<Accordion title="A block shows nothing.">
+Blocks that pull in live data show nothing when there is nothing to show — no published
+courses in that category, no batches on that course.
+</Accordion>
 
-- Building from blocks means you never touch code — you arrange pieces and set their
-  content.
-- A page can stay a **draft** for as long as you like; visitors only see it once it is
-  **published**.
-- Archiving a page takes it down but keeps it, so you can bring it back later.
+<Accordion title="Can I build a page from scratch?">
+Yes, from the layout blocks — section, row, column, text, image, button. The ready-made
+blocks exist because they are faster and they look right on a phone.
+</Accordion>
+
+<Accordion title="Can I edit the checkout page?">
+Yes. It is a page with a Checkout block, and the block's labels, methods and order card
+are yours. See [Checkout](/docs/knowledgebase/selling-payments/checkout).
+</Accordion>
+
+<Accordion title="I replaced a system page and something broke.">
+Replace it back with the original, then work out what the page needed. System pages do
+a job the platform depends on.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Templates & themes](/docs/knowledgebase/website/templates-and-themes) — start from a ready-made page and set your look.
-- [Navigation menus](/docs/knowledgebase/website/navigation-menus) — link your pages together.
-- [Publishing](/docs/knowledgebase/website/publishing) — draft, preview, and go live.
+<Cards>
+  <Card title="Templates and themes" description="Colours, type and the overall look." href="/docs/knowledgebase/website/templates-and-themes" />
+  <Card title="Navigation menus" description="How visitors move between pages." href="/docs/knowledgebase/website/navigation-menus" />
+  <Card title="Publishing" description="Getting changes live." href="/docs/knowledgebase/website/publishing" />
+  <Card title="SEO" description="Metadata, sitemap and being found." href="/docs/knowledgebase/website/seo" />
+</Cards>

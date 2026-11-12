@@ -1,64 +1,139 @@
 ---
 title: "Exams"
-description: "Place a quiz inside course content as a graded exam, and give learners a 'My Exams' list to find and take their assessments."
+description: "There is no separate exam feature — an exam is a quiz settled differently. Here is the recipe, and what learners see."
 ---
 
-An exam is a quiz placed inside your course content as a graded assessment. Learners reach it
-where it sits in the lessons, take it, and the result flows into their progress and grade. This
-page covers how exams appear and what learners do with them.
+Edushade has no separate exam object. **An exam is a quiz** with its settings turned up:
+one attempt, a real time limit, a narrow window, and results held until you release
+them.
 
-## Adding an exam to a course
+What makes it feel like an exam to a learner is the **Exam** area of their dashboard,
+where assessments that are scheduled and count appear with their dates.
 
-1. Build the quiz first — see [Creating quizzes](/docs/knowledgebase/assessments/creating-quizzes).
-2. In your course content, add the quiz as an assessment in the section where it belongs.
-3. Set its rules — attempts, timer, proctoring, and so on — using
-   [Quiz settings](/docs/knowledgebase/assessments/quiz-settings) and
-   [Proctoring](/docs/knowledgebase/assessments/proctoring).
+<WhoCan roles="Admin, Instructor" />
 
-The exam now appears inside the course alongside the lessons.
+## Setting one up
 
-## The learner's "My Exams" list
+<Steps>
 
-Learners get a **My Exams** list that gathers all their assessments in one place. They can:
+<Step>
 
-- **Filter** by status — **pending**, **completed**, or **graded**.
-- **Launch** an exam directly from the list.
-- See results once available.
+### Build the quiz
 
-This saves learners from hunting through lessons to find what they still need to do.
+As normal — see [Creating a quiz](/docs/knowledgebase/assessments/creating-quizzes).
+Give it a **Quiz Type** of "Exam" or "Final", so you can filter and report on exams
+later.
 
-## Taking an exam
+Write real **Instructions**: what is allowed, what to do if something goes wrong, who to
+contact.
 
-The experience is the same as any quiz — see
-[Taking quizzes](/docs/knowledgebase/assessments/taking-quizzes). In short:
+</Step>
 
-- Objective questions can be **auto-graded** for an instant result.
-- Written answers stay **pending** until an instructor grades them.
-- Results flow back into the learner's **progress and grade**.
+<Step>
 
-## Scheduled release and locking
+### Settle the settings
 
-Exam availability respects your course schedule. You can release an exam on a set date or lock
-it until earlier content is done. See
-[Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling). You can also set the
-quiz's own open and close window — see
-[Quiz availability](/docs/knowledgebase/assessments/quiz-availability).
+| Setting | For an exam |
+|---|---|
+| **Maximum Attempts** | 1 |
+| **Time limit** | On, with the real duration |
+| **Allow Pause** | Off |
+| **Shuffle questions** and **Shuffle answer options** | On |
+| **Require All Questions** | On, if nothing may be skipped |
+| **Pass Score** | Your pass mark |
+| **Show answer after activity** | Off |
+| **Show each learner's score as soon as they submit** | Off |
+| **Release scores on** | After the window closes |
 
-## How results feed grades
+</Step>
 
-An exam's score rolls into the learner's overall course grade. Set how much it counts with
-[weighted grading](/docs/knowledgebase/progress-grading/weighted-grading), and track outcomes
-in [Progress tracking](/docs/knowledgebase/progress-grading/progress-tracking).
+<Step>
 
-<Callout type="info">
-Need a main exam and a backup makeup that count as one? See
-[Makeup & alternative assessments](/docs/knowledgebase/assessments/makeup-assessments).
-</Callout>
+### Set the window
+
+Add the quiz to the course and set its **Drip Schedule**: an **unlock** when the exam
+opens and a **lock** when it closes. Without a lock there is no window, and a learner
+sitting it two days later looks the same as one who sat it on the day.
+
+See [Quiz availability](/docs/knowledgebase/assessments/quiz-availability).
+
+</Step>
+
+<Step>
+
+### Decide what it is worth
+
+On the programme's **Grading** tab, give the exam its weight. A final exam at 40% of the
+course is a decision to make once, in the weights editor — see
+[Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+
+</Step>
+
+</Steps>
+
+## What the learner sees
+
+The **Exam** area of their dashboard has three tabs:
+
+| Tab | What is in it |
+|---|---|
+| **Upcoming Exams** | Scheduled, not yet sat. With **Starts At** and **Ends At**. |
+| **Previous Exams** | Sat, with when they submitted and how long they took. |
+| **Published Results** | Results that have been released. |
+
+Each exam card carries its time limit, total questions, total marks, and — once
+released — the score, the result and the accuracy rate, with a link to the
+[merit list](/docs/knowledgebase/assessments/merit-lists).
+
+Before release it reads **Under Review**. An exam they missed reads **Missed**, with the
+deadline that passed. One not yet open reads **Locked**.
+
+## On the day
+
+- **Release the scores after the window closes**, not as learners submit.
+- **Check the [analytics](/docs/knowledgebase/assessments/quiz-analytics) before you
+  release.** A question almost everybody got wrong is usually a bad answer key, and it
+  is much easier to fix before anyone has seen a mark.
+- **Expect reschedules.** Somebody's connection will fail. See
+  [Reschedules](/docs/knowledgebase/assessments/reschedules).
+
+## What is not available
+
+There is no webcam proctoring, browser lock or screen recording. See
+[Keeping an exam honest](/docs/knowledgebase/assessments/proctoring) for what you can
+actually do.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Why does an exam show in the learner's Exam area and a quiz does not?">
+The Exam area collects the assessments that are scheduled and count. A practice quiz
+sitting inside a lesson is part of the course, not an exam.
+</Accordion>
+
+<Accordion title="A learner's exam says Under Review.">
+They have submitted and the result has not been released — either marking is not
+finished, or the release time has not come.
+</Accordion>
+
+<Accordion title="Can I run a makeup exam for the learners who missed it?">
+Yes, and group it with the original so it satisfies the same slot. See
+[Makeup assessments](/docs/knowledgebase/assessments/makeup-assessments).
+</Accordion>
+
+<Accordion title="Can two batches sit the same exam at different times?">
+Yes. Availability belongs to the quiz item in each programme, so each batch gets its own
+window.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Creating quizzes](/docs/knowledgebase/assessments/creating-quizzes)
-- [Taking quizzes](/docs/knowledgebase/assessments/taking-quizzes)
-- [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling)
-- [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading)
-- [Makeup & alternative assessments](/docs/knowledgebase/assessments/makeup-assessments)
+<Cards>
+  <Card title="Quiz settings" description="Every setting the recipe above uses." href="/docs/knowledgebase/assessments/quiz-settings" />
+  <Card title="Keeping an exam honest" description="What integrity tools exist, and what do not." href="/docs/knowledgebase/assessments/proctoring" />
+  <Card title="Makeup assessments" description="A second sitting that counts as the first." href="/docs/knowledgebase/assessments/makeup-assessments" />
+  <Card title="Merit lists" description="The results sheet learners see." href="/docs/knowledgebase/assessments/merit-lists" />
+</Cards>

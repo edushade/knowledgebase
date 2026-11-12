@@ -6,16 +6,22 @@
     "index",
     "creating-quizzes",
     "question-types",
+    "question-bank",
     "quiz-settings",
     "quiz-availability",
     "taking-quizzes",
-    "grading-quizzes",
-    "proctoring",
-    "leaderboards",
-    "assignments",
+    "attempts-and-retakes",
+    "reschedules",
     "exams",
+    "proctoring",
     "makeup-assessments",
+    "alternative-assessments",
+    "assignments",
+    "assignment-submissions",
+    "grading-quizzes",
+    "quiz-analytics",
     "question-reports",
-    "quiz-analytics"
+    "merit-lists",
+    "leaderboards"
   ]
 }

@@ -1,0 +1,141 @@
+---
+title: "Certificate Types"
+description: "The reusable rule for who earns a certificate — made once, assigned to as many programmes as you like."
+---
+
+A certificate type is the **rule**, not the picture. It says who earns a certificate and
+on what basis. Programmes assign a type; designs are drawn against one.
+
+Making the rule once and reusing it is what stops forty courses each having their own
+slightly different idea of what "finished" means.
+
+<WhoCan roles="Admin" />
+
+## Where they live
+
+<Path>Settings > Certificate Templates</Path>, then **Manage Certificate Types** — or
+from a programme's certificate settings, which opens the same screen.
+
+## What a type holds
+
+| Field | What it is |
+|---|---|
+| **Name** | What you call it — "Diploma of Completion". |
+| **Description** | A note for your team. |
+| **Kind** | **Completion** or **Enrollment**. See below. |
+| **Requirement mode** | **Meet ALL selected requirements** or **Meet ANY one requirement**. |
+| **Requirements** | What the learner has to do. |
+| **Status** | Active or not. |
+
+### The two kinds
+
+| Kind | When it is granted |
+|---|---|
+| **Completion (on passing / completing)** | When the learner has earned it. |
+| **Enrollment (instant on enroll)** | The moment they enrol. |
+
+An **Enrollment** type is for a proof-of-admission document — something a learner needs
+for a visa, an employer or a scholarship body before the course has even started. It has
+no requirements; enrolling *is* the requirement.
+
+## The requirements
+
+A **Completion** type can require any of these:
+
+| Requirement | Issued when the learner… |
+|---|---|
+| **On passing grade** | passes, per the grading scheme. |
+| **On enrollment completion** | completes the programme — 100% progress. |
+| **On feedback form submission** | submits the feedback form the programme names. |
+| **On approved review** | leaves a review that is approved. |
+
+**Requirement mode** decides how they combine: **ALL** means every one you ticked, **ANY**
+means one is enough.
+
+<Callout type="info">
+A common arrangement: **ALL** of *on passing grade* and *on feedback form submission* —
+a learner earns the certificate by passing, and collects it by telling you how the
+course went.
+</Callout>
+
+## Passing basis
+
+Where the type requires a passing grade, **Passing basis** says what "passing" means:
+
+| Basis | What has to pass |
+|---|---|
+| **Overall program grade** | The final result clears the pass line. Nothing else is checked. |
+| **All assessments pass** | Every assessment in the programme. |
+| **Specific assessments** | Only the ones you name. |
+| **Every counted subject passes** | Every subject the programme counts towards its result. |
+
+**Every counted subject passes** is the one most institutions actually mean. It reads
+the programme's own weights, so a subject added, removed or made optional is picked up
+automatically — there is no second list to keep in step.
+
+<Callout type="warn">
+**Overall program grade alone is a weak gate.** A learner can clear the overall pass
+line while failing half their subjects. If your regulations say every subject must be
+passed, say so here.
+</Callout>
+
+## Assigning a type to a programme
+
+On a course's settings step:
+
+- **Completion certificate type** — the one it grants when earned.
+- **Enrollment certificate type (instant)** — the one it grants on enrolment.
+
+Either can be left as none. A programme can grant both — an admission letter now and a
+diploma later.
+
+Each can also name a **design** to override the type's default. See
+[Certificate templates](/docs/knowledgebase/certificates/certificate-templates).
+
+## Two programme-level bindings
+
+Some things cannot live on a shared type, because they differ per programme:
+
+- **The feedback form** — which form this programme asks for, when its type requires one.
+- **The specific assessments** — when the passing basis is **Specific assessments**,
+  which ones, in this programme.
+
+Both are set on the programme, not the type.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Do I need a separate type for each course?">
+No, and you should not. Make a type per *rule* — "Diploma", "Short course", "Admission
+letter" — and assign it everywhere that rule applies.
+</Accordion>
+
+<Accordion title="I changed a type's rules. What happens to certificates already issued?">
+They stand. The new rules apply to who earns one from now on.
+</Accordion>
+
+<Accordion title="Can a learner hold two certificates for one programme?">
+Yes — an enrolment certificate and a completion certificate are different documents
+with different rules.
+</Accordion>
+
+<Accordion title="What is the difference between a type and a template?">
+The **type** is the rule for earning it. The **template** is the drawn document. A type
+can have a default template, and a programme can override it.
+</Accordion>
+
+<Accordion title="Nobody is getting a certificate.">
+Work down [Certificate requirements](/docs/knowledgebase/certificates/certificate-requirements),
+which lists the gates in the order they are applied.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Certificate requirements" description="Why a certificate has not appeared — the gates, in order." href="/docs/knowledgebase/certificates/certificate-requirements" />
+  <Card title="Certificate templates" description="Drawing the document itself." href="/docs/knowledgebase/certificates/certificate-templates" />
+  <Card title="Issuing certificates" description="Automatic issue, issuing by hand, and certificate numbers." href="/docs/knowledgebase/certificates/issuing-certificates" />
+</Cards>

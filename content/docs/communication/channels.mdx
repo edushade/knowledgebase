@@ -1,82 +1,106 @@
 ---
-title: "Channels & Sending Services"
-description: "Turn on email, SMS, push, and chat apps, set their basics, and connect your own sending accounts."
+title: "Channels and Sending Services"
+description: "How messages actually leave your platform — the channels available, the services behind them, and testing before you need them."
 ---
 
-A channel is a way your platform reaches people. You decide which channels to offer, set a
-few basics for each, and connect your own sending account so messages go out under your
-name. Once a channel is on, you can use it in
-[campaigns](/docs/knowledgebase/communication/campaigns) and
-[message templates](/docs/knowledgebase/communication/message-templates).
+A **channel** is how a message travels. A **sending service** is the company that
+carries it. Nothing leaves your platform until at least one service is connected.
 
-## The channels you can offer
+<Path>Notifications > Settings</Path>.
 
-| Channel | What it is |
+<WhoCan roles="Admin" />
+
+## The channels
+
+| Channel | Carried by |
 |---|---|
-| **Email** | Standard email to a learner's inbox. |
-| **SMS** | Text messages to a phone. |
-| **Push** | Pop-up alerts on a phone, tablet, or browser. |
-| **WhatsApp** | Messages through WhatsApp. |
-| **Telegram** | Messages through Telegram. |
-| **Slack** | Messages into a Slack workspace. |
-| **Discord** | Messages into a Discord server. |
+| **Email** | SendGrid, Mailgun, Cloudflare |
+| **SMS** | Twilio, Plivo, Vonage |
+| **WhatsApp** | Twilio |
+| **Push** | FCM, APNs |
+| **In-app** | Nothing to connect — it is your platform |
+| **Slack**, **Discord**, **Telegram** | Those services |
 
-## Turning channels on and off
+Email and SMS are what an academy actually needs. The chat channels are for notifying
+your own team — a Slack message when a payment fails, say — rather than for reaching
+learners.
 
-1. Go to **Admin → Communication → Channels**.
-2. Switch a channel **on** or **off**.
-3. Set its basics (see below).
-4. Connect a sending account for it (see "Connect your own sending service").
+## Connecting one
 
-Only channels you turn on appear as options when you build a campaign or template.
+Each service takes its own credentials, plus:
 
-## Basic settings per channel
-
-Each channel has a few simple settings:
-
-| Channel | Settings you set |
+| Setting | What it does |
 |---|---|
-| **Email** | The **from name**, the **from address**, and a **reply-to address**. |
-| **SMS** | The **sender ID** that shows as the sender. |
-| **Push** | A **default icon** and **badge** for your alerts. |
+| **Enabled** | Whether it is used. |
+| **Priority** | Lower number wins. With two email services configured, the lower priority is tried first. |
+| **Rate limits** | **Per minute**, **per hour**, **per day**. |
 
-These make messages look like they come from your academy, not from anywhere generic.
-
-## Connect your own sending service
-
-To actually deliver messages, you connect your **own sending account** for each channel —
-for example your own email-sending account, your own text-message account, your own push
-account, or your own chat-app connection. Messages then go out through your account, under
-your name and your limits.
-
-For each connected service you can set:
-
-| Option | What it does |
-|---|---|
-| **On / off** | Whether this service is active. |
-| **Priority** | The order to try services in. If your first choice fails, the next one takes over automatically. |
-| **Rate limit** | How many messages it may send in a period, so you stay within your account's allowance. |
-| **Test / validate** | Check that the connection works before you rely on it. |
-
-<Callout type="info">
-**Fallback in plain terms:** if you connect two services for the same channel, set one as
-the higher priority. If it ever has trouble, the platform quietly tries the next one so
-your messages still go out.
+<Callout type="warn">
+**Secrets are saved and hidden.** Leave a credential blank to keep the current value, or
+type a new one to replace it — you cannot read the old one back.
 </Callout>
 
-## How to connect a service
+## Test it before you need it
 
-1. In **Admin → Communication → Channels**, open the channel you want.
-2. Click **Add sending service**.
-3. Enter the account details for your service.
-4. Set its **priority** and **rate limit**.
-5. Click **Test** to confirm it works.
-6. Turn it **on**.
+Every service has **Send Test Notification**: an email address or a phone number, and a
+message sent to it. There is also a connection test that checks the credentials without
+sending anything.
 
-## Good to know
+<Callout type="error">
+**Do this before an intake, not during one.** An academy that discovers its email
+service is misconfigured on registration day loses that intake's registrations — every
+verification email, every welcome, every password reset.
+</Callout>
 
-- Start with email — it is the most universal channel and the easiest to set up.
-- Always run the **Test** step after connecting a service, so you find problems before real
-  messages go out.
-- Push needs a little setup on each device — see
-  [Push notifications & devices](/docs/knowledgebase/communication/push-notifications).
+## Rate limits
+
+Set them to what your service actually allows. Exceeded limits mean messages that do not
+arrive, and a campaign that fails halfway is worse than one you did not send.
+
+## Priority, and a fallback
+
+With two services on the same channel, priority decides which is tried first. It is also
+a fallback: if your main email service has a bad day, the second carries the messages.
+
+For an academy where a missed verification email means a lost sale, a second email
+service is cheap insurance.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="No emails are being sent at all.">
+Check that an email service is connected and **Enabled**, then run the connection test,
+then send a test notification. One of those three tells you where it stops.
+</Accordion>
+
+<Accordion title="Some messages arrive and some do not.">
+Look at your rate limits first, then
+[Delivery and analytics](/docs/knowledgebase/communication/delivery-and-analytics) for
+what each message actually did.
+</Accordion>
+
+<Accordion title="Do I need SMS?">
+In Bangladesh, often yes. Learners who never open email read a text. It costs per
+message, so use it for things that matter — verification, payment, a deadline.
+</Accordion>
+
+<Accordion title="Can learners choose what they receive?">
+Yes, per channel, in their own settings. See
+[Notification preferences](/docs/knowledgebase/communication/notification-preferences).
+</Accordion>
+
+<Accordion title="What is the in-app channel?">
+Notifications inside your platform, in the learner's bell. Nothing to connect, nothing
+to pay for, and the only channel that cannot fail to deliver.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Delivery and analytics" description="What happened to each message." href="/docs/knowledgebase/communication/delivery-and-analytics" />
+  <Card title="Campaigns" description="Sending something to many people." href="/docs/knowledgebase/communication/campaigns" />
+  <Card title="Message templates" description="Writing once, sending on several channels." href="/docs/knowledgebase/communication/message-templates" />
+</Cards>

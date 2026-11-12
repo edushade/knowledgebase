@@ -1,0 +1,112 @@
+---
+title: "Enrolment Windows"
+description: "When a batch or a semester is open to new learners — the four rules, in the order they are applied."
+---
+
+A batch is not simply open or closed. Four things decide whether somebody can join
+today, and they are checked in order. Knowing the order is how you answer "why was this
+learner refused?" without guessing.
+
+<WhoCan roles="Admin" />
+
+## The four rules, in order
+
+### 1. Has the batch ended?
+
+**The batch's end date is a hard bound.** Once a batch is over, nothing in it can be
+joined — not the batch, not a single semester of it. The buyer is told the batch has
+ended and to look for a newer one.
+
+Nothing overrides this.
+
+### 2. Is enrolment open?
+
+**Enrollment Open** on the batch. Off refuses new learners while leaving the batch
+visible and everyone already in it untouched.
+
+### 3. Are there seats?
+
+**Max Enrollment** on the batch. **0 means unlimited.** On a cohort-based course this is
+the limit that counts — the course's own Maximum Enrollments does not apply to a batch.
+
+### 4. Has teaching already started?
+
+**Allow Late Enrollment** on the batch. Off, somebody arriving after the start date is
+refused and told to look for the next batch. On, they may still join.
+
+<Callout type="info">
+**A semester overrides the late-entry rule.** If a learner is buying particular
+semesters rather than the whole batch, the batch's late-entry answer is skipped and the
+semester's own window decides. That is what lets a batch which is running with late
+entry closed still sell Semester 3.
+</Callout>
+
+## A semester's own window
+
+Each [term](/docs/knowledgebase/courses/terms-and-breakpoints) can carry
+**Enrollment opens** and **Enrollment closes**. Leave both empty and the semester follows
+its batch:
+
+- On sale until the batch's end date, **or**
+- when the batch does not allow late entry, only until that semester starts teaching.
+
+Fill them in when one semester needs to sell on different dates from the rest — later
+admissions for a semester that starts in the second half of the year, for instance.
+
+## One batch per programme
+
+A learner cannot be in two batches of the same programme at once. Somebody already in
+Batch 1 is refused Batch 2 of the same course, whether they are buying the whole thing
+or a single semester.
+
+If they genuinely need to move,
+[transfer](/docs/knowledgebase/enrollment-access/transfers) them rather than enrolling
+them twice.
+
+## Enrolling somebody anyway
+
+These rules govern *purchase*. Enrolling a learner yourself is a different path — see
+[Admin and bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
+Use it for the agreed exception: the learner who paid offline, the late joiner you
+decided to take.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner was told the batch has already started.">
+**Allow Late Enrollment** is off and the start date has passed. Turn it on to accept
+late joiners, or enrol this one learner yourself.
+</Accordion>
+
+<Accordion title="We want to sell Semester 3 of a batch that is already running.">
+Give Semester 3 its own enrolment window. The batch's late-entry setting is skipped for
+a purchase scoped to particular semesters, so the semester's window is what decides.
+See [Terms and semesters](/docs/knowledgebase/courses/terms-and-breakpoints).
+</Accordion>
+
+<Accordion title="The batch shows seats left but nobody can join.">
+Check the other three rules in order: the end date, **Enrollment Open**, and late entry.
+Seats are only the third of four.
+</Accordion>
+
+<Accordion title="A learner says they are already enrolled, but they are not in this batch.">
+They are in another batch of the same programme, which is what is refusing them.
+Transfer them instead.
+</Accordion>
+
+<Accordion title="Can I reopen a batch that has ended?">
+Move its end date. Until you do, nothing in it sells — the end date is checked before
+everything else.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Cohorts and batches" description="Where these four settings live." href="/docs/knowledgebase/courses/cohorts" />
+  <Card title="How learners enroll" description="What a buyer actually goes through." href="/docs/knowledgebase/enrollment-access/how-learners-enroll" />
+  <Card title="Admin and bulk enrollment" description="Enrolling someone yourself, around the rules." href="/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment" />
+  <Card title="Transfers" description="Moving a learner who is in the wrong batch." href="/docs/knowledgebase/enrollment-access/transfers" />
+</Cards>

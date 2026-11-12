@@ -1,0 +1,23 @@
+{
+  "title": "How-To Library",
+  "icon": "Wrench",
+  "defaultOpen": false,
+  "pages": [
+    "index",
+    "---Set up---",
+    "set-up-email",
+    "---Build and run---",
+    "launch-a-batch",
+    "set-up-grading",
+    "sell-by-semester",
+    "---Assess---",
+    "run-an-exam",
+    "publish-results",
+    "fix-a-wrong-answer-key",
+    "---Learners---",
+    "move-a-learner",
+    "bring-back-learners",
+    "---Money---",
+    "chase-overdue-payments"
+  ]
+}

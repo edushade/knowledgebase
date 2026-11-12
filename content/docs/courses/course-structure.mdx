@@ -1,89 +1,123 @@
 ---
 title: "Course Structure"
-description: "Organize your course content into sections, lessons, quizzes, assignments, files, and terms."
+description: "How a course is shaped — sections, items and terms — and how that shape reaches the learner."
 ---
 
-A course's content is built like a tidy outline: a tree of items you can arrange any way
-you like. You group things into sections, add lessons and activities inside them, and
-reorder everything by dragging. This is where your course really takes shape.
+A course is a list, and the shape of that list is most of what a learner feels about the
+course. This page is about the shape; [the course builder](/docs/knowledgebase/courses/curriculum-builder)
+is about the buttons.
 
-## The building blocks
+<WhoCan roles="Admin, Instructor" />
 
-You can add any of these to a course:
+## The pieces
 
-| Building block | What it is |
+| Piece | What it is |
 |---|---|
-| **Section** | A folder that groups items together — for example "Module 1" or "Week 3". |
-| **Lesson** | A single piece of teaching: a video, text, PDF, live session, and more. See [Lesson types](/docs/knowledgebase/courses/lesson-types). |
-| **Quiz** | A set of questions that test understanding. See [Assessments & Quizzes](/docs/knowledgebase/assessments). |
-| **Assignment** | A task learners submit — a file upload, a written answer, or a quiz. |
-| **File** | A downloadable resource such as slides or a handout. See [Files and resources](/docs/knowledgebase/courses/files-and-resources). |
-| **Term / period** | A boundary that splits content into periods, like "Semester 1". |
+| **Section** | A container with a title. "Module 1", "Week 3". Holds everything else. |
+| **Lesson** | The teaching — video, audio, reading, PDF, live class or embedded content. |
+| **Quiz** | A test. Marked automatically or by you. |
+| **Assignment** | Work the learner submits for marking. |
+| **File** | A download in its own right — a handout, a dataset. |
+| **Breakpoint** | A dated term. Cohort-based courses only. |
+| **Stage** | The equivalent of a section in a learning path, holding whole courses. |
 
-Sections can hold other sections, so you can nest content as deeply as you need — for
-example, a section "Week 1" inside a section "Module A".
+## The shape that works
 
-### Terms and periods
+Sections at the top level, everything else inside them:
 
-A **term** (also called a period) divides your content into stretches of time, such as
-Semester 1 and Semester 2. You add it like any other item, and it groups the content
-that belongs to that period. Full details — including how terms affect grading and
-progress — live in
-[Terms and periods](/docs/knowledgebase/progress-grading/terms-and-periods).
+```
+Section — Getting started
+  Lesson — Welcome (video, 4 min)
+  Lesson — How this course works (reading)
+  Quiz  — Quick check
 
-## What you can do with each item
+Section — Core ideas
+  Lesson — The three principles (video, 18 min)
+  File  — Principles worksheet
+  Assignment — Apply the principles
+```
 
-When you build the outline, you have these controls for any item:
+Three habits make the difference:
 
-- **Add** a new section, lesson, quiz, assignment, file, or term.
-- **Reorder** items by dragging them up or down.
-- **Move** an item into or out of a section.
-- **Clone the whole curriculum** — copy an entire course outline into another course as a
-  starting point.
-- **Set the status** of any single item to draft (hidden) or published (live).
-- **Mark an item as free preview** so anyone can open it without enrolling.
-- **Hide an item from public listings** so it does not appear on the course page before
-  enrollment.
-- **Show an item as restricted** — display a locked badge for content a learner cannot
-  open yet.
+1. **Name sections by what the learner will be able to do**, not "Module 2".
+2. **Keep sections roughly even** — five items each reads better than two sections of
+   two and one of fourteen.
+3. **End a section with something that proves it landed** — a quiz or a short
+   assignment. It also gives you something to grade.
 
-<Callout type="info">
-A **free preview** item is a great way to give a taste of the course. Pick one strong
-lesson and mark it as free preview to attract enrollments.
-</Callout>
+## Terms sit above sections
 
-## How to build your outline
+On a cohort-based course, a **breakpoint** is a dated term and sections sit inside it:
 
-1. Open your course and go to the **Curriculum** (content) area.
-2. Click **Add Section** and give it a name, such as "Module 1".
-3. Inside the section, click **Add** and choose a lesson, quiz, assignment, file, or term.
-4. Fill in the item and **Save**.
-5. Drag items to reorder them, or drag them between sections.
-6. For any item, open its options to set its **status**, mark it **free preview**, hide
-   it, or show it as **restricted**.
-7. Repeat until your course is complete.
+```
+Breakpoint — Semester 1 (Jan 15 – Apr 30)
+  Section — Foundations
+  Section — Practice
+Breakpoint — Semester 2 (May 15 – Aug 30)
+  Section — Advanced work
+```
+
+Anything *outside* a term still belongs to the course but is not counted in any term's
+result. See [Terms and semesters](/docs/knowledgebase/courses/terms-and-breakpoints).
+
+## What the shape decides
+
+The outline is not only presentation. Four things read it:
+
+- **Progress.** The share of published items a learner has finished. See
+  [Progress tracking](/docs/knowledgebase/progress-grading/progress-tracking).
+- **Grading.** Which items carry marks, and how they are weighted. See
+  [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+- **Drip.** What opens when. See [Drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling).
+- **Prerequisites.** What must be finished before what. See
+  [Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites).
+
+Move a quiz out of a section and all four change.
 
 ## What the learner sees
 
-Learners see your outline as a clean list of sections and lessons. They open items in
-order and track their progress as they go.
+The outline, in your order, with sections they can fold shut and a tick against
+everything they have finished. Anything unpublished is not there at all. Anything held
+by a drip schedule shows as locked, with the date it opens — but anything held by an
+[eligibility rule](/docs/knowledgebase/enrollment-access/eligibility-rules) simply does
+not appear, with no explanation given.
 
-- **Free preview** items can be opened without enrolling.
-- **Hidden** items do not appear on the public course page.
-- **Restricted** items show a locked badge — the learner can see it exists but cannot open
-  it until they qualify. The platform does not display a detailed reason; the item is
-  simply locked.
+An item marked **Free Preview** can be opened by anyone, enrolled or not.
 
-## Tips
+## Common questions
 
-- Group lessons into sections so the course feels organized, not like one long list.
-- Clone an existing course's outline when you teach a similar subject — then edit it.
-- Use terms when a program runs across semesters; they keep periods clear.
+<Accordions type="single">
+
+<Accordion title="Can a lesson sit outside a section?">
+Yes, at the top level. It works, and for a very short course it is fine. For anything
+longer, learners lose their place in a flat list.
+</Accordion>
+
+<Accordion title="How many items should a course have?">
+However many it takes — but keep each one small. A 40-minute video that a learner cannot
+pause between ideas is one item; split into four, it is four ticks and four places to
+come back to.
+</Accordion>
+
+<Accordion title="Does reordering the course disturb learners already in it?">
+Their finished items stay finished. What changes is what they see next, and anything
+tied to position — drip offsets counted from the course's start, for instance. Reorder
+freely early on; be careful once a batch is running.
+</Accordion>
+
+<Accordion title="Can two courses share the same section?">
+No. A section belongs to one course. To reuse the material, use the
+[Content Bank](/docs/knowledgebase/courses/content-bank), or put the whole course into a
+[learning path](/docs/knowledgebase/courses/learning-paths).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Lesson types](/docs/knowledgebase/courses/lesson-types) — the kinds of lessons you can add.
-- [Reusable content](/docs/knowledgebase/courses/reusable-content) — build items once, use them in many courses.
-- [Scheduled content release](/docs/knowledgebase/enrollment-access/drip-scheduling) — release items over time.
-- [Who can access content](/docs/knowledgebase/enrollment-access/eligibility-rules) — control what each learner can open.
-- [Terms and periods](/docs/knowledgebase/progress-grading/terms-and-periods) — organize content into periods.
+<Cards>
+  <Card title="The course builder" description="Adding, nesting, reordering and publishing." href="/docs/knowledgebase/courses/curriculum-builder" />
+  <Card title="Lesson types" description="What each kind of lesson needs." href="/docs/knowledgebase/courses/lesson-types" />
+  <Card title="Terms and semesters" description="Dated terms above your sections." href="/docs/knowledgebase/courses/terms-and-breakpoints" />
+  <Card title="Progress tracking" description="How the outline becomes a percentage." href="/docs/knowledgebase/progress-grading/progress-tracking" />
+</Cards>

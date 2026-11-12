@@ -1,65 +1,102 @@
 ---
-title: "Sharing & Limits"
-description: "How your files stay private, and the sensible file-type and size limits that keep your platform safe."
+title: "Sharing and Limits"
+description: "Upload sizes, allowed types, and whether learners can download what you sell."
 ---
 
-Your platform keeps your files private and applies sensible limits on what can be
-uploaded. This page explains, in plain terms, who can see your files and why some uploads
-are restricted.
+Everything that governs files sits in <Path>Settings > Control Panel</Path> under
+**Media**.
 
-## Your files stay private
+<WhoCan roles="Admin" />
 
-Files in your library belong to your platform and are not visible to the public by
-default. A file only becomes reachable to others when **you** attach it to something
-people can see — for example, a published website page, a lesson a learner is enrolled
-in, or a product you sell.
+## The settings
 
-In short:
+| Setting | What it does |
+|---|---|
+| **Max upload file size (MB)** | The limit for your team. |
+| **Max upload file size for learners (MB)** | A separate limit for learners, who upload assignments. |
+| **Allowed file types** | A comma-separated list of what is accepted. |
+| **Video speed controls** | Whether learners can change playback speed. |
+| **Video quality controls** | Whether they can change quality. |
+| **Video downloads** | Whether videos can be downloaded. |
+| **Restrict paid content download** | Disables download and print for paid course, learning path and cohort content. |
+| **Auth Page Image** | The picture beside your sign-in form. |
 
-- **Not attached anywhere** → private to your platform.
-- **Attached to something public** → visible to whoever can see that thing.
-
-You decide where each file appears by choosing where to attach it.
-
-## File-type and size limits
-
-To keep your platform safe and running smoothly, there are limits on what can be
-uploaded:
-
-- **File type** — everyday teaching and media files are accepted (documents, PDFs,
-  images, audio, video). Some file types are blocked because they aren't meant for a
-  learning library.
-- **File size** — there's a maximum size per file. Large media files are supported, but
-  there's still an upper limit.
-
-If a file is refused, it's usually because of its type or because it's larger than the
-allowed size.
+## Restrict paid content download
 
 <Callout type="info">
-You can set a separate, smaller size limit for files that **learners** upload — handy if
-you want to keep submissions modest while still allowing large videos in your own course
-content.
+**This is the setting an academy selling courses actually wants.** On, learners cannot
+download or print the content of anything paid — it stays inside your platform.
 </Callout>
 
-## What to do if a file is refused
+It covers paid courses, learning paths and cohorts. Free content is unaffected, which is
+usually right: a free guide is meant to travel.
 
-| Situation | What to try |
+It is not absolute. Anything a learner can see, a learner can photograph. What it stops
+is the easy route — the one where a whole course ends up in a shared folder because
+downloading was a button.
+
+## Video quality and speed
+
+**Video quality controls** matters more than it looks in markets with uneven
+connections. Letting a learner drop to a lower quality is the difference between
+watching and giving up.
+
+**Video speed controls** here is academy-wide; the managed player has its own setting
+per programme. See [Video playback](/docs/knowledgebase/files/video-playback).
+
+## Choosing the size limits
+
+| Limit | A reasonable starting point |
 |---|---|
-| **File is too large** | Compress it, or split it into smaller files. For long videos, export at a lower quality. |
-| **File type isn't allowed** | Save it in a common format (for example, export to PDF). |
-| **A learner's file is refused but yours isn't** | A smaller size limit may apply to learner uploads. Adjust the learner limit if needed. |
+| Your team | High enough for a lesson video. |
+| Learners | Enough for a document or a photo of handwritten work, and no more. |
 
-## Good to know
+A learner limit that is too generous fills your storage with phone video that nobody
+will ever watch.
 
-- Limits protect everyone — they keep your library tidy and your platform fast.
-- Sharing is always your choice: nothing becomes public until you attach it somewhere
-  public.
-- If you're unsure why a file won't upload, check its size and type first — those are the
-  two most common reasons.
+## Allowed file types
 
-## What's next
+List what you actually need. A short list prevents accidents — somebody uploading an
+installer, or a format nothing can open.
 
-- [Uploading files](/docs/knowledgebase/files/uploading-files) — add files within the
-  limits.
-- [Learner uploads](/docs/knowledgebase/files/learner-uploads) — where learners can add
-  files.
+Remember learners' assignments when you set it: a list without `pdf` and `docx` will
+stop submissions.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner's upload is refused.">
+The learner size limit, or the file type. Both are separate from your team's.
+</Accordion>
+
+<Accordion title="Learners are sharing our course videos.">
+Switch on **Restrict paid content download**. It stops the easy route, which is most of
+it.
+</Accordion>
+
+<Accordion title="Can I stop screenshots?">
+No. Anything on screen can be captured.
+</Accordion>
+
+<Accordion title="How much storage do we have?">
+Your plan's allowance. The practical control is the yearly tidy — sort by **Largest
+First** and deal with the top twenty. See
+[Organizing files](/docs/knowledgebase/files/organizing-files).
+</Accordion>
+
+<Accordion title="Can one course allow downloads when others do not?">
+The download restriction is academy-wide and applies to paid content. To let learners
+keep something, attach it as a downloadable file rather than putting it in a paid
+lesson.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Video playback" description="Players, seeking and speed, per programme." href="/docs/knowledgebase/files/video-playback" />
+  <Card title="Learner uploads" description="What learners send you." href="/docs/knowledgebase/files/learner-uploads" />
+  <Card title="The Control Panel" description="Where these settings live." href="/docs/knowledgebase/settings/control-panel" />
+</Cards>

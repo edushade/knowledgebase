@@ -1,0 +1,87 @@
+---
+title: "Importing and Exporting Courses"
+description: "Take a course out as a file, and bring one back in — for backups, for moving a course, or for working on it offline."
+---
+
+Courses and learning paths can be exported to a file and imported back. It is the way to
+keep a copy of a course outside the platform, and the way to move one between academies.
+
+<WhoCan roles="Admin" />
+
+## Exporting
+
+On the course list, tick the courses you want and choose **Export**. You are then asked
+for a format:
+
+| Format | What it contains | Can it be imported back? |
+|---|---|---|
+| **CSV** | A flat table of course details — title, type, status and so on. | No |
+| **JSON** | The whole course: curriculum, quizzes and questions. | Yes |
+| **ZIP** | The whole course *and* its media files. | Yes |
+
+Choose **CSV** when you want a spreadsheet of what you teach. Choose **JSON** to move
+the structure. Choose **ZIP** when the videos and files have to travel too — it is much
+larger, and the only format that carries media.
+
+Learning paths export the same three ways, from the learning path list.
+
+## Importing
+
+**Import**, on the same list, takes a JSON or ZIP file that came out of an export.
+
+<Callout type="info">
+**Imported courses always arrive as drafts.** Nothing goes live because you imported it.
+Open each one, check it, and publish when you are ready.
+</Callout>
+
+An import brings the course and its content. It does not bring learners, enrolments,
+marks, progress, prices or certificates — those belong to the academy they were earned
+in, not to the course.
+
+## What this is good for
+
+- **Keeping a copy** of a course outside the platform before a big rewrite.
+- **Moving a course** to another academy you run.
+- **Duplicating** a course: export it, import it, rename the copy.
+
+## What it is not for
+
+- **Backing up your academy.** This exports courses, not learners, results or payments.
+- **Bulk-authoring.** There is no spreadsheet format you can write a course in and
+  import. The CSV export is a report, not an input.
+- **Moving one batch to another.** Use
+  [Re-use from Existing](/docs/knowledgebase/courses/cohorts) on a batch instead.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="My import failed with an invalid file message.">
+The import accepts JSON and ZIP that came out of *this* export. A spreadsheet, a PDF, or
+a JSON file written by hand will be refused. If you exported as CSV, that file cannot be
+imported back — re-export as JSON or ZIP.
+</Accordion>
+
+<Accordion title="The imported course has no videos.">
+JSON carries structure, not media. Export as **ZIP** if the files have to come too.
+</Accordion>
+
+<Accordion title="Can I import questions on their own?">
+No. Questions travel inside a course's JSON or ZIP. There is no separate question
+import — questions are written in the
+[Content Bank](/docs/knowledgebase/courses/content-bank) or in a quiz.
+</Accordion>
+
+<Accordion title="Does exporting take the course offline?">
+No. Export reads a copy; the course carries on exactly as it was.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="The course builder" description="Checking an imported course before publishing it." href="/docs/knowledgebase/courses/curriculum-builder" />
+  <Card title="Cohorts and batches" description="Re-using an existing batch instead of importing." href="/docs/knowledgebase/courses/cohorts" />
+  <Card title="Publishing and the catalog" description="Taking an imported draft live." href="/docs/knowledgebase/courses/publishing-and-catalog" />
+</Cards>

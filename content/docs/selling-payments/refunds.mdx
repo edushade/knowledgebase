@@ -1,63 +1,119 @@
 ---
 title: "Refunds"
-description: "Reverse a payment fully or partially and decide what happens to the buyer's access."
+description: "Handling a refund request — approving, declining with a reason, and deciding whether access goes with the money."
 ---
 
-A **refund** reverses a payment — all of it or part of it — and lets you decide what
-happens to the buyer's access. Refunds can be started by the buyer (for your review) or
-by you directly.
+A learner asks for their money back. Refunds live in
+<Path>Billing > Transactions > Refunds</Path>.
 
-## The two ways a refund starts
+<WhoCan roles="Admin" />
 
-| Path | How it begins |
+## Full or partial
+
+| Type | When |
 |---|---|
-| **Buyer-requested** | The buyer submits a refund request. It starts as **pending** and waits for your review. |
-| **Admin-initiated** | You start the refund yourself, without a request. |
+| **Full Refund** | The whole amount. |
+| **Partial Refund** | Some of it — a learner halfway through, a goodwill gesture. |
 
-## Choosing what happens to access
+## The decision, and the reason
 
-When you approve a refund, you decide the **access outcome**:
+Every refund records **why**, from a list:
 
-| Outcome | What it means |
-|---|---|
-| **Keep access** | The buyer gets money back but keeps access. |
-| **Limited access** | Access continues until a date you set, then expires. |
-| **Revoke access** | Access is removed immediately. |
+| Reason |
+|---|
+| Accidental purchase |
+| Changed mind |
+| Not as described |
+| Technical issues |
+| Fraudulent request |
+| Other (specify below) |
 
-You can also refund access to **only specific course parts** rather than the whole
-enrollment — useful when a buyer should lose part of a program but not all of it.
+Declining also takes a reason:
 
-## How the money comes back
+| Decline reason |
+|---|
+| Already refunded once |
+| Excessive usage (more than 50% completed) |
+| Outside refund window (more than 30 days) |
+| Violates refund policy |
+| Other |
 
-- **Online payments** are refunded **back through the original payment provider**.
-- **Offline payments** (cash, bank transfer) are simply **marked refunded** — you return
-  the money the same way it came in.
-
-<Callout type="warn">
-  You can't refund more than was paid. A partial refund can be any amount up to the total
-  the buyer paid.
+<Callout type="info">
+**The decline reasons are the shape of a refund policy.** If you do not have one
+written down, these four are a reasonable starting point: one refund per learner, a
+usage limit, a time window, and a policy to point at.
 </Callout>
 
-## Approving a refund
+## The part people forget: access
 
-1. Go to **Admin → Refunds**.
-2. Open a **pending** request (or start a new refund).
-3. Choose **full** or **partial**, and the **amount** for a partial refund.
-4. Choose the **access outcome**: keep, limited, or revoke.
-5. (Optional) Limit it to **specific course parts**.
-6. **Approve**. The money is returned through the original method.
+A refund asks what happens to what they bought:
 
-## What the buyer sees
+| Choice | What happens |
+|---|---|
+| **Revoke access** | They lose the programme. |
+| **Remain existing access** | They keep it. |
 
-- The status of a refund they requested (pending, then resolved).
-- Any change to their access, depending on the outcome you chose.
+Money and access are separate decisions. A learner refunded for a course that was
+genuinely not as described should probably lose access; one refunded as a goodwill
+gesture on a course they half finished probably should not.
 
-## Good to know
+**Decide this before you process the refund.** There is no undo that returns the weeks
+they lost.
 
-- You can export refunds to a spreadsheet from the billing area.
+## Watching the pattern
+
+The refund screens report more than individual cases:
+
+| View | What it tells you |
+|---|---|
+| **Refund Rate** | What share of sales come back. |
+| **Refund by Reason** | The distribution of why. |
+| **Refund by Entity Type** | Which kinds of product. |
+| **High Refund Rate Entities** | Specific programmes with elevated rates. |
+| **Refund Trend** | Whether it is getting worse. |
+| **Total Refunded (30 days)**, **Avg Refund**, **Avg Processing** | The totals, and how fast you respond. |
+
+**High Refund Rate Entities** is the one to act on. A single course with a refund rate
+far above the rest is telling you something specific — usually that its page promises
+more than it delivers, or that its first week loses people. Compare it against that
+programme's [statistics](/docs/knowledgebase/analytics/course-statistics).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Does refunding automatically remove access?">
+No. You choose — **revoke access** or **remain existing access**. Decide before you
+process it.
+</Accordion>
+
+<Accordion title="A learner paid in cash. Can I refund them here?">
+Record the refund so the figures are right, and hand the cash back yourself. The
+platform cannot return money it never received.
+</Accordion>
+
+<Accordion title="Can I refund one instalment?">
+Use a partial refund for the amount actually being returned, and review their plan — a
+refunded learner on a live plan will keep being billed.
+</Accordion>
+
+<Accordion title="One course has a high refund rate.">
+Open its statistics and look at where learners stop. A high refund rate with low
+completion means the course is losing people early; with high completion it usually
+means the page over-promised.
+</Accordion>
+
+<Accordion title="How long do we have to refund?">
+That is your policy, not a platform rule. The decline reasons suggest 30 days and 50%
+completion as workable lines — write yours down and publish it.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Checkout](/docs/knowledgebase/selling-payments/checkout) — the payment a refund reverses.
-- [Payment methods](/docs/knowledgebase/selling-payments/payment-methods) — how online vs offline refunds are handled.
-- [Revenue & reports](/docs/knowledgebase/selling-payments/revenue-reports) — refunds in your overall numbers.
+<Cards>
+  <Card title="Transactions" description="The payment a refund is against." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Revenue reports" description="What refunds do to your figures." href="/docs/knowledgebase/selling-payments/revenue-reports" />
+  <Card title="Course statistics" description="Why one course is being refunded." href="/docs/knowledgebase/analytics/course-statistics" />
+</Cards>

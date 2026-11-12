@@ -1,0 +1,123 @@
+---
+title: "Alternative Assessments"
+description: "Making a main exam and its makeup interchangeable, so that sitting either one satisfies the same slot."
+---
+
+A learner misses the final exam and sits the makeup. Without help, the system sees two
+assessments: one missed and one passed. An alternative group tells it there is really
+one.
+
+**A group is one assessment slot.** Completing any member satisfies it — for progress,
+for unlock order, and for the result.
+
+<WhoCan roles="Admin, Instructor" />
+
+## Making a group
+
+Open the course builder and click **Alternative Groups**, at the top right.
+
+<Steps>
+
+<Step>
+
+### Pick two or more assessments
+
+They must belong to the **same course or batch**. Assessments are listed under the
+programme they belong to, and once you pick one, the others lock — a group cannot
+reach across two programmes, because it feeds one programme's grading.
+
+Only ungrouped assessments are offered. One that already belongs to a group is hidden.
+
+</Step>
+
+<Step>
+
+### Star the primary
+
+One member is the **primary**. It is the one the slot is named by, and the one that
+carries the slot's weight.
+
+Make the main assessment the primary, not the makeup.
+
+</Step>
+
+<Step>
+
+### Save
+
+The group appears in the list of existing groups, and the assessments now behave as one
+slot.
+
+</Step>
+
+</Steps>
+
+## What changes
+
+**Progress.** The slot counts once. A learner who sat the makeup is not short a lesson.
+
+**Unlock order.** Anything waiting on the exam is satisfied by the makeup too. See
+[Prerequisites](/docs/knowledgebase/enrollment-access/prerequisites).
+
+**The result.** The slot's score is whatever the learner actually sat. The group is
+counted exactly once.
+
+**Weights.** The slot's weight sits on the primary. The other members appear in the
+weights editor with a link back to their primary, and:
+
+- their weight may be **at most** the primary's;
+- it does **not** count towards the programme's 100% total.
+
+See [Weighted grading](/docs/knowledgebase/progress-grading/weighted-grading).
+
+**The transcript.** The row printed is the member the learner took.
+
+## What happens to a learner who sits both
+
+The slot takes one score. If a learner sits both the exam and its makeup, cap the
+makeup's weight below the primary's so the alternative route cannot be worth more than
+the original.
+
+## Breaking a group up
+
+Deleting a group makes its assessments separate again — each becomes its own slot. **No
+quiz, assignment or learner data is deleted**; only the link between them.
+
+Recalculate the programme's grades afterwards, because the number of slots has changed.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="No assessments are offered when I try to make a group.">
+Every assessment in the programme is already in one. Members of other groups are hidden
+so you cannot put one assessment in two places.
+</Accordion>
+
+<Accordion title="Can a group span a course and its learning path?">
+No. A group lives in one course or batch, because it feeds that programme's grading.
+</Accordion>
+
+<Accordion title="Which member does the transcript show?">
+The one the learner actually took. A learner who sat the makeup sees the makeup.
+</Accordion>
+
+<Accordion title="Is this the same as a makeup assessment?">
+A makeup is the *assessment*; an alternative group is what makes it count as the
+original. Setting up a makeup without grouping it leaves you with a missed exam and an
+extra quiz. See [Makeup assessments](/docs/knowledgebase/assessments/makeup-assessments).
+</Accordion>
+
+<Accordion title="Can a group have three members?">
+Yes — two or more. A main exam with two makeup sittings works.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Makeup assessments" description="Running a second sitting for the learners who missed it." href="/docs/knowledgebase/assessments/makeup-assessments" />
+  <Card title="Weighted grading" description="Where a group's weight sits, and the rule about supplementary members." href="/docs/knowledgebase/progress-grading/weighted-grading" />
+  <Card title="The course builder" description="Where Alternative Groups lives." href="/docs/knowledgebase/courses/curriculum-builder" />
+</Cards>

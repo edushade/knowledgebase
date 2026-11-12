@@ -1,94 +1,150 @@
 ---
 title: "Question Types"
-description: "Every kind of question you can ask in a quiz — which ones grade themselves, which you grade by hand, and what each one is good for."
+description: "The six question types you can build, what each one is for, and what to use when you need written work."
 ---
 
-You can build quizzes from a wide range of question types. Some are **auto-graded** — they
-score themselves the instant a learner submits. Others are **manually graded** — a human
-reads the answer and assigns a score. A few are **composite**, combining several questions
-in one block.
+A question's type decides how a learner answers it and whether it can be marked without
+a person. In a quiz, **six types are available, and all six mark themselves** — a quiz
+is scored the moment it is submitted.
 
-This page lists every type and what it's good for. For how scoring works, see
-[Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes).
+<WhoCan roles="Admin, Instructor" />
 
-## Auto-graded questions
+## The six
 
-These grade themselves the moment the learner submits — no waiting, instant results.
+**Add Question** in the quiz builder opens the picker, grouped by what the question
+asks of the learner.
 
-| Type | What the learner does |
-|---|---|
-| **Multiple choice (single answer)** | Picks exactly one correct option. |
-| **Multiple choice (multiple answers)** | Picks all the correct options. Can award **partial credit** for getting some right. |
-| **True / False** | Chooses true or false. |
-| **Dropdown** | Picks one answer from a compact dropdown list. |
-| **Matching** | Pairs items in one column with items in another. Each pair can be scored on its own. |
-| **Ordering / sequencing** | Arranges items into the correct order. |
-| **Fill-in-the-blank** | Types the missing word(s) into a passage. Each blank can be case-sensitive or not. |
-| **Numeric** | Types a number. You set an **accepted tolerance** (for example, ±0.1) so near-misses can still count. |
-| **Math response** | Types a math expression that is checked against accepted answers. |
-| **Hotspot** | Clicks the correct region(s) on an image. |
-| **Graphing** | Plots an answer on a graph. |
-| **Categorize** | Sorts items into the right groups or buckets. |
-| **Labelling** | Drags labels onto the right spots on an image or diagram. |
+<Screenshot
+  src="/kb/assessments/question-type-picker.png"
+  alt="The question type picker, listing Multiple Choice Single and Multiple, True or False, Dropdown Selection and Fill in the Blank."
+  caption="Search the box at the top if you know what you want. The tag on the right says what kind of question it is."
+/>
 
-## Manually graded questions
+### Objective — auto-gradable
 
-These need a human to read the answer and assign a score. They go into your grading queue —
-see [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes).
+| Type | The learner… | Good for |
+|---|---|---|
+| **Multiple Choice (Single)** | Picks one answer. | Checking a single fact or judgement. |
+| **Multiple Choice (Multiple)** | Picks several. | "Which three of these apply?" |
+| **True or False** | Chooses between two statements. | Quick checks; easy to guess, so use several. |
+| **Dropdown Selection** | Chooses from a dropdown menu. | Long option lists that would crowd the page. |
+| **Fill in the Blank** | Types the missing word. | Terminology and recall, where recognising is too easy. |
 
-| Type | What the learner does |
-|---|---|
-| **Short answer** | Writes a sentence or two. |
-| **Long answer / essay** | Writes a longer, multi-paragraph response. |
-| **Open ended** | Writes a free, discussion-style response. |
-| **Code input** | Writes code as the answer. |
-| **File upload** | Uploads a file (document, image, and so on). |
-| **Audio response** | Records or uploads an audio answer. |
-| **Video response** | Records or uploads a video answer. |
-| **Draw / sketch** | Draws an answer by hand. |
-| **Comprehension** | Reads a passage and answers open questions about it. |
-| **Scenario / case study** | Responds to a described situation or case. |
+### Composite — interactive
 
-## Composite questions
+| Type | The learner… | Good for |
+|---|---|---|
+| **Matching** | Pairs items from two columns. | Terms to definitions, causes to effects, steps to their order. |
 
-These combine several parts in one item.
+Every one of these is scored on submission, so a quiz made of them gives the learner a
+result straight away and gives you a mark with no queue behind it.
 
-| Type | What it is |
-|---|---|
-| **Simulation / interactive task** | An interactive task the learner works through. |
-| **Comprehension block** | A reading passage followed by several sub-questions, scored together. |
+## When you need written work
 
-## Choosing the right type
-
-| Your goal | Good choice |
-|---|---|
-| Quick recall with one right answer | Multiple choice (single) or dropdown |
-| "Select all that apply" | Multiple choice (multiple) — turn on partial credit |
-| Fast yes/no check | True / False |
-| Match terms to definitions | Matching |
-| Put steps in order | Ordering / sequencing |
-| Fill in missing words | Fill-in-the-blank |
-| A calculated number | Numeric (set a tolerance) |
-| Identify a part of a picture | Hotspot or labelling |
-| Reasoning or explanation | Short answer, long answer, or open ended |
-| Reading plus several questions | Comprehension block |
-| Project or document hand-in | File upload |
-
-## Good to know
+A quiz cannot ask for an essay, a paragraph or a free written answer. That is what
+[assignments](/docs/knowledgebase/assessments/assignments) are for: a learner writes or
+uploads, you read it and give it a mark, and it counts towards their grade like any
+other assessment.
 
 <Callout type="info">
-Mix question types in one quiz freely. Auto-graded questions give a learner an instant
-partial score, while any manually graded questions stay **pending** until you grade them —
-then the final score updates.
+**The split is deliberate, and it is worth using.** A quiz gives an instant, objective
+result at scale. An assignment gives you something to read. Most courses want some of
+each, and the [grading scheme](/docs/knowledgebase/progress-grading/course-grading-setup)
+is where you decide how much each is worth.
 </Callout>
 
-<Callout type="warn">
-Quizzes do **not** include IELTS or band-score scoring, and there are no separate Listening,
-Reading, Writing, or Speaking sections. Build the test you need from the question types above.
-</Callout>
+If you need to test reasoning without the marking, a well-built Multiple Choice
+(Multiple) comes closer than people expect — "which of these would you do, and which
+would you not" forces the same judgement.
+
+If you need ordering, Matching does the job: steps on one side, positions on the other.
+
+## What every question takes
+
+| Field | Notes |
+|---|---|
+| **Question Title** | The question itself. Required. |
+| **Score** | What it is worth, from 0.1 to 100. |
+| **Required** | Whether the learner may leave it blank. Nothing to do with marks. |
+| **Explanation** | Shown after the answer, where you have allowed that. |
+| **Shuffle Options** | Scramble this question's options. |
+| **Time limit** | A limit for this one question, on top of the quiz's. |
+| **Image / audio / video / attachments** | Media the question is about. |
+
+Multiple choice, true/false and dropdown questions need their options; matching needs
+its pairs, and can carry **distractors** — extra right-hand items that match nothing,
+which stop a learner solving the last pair by elimination.
+
+## Choosing well
+
+- **Multiple choice is only as good as its wrong answers.** Three obviously silly
+  options make a question everyone gets right, and it tells you nothing.
+- **True or False is a coin toss** on its own. Use it in groups of several.
+- **Fill in the Blank punishes spelling.** Leave **Case sensitive** off, accept the
+  variants you can think of, and check
+  [question reports](/docs/knowledgebase/assessments/question-reports) afterwards for the
+  one everybody got "wrong".
+- **Write the explanation while you write the question.** It is the cheapest teaching in
+  the course, and you will not come back to add it later.
+
+## Where questions live
+
+A question can be written inside a quiz, or kept in the
+[Content Bank](/docs/knowledgebase/courses/content-bank) and reused. The Content Bank
+offers the same six types.
+
+A banked question pulled into a quiz becomes that quiz's own copy — later edits to the
+bank do not reach it.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can I ask an essay question in a quiz?">
+No. Use an [assignment](/docs/knowledgebase/assessments/assignments) — it is built for
+written work, it carries a mark, and that mark counts towards the grade the same way a
+quiz does.
+</Accordion>
+
+<Accordion title="What does Required mean?">
+That the learner cannot submit while it is blank. It does not affect marks, and it is
+not the same as **Require All Questions**, which is a quiz-wide setting.
+</Accordion>
+
+<Accordion title="Can I change a score after a learner has answered?">
+Yes. Any score can be overridden from the grading screen — useful when an answer key
+turns out to be wrong. See
+[Fixing a wrong answer key](/docs/knowledgebase/how-to/fix-a-wrong-answer-key).
+</Accordion>
+
+<Accordion title="Is Fill in the Blank case sensitive?">
+There is a **Case sensitive** setting on the question. Leave it off unless the case is
+genuinely part of the answer, or learners will fail on a capital letter.
+</Accordion>
+
+<Accordion title="What are distractors in a Matching question?">
+Extra items on the right that pair with nothing. Without them a learner who knows three
+of four pairs gets the fourth free.
+</Accordion>
+
+<Accordion title="Can a question be worth negative marks?">
+A question can carry a negative score for a wrong answer, set beside its score. Use it
+carefully — it punishes guessing, and it punishes learners who are unsure but right.
+</Accordion>
+
+<Accordion title="I have older questions of a type that is not in the picker.">
+Questions made before a type was withdrawn still work — learners can answer them and
+they still count. You just cannot add another one of that type. If you are rebuilding
+the quiz, replace it with one of the six.
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Creating quizzes](/docs/knowledgebase/assessments/creating-quizzes)
-- [Grading quizzes](/docs/knowledgebase/assessments/grading-quizzes) — auto-grading, partial credit, and manual grading.
-- [Question reports](/docs/knowledgebase/assessments/question-reports) — let learners flag a question.
+<Cards>
+  <Card title="Creating quizzes" description="Building a quiz from these questions." href="/docs/knowledgebase/assessments/creating-quizzes" />
+  <Card title="Assignments" description="Where written work belongs." href="/docs/knowledgebase/assessments/assignments" />
+  <Card title="The Content Bank" description="Keeping questions for reuse." href="/docs/knowledgebase/courses/content-bank" />
+  <Card title="Question reports" description="Finding the questions that are not working." href="/docs/knowledgebase/assessments/question-reports" />
+</Cards>

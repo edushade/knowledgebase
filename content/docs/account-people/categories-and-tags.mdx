@@ -1,77 +1,109 @@
 ---
-title: "Categories & Tags"
-description: "Organize courses and content with nestable categories and flexible tags so learners can browse and filter easily."
+title: "Categories and Tags"
+description: "How your catalogue is organised — the difference between the two, and the mistake that makes both useless."
 ---
 
-Categories and tags are how you organize your content so learners can find what they
-want. Categories give you a tidy, structured menu; tags are quick, flexible labels. Most
-platforms use both.
+Categories and tags both classify what you offer. They are not the same thing, and using
+them interchangeably is how a catalogue becomes unusable.
+
+Both live under <Path>Configure > Taxonomy</Path>.
+
+<WhoCan roles="Admin" />
+
+## The difference
+
+| | **Categories** | **Tags** |
+|---|---|---|
+| What they are | The structure of your catalogue | Keywords |
+| How many per course | A few | As many as are true |
+| Who uses them | Learners browsing | Learners searching |
+| Change often? | Rarely | Freely |
+
+A category answers "what kind of thing is this?". A tag answers "what is it about?".
+
+**Categories** are required on a course. **Tags** are optional.
 
 ## Categories
 
-**Categories** are a structured way to group courses and other content. They can be
-**nested**, so you can have a broad category with more specific ones inside it — for
-example, **Business → Marketing → Social Media**.
+Think of your catalogue's top-level menu. A learner should be able to find roughly what
+they want by picking one.
 
-### What you can do
+Good: *Business · Languages · IT and Software · Exam Preparation · Health and Care*
 
-- **Create, edit, and delete** categories.
-- **Reorder** them so they appear in the order you want.
-- Give each one a **name, description, icon, color, and thumbnail**.
-- Set each one to **published, draft, or archived**.
-- **Attach** categories to courses and other content.
-- See a **count** of how much content sits in each category.
-- **Export to a spreadsheet** or **bulk delete** when managing many at once.
+<Callout type="warn">
+**Too many categories is the usual mistake.** Thirty categories across forty courses is
+not a structure; it is a list with extra steps. Fewer, broader categories with tags
+underneath work better for everybody.
+</Callout>
 
-### Setting one up
-
-1. Go to **Admin → Categories**.
-2. Click **New Category**.
-3. Enter a name and, if you like, a description, icon, color, and thumbnail.
-4. Choose a parent category to nest it, or leave it at the top level.
-5. Set its status and click **Save**.
-
-| Status | What it means |
-|---|---|
-| **Published** | Live — learners can see and browse it. |
-| **Draft** | Hidden from learners while you set it up. |
-| **Archived** | Retired but kept — hidden from learners, still visible to you. |
-
-### What the learner sees
-
-Learners browse a **category tree** — an organized menu they can open up to drill into
-more specific topics — and they can **filter** what they see by category. Well-named
-categories make your catalog feel easy to explore.
+Fix them early. Changing the category structure once learners have bookmarked pages and
+search engines have indexed them costs more than getting it right at the start.
 
 ## Tags
 
-**Tags** are flat, flexible labels you can stick on many kinds of content — for example
-**Beginner-Friendly**, **Live Cohort**, or **Free**. Unlike categories, they aren't
-nested; a piece of content can carry several tags at once.
+Tags are where the detail goes: *beginner · spoken English · IELTS · Excel · evening
+batch*.
 
-### What you can do
+Add them generously — they cost nothing and they feed
+[search](/docs/knowledgebase/search).
 
-- Create tags and attach them to courses and other content types.
-- Use them to highlight qualities that don't fit neatly into a category.
+## Both appear as filters
 
-### What the learner sees
+A learner browsing your catalogue filters by category, difficulty, language and tags.
+That only works if the values are used consistently: "IELTS", "ielts" and "I.E.L.T.S."
+are three different tags and one wasted filter.
 
-Learners can **filter** by tag to quickly narrow down to, say, only beginner-friendly or
-only live courses.
+Agree the names, and have one person responsible for adding new ones.
 
-<Callout type="info">
-A good rule of thumb: use **categories** for the main "where does this belong?" structure,
-and **tags** for extra qualities like difficulty, format, or audience.
-</Callout>
+## Search keywords are a third thing
 
-## Built-in location data
+A course also has **Search Keywords** on its settings step — "other names people might
+search for, such as an abbreviation or its name in another language". These are **never
+shown to learners**; they only widen what finds the course.
 
-Your platform also includes ready-made **location data** — a complete list of **countries,
-states, and cities**. It's used in places like profiles and scheduling, so people can pick
-their location from a consistent list. This data is always available and isn't something
-you need to set up or edit.
+| | Shown to learners | Purpose |
+|---|---|---|
+| **Category** | Yes | Structure |
+| **Tag** | Yes | Topic |
+| **Search keyword** | No | Findability |
+
+Put "ইংরেজি" in search keywords, not in tags.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Can a course be in more than one category?">
+Yes. Do not overdo it — a course in six categories is in none of them, as far as a
+browsing learner is concerned.
+</Accordion>
+
+<Accordion title="What happens if I delete a category?">
+Courses using it lose it, and a course needs at least one. Move them first.
+</Accordion>
+
+<Accordion title="Do products use the same categories as courses?">
+Categories and tags are shared. Products can also have their own
+[taxonomies](/docs/knowledgebase/selling-payments/products-catalog) for attributes that
+only apply to them.
+</Accordion>
+
+<Accordion title="We have duplicate tags with different spellings.">
+Pick one, re-tag the courses, delete the rest, and write the agreed list down somewhere
+your team will see it.
+</Accordion>
+
+<Accordion title="Where do categories appear on the website?">
+In your catalogue listings and filters. How they are laid out is part of your site — see
+[Pages and blocks](/docs/knowledgebase/website/pages-and-blocks).
+</Accordion>
+
+</Accordions>
 
 ## Related pages
 
-- [Courses & Content](/docs/knowledgebase/courses) — the content you organize with categories and tags.
-- [Search & Discovery](/docs/knowledgebase/search) — how learners search and filter your catalog.
+<Cards>
+  <Card title="Creating a course" description="Where a category is chosen." href="/docs/knowledgebase/courses/creating-a-course" />
+  <Card title="Filters" description="How learners narrow your catalogue." href="/docs/knowledgebase/search/filters" />
+  <Card title="Products" description="Taxonomies for things that are not courses." href="/docs/knowledgebase/selling-payments/products-catalog" />
+</Cards>

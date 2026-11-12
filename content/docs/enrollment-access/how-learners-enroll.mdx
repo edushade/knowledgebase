@@ -1,77 +1,138 @@
 ---
 title: "How Learners Enroll"
-description: "How a learner joins a course, learning path, or cohort, and what gets checked along the way."
+description: "What a learner actually goes through from finding a course to opening the first lesson, and where it goes wrong."
 ---
 
-A learner always enrolls in a whole offering — a **course**, a **learning path**, or a
-**cohort** — never in a single lesson. Once enrolled, they get access to that offering's
-content (subject to the access controls described later in this section).
+Enrolment is the moment a stranger becomes your learner. It is worth knowing the path
+exactly, because every step is somewhere they can fall out.
 
-## Ways to enroll
+<WhoCan roles="Learner" />
 
-| Method | Who does it | When to use it |
-|---|---|---|
-| **Self-enroll** | The learner | Free or open offerings where anyone can join. |
-| **After a purchase** | Automatic | The learner is enrolled the moment payment succeeds. |
-| **After a scholarship** | Automatic | The learner is enrolled when a scholarship is granted. |
-| **Admin enroll** | You / an admin | Adding a specific learner yourself. |
-| **Bulk enroll** | You / an admin | Adding many learners at once from a list. |
+## The path
 
-This page covers **self-enroll** and what the system checks. For the admin methods, see
-[Admin & bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
+<Steps>
 
-## How self-enroll works
+<Step>
 
-A learner opens a published offering and clicks **Enroll**. Before the enrollment goes
-through, the system checks a few things:
+### They find the course
 
-1. **Is it published?** Only published offerings can be joined.
-2. **Is enrollment open?** You can turn enrollment on or off for an offering.
-3. **Are seats available?** If you set a seat limit, the offering stops accepting learners
-   once it is full.
-4. **For cohorts — is the enrollment window open?** A cohort accepts learners only between
-   its start and end enrollment dates.
+From your catalogue, from search, from a link you sent. The course page shows its
+title, description, thumbnail, level, language, duration, **Learning Outcomes** and
+**Requirements** — and any lesson you marked **Free Preview**.
 
-If every check passes, the learner is enrolled and can begin. If any check fails, they
-can't enroll right then (for example, the seats are full or the window has closed).
+A cohort-based course shows its batches instead of one **Enrol** button: each with its
+start date and how many seats are left.
 
-## Enrollment statuses
+</Step>
 
-Every enrollment has a status. It controls whether the learner is active and whether they
-can enroll again later.
+<Step>
 
-| Status | What it means | Can they re-enroll? |
-|---|---|---|
-| **Active** | Currently enrolled and learning. | No — they are already in. |
-| **Completed** | They finished the offering. | No |
-| **Suspended** | Temporarily paused by an admin. | No |
-| **Cancelled** | The enrollment was cancelled. | Yes |
-| **Expired** | Their access window ended. | Yes |
+### They sign in or sign up
 
-In short: an **active, completed, or suspended** learner can't re-enroll in the same
-offering, while a **cancelled or expired** one can.
+Buying requires an account. They can register with an email address or a phone number,
+or sign in with Google or Facebook if you have switched those on.
 
-## Cohort rules
+Depending on your settings they may have to verify their email or phone, and complete
+their profile, before they can go on. See
+[Accounts and sign-in](/docs/knowledgebase/account-people/accounts-and-sign-in).
 
-Cohorts are time-bound groups, so they have two extra rules:
+</Step>
 
-- A learner can be in **only one cohort at a time** within the same parent offering. They
-  can't join two parallel cohorts of the same thing.
-- Each cohort has its **own enrollment window and seat limit**, separate from other cohorts.
+<Step>
 
-<Callout type="info">
-Want to learn how cohorts and learning paths are set up? See
-[Cohorts](/docs/knowledgebase/courses/cohorts) and
-[Learning paths](/docs/knowledgebase/courses/learning-paths) in Courses & Content.
-</Callout>
+### They pay
 
-## Good to know
+One item per checkout. They pick a payment method, enter a coupon code if they have
+one, and pay. Where you offer it, they can pay in instalments instead of all at once.
 
-- **Access expiry (access window).** Each enrollment can have an end date, after which the
-  learner's access expires. You can choose to allow extensions.
-- **Notifications.** Each enrollment can have notifications turned on or off for that
-  learner.
-- Enrolling does **not** automatically open every lesson. What a learner sees and when is
-  controlled by [eligibility rules](/docs/knowledgebase/enrollment-access/eligibility-rules),
-  [drip scheduling](/docs/knowledgebase/enrollment-access/drip-scheduling), and
-  [prerequisites](/docs/knowledgebase/enrollment-access/prerequisites).
+See [Checkout](/docs/knowledgebase/selling-payments/checkout) and
+[Payment methods](/docs/knowledgebase/selling-payments/payment-methods).
+
+</Step>
+
+<Step>
+
+### They are enrolled
+
+The enrolment is created as soon as the payment succeeds, and the course appears under
+**My Course** on their dashboard.
+
+What opens depends on what you set up: everything at once, or week one with the rest on
+a [drip schedule](/docs/knowledgebase/enrollment-access/drip-scheduling).
+
+</Step>
+
+</Steps>
+
+## A free course
+
+With a price of zero, there is nothing to pay and the learner is enrolled straight
+away. They still need an account.
+
+## When they are refused
+
+Four rules can stop a purchase, in this order: the batch has ended, enrolment is
+closed, the seats are full, or the batch has started and does not take late joiners.
+A learner already in another batch of the same programme is also refused. See
+[Enrolment windows](/docs/knowledgebase/enrollment-access/enrollment-windows).
+
+Each refusal says which it is, so a learner who tells you "it would not let me in"
+usually knows more than they are letting on — ask them what it said.
+
+## Where learners actually fall out
+
+In rough order of how often:
+
+1. **The course has no price.** It is published, it looks ready, and there is nothing to
+   buy. See [Pricing](/docs/knowledgebase/selling-payments/pricing).
+2. **Verification is required and the email never arrived.** Check your sending setup
+   before blaming the learner. See [Verification](/docs/knowledgebase/account-people/verification).
+3. **A cohort-based course with no batch.** Nothing to join.
+4. **Profile completion is required** and they stopped at the form.
+5. **The payment failed** and nobody followed up. Pending transactions are a list you
+   can work. See [Transactions](/docs/knowledgebase/selling-payments/transactions).
+
+## What you can do for them
+
+- Enrol them yourself — see
+  [Admin and bulk enrollment](/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment).
+- Record a payment taken outside the platform — see
+  [Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
+- Give them a scholarship or a coupon — see
+  [Scholarships](/docs/knowledgebase/selling-payments/scholarships) and
+  [Coupons and offers](/docs/knowledgebase/selling-payments/coupons-and-offers).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="A learner paid but has no access.">
+Find the transaction. If it is pending, the payment has not completed; if it succeeded,
+check the enrolment exists and work down
+[How access works together](/docs/knowledgebase/enrollment-access/how-access-works-together).
+</Accordion>
+
+<Accordion title="Can a learner buy two courses at once?">
+No. Checkout takes one item per purchase. To sell several together, make a
+[bundle](/docs/knowledgebase/selling-payments/bundles), which is one item.
+</Accordion>
+
+<Accordion title="Can somebody buy a course for someone else?">
+Not as a gift purchase. Take the payment and enrol the recipient yourself.
+</Accordion>
+
+<Accordion title="A learner cannot see the Enrol button.">
+Either the course has no price, or **Enrollment Open** is off, or an eligibility rule
+excludes them — and the third gives them no message at all.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Enrolment windows" description="The four rules that decide whether a batch is open." href="/docs/knowledgebase/enrollment-access/enrollment-windows" />
+  <Card title="Checkout" description="What the buyer sees, and what you can change about it." href="/docs/knowledgebase/selling-payments/checkout" />
+  <Card title="Admin and bulk enrollment" description="Putting learners in yourself." href="/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment" />
+  <Card title="The learner experience" description="What happens after they are in." href="/docs/knowledgebase/learner" />
+</Cards>
