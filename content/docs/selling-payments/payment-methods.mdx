@@ -51,13 +51,36 @@ arrived.
 ## Taking money offline
 
 Not every payment goes through a gateway, and in Bangladesh most academies take some in
-cash or by bank transfer. Two routes:
+cash or by bank transfer. Three routes:
 
 1. **Record it yourself** — [Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
-2. **Verify what somebody else recorded** — the **Pending Verification** queue on
+2. **Let the learner tell you** — they send the money, then report it at checkout (below).
+3. **Verify what somebody else recorded** — the **Pending Verification** queue on
    [Transactions](/docs/knowledgebase/selling-payments/transactions).
 
-Both produce a real transaction, so your revenue figures include the cash.
+All three produce a real transaction, so your revenue figures include the cash.
+
+### Letting learners tell you they paid
+
+Turn on **Learners can report a payment made another way** in
+<Path>Settings > Integrations</Path>, and write what they should do in **What learners
+see** — every bKash, Nagad or Rocket number and bank account they can pay into, and
+anything else they need to know. It is shown exactly as you write it, and it cannot be
+switched on empty.
+
+Learners then see one more choice at checkout, on your website and in the app: **I
+already paid another way**. They pick how they paid (bKash, Nagad, Rocket, bank transfer
+or cash at your academy), type the transaction number and the day they sent it, and can
+add a photo of the receipt. They do not type an amount: the price decides what is owed.
+
+Nothing opens when they press **Send to the academy**. The payment waits in **Pending
+Verification** with **Reported by learner** beside it. Check the transaction number
+against your own bKash or bank statement, then verify it — the learner gets access —
+or reject it with a reason, which the learner is sent by email and in their
+notifications.
+
+The same transaction number cannot be reported twice, and an offer code or instalment
+plan does not apply to a reported payment.
 
 ## What the buyer sees
 
