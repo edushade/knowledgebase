@@ -2,5 +2,5 @@
   "title": "Settings",
   "icon": "Settings",
   "defaultOpen": true,
-  "pages": ["index", "control-panel", "integrations", "holidays"]
+  "pages": ["index", "control-panel", "integrations", "holidays", "date-filters"]
 }

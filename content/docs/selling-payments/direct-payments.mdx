@@ -1,0 +1,145 @@
+---
+title: "Direct Payments"
+description: "Learners send money to your own bKash, Nagad, Rocket, Upay, bank account or office, tell you the transaction ID, and your team confirms it."
+---
+
+Many learners would rather send money the way they always do: **Send Money** on bKash
+to your number, a bank transfer, or cash at your office. Direct payments let them do
+that at checkout. They send the money to you, tell you the transaction ID, and the
+course opens once someone on your team has found the payment on your own statement.
+
+Direct payments work on their own — an academy with no online payment at all — or
+beside online payment, so learners can choose.
+
+<WhoCan roles="Admin" />
+
+## How it works
+
+1. At checkout the learner chooses **Send the money yourself**, and one of your
+   accounts — for example **Send Money by bKash**.
+2. They are shown the amount, your number and the name on the account, with copy
+   buttons and the steps for that kind of account.
+3. They tell you the **Transaction ID** from their SMS or receipt, the day they sent it,
+   and — if you ask — the number they sent from and a screenshot.
+4. The payment waits in **Pending Verification**. Your team is alerted by email and in
+   the app.
+5. Someone checks your statement, then presses **Found it, give access** or **Couldn't
+   find it**. The learner is told either way.
+
+Nothing opens for the learner until your team confirms the payment.
+
+## Setting it up
+
+In <Path>Settings > Integrations > Payments</Path>, the **Direct payments** section:
+
+| Setting | What it does |
+|---|---|
+| **Take direct payments** | The switch. Learners see it at checkout as **Send the money yourself**. |
+| **Ways to pay you** | Your accounts. **Set up** opens the page where you add them. |
+| **Payments waiting to be checked** | How many are waiting, and **Check them**. |
+
+The set-up page has four parts:
+
+| Part | What you decide |
+|---|---|
+| **Where learners send money** | Each bKash, Nagad, Rocket or Upay number, bank account, or your office. Each one becomes its own choice at checkout, with its own steps. |
+| **What learners tell you** | The **Transaction ID** is always asked. You choose whether to ask for the **Number they sent from**, and whether a **Screenshot of the payment** is **Optional**, **Required** or not asked. |
+| **Checking payments** | Your **Office hours**, shown to learners while they wait. Staff who can change orders are the ones who confirm payments. |
+| **A note for learners (optional)** | Anything else, in your own words, up to 1,000 characters. Shown under the payment details. |
+
+The full walkthrough is
+[Set up direct payments](/docs/knowledgebase/how-to/set-up-direct-payments).
+
+### Each account
+
+| Field | What it is |
+|---|---|
+| **Pay by** | **bKash**, **Nagad**, **Rocket**, **Upay**, **Bank account** or **Cash at your office**. |
+| **Account type** | For a mobile wallet: **Personal**, **Merchant** or **Agent**. It decides what learners are told to tap — **Send Money**, **Make Payment** or **Cash Out**. |
+| **Number** and **Name on the account** | Learners check the name in their app before they confirm. |
+| **Tell learners to expect an answer within** | **1 hour**, **4 hours** or **1 working day**. Learners are told this when they send. |
+| **Largest amount (optional)** | Above this, learners do not see this account — useful for a personal wallet with a daily limit. |
+| **Offer at checkout** | Switch an account off to stop taking payments into it for now. |
+
+As you fill in an account, **Learners will see these steps** shows exactly what the
+learner will be told.
+
+## When you take both online and direct payments
+
+The **At checkout** section appears once both are switched on:
+
+| Setting | Choices |
+|---|---|
+| **Show first** | **Online payment** or **Direct payments**. The other is listed underneath. |
+| **Offer direct payments** | **On every order**, **Only after an online payment fails**, or **Only on orders above an amount** (set the **Smallest order**). Online payment is always offered. |
+| **Courses that take direct payments** | **All courses and programmes**, or **Only the ones I choose**. |
+
+## What the learner sees
+
+- **At checkout**, two cards: **Pay online** and **Send the money yourself**, each of
+  your accounts listed with how soon you check.
+- **Where to send it** — the amount, your number or bank details, copy buttons, and the
+  steps. On an Android phone, bKash and Nagad have a button that opens the app.
+- **Tell us about your payment** — the transaction ID (they can paste the whole SMS and
+  the ID is picked out of it), **Today**, **Yesterday** or **Pick a date**, and the
+  screenshot if you ask for one.
+- **"Thank you. We're checking your payment"** — with your answer time, your office
+  hours, and **Fix it** if they typed something wrong.
+- **On the course page**, until you decide: *"We're checking your payment"* in place of
+  the buy button, so nobody pays twice.
+- **If you could not confirm it**: your reason, and **Send again**.
+
+Their order shows the same, in [Payment history](/docs/knowledgebase/learner/payment-history).
+
+## Good to know
+
+- **Discount codes do not apply to direct payments.** A code works when paying online.
+  A learner who chooses to send the money themselves sends the full price, less any
+  scholarship you have given them.
+- **Instalment plans are paid online.** Direct payments are offered for a full price.
+- **The same transaction ID cannot be used for two orders.** A learner who tries is told
+  it has already been sent.
+- **A learner cannot report twice for the same course.** While one payment is waiting,
+  they can fix it but not send another.
+- **Your team is told once per payment**, by email and in the app.
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Do I still need an online payment service?">
+No. Direct payments work on their own. An online service lets learners start straight
+away without anyone checking, so many academies use both.
+</Accordion>
+
+<Accordion title="A learner typed the wrong transaction ID.">
+They can correct it with **Fix it** until your team has looked at it. Your team can also
+correct it on the payment's **Edit** page.
+</Accordion>
+
+<Accordion title="Who can confirm payments?">
+Staff whose role lets them change orders. Change who that is in
+[People and roles](/docs/knowledgebase/account-people/people-and-roles).
+</Accordion>
+
+<Accordion title="What does the learner read when we cannot find the payment?">
+A sentence for the reason you chose — for example *"The amount we received doesn't
+match the price."* — and your note. See
+[Check a direct payment](/docs/knowledgebase/how-to/check-a-direct-payment).
+</Accordion>
+
+<Accordion title="Can I stop taking payments into one number for a while?">
+Yes. Edit the account and switch off **Offer at checkout**. Payments already reported to
+it stay in **Pending Verification**.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Set up direct payments" description="Adding your accounts and switching it on." href="/docs/knowledgebase/how-to/set-up-direct-payments" />
+  <Card title="Check a direct payment" description="Finding it on your statement and deciding." href="/docs/knowledgebase/how-to/check-a-direct-payment" />
+  <Card title="Payment methods" description="Online payment services, and the other ways money arrives." href="/docs/knowledgebase/selling-payments/payment-methods" />
+  <Card title="Transactions" description="Where every payment lands." href="/docs/knowledgebase/selling-payments/transactions" />
+</Cards>

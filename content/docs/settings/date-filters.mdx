@@ -1,0 +1,125 @@
+---
+title: "Date Filters and Your Time Zone"
+description: "The one date filter used across the admin, its choices, and why its days follow your academy's time zone."
+---
+
+Every admin list and report that can be narrowed by date uses the same filter. Learn it
+once and it works the same on transactions, analytics, people lists and holidays.
+
+<WhoCan roles="Admin, Instructor" />
+
+## Where you meet it
+
+A button with a calendar icon at the top of the list, usually called **Date**. Some
+screens give it a name that says which date it means:
+
+| Screen | The filter is called |
+|---|---|
+| <Path>Billing > Transactions</Path> | **Date** |
+| <Path>Analytics > Programmes</Path>, **Enrollments**, **Learners**, **Instructors** | **Date** |
+| <Path>Analytics > Progress</Path> | **Enrolled** |
+| <Path>Analytics > Grades</Path> | **Graded** |
+| <Path>Analytics > Certificates</Path> | **Issued** |
+| **User Growth Trend** and **Top Performing Courses** on the analytics overview | **Date** |
+| People lists | **Created Date**, **Updated Date**, **Last Login Date**, **Enrollment Date**, **Last Learning Activity** |
+| A person's **Communication** tab | **Sent** |
+| Choosing learners to enrol | **Signed up** |
+| <Path>Settings > Holidays</Path> | **Date**, looking forward (below) |
+
+Once a period is applied, it shows beside the name — "This month", "Nov 2026" or
+"Oct 3 – Nov 2, 2026" — so you can see what the list is narrowed to without opening it.
+
+## The choices
+
+| Choice | What it covers |
+|---|---|
+| **Today** | Today. |
+| **Yesterday** | Yesterday. |
+| **Last 7 days** | Today and the six days before it. |
+| **Last 30 days** | Today and the 29 days before it. |
+| **This month** | From the 1st of this month to today. |
+| **Last month** | The whole of last month. |
+| **This year** | From 1 January to today. |
+| **Last year** | The whole of last year. |
+| **A whole month** | Pick a year with the arrows, then click a month. |
+| **Custom range** | Pick a first day and a last day on the calendar, then press **Apply**. |
+
+A preset or a month applies as soon as you click it. A custom range waits for **Apply**,
+and both days you picked are included. Pick only one day and **Apply** uses that day.
+
+**Clear** at the bottom removes the filter.
+
+Analytics screens start with no period: they show everything until you choose one.
+
+## Holidays look forward
+
+Holidays are mostly planned ahead, so their filter offers days to come: **Today**,
+**Next 7 days**, **Next 30 days**, **This month**, **Next month**, **This year**,
+**Next year** and **Last year**. Future months and days can be picked.
+
+## Filters for a single day
+
+Two places ask for one day rather than a period:
+
+- **Meeting Schedules**, under Live Sessions — **Yesterday**, **Today** or **Tomorrow**,
+  or any day on the calendar. It applies as soon as you click.
+- **Date of Birth**, in the people lists — a calendar with month and year lists, so you
+  can reach a year long ago without clicking back month by month.
+
+## Your academy's days, not your computer's
+
+"Today" and "Yesterday" are worked out on your academy's clock. Someone checking
+transactions from another country gets the same list you would, and a payment made at
+11:30 at night lands on the day your learners would say it happened.
+
+The bottom of the filter tells you which clock it is using — for example *"Days in
+Asia/Dhaka time"*.
+
+### Setting your academy's time zone
+
+<Path>Website > Settings > Localization</Path>, under **Regional Settings**: the
+**Timezone** list. Choose your academy's own city, for example **Asia/Dhaka**.
+
+<Callout type="warn">
+**If no time zone is set, the filter counts days in UTC.** For an academy in Bangladesh
+that is six hours behind, so an evening payment can appear on the next day's list. The
+footer of the filter says *"Days in UTC time"* when this is the case.
+</Callout>
+
+The same setting decides how dates and times appear on your website. See
+[Languages](/docs/knowledgebase/website/languages).
+
+## Common questions
+
+<Accordions type="single">
+
+<Accordion title="Why does a payment show under a different day than I expected?">
+Check the line at the bottom of the filter. If it does not say your own time zone, set
+it under <Path>Website > Settings > Localization</Path>.
+</Accordion>
+
+<Accordion title="Can I pick a day in the future?">
+Only on Holidays, which look forward. Everywhere else the filter is about what has
+already happened, so future days are greyed out.
+</Accordion>
+
+<Accordion title="The Outstanding & at-risk card has a different selector.">
+That card on the billing overview has its own short list — **Last 7 days**, **Last 30
+days** and **Last 90 days**. It also ends on your academy's today.
+</Accordion>
+
+<Accordion title="I cleared the filter on User Growth Trend and the chart changed.">
+That chart starts on the last month or so. Clearing removes the period altogether, so
+the chart shows everything it has.
+</Accordion>
+
+</Accordions>
+
+## Related pages
+
+<Cards>
+  <Card title="Transactions" description="Finding payments by day." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Analytics" description="The screens a period narrows." href="/docs/knowledgebase/analytics" />
+  <Card title="Holidays" description="The one filter that looks forward." href="/docs/knowledgebase/settings/holidays" />
+  <Card title="Languages" description="Where the time zone and date formats live." href="/docs/knowledgebase/website/languages" />
+</Cards>

@@ -4,9 +4,11 @@
   "defaultOpen": true,
   "pages": [
     "index",
+    "programme-chat",
     "discussions",
+    "support-requests",
+    "reviews-and-ratings",
     "comments",
-    "reactions",
-    "reviews-and-ratings"
+    "reactions"
   ]
 }

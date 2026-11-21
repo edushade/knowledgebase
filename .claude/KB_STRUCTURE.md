@@ -1,7 +1,7 @@
 # Edushade Knowledge Base — Structure
 
 All paths are under `content/docs/`. Each folder has `index.mdx` + `meta.json`.
-196 pages across 18 sections.
+203 pages across 18 sections.
 
 **Existing folders and page slugs are never renamed.** They carry search traffic that
 took months to earn (see `lib/feature-pages.ts`). New material is added beside them.
@@ -53,10 +53,10 @@ quiz-analytics, question-reports, merit-lists, leaderboards
 index, certificate-types, certificate-requirements, issuing-certificates,
 verifying-certificates, certificate-templates, transcript-designs, designing-a-document
 
-## selling-payments/ — "Selling & Payments" (CreditCard) — 15
+## selling-payments/ — "Selling & Payments" (CreditCard) — 16
 index, pricing, installments, subscriptions, bundles, products-catalog,
 coupons-and-offers, scholarships, scholarship-applications, checkout, payment-methods,
-manual-payments, transactions, refunds, revenue-reports
+direct-payments, manual-payments, transactions, refunds, revenue-reports
 
 ## website/ — "Website & Pages" (Globe) — 10
 index, pages-and-blocks, templates-and-themes, navigation-menus, languages, blog, seo,
@@ -67,8 +67,9 @@ index, channels, notification-preferences, quiet-hours, campaigns, audiences,
 message-templates, announcements, delivery-and-analytics, notification-inbox,
 push-notifications
 
-## community/ — "Community & Feedback" (MessagesSquare) — 5
-index, discussions, comments, reactions, reviews-and-ratings
+## community/ — "Community & Feedback" (MessagesSquare) — 7
+index, programme-chat, discussions, support-requests, reviews-and-ratings, comments,
+reactions
 
 ## bookings/ — "Live Sessions & Events" (CalendarClock) — 10
 index, meeting-plans, availability, booking-page, group-and-request-bookings,
@@ -83,8 +84,8 @@ index, adding-people, people-and-roles, merging-accounts, student-ids,
 accounts-and-sign-in, verification, security, profiles-and-devices, activity-history,
 privacy-and-consent, support-login, your-platform-settings, categories-and-tags
 
-## settings/ — "Settings" (Settings) — 4
-index, control-panel, integrations, holidays
+## settings/ — "Settings" (Settings) — 5
+index, control-panel, integrations, holidays, date-filters
 
 ## files/ — "Files & Media" (FolderOpen) — 7
 index, uploading-files, organizing-files, previewing-files, sharing-and-limits,
@@ -93,15 +94,15 @@ learner-uploads, video-playback
 ## search/ — "Search & Discovery" (Search) — 6
 index, search-basics, autocomplete, filters, trending-and-popular, search-history
 
-## learner/ — "The Learner Experience" (GraduationCap) — 13
+## learner/ — "The Learner Experience" (GraduationCap) — 14
 index, learner-dashboard, my-courses, taking-a-lesson, saved, assignments, exams,
-results-and-certificates, my-calendar, notices-and-notifications, payment-history,
-profile-and-settings, report-a-problem
+results-and-certificates, my-calendar, community, notices-and-notifications,
+payment-history, profile-and-settings, report-a-problem
 
-## how-to/ — "How-To Library" (Wrench) — 11
+## how-to/ — "How-To Library" (Wrench) — 13
 index, set-up-email, launch-a-batch, set-up-grading, sell-by-semester, run-an-exam,
 publish-results, fix-a-wrong-answer-key, move-a-learner, bring-back-learners,
-chase-overdue-payments
+set-up-direct-payments, check-a-direct-payment, chase-overdue-payments
 
 ---
 
@@ -123,6 +124,8 @@ Slugs are unchanged in every case.
 | `certificates/verifying-certificates` | Verifiable certificates | There is no public verification page. |
 | `selling-payments/subscriptions` | A subscriptions feature | Not a payment mode, and not in the menu. Limited access is the supported shape. |
 | `communication/announcements` | Announcements | Notices are in-app only, and recurring notices are not functional. |
+| `community/discussions` | Course discussions | Retired. Now "Questions and Answers (Q&A)", the programme's Q&A channel. |
+| `community/comments`, `community/reactions` | Lesson comments, six reactions | Retired with discussions. Each page says what replaced it. |
 
 ## Tooling
 

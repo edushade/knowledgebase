@@ -1,0 +1,106 @@
+---
+title: "How to check a direct payment"
+description: "Find a payment a learner reported on your own statement, then give them access or tell them why not."
+---
+
+At the end of this, the learner either has access or knows exactly why not and what to
+do next.
+
+<WhoCan roles="Admin" />
+
+**Before you start** — you need a role that can change orders, and access to the
+statement for the account the learner paid into: your bKash or Nagad app, your bank
+statement, or your cash receipts.
+
+<Steps>
+
+<Step>
+
+### Open Pending Verification
+
+<Path>Billing > Transactions > Pending Verification</Path>. The number beside **Billing**
+in the menu is how many are waiting.
+
+The list shows the oldest first, so nobody waits longest. Switch to **Newest first** if
+you prefer, or search by name, email, order or transaction ID.
+
+</Step>
+
+<Step>
+
+### Read what the learner sent
+
+Pick a payment. The right-hand side shows:
+
+- **Sent to** — which of your accounts.
+- **TrxID** — with **Copy**.
+- **From** — the number they sent it from, if you ask for it.
+- **Sent on** and **Reported**.
+- **Changed** — an **Edited** badge if the learner fixed the details afterwards.
+- **Checks** — **TrxID not used on any other order**, or a warning that it is on another
+  order too.
+- The screenshot, if they sent one, with **Open full size**.
+
+Under it, a sentence tells you what to look for — for example *"In your bKash
+statement, look for ৳4,500 from 01712-345678 with ID 9AB2C3D4 on 21 Nov."*
+
+</Step>
+
+<Step>
+
+### Find it on your statement
+
+Search your statement for the transaction ID, then check the amount and the sender.
+
+</Step>
+
+<Step>
+
+### Decide
+
+**Found it, give access** — the learner gets access at once and is told by email and in
+their notifications.
+
+**Couldn't find it** — choose why:
+
+| Reason | What the learner reads |
+|---|---|
+| **No payment with this TrxID** | *"We couldn't find a payment with this transaction ID in our account. Please check the ID and send it again."* |
+| **The amount is different** | *"The amount we received doesn't match the price."* |
+| **Sent to a different account** | *"This payment reached a different account from the one you chose."* |
+| **Something else** | Only your note, so a note is required. |
+
+Add a note for the learner if it helps — what to check, or who to call. The dialog shows
+exactly what they will read. Then press **Send to** and their name.
+
+</Step>
+
+</Steps>
+
+You can make the same decision from the payment's own page: click its row in
+<Path>Billing > Transactions</Path> and use the **Check this payment** card.
+
+## What happens next
+
+A confirmed payment opens the course and appears as **Paid**. A payment you could not
+find shows as **Not accepted**; the learner sees your reason on the course page and
+their order, and can **Send again** with corrected details. They are told they do not
+need to pay twice.
+
+## If something goes wrong
+
+- **The transaction ID is on another order too.** Look at both before deciding. Two
+  learners rarely share one payment; one of them has usually copied the wrong SMS.
+- **The learner typed the ID wrong, and you found the payment anyway.** Open the payment,
+  press **Edit**, correct **TrxID the learner sent**, and save. Then confirm it.
+- **You confirmed the wrong payment.** Payments are not deleted. Refund it from
+  <Path>Billing > Transactions</Path>; see [Refunds](/docs/knowledgebase/selling-payments/refunds).
+
+## Related questions
+
+<Cards>
+  <Card title="Direct payments" description="How the whole flow works." href="/docs/knowledgebase/selling-payments/direct-payments" />
+  <Card title="Set up direct payments" description="Your accounts, and what learners tell you." href="/docs/knowledgebase/how-to/set-up-direct-payments" />
+  <Card title="Transactions" description="The list, its filters and the payment page." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Payment history" description="What the learner sees on their order." href="/docs/knowledgebase/learner/payment-history" />
+</Cards>

@@ -78,8 +78,12 @@ every other page.
 - **Marksheets and transcripts are an admin tool** — learners do not self-serve one.
 - **Access and eligibility rules do not show the learner a detailed "why"** — restricted
   content simply does not appear. Note this honestly where relevant.
-- **Learner-to-learner messaging is not switched on.** The learner menu has no Message
-  item. Do not document chat, servers, channels or direct messages.
+- **Course discussions, lesson comments and reactions are retired** (Nov 2026). Their
+  pages now say what replaced them: each programme's chat and Q&A channel under
+  **Community**. Learners message classmates only where the academy turns on **Learners
+  can message each other**; they can always message staff. There are no emoji reactions.
+- **Discount codes do not apply to direct payments.** A learner who sends the money
+  themselves pays the full price.
 - **Subscriptions exist but are not in the Billing menu.** Document subscription
   *pricing* where it is set; do not send readers to a menu item that is not there.
 

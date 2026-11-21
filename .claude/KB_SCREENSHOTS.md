@@ -27,7 +27,7 @@ may not be there yet — capture those from a local build rather than faking the
 
 ## Already captured
 
-34 screenshots, all placed on a page. `check-links.mjs` fails the build if one goes
+33 screenshots, all placed on a page. `check-links.mjs` fails the build if one goes
 missing, so this list cannot silently rot.
 
 | File | Screen |
@@ -64,7 +64,6 @@ missing, so this list cannot silently rot.
 | `selling-payments/emi-plans.png` | The EMI plans list |
 | `selling-payments/pricing-list.png` | The pricing list |
 | `settings/control-panel.png` | Control Panel, Platform Settings |
-| `settings/integrations.png` | Integrations, Payment Gateways |
 | `website/website-dashboard.png` | The Website dashboard |
 
 ## Still to capture
@@ -89,6 +88,26 @@ In rough order of how much they would help a reader.
 | Theme panel, light and dark | `website/templates-and-themes` |
 | The file manager | `files/uploading-files` |
 | A learner taking a lesson | `learner/taking-a-lesson` |
+
+Added in November 2026 and waiting for the reference academy to have the deploy (none of
+these may be captured from a local build — see below). `settings/integrations.png` was
+removed because the screen was redesigned: it showed **Payment Gateways**, which is now
+**Payments** with Online payment, Direct payments and At checkout.
+
+| Screen | Page |
+|---|---|
+| Integrations, Payments (Online payment, Direct payments, At checkout) | `settings/integrations` |
+| Direct payments set-up, with the Add an account dialog and its preview | `how-to/set-up-direct-payments` |
+| Pending Verification, one payment open with the statement hint | `how-to/check-a-direct-payment` |
+| Couldn't find it, the reason list and what the learner reads | `how-to/check-a-direct-payment` |
+| Checkout sheet, Pay online and Send the money yourself | `selling-payments/direct-payments` |
+| The transaction page's cards | `selling-payments/transactions` |
+| A learner's order page, being checked, with Fix it | `learner/payment-history` |
+| The date filter open, presets and the "Days in … time" line | `settings/date-filters` |
+| A learner's Community screen, rail and a programme channel | `learner/community` |
+| A programme's Community tab | `community/programme-chat` |
+| Add a channel | `community/programme-chat` |
+| A Q&A question with its accepted answer | `community/discussions` |
 
 ### Never capture from a customer's installation
 

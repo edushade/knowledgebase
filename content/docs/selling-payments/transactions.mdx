@@ -1,59 +1,110 @@
 ---
 title: "Transactions"
-description: "Every payment your academy has taken — and the four lists that actually need you to do something."
+description: "Every payment your academy has taken, the page each one opens, and the lists that actually need you to do something."
 ---
 
 <Path>Billing > Transactions</Path> is the record of money. Most of it you will never
-read. Four slices of it need working every week.
+read. A few slices of it need working every week.
 
 <WhoCan roles="Admin" />
 
 ## The lists
 
+Under **Transactions** in the Billing menu:
+
 | List | What it is for |
 |---|---|
 | **All Transactions** | Everything. For looking one payment up. |
-| **Pending Verification** | Offline payments waiting for you to confirm. |
-| **Manual Entry** | Recording a payment taken outside the platform. |
+| **Pending Verification** | Payments learners sent you directly, and ones your staff recorded as waiting. The number beside **Billing** in the menu is how many are waiting. |
+| **Manual Entry** | Recording a payment taken outside the site. |
 | **Refunds** | Refund requests and what happened to them. |
 
-## What a transaction carries
+## The columns
 
-| Field | What it is |
+| Column | What it shows |
 |---|---|
-| **Transaction ID** | Your reference. |
-| **Customer** | Who paid. |
-| **Entity** and **Entity Type** | What they bought. |
-| **Amount**, **Original Amount**, **Currency** | What it cost, and what it cost before any discount. |
-| **Payment Method** | bKash, Nagad, card, cash, bank transfer. |
-| **Payment Gateway** | Which service processed it — not the same as the method. |
-| **Payment Status** | Pending, Success, Failed, Refunded, Cancelled, Processing. |
-| **Offer Applied** / **Scholarship Applied** | Why the amount is lower than the price. |
-| **Internal Notes** | Private — the customer never sees these. |
+| **Status** | Where the payment stands (below). A payment a learner told you about adds **Reported by learner**. |
+| **Amount** | What was paid, and how much of it was refunded. |
+| **Customer** | Who paid. Links to their profile. |
+| **Item** | What they bought, with its kind underneath. |
+| **Date** | When. |
+| **Transaction ID** | The bKash, bank or payment-service ID, with a copy button, and your own order number under it. |
+| **Paid through** | **Directly to you** for money sent to your own accounts, **No payment needed** for a free enrolment, or the name of the online payment service. |
+| **Method** | bKash, Nagad, card, cash, bank transfer. |
+
+Click a row to open the payment's own page. The **⋯** at the end of a row has **View**,
+**Edit** (for direct payments), **Download receipt** (once paid) and **Refund** (once
+paid, if your role allows it).
+
+### What the statuses mean
+
+| Status | Meaning |
+|---|---|
+| **Paid** | The money arrived and the learner has access. |
+| **Confirmed** | A free enrolment. |
+| **Waiting to be checked** | Money sent to you directly that nobody has confirmed yet. Click it to check it. |
+| **Pending** | An online payment that has not finished. |
+| **Not accepted** | A direct payment your team could not confirm. |
+| **Failed** | An online payment that did not go through. |
+| **Refund requested**, **Partly refunded**, **Refunded** | Where a refund stands. |
+| **Cancelled** | Stopped before it was paid. |
+
+## Filtering
+
+| Filter | Choices |
+|---|---|
+| **Status** | **Paid**, **Pending or waiting to be checked**, **Failed or not accepted**, **Refunded**, **Cancelled**. |
+| **Item type** | Course, Learning Path, Cohort, Bundle, Event, Product, Meeting Plan — then the item itself. |
+| **Paid through** | **Directly to you**, or one online payment service. |
+| **Currency** | Shown when you have sold in more than one. |
+| **Needs follow-up** | **Checkouts not completed**, **Failed and not paid since**, **Paid, no access yet**. |
+| **Date** | The admin's date filter, counted in your academy's time zone. See [Date filters and your time zone](/docs/knowledgebase/settings/date-filters). |
+
+**Manual Entry**, above the list, records a payment taken outside the site.
+
+## The payment's page
+
+Each payment opens as one page of cards. At the top: the amount, its status, who paid
+and what for, and one sentence saying where it stands — *"Paid on 21 Nov. Rahim has
+access."* or *"Waiting to be checked. Rahim reported sending it on 21 Nov, 10:42 am."*
+Beside it, **Download receipt** once it is paid, and **Edit** for a direct payment.
+
+| Card | What it holds |
+|---|---|
+| **Check this payment** | For a direct payment waiting to be checked: what the learner sent and the decision, as on Pending Verification. |
+| **Transaction IDs** | Every ID you can search for on your statement or in the payment service's panel, each with a copy button, and your **Order number** last. |
+| **What the learner reported** | What they sent, and — if you turned it down — why, and what they read. |
+| **Payment** | Amount, **Paid through**, method, fees, what you receive, and the date. |
+| **Learner** | Who paid, how much they have paid in total, and **All their payments**. |
+| **What they bought** | The item, its price, any discount or scholarship, and the access it gives. |
+| **Instalments** | For an instalment plan: what is paid and what is still due. |
+| **Internal notes** | Only your staff see these. |
+| **Activity** | What happened to this payment, oldest first. |
+| **Related payments** | Other instalments of this purchase, or other payments by this learner. |
 
 <Callout type="info">
-**Method and gateway are different things.** A learner pays with **bKash** (the method)
-through **SSLCommerz** (the gateway). When you are reconciling against a gateway
-statement, the gateway's own transaction reference is the one to match on — it is on
-the transaction, and can be copied straight from the screen.
+**Reconcile on the Transaction IDs card.** A learner pays with **bKash** through an
+online payment service, and the statement shows that service's own reference — not
+your order number. The card lists each reference by the name the statement uses, so
+you search for the right one.
 </Callout>
 
-## The four things to work weekly
+## The things to work weekly
 
-The billing overview surfaces these as **Quick Actions**, and each is a list of real
-problems:
+The billing overview's **Pending Tasks** and the **Needs follow-up** filter bring up
+these:
 
-### Offline payments to verify
+### Payments waiting to be checked
 
-Someone said they paid by bank transfer. Until you confirm it, they have no access.
-This is the one to clear daily — a learner who paid and is waiting is the unhappiest
-customer you have.
+Someone sent you money and told you. Until you confirm it, they have no access. Clear it
+daily — a learner who paid and is waiting is the unhappiest customer you have. See
+[Check a direct payment](/docs/knowledgebase/how-to/check-a-direct-payment).
 
 ### Failed payments
 
 Payments that did not go through. Some are a card problem the learner has already
-solved; some are a learner who tried, failed and gave up. The second group is money
-sitting on the floor.
+solved; some are a learner who tried, failed and gave up. **Failed and not paid since**
+shows the second group.
 
 ### Checkouts not completed
 
@@ -64,24 +115,19 @@ They got as far as paying and stopped. A single message recovers a surprising sh
 Money in, no enrolment. Rare, and always worth looking at: it means the payment
 succeeded and the thing it paid for did not happen.
 
-## Finding one payment
-
-Search by customer, by transaction ID, or by the gateway's reference. All three work,
-and the gateway reference is the one an outside enquiry will quote.
-
 ## Common questions
 
 <Accordions type="single">
 
 <Accordion title="A learner says they paid and has no access.">
-Find the transaction. **Pending** means it has not completed — if it was an offline
-payment, verify it. **Success** with no enrolment is the "paid, no access yet" case and
-needs looking at directly.
+Find the payment. **Waiting to be checked** means they sent it to you directly — check
+it. **Pending** means an online payment that has not finished. **Paid** with no
+enrolment is the **Paid, no access yet** case and needs looking at directly.
 </Accordion>
 
 <Accordion title="The amount does not match the price.">
-Check **Offer Applied** and **Scholarship Applied**, and compare **Amount** against
-**Original Amount**. A discount, a coupon or a scholarship explains almost all of them.
+Open the payment and read **What they bought**: a discount, an offer code or a
+scholarship explains almost all of them.
 </Accordion>
 
 <Accordion title="Can I delete a transaction?">
@@ -89,9 +135,14 @@ No, and you should not want to. Money records are a trail. Refund it or cancel i
 both leave the history intact.
 </Accordion>
 
-<Accordion title="How do I reconcile with the gateway's statement?">
-Match on the gateway's own transaction reference, not on the platform's transaction ID.
-The gateway reference is what the statement shows.
+<Accordion title="How do I reconcile with the payment service's statement?">
+Use the **Transaction IDs** card on the payment's page. It names each reference the way
+the statement does.
+</Accordion>
+
+<Accordion title="Why is there no Edit on an online payment?">
+An online payment is recorded by the payment service itself. Only payments sent to you
+directly, or recorded by your staff, can be edited.
 </Accordion>
 
 <Accordion title="Does a manual enrolment appear here?">
@@ -105,8 +156,8 @@ the platform, record it as a manual payment. See
 ## Related pages
 
 <Cards>
+  <Card title="Direct payments" description="Learners paying into your own accounts." href="/docs/knowledgebase/selling-payments/direct-payments" />
   <Card title="Manual payments" description="Recording cash, bank transfers and offline payments." href="/docs/knowledgebase/selling-payments/manual-payments" />
   <Card title="Refunds" description="Requests, approvals, and whether access is revoked." href="/docs/knowledgebase/selling-payments/refunds" />
   <Card title="Revenue reports" description="The totals behind these rows." href="/docs/knowledgebase/selling-payments/revenue-reports" />
-  <Card title="Payment methods" description="What learners can pay with." href="/docs/knowledgebase/selling-payments/payment-methods" />
 </Cards>

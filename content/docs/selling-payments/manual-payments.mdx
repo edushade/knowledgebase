@@ -7,9 +7,16 @@ A learner pays in cash at your office, or by bank transfer, or to an agent. The 
 real; the platform knows nothing about it. A manual payment records it, enrols them, and
 keeps your revenue figures true.
 
-<Path>Billing > Transactions > Manual Entry</Path>.
+<Path>Billing > Transactions > Manual Entry</Path> opens **Manual Payment Entry**.
 
 <WhoCan roles="Admin" />
+
+<Callout type="info">
+**Would the learner rather tell you themselves?** With
+[direct payments](/docs/knowledgebase/selling-payments/direct-payments) switched on,
+learners report the payment at checkout and you only confirm it. Manual entry is for the
+payments nobody reported.
+</Callout>
 
 ## Why not just enrol them
 
@@ -23,106 +30,115 @@ belongs.
 
 ## Recording one
 
+The form is in sections, each with a line on the left saying what it is for.
+
 <Steps>
 
 <Step>
 
-### Choose the customer
+### Learner
 
-Search and pick the learner. They need an account first — see
+Search by name or email and pick the learner. They need an account first — see
 [Adding people](/docs/knowledgebase/account-people/adding-people).
 
 </Step>
 
 <Step>
 
-### Choose what they bought
+### What they paid for
 
-Pick the **entity type** and the thing itself. The selector shows its title, its price
-and the seats left, so you can see what you are about to sell.
+Pick the **Kind of item** — Course, Learning path, Cohort, Bundle, Event, Product or
+Meeting plan — then the **Item and price**. Each price shows its amount and the places
+left, so you can see what you are about to sell.
 
-For a cohort-based course, pick the **batch**.
+For a cohort-based course, pick the batch.
 
 </Step>
 
 <Step>
 
-### Set the amount
+### Price
 
-**Base price** fills in from the price you picked, and can be changed. Then:
+The price fills in from the one you picked. Then, if they apply:
 
-- **Apply discount** — a **percentage**, a **fixed** amount, or an **offer code**.
+- **Discount** — **A percentage off**, **A fixed amount off**, or **An offer code**
+  (press **Check code** to apply it).
 - **Processing fee** — anything you charge on top.
-- **Other charges**, with a label of your own — an admission fee, a materials charge.
+- **Other charges**, with **What they are for** — an admission fee, a materials charge.
 
-A percentage discount cannot exceed 100%, and a fixed one cannot exceed the base price.
+**Total paid** at the bottom is what the learner paid.
 
 </Step>
 
 <Step>
 
-### Record how they paid
+### Payment
 
 | Field | Notes |
 |---|---|
-| **Gateway** | Which service, or offline. Required. |
-| **Payment method** | Cash, bank transfer, bKash, Nagad, Rocket. Required. |
-| **Payment date & time** | When they actually paid, not when you are typing. Required. |
-| **Payment reference number** | Their bank reference or transaction number. |
-| **Transaction/Gateway ID** | If the gateway gave one. |
+| **Paid by** | Cash, bKash, Nagad, Rocket or Bank transfer. |
+| **Paid on** | When they actually paid, not when you are typing. |
+| **Transaction ID** | The bKash, Nagad, Rocket or bank ID, if there is one. |
+| **Payment reference** | A receipt or slip number — anything else you file it under. |
 
 </Step>
 
 <Step>
 
-### Set the status
+### Status
 
-| Status | What it does |
+| Choice | What it does |
 |---|---|
-| **Verified** | Confirmed. The learner is enrolled. |
-| **Pending** | Recorded but not confirmed — it joins **Pending Verification**. |
-| **Rejected** | Not accepted. |
+| **Received** | The money is in your account. The learner gets access now. |
+| **Waiting to be checked** | Not confirmed yet. It joins **Pending Verification**, and the learner gets access once someone marks it received. |
 
-Record a payment you have not actually seen as **Pending**, and verify it when the money
-lands.
+Record a payment you have not actually seen as **Waiting to be checked**, and confirm it
+when the money lands.
 
-</Step>
+**Internal notes** are private — the learner never sees them. **Your reference** is for
+where the payment came up, such as a ticket number or a phone call. Write down who took
+the money and where. It is the difference between a clean month-end and an argument.
 
-<Step>
-
-### Leave a note
-
-**Internal notes** and **Admin reference** are private — the customer never sees them.
-Write down who took the money and where. It is the difference between a clean month-end
-and an argument.
+Press **Record payment**.
 
 </Step>
 
 </Steps>
 
-## Verifying what somebody else recorded
+## Correcting a payment
 
-**Pending Verification**, on the transactions screen, is the queue of payments recorded
-but not confirmed. Work it daily: every row is a learner who has paid and cannot get in.
+Open the payment from <Path>Billing > Transactions</Path> and press **Edit**. Payments
+sent to you directly and payments your staff recorded can be edited; online payments
+cannot. The learner and the kind of item stay as they were; the rest can be corrected.
+Press **Save changes**.
 
-Rows marked **Reported by learner** came from the learner themselves, at checkout — see
-[Letting learners tell you they paid](/docs/knowledgebase/selling-payments/payment-methods#letting-learners-tell-you-they-paid).
-Open one to see the transaction number they typed and their receipt photo, if they added
-one. Rejecting one of these needs a reason: the learner is sent it, so write it for them
-("We couldn't find this transaction number in our bKash statement").
+On a payment that is not yet received, the status also offers **Not received** — the
+money did not arrive or the ID does not match. The learner gets no access, and any offer
+code on it can be used again.
+
+On a payment the learner reported themselves, the form opens with **Reported by the
+learner** at the top. Their transaction ID appears as **TrxID the learner sent**, which
+you can correct if they mistyped it. To give access or turn it down, use **Check this
+payment** — it shows what they sent and what they will read. See
+[Check a direct payment](/docs/knowledgebase/how-to/check-a-direct-payment).
 
 ## Common questions
 
 <Accordions type="single">
 
-<Accordion title="The learner is not in the customer list.">
+<Accordion title="The learner is not in the list.">
 They have no account. Create one first — a manual payment attaches to a person, not to
 a name.
 </Accordion>
 
 <Accordion title="I recorded the payment but they have no access.">
-Check the status. **Pending** records the money without enrolling them; **Verified**
-enrols them.
+Check the status. **Waiting to be checked** records the money without enrolling them;
+**Received** enrols them.
+</Accordion>
+
+<Accordion title="It says enrollment is closed.">
+The batch or course is not taking enrolments. You can still record the payment with
+**Create anyway** if you mean to let this learner in.
 </Accordion>
 
 <Accordion title="Can I record a payment for an instalment plan?">
@@ -136,7 +152,7 @@ use an instalment plan rather than a series of manual entries.
 </Accordion>
 
 <Accordion title="Do manual payments count towards revenue?">
-Yes, once verified. That is the point of recording them.
+Yes, once received. That is the point of recording them.
 </Accordion>
 
 </Accordions>
@@ -144,7 +160,7 @@ Yes, once verified. That is the point of recording them.
 ## Related pages
 
 <Cards>
-  <Card title="Transactions" description="Where recorded payments live, and the queues to work." href="/docs/knowledgebase/selling-payments/transactions" />
-  <Card title="Payment methods" description="What learners can pay with online." href="/docs/knowledgebase/selling-payments/payment-methods" />
+  <Card title="Transactions" description="Where recorded payments live, and the lists to work." href="/docs/knowledgebase/selling-payments/transactions" />
+  <Card title="Direct payments" description="Letting learners report the payment themselves." href="/docs/knowledgebase/selling-payments/direct-payments" />
   <Card title="Admin and bulk enrollment" description="Access without a payment, for when that is right." href="/docs/knowledgebase/enrollment-access/admin-and-bulk-enrollment" />
 </Cards>

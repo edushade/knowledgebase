@@ -1,6 +1,6 @@
 ---
 title: "Integrations"
-description: "Connecting outside services — payment gateways, sign-in providers, calendars, conferencing and tracking."
+description: "Connecting outside services — payments, sign-in providers, calendars, conferencing and tracking."
 ---
 
 <Path>Settings > Integrations</Path> is one screen with five sections. Each connects
@@ -8,17 +8,11 @@ something outside your academy.
 
 <WhoCan roles="Admin" />
 
-<Screenshot
-  src="/kb/settings/integrations.png"
-  alt="Payment Gateways, with one gateway active and the rest showing Setup required."
-  caption="A connected gateway shows Active and gets Test and Configure buttons. The others wait on Setup required."
-/>
-
 ## The five sections
 
 | Section | What it connects |
 |---|---|
-| **Payment Gateways** | The services that take money. |
+| **Payments** | Online payment services, and direct payments into your own accounts. |
 | **Sign-in Providers** | Google, Facebook, Apple, GitHub sign-in. |
 | **Calendar** | A calendar for bookings. |
 | **Conferencing** | Zoom, Google Meet and the like. |
@@ -28,9 +22,18 @@ Each section is gated separately, so somebody allowed to manage payments may see
 section and not the others — what they cannot open shows a short notice rather than an
 error.
 
-## Payment Gateways
+## Payments
 
-**Set up** a gateway and fill in its credentials. Each connection carries:
+The first section, in three parts:
+
+| Part | What it is |
+|---|---|
+| **Online payment** | Services that take money on a secure page — learners get access at once. |
+| **Direct payments** | Learners send money to your own bKash, Nagad, Rocket, Upay, bank account or office, and your staff confirm each one. See [Direct payments](/docs/knowledgebase/selling-payments/direct-payments). |
+| **At checkout** | Shown when both are on: which comes first, when direct payments are offered, and for which courses. |
+
+Under **Online payment**, **Set up** a service and fill in its credentials, or **Add
+payment gateway**. Each connection carries:
 
 | Control | What it does |
 |---|---|
@@ -121,6 +124,7 @@ not sent at all — two different problems.
 
 <Cards>
   <Card title="Payment methods" description="Which gateways exist and what each needs." href="/docs/knowledgebase/selling-payments/payment-methods" />
+  <Card title="Set up direct payments" description="Your own accounts, at checkout." href="/docs/knowledgebase/how-to/set-up-direct-payments" />
   <Card title="The Control Panel" description="Browser-side tracking, and everything else academy-wide." href="/docs/knowledgebase/settings/control-panel" />
   <Card title="Booking integrations" description="Calendars and conferencing for live sessions." href="/docs/knowledgebase/bookings/integrations" />
   <Card title="Accounts and sign-in" description="What social sign-in means for learners." href="/docs/knowledgebase/account-people/accounts-and-sign-in" />

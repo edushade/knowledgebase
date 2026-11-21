@@ -1,33 +1,87 @@
 ---
 title: "Payment History"
-description: "A learner's own record of what they bought — and how they ask for a refund."
+description: "A learner's own record of what they bought, what an order page tells them, and how they fix a payment they reported or ask for a refund."
 ---
 
-**Payment History** is the learner's list of orders.
+**Payment History**, in the learner's menu, is their list of orders. Each one opens a
+page of its own with everything about that purchase.
 
 <WhoCan roles="Learner" />
 
-## What they see
+## The list
 
 | Column | What it shows |
 |---|---|
-| **Order ID** | Their reference. |
-| **Transaction ID** | The payment's reference. |
-| **Item**, **Type** | What they bought. |
-| **Total Items**, **Total Amount** | The order. |
-| **Payment Method** | How they paid. |
+| **Transaction ID** | The order's reference. |
 | **Date** | When. |
+| **Item**, **Type** | What they bought. |
+| **Amount** | What it cost. |
+| **Payment Method** | How they paid. For money they sent you directly, the way they sent it — **bKash**, **Nagad**, **Rocket**, **Upay**, **Bank transfer** or **Cash at our office**. |
 | **Status** | Where it stands. |
-| **View Details** | The full record. |
+| **Actions** | Open the order, or ask for a refund. |
 
-Where there is nothing: "No orders found".
+On a phone the same orders show as cards.
+
+### What the statuses mean
+
+| Status | Meaning |
+|---|---|
+| **Paid** | Done. |
+| **Confirmed** | A free enrolment. Nothing was paid. |
+| **Being checked** | They sent the money to you directly and told you. Your team has not confirmed it yet. |
+| **Not accepted** | Your team could not confirm the payment they reported. The reason is shown on the row. |
+| **Pending**, **Failed**, **Cancelled** | An online payment that has not finished, did not go through, or was stopped. |
+| **Refund requested**, **Partly refunded**, **Refunded** | Where a refund stands. |
+
+## The order page
+
+Opening an order shows, from the top:
+
+1. **What they bought** — its picture, its type and its title, linked to the course when
+   they have access. Where the price they bought is no longer on sale, the page says so
+   and adds that their access and any instalments carry on as before.
+2. **One status block** — a single sentence saying where the order stands, and the one
+   thing to do next, if there is one.
+3. **Payment details** — **Amount**, **Payment method**, **Paid on**, and the **Order
+   number** with a copy button. For a payment they sent you directly there is also
+   **What you sent**: where it went, the number it came from, the transaction ID and the
+   day.
+4. Refunds and the instalment plan, where they apply.
+
+Beside it sits the total, **Print receipt** once the payment has succeeded, and
+**Questions about this order?** with **Message us**, which opens their
+[Support](/docs/knowledgebase/learner/community#support) page.
+
+## A payment they sent you directly
+
+When a learner pays into your own bKash, bank account or office and tells you the
+transaction ID, the order waits for your team. See
+[Direct payments](/docs/knowledgebase/selling-payments/direct-payments).
+
+| What happened | The status block says | What they can do |
+|---|---|---|
+| Waiting for your team | *"Thanks. We're checking your payment."* and how soon you usually check | **Fix it**, while nobody has checked it yet |
+| Your team confirmed it | *"We've confirmed your payment"* — *"You have access now."* | Open the course |
+| Your team could not confirm it | *"We couldn't accept the payment you reported"*, with your reason | **Send again** |
+
+**Fix it** lets them correct the **Transaction ID**, the number they sent from, the day,
+or the screenshot — the usual mistake is a mistyped transaction ID. The amount and the
+account they paid into cannot be changed. Once your team has looked at the payment, it
+can no longer be fixed.
+
+**Send again** takes them back to the course page to report the payment again with the
+right details. The page tells them they do not need to pay twice.
+
+The reason they read is the one your team chose, in the learner's own words — for
+example *"The amount we received doesn't match the price."* — followed by any note your
+team wrote.
 
 ## Requesting a refund
 
 **Request Refund** on an order opens a form: the transaction amount, the **Refund
 Type** — **Full Refund** or **Partial Refund** — and a reason.
 
-Once sent, the row reads **Refund submitted**, then **Refunded** when it completes.
+Once sent, the status reads **Refund requested**, then **Refunded** when it completes.
 Where a refund is not available it says **No refund available** rather than offering a
 button that does nothing.
 
@@ -46,22 +100,29 @@ See [Installments](/docs/knowledgebase/selling-payments/installments).
 ## What they are told along the way
 
 Refund notifications reach them at each step: the request received, the refund approved
-with the amount, and the refund completed. Those are worth leaving on — a refund in
-silence produces a support message every time.
+with the amount, and the refund completed. A payment they reported is confirmed, or
+turned down with its reason, by email and in their notifications. Those are worth
+leaving on — a decision in silence produces a support message every time.
 
 ## Common questions
 
 <Accordions type="single">
 
 <Accordion title="A learner cannot find a payment they made.">
-Payments taken outside the platform only appear if they were recorded. See
+Payments taken outside the platform only appear if they were recorded — by you, or by
+the learner reporting it. See
 [Manual payments](/docs/knowledgebase/selling-payments/manual-payments).
 </Accordion>
 
-<Accordion title="They told you they paid by bKash, and it says waiting.">
-A payment they reported at checkout waits here until someone checks it in **Pending
-Verification**. See
-[Letting learners tell you they paid](/docs/knowledgebase/selling-payments/payment-methods#letting-learners-tell-you-they-paid).
+<Accordion title="They sent the money by bKash, and it says Being checked.">
+It is waiting in **Pending Verification** for your team. Check it against your bKash
+statement and confirm it. See
+[Checking a direct payment](/docs/knowledgebase/how-to/check-a-direct-payment).
+</Accordion>
+
+<Accordion title="They typed the wrong transaction ID.">
+They can correct it themselves with **Fix it** on the order page, as long as your team
+has not checked it yet.
 </Accordion>
 
 <Accordion title="They requested a refund and heard nothing.">
@@ -74,12 +135,9 @@ Check their instalment state. **Past grace — access paused** looks like an act
 enrolment and opens nothing.
 </Accordion>
 
-<Accordion title="Can they get an invoice?">
-**View Details** holds the record of the transaction.
-</Accordion>
-
-<Accordion title="Can a refund be requested for a free enrolment?">
-There is nothing to refund, and the row says so.
+<Accordion title="Can they get a receipt?">
+Yes, once the payment has succeeded — **Print receipt** on the order page prints it with
+your academy's name. A payment still being checked has no receipt yet.
 </Accordion>
 
 </Accordions>
@@ -87,6 +145,7 @@ There is nothing to refund, and the row says so.
 ## Related pages
 
 <Cards>
+  <Card title="Direct payments" description="Learners paying into your own accounts." href="/docs/knowledgebase/selling-payments/direct-payments" />
   <Card title="Refunds" description="Handling the requests this produces." href="/docs/knowledgebase/selling-payments/refunds" />
   <Card title="Installments" description="What a learner behind on payments sees." href="/docs/knowledgebase/selling-payments/installments" />
   <Card title="Transactions" description="Your side of the same record." href="/docs/knowledgebase/selling-payments/transactions" />
